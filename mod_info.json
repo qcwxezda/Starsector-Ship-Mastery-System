@@ -3,9 +3,18 @@
     "name": "Ship Mastery System",
     "author": "qcwxezda",
     "version": {"major":0, "minor":1, "patch":0},
-    "dependencies": [],
-    "description": "Ships gain XP during combat that can be spent to build in hull mods. Disables building in hull mods using story points.",
-    "gameVersion": "0.96a-RC8",
+    "dependencies": [
+        {
+            "id": "lw_lazylib",
+            "name": "LazyLib"
+        },
+        {
+            "id": "lunalib",
+            "name": "LunaLib"
+        }
+    ],
+    "description": "Gain mastery in ship hulls to unlock s-mod slots and additional bonuses. Start with 0 s-mod slots and a minor debuff.",
+    "gameVersion": "0.96a-RC10",
     "jars": ["jars/Ship Mastery System.jar"],
-    "modPlugin": "progsmod.plugin.ProgSMod"
+    "modPlugin": "shipmastery.plugin.ModPlugin"
 }
