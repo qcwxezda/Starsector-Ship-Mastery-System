@@ -1,0 +1,11 @@
+{
+    "id": "shipmasterysystem",
+    "name": "Ship Mastery System",
+    "author": "qcwxezda",
+    "version": {"major":0, "minor":1, "patch":0},
+    "dependencies": [],
+    "description": "Ships gain XP during combat that can be spent to build in hull mods. Disables building in hull mods using story points.",
+    "gameVersion": "0.96a-RC8",
+    "jars": ["jars/Ship Mastery System.jar"],
+    "modPlugin": "progsmod.plugin.ProgSMod"
+}
