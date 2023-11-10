@@ -1,5 +1,5 @@
 {
-    "masterVersionFile":"https://raw.githubusercontent.com/qcwxezda/?",
+    "masterVersionFile":"https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/master/shipmastery.version",
     "modName":"ShipMasterySystem",
     "modThreadId":-1,
     "modVersion":
@@ -8,4 +8,6 @@
         "minor":1,
         "patch":0,
     },
+    "directDownloadURL":"https://github.com/qcwxezda/Starsector-Ship-Mastery-System/releases/latest/download/ShipMasterySystem.zip",
+    "changelogURL":"https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/main/changelog.txt"
 }
