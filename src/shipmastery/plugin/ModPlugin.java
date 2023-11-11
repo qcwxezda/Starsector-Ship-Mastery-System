@@ -4,10 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
-import com.fs.starfarer.api.util.Misc;
-import lunalib.lunaRefit.LunaRefitManager;
-import shipmastery.campaign.ClearSModsButton;
-import shipmastery.campaign.MasteryButton;
+import shipmastery.Settings;
 import shipmastery.campaign.RefitHandler;
 
 import java.net.URL;
@@ -16,14 +13,9 @@ import java.net.URLClassLoader;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     @Override
-    public void onApplicationLoad()  {
-        Misc.MAX_PERMA_MODS = 0;
-        LunaRefitManager.addRefitButton(new MasteryButton());
-        LunaRefitManager.addRefitButton(new ClearSModsButton());
-    }
-
-    @Override
     public void onGameLoad(boolean newGame) {
+        Settings.loadMasteryData();
+
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
             EveryFrameScript refitModifier = (EveryFrameScript) getClassLoader().loadClass("shipmastery.campaign.RefitHandler").newInstance();

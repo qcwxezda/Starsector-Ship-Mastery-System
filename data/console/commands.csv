@@ -1,0 +1,2 @@
+command,class,tags,syntax,help
+sms_AddMasteryPoints,shipmastery.console.AddMasteryPoints,"cheat",sms_addMasteryPoints hullId amount,Adds mastery points to the specified hull type.

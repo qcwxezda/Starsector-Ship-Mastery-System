@@ -2,6 +2,7 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.campaign.ui.UITable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,6 +17,8 @@ public class ClassRefs {
     /** Interface that contains a single method: dialogDismissed */
     public static Class<?> dialogDismissedInterface;
     public static Class<?> uiPanelClass;
+    public static Class<?> uiTableDelegateClass;
+    public static String uiTableDelegateMethodName;
     private static boolean foundAllClasses = false;
     public static boolean foundAllClasses(){
         return foundAllClasses;
@@ -40,6 +43,17 @@ public class ClassRefs {
             e.printStackTrace();
         }
     }
+
+    public static void findUITableDelegateClass() {
+        for (Class<?> cls : UITable.class.getDeclaredClasses()) {
+            if (cls.isInterface() && cls.getDeclaredMethods().length == 1) {
+                uiTableDelegateClass = cls;
+                uiTableDelegateMethodName = cls.getDeclaredMethods()[0].getName();
+                return;
+            }
+        }
+    }
+
     public static void findConfirmDialogClass() {
         CampaignUIAPI campaignUI = Global.getSector().getCampaignUI();
         // If we don't know the confirmation dialog class, try to create a confirmation dialog in order to access it
@@ -75,7 +89,10 @@ public class ClassRefs {
         if (uiPanelClass == null) {
             findUIPanelClass();
         }
-        if (confirmDialogClass != null && dialogDismissedInterface != null && actionListenerInterface != null && uiPanelClass != null) {
+        if (uiTableDelegateClass == null) {
+            findUITableDelegateClass();
+        }
+        if (confirmDialogClass != null && dialogDismissedInterface != null && actionListenerInterface != null && uiPanelClass != null && uiTableDelegateClass != null) {
             foundAllClasses = true;
         }
     }

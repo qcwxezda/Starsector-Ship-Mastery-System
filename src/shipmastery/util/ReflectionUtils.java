@@ -4,17 +4,33 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.ui.ButtonAPI;
-import com.fs.starfarer.api.ui.LabelAPI;
-import com.fs.starfarer.api.ui.UIPanelAPI;
+import com.fs.starfarer.api.ui.*;
 import shipmastery.listeners.ActionListener;
 
+import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ReflectionUtils {
+
+    public static UIPanelAPI makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
+        return makeButton(text, handler, base, bg, Alignment.MID, CutStyle.ALL, width, height, -1);
+    }
+
+    public static UIPanelAPI makeButton(String text, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
+        CustomPanelAPI container = Global.getSettings().createCustom(width, height, null);
+        TooltipMakerAPI ttm = container.createUIElement(width, height, false);
+        ttm.setButtonFontOrbitron20();
+        ButtonAPI button = ttm.addButton(text, null, base, bg, align, style, width, height, 0f);
+        setButtonListener(button, handler);
+        if (hotkey >= 0) {
+            button.setShortcut(hotkey, true);
+        }
+        container.addUIElement(ttm);
+        return container;
+    }
 
     public static Object getField(Object o, String fieldName) {
         try {

@@ -8,8 +8,11 @@ import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.ui.*;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
+import com.fs.starfarer.coreui.refit.ModWidget;
+import com.fs.starfarer.loading.specs.HullVariantSpec;
 import shipmastery.Settings;
 import shipmastery.listeners.ActionListener;
 import shipmastery.listeners.MasteryButtonPressed;
@@ -18,6 +21,7 @@ import shipmastery.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +29,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
 
     boolean insideRefitScreen = false;
     boolean needRefresh = true;
+    boolean variantChanged = false;
     boolean isFirstFrame = true;
 
     @Override
@@ -89,12 +94,18 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         CoreUIAPI core = (CoreUIAPI) ReflectionUtils.getCoreUI();
         UIPanelAPI currentTab = (UIPanelAPI) ReflectionUtils.invokeMethod(core, "getCurrentTab");
 
-        modifyBuildInButton(core, currentTab);
+        modifyBuildInButton(core);
+        updateMasteryButton(core);
         addMPDisplay(currentTab);
         needRefresh = false;
+
+        if (variantChanged) {
+            syncWithVariant((UIPanelAPI) core);
+            variantChanged = false;
+        }
     }
 
-    private ShipAPI getSelectedShip(CoreUIAPI core) {
+    public ShipAPI getSelectedShip(UIPanelAPI core) {
         ShipAPI ship;
         try {
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
@@ -108,15 +119,25 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         return ship;
     }
 
-    void modifyBuildInButton(CoreUIAPI core, UIPanelAPI currentTab) {
-        // Modify the "build-in" button
+    void syncWithVariant(UIPanelAPI core) {
         try {
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
+            Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
+
+            // This is necessary to sync the mods list when inside the menu for adding hullmods
+            ((ModWidget) getModsPanel((CoreUIAPI) core)).syncWithCurrentVariant((HullVariantSpec) getSelectedShip(core).getVariant());
+        } catch (Exception ignore) {}
+    }
+
+    UIPanelAPI getModsPanel(CoreUIAPI core) {
+        try {
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             Object modDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getModDisplay");
 
             // The screen for adding hull mods has a different mod display object for some reason
             List<?> coreChildren = (List<?>) ReflectionUtils.invokeMethod(core, "getChildrenNonCopy");
-            boolean isAddingHullMods = false;
 
             outer:
             for (Object child : coreChildren) {
@@ -125,16 +146,25 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                     for (Object subChild : subChildren) {
                         if (subChild.getClass().equals(modDisplay.getClass())) {
                             modDisplay = subChild;
-                            isAddingHullMods = true;
                             break outer;
                         }
                     }
                 }
             }
-            Object modsPanel = ReflectionUtils.invokeMethodNoCatch(modDisplay, "getMods");
+            return (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(modDisplay, "getMods");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    void modifyBuildInButton(CoreUIAPI core) {
+        // Modify the "build-in" button
+        try {
+            Object modsPanel = getModsPanel(core);
             ButtonAPI addButton = (ButtonAPI) ReflectionUtils.invokeMethodNoCatch(modsPanel, "getAdd");
             ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethodNoCatch(modsPanel, "getPerm");
-            permButton.setText("Mastery");
 
             // Modify the add button so that it does what it normally does, but also triggers a refresh since the
             // "build in" button changes when adding hull mods.
@@ -149,17 +179,43 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                 });
             }
 
-            if (isAddingHullMods) {
-                ReflectionUtils.invokeMethodNoCatch(permButton, "setOpacity", 0f);
-            }
-            else {
-                ReflectionUtils.setButtonListener(permButton, new MasteryButtonPressed(getSelectedShip(core)));
-                permButton.setShortcut(16, true);
-            }
+            ReflectionUtils.invokeMethodNoCatch(permButton, "setOpacity", 0f);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    void updateMasteryButton(CoreUIAPI core) {
+        UIPanelAPI modsPanel = getModsPanel(core);
+
+        // Remove existing CustomPanelAPIs, which would be mastery buttons we added previously
+        List<?> children = (List<?>) ReflectionUtils.invokeMethod(modsPanel, "getChildrenNonCopy");
+        Iterator<?> itr = children.listIterator();
+        while (itr.hasNext()) {
+            Object child = itr.next();
+            if (child instanceof CustomPanelAPI) {
+                itr.remove();
+            }
+        }
+
+        ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
+        UIPanelAPI masteryButton = ReflectionUtils.makeButton(
+                "Mastery",
+                new MasteryButtonPressed(this),
+                Misc.getBasePlayerColor(),
+                Misc.getDarkPlayerColor(),
+                Alignment.MID,
+                CutStyle.BOTTOM,
+                permButton.getPosition().getWidth(),
+                permButton.getPosition().getHeight(),
+                16
+        );
+
+        modsPanel
+                .addComponent(masteryButton)
+                .belowMid(permButton, -25f)
+                .setXAlignOffset(-5f);
     }
 
     void addMPDisplay(UIPanelAPI currentTab) {
@@ -171,34 +227,48 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                 ButtonAPI randomButton = buttonToMemberMap.keySet().iterator().next();
                 UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(randomButton, "getParent");
                 List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");
-
-                // Haven't added anything yet if the two sizes are the same
-                if (sortedButtonList.size() == buttonToMemberMap.size()) {
-                    float w = parent.getPosition().getWidth(), h = parent.getPosition().getHeight();
-                    CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
-                    TooltipMakerAPI tooltipMaker = custom.createUIElement(w, h, false);
-                    tooltipMaker.setParaOrbitronLarge();
-                    for (int i = 0; i < sortedButtonList.size(); i++) {
-                        float h2 = tooltipMaker.getHeightSoFar();
-                        tooltipMaker.addPara("1536 MP", Settings.masteryColor, 0f).setAlignment(Alignment.LMID);
-                        float hDiff = tooltipMaker.getHeightSoFar() - h2;
-                        // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
-                        if (sortedButtonList.get(i) instanceof ButtonAPI) {
-                            ButtonAPI button = (ButtonAPI) sortedButtonList.get(i);
-                            if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI) {
-                                ButtonAPI nextButton = (ButtonAPI) sortedButtonList.get(i + 1);
-                                tooltipMaker.addSpacer(button.getPosition().getY() - nextButton.getPosition().getY() - hDiff);
-                            }
+                // Delete everything that isn't a button (The MP display will be deleted if we already added it)
+                Iterator<?> itr = sortedButtonList.listIterator();
+                while (itr.hasNext()) {
+                    Object child = itr.next();
+                    if (!(child instanceof ButtonAPI)) {
+                        itr.remove();
+                    }
+                }
+                float w = parent.getPosition().getWidth(), h = parent.getPosition().getHeight();
+                CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
+                TooltipMakerAPI tooltipMaker = custom.createUIElement(w, h, false);
+                for (int i = 0; i < sortedButtonList.size(); i++) {
+                    float h2 = tooltipMaker.getHeightSoFar();
+                    //noinspection ReassignedVariable,SuspiciousMethodCalls
+                    FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
+                    if (fm != null) {
+                        int mp = (int) Settings.getMasteryPoints(fm.getHullSpec());
+                        if (mp > 0) {
+                            tooltipMaker.addPara(mp + " MP", Settings.masteryColor, 0f).setAlignment(Alignment.LMID);
                         }
                     }
-                    tooltipMaker.setParaFontDefault();
-                    custom.addUIElement(tooltipMaker);
-                    parent.addComponent(custom).inBL(2f, -6f);
+                    float hDiff = tooltipMaker.getHeightSoFar() - h2;
+                    // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
+                    if (sortedButtonList.get(i) instanceof ButtonAPI) {
+                        ButtonAPI button = (ButtonAPI) sortedButtonList.get(i);
+                        if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI) {
+                            ButtonAPI nextButton = (ButtonAPI) sortedButtonList.get(i + 1);
+                            tooltipMaker.addSpacer(button.getPosition().getY() - nextButton.getPosition().getY() - hDiff);
+                        }
+                    }
                 }
+                custom.addUIElement(tooltipMaker);
+                parent.addComponent(custom).inBL(2f, -6f);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void forceRefresh(boolean variantChanged) {
+        needRefresh = true;
+        this.variantChanged = variantChanged;
     }
 
     @Override
