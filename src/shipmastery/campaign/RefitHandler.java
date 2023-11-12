@@ -11,13 +11,12 @@ import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
-import com.fs.starfarer.coreui.refit.ModWidget;
-import com.fs.starfarer.loading.specs.HullVariantSpec;
 import shipmastery.Settings;
 import shipmastery.listeners.ActionListener;
 import shipmastery.listeners.MasteryButtonPressed;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.ReflectionUtils;
+import shipmastery.util.Utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
@@ -26,11 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 public class RefitHandler implements CoreUITabListener, EveryFrameScript {
-
-    boolean insideRefitScreen = false;
-    boolean needRefresh = true;
-    boolean variantChanged = false;
     boolean isFirstFrame = true;
+    CoreUIAPI coreUI = null;
+    boolean injectRefitScreenNextFrame = false;
 
     @Override
     public boolean isDone() {
@@ -72,43 +69,16 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
             ClassRefs.findAllClasses();
         }
 
-        if (Global.getSector() == null || Global.getSector().getCampaignUI() == null) return;
-
-        if (!insideRefitScreen || !needRefresh) return;
-
-        CampaignUIAPI ui = Global.getSector().getCampaignUI();
-        if (!CoreUITabId.REFIT.equals(ui.getCurrentCoreTab())) {
-            insideRefitScreen = false;
-            return;
-        }
-        // Due to a bug, if the player ESCs out of the refit screen in a market, the core tab is still shown as REFIT
-        // even though it's been closed. To combat this, check if the savedOptionList is empty. If it is, we're still
-        // in the refit screen; otherwise, we've ESCed out of the refit screen.
-        else if (ui.getCurrentInteractionDialog() != null
-                && ui.getCurrentInteractionDialog().getOptionPanel() != null
-                && !ui.getCurrentInteractionDialog().getOptionPanel().getSavedOptionList().isEmpty()) {
-            insideRefitScreen = false;
-            return;
-        }
-
-        CoreUIAPI core = (CoreUIAPI) ReflectionUtils.getCoreUI();
-        UIPanelAPI currentTab = (UIPanelAPI) ReflectionUtils.invokeMethod(core, "getCurrentTab");
-
-        modifyBuildInButton(core);
-        updateMasteryButton(core);
-        addMPDisplay(currentTab);
-        needRefresh = false;
-
-        if (variantChanged) {
-            syncWithVariant((UIPanelAPI) core);
-            variantChanged = false;
+        if (injectRefitScreenNextFrame) {
+            injectRefitScreen(false);
+            injectRefitScreenNextFrame = false;
         }
     }
 
-    public ShipAPI getSelectedShip(UIPanelAPI core) {
+    public ShipAPI getSelectedShip() {
         ShipAPI ship;
         try {
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             Object shipDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getShipDisplay");
             ship = (ShipAPI) ReflectionUtils.invokeMethodNoCatch(shipDisplay, "getShip");
@@ -119,25 +89,25 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         return ship;
     }
 
-    void syncWithVariant(UIPanelAPI core) {
+    void syncRefitScreenWithVariant() {
         try {
+            Object core = ReflectionUtils.getCoreUI();
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
-
-            // This is necessary to sync the mods list when inside the menu for adding hullmods
-            ((ModWidget) getModsPanel((CoreUIAPI) core)).syncWithCurrentVariant((HullVariantSpec) getSelectedShip(core).getVariant());
         } catch (Exception ignore) {}
     }
 
-    UIPanelAPI getModsPanel(CoreUIAPI core) {
+    public UIPanelAPI getModsPanel() {
+        if (coreUI == null) return null;
+
         try {
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(core, "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             Object modDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getModDisplay");
 
             // The screen for adding hull mods has a different mod display object for some reason
-            List<?> coreChildren = (List<?>) ReflectionUtils.invokeMethod(core, "getChildrenNonCopy");
+            List<?> coreChildren = (List<?>) ReflectionUtils.invokeMethod(coreUI, "getChildrenNonCopy");
 
             outer:
             for (Object child : coreChildren) {
@@ -159,10 +129,12 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         }
     }
 
-    void modifyBuildInButton(CoreUIAPI core) {
+    void modifyBuildInButton() {
+        if (coreUI == null) return;
+
         // Modify the "build-in" button
         try {
-            Object modsPanel = getModsPanel(core);
+            Object modsPanel = getModsPanel();
             ButtonAPI addButton = (ButtonAPI) ReflectionUtils.invokeMethodNoCatch(modsPanel, "getAdd");
             ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethodNoCatch(modsPanel, "getPerm");
 
@@ -173,7 +145,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                 ReflectionUtils.setButtonListener(addButton, new ActionListener() {
                     @Override
                     public void trigger(Object... args) {
-                        needRefresh = true;
+                        injectRefitScreenNextFrame = true;
                         ReflectionUtils.invokeMethodExtWithClasses(origListener, "actionPerformed", false, new Class[]{Object.class, Object.class}, args);
                     }
                 });
@@ -186,8 +158,10 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         }
     }
 
-    void updateMasteryButton(CoreUIAPI core) {
-        UIPanelAPI modsPanel = getModsPanel(core);
+    void updateMasteryButton() {
+        if (coreUI == null) return;
+
+        UIPanelAPI modsPanel = getModsPanel();
 
         // Remove existing CustomPanelAPIs, which would be mastery buttons we added previously
         List<?> children = (List<?>) ReflectionUtils.invokeMethod(modsPanel, "getChildrenNonCopy");
@@ -201,7 +175,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
 
         ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
         UIPanelAPI masteryButton = ReflectionUtils.makeButton(
-                "Mastery",
+                Utils.getString("sms_refitScreen", "masteryButton"),
                 new MasteryButtonPressed(this),
                 Misc.getBasePlayerColor(),
                 Misc.getDarkPlayerColor(),
@@ -218,7 +192,10 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                 .setXAlignOffset(-5f);
     }
 
-    void addMPDisplay(UIPanelAPI currentTab) {
+    void addMPDisplay() {
+        if (coreUI == null) return;
+
+        UIPanelAPI currentTab = (UIPanelAPI) ReflectionUtils.invokeMethod(coreUI, "getCurrentTab");
         // Add MP display to the ship displays on the left side of the refit screen
         try {
             //noinspection unchecked
@@ -266,16 +243,21 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
         }
     }
 
-    public void forceRefresh(boolean variantChanged) {
-        needRefresh = true;
-        this.variantChanged = variantChanged;
+    public void injectRefitScreen(boolean variantChanged) {
+        coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
+        modifyBuildInButton();
+        updateMasteryButton();
+        addMPDisplay();
+
+        if (variantChanged) {
+            syncRefitScreenWithVariant();
+        }
     }
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
         if (CoreUITabId.REFIT.equals(id)) {
-            insideRefitScreen = true;
-            needRefresh = true;
+            injectRefitScreenNextFrame = true;
         }
     }
 }

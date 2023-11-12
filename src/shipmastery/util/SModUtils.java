@@ -1,10 +1,9 @@
 package shipmastery.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.util.Misc;
 
 public abstract class SModUtils {
 
@@ -18,47 +17,33 @@ public abstract class SModUtils {
         ShipVariantAPI variant = ship.getVariant();
 
         // If enhancing built-in, always only costs 1
-        if (variant.getHullSpec().getBuiltInMods().contains(spec.getId())) {
+        if (isHullmodBuiltIn(spec, ship.getVariant())) {
             return 1;
         }
 
         int nSMods = variant.getSMods().size();
-        int cost = 1 + ADDITIONAL_MP_PER_SMOD * nSMods;
+        int cost = 1 + Utils.hullSizeToInt(ship.getHullSize()) + ADDITIONAL_MP_PER_SMOD * nSMods;
         // Doubled MP cost if going over the limit
-        if (nSMods >= getSModLimit(ship)) {
+        if (nSMods >= Misc.getMaxPermanentMods(ship)) {
             cost *= 2;
         }
         return cost;
     }
 
     public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {
-        ShipVariantAPI variant = ship.getVariant();
-        int hullSizeOrd = 0;
-        switch (variant.getHullSize()) {
-            case DESTROYER:
-                hullSizeOrd = 1;
-                break;
-            case CRUISER:
-                hullSizeOrd = 2;
-                break;
-            case CAPITAL_SHIP:
-                hullSizeOrd = 3;
-                break;
-        }
+        int hullSizeOrd = Utils.hullSizeToInt(ship.getHullSize());
 
-        float valueFrac = Math.max(1, variant.getHullSpec().getBaseValue() / BASE_VALUE_AMTS[hullSizeOrd]);
+        float valueFrac = Math.max(1, ship.getHullSpec().getBaseValue() / BASE_VALUE_AMTS[hullSizeOrd]);
         float cost = 10000f
-                * (float) Math.max(1f, Math.pow(spec.getCostFor(variant.getHullSize()), 0.4f))
+                * (float) Math.max(1f, Math.pow(spec.getCostFor(ship.getHullSize()), 0.4f))
                 * (float) Math.pow(valueFrac, 0.8f)
-                * (float) Math.pow((hullSizeOrd + 1), 0.9f);
+                * (float) Math.pow((hullSizeOrd + 1), 1.1f);
         cost = (float) (Math.ceil(cost/1000f)*1000f);
         // Hard cap at 10 million credits
         return (int) (Math.min(cost, CREDITS_HARD_CAP));
     }
 
-    public static int getSModLimit(ShipAPI ship) {
-        return (int) ship.getMutableStats().getDynamic()
-                .getMod(Stats.MAX_PERMANENT_HULLMODS_MOD)
-                .computeEffective(Global.getSettings().getInt("maxPermanentHullmods"));
+    public static boolean isHullmodBuiltIn(HullModSpecAPI spec, ShipVariantAPI variant) {
+        return variant.getHullSpec().isBuiltInMod(spec.getId());
     }
 }

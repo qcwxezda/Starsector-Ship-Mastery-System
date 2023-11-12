@@ -2,6 +2,7 @@ package shipmastery;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import shipmastery.util.Utils;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public abstract class Settings {
     public static final String MASTERY_KEY = "shipmastery_Mastery";
     public static MasteryTable MASTERY_TABLE;
     public static Color masteryColor = new Color(96, 192, 255);
-    public static float doubleClickInterval = 1f;
+    public static float doubleClickInterval = 0.75f;
 
     public static void loadMasteryData() {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
@@ -37,12 +38,12 @@ public abstract class Settings {
     }
 
     public static float getMasteryPoints(ShipHullSpecAPI spec) {
-        MasteryData data = MASTERY_TABLE.get(spec.getBaseHullId());
+        MasteryData data = MASTERY_TABLE.get(Utils.getBaseHullId(spec));
         return data == null ? 0 : data.points;
     }
 
     public static void addMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = spec.getBaseHullId();
+        String id = Utils.getBaseHullId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
         if (data == null) {
             MASTERY_TABLE.put(id, new MasteryData(amount, 0));
@@ -53,7 +54,7 @@ public abstract class Settings {
     }
 
     public static void spendMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = spec.getBaseHullId();
+        String id = Utils.getBaseHullId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
         if (data == null) return;
 

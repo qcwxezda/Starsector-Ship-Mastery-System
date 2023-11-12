@@ -32,7 +32,8 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
-            "shipmastery.listeners"
+            "shipmastery.listeners",
+            "shipmastery.ui"
     };
 
     private static ReflectionEnabledClassLoader getClassLoader() {

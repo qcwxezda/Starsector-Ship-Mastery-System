@@ -5,17 +5,18 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import shipmastery.Settings;
+import shipmastery.util.Utils;
 
 import java.util.List;
 
-public class ResetButtonScript implements CustomUIPanelPlugin {
-    ButtonAPI resetButton;
+public class ButtonWithConfirmScript implements CustomUIPanelPlugin {
+    ButtonAPI button;
     float confirmTime = 0f;
     String defaultText;
-    String confirmText = "Confirm?";
+    String confirmText = Utils.getString("sms_masteryPanel", "confirmText");
 
     public void setButton(ButtonAPI button) {
-        resetButton = button;
+        this.button = button;
         defaultText = button.getText();
     }
 
@@ -30,19 +31,19 @@ public class ResetButtonScript implements CustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
-        if (resetButton == null) return;
-        boolean confirming = (boolean) resetButton.getCustomData();
+        if (button == null) return;
+        boolean confirming = (boolean) button.getCustomData();
 
         if (confirming) {
-            if (defaultText.equals(resetButton.getText())) {
-                resetButton.setText(confirmText);
+            if (defaultText.equals(button.getText())) {
+                button.setText(confirmText);
                 confirmTime = 0f;
             }
 
             confirmTime += amount;
             if (confirmTime > Settings.doubleClickInterval) {
-                resetButton.setCustomData(false);
-                resetButton.setText(defaultText);
+                button.setCustomData(false);
+                button.setText(defaultText);
             }
         }
     }
@@ -51,11 +52,5 @@ public class ResetButtonScript implements CustomUIPanelPlugin {
     public void processInput(List<InputEventAPI> list) {}
 
     @Override
-    public void buttonPressed(Object o) {
-        if (o instanceof ButtonAPI) {
-            System.out.println("Button pressed: " + ((ButtonAPI) o).getText());
-        } else {
-            System.out.println("Button pressed: " + o);
-        }
-    }
+    public void buttonPressed(Object o) {}
 }

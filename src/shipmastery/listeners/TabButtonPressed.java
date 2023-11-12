@@ -1,19 +1,20 @@
 package shipmastery.listeners;
 
 import com.fs.starfarer.api.ui.ButtonAPI;
+import shipmastery.ui.MasteryPanel;
 
 public class TabButtonPressed extends ActionListener {
 
-    MasteryButtonPressed parentListener;
+    MasteryPanel masteryPanel;
 
-    public TabButtonPressed(MasteryButtonPressed parentListener) {
-        this.parentListener = parentListener;
+    public TabButtonPressed(MasteryPanel masteryPanel) {
+        this.masteryPanel = masteryPanel;
     }
 
     @Override
     public void trigger(Object... args) {
         ButtonAPI button = (ButtonAPI) args[1];
         button.setChecked(true);
-        parentListener.togglePanelVisibility(button);
+        masteryPanel.togglePanelVisibility(button);
     }
 }

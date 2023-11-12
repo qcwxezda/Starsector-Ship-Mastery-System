@@ -1,0 +1,27 @@
+{
+  "sms_refitScreen": {
+    "masteryButton": "Mastery"
+  },
+
+  "sms_masteryPanel": {
+    "hullmodsTab": "Hullmods",
+    "masteryTab": "Mastery",
+    "doubleClickHint": "Double-click to build in",
+    "clearButton": "Clear S-mods",
+    "creditsDisplay": "Credits: ",
+    "masteryPointsDisplay": "Mastery Points: ",
+    "builtInDisplay": "Built-in: ",
+    "enhanceConfirm": "Enhanced ",
+    "builtInConfirm": "Built in ",
+    "confirmText": "Confirm?",
+    "clearConfirm": "Removed all S-mods",
+    "hullmodListEmptyHint": "No applicable hullmods installed",
+    "yes": "Yes",
+    "no": "No",
+    "cantBuildIn": " can't be built in",
+    "limitReached": "Build-in limit reached",
+    "notEnoughCredits": "Insufficient credits",
+    "notEnoughMasteryPoints": "Insufficient mastery points",
+    "dismissWindow": "Finish"
+  }
+}

@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ClassRefs {
+public abstract class ClassRefs {
     /** The class that CampaignUIAPI.showConfirmDialog instantiates. We need this because showConfirmDialog doesn't work
      *  if any core UI is open. */
     public static Class<?> confirmDialogClass;
