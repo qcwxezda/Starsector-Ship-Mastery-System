@@ -1,6 +1,5 @@
 package shipmastery.listeners;
 
-import com.fs.starfarer.api.ui.ButtonAPI;
 import shipmastery.ui.MasteryPanel;
 
 public class SModTableHeaderPressed extends ActionListener {

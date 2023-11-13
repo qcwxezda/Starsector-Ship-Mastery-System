@@ -5,6 +5,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.Settings;
+import shipmastery.campaign.DeferredActionPlugin;
 import shipmastery.campaign.RefitHandler;
 
 import java.net.URL;
@@ -13,8 +14,13 @@ import java.net.URLClassLoader;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     @Override
-    public void onGameLoad(boolean newGame) {
+    public void onApplicationLoad() throws Exception {
         Settings.loadMasteryData();
+    }
+
+    @Override
+    public void onGameLoad(boolean newGame) {
+        Settings.loadMasteryTable();
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
@@ -26,6 +32,10 @@ public class ModPlugin extends BaseModPlugin {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add refit tab modifier", e);
         }
+
+        DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
+        Global.getSector().addTransientScript(deferredActionPlugin);
+        Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
     }
 
     private static final String[] reflectionWhitelist = new String[] {

@@ -4,7 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.ui.*;
+import com.fs.starfarer.api.util.Pair;
 import shipmastery.listeners.ActionListener;
 
 import java.awt.*;
@@ -15,11 +17,11 @@ import java.lang.reflect.Method;
 
 public abstract class ReflectionUtils {
 
-    public static UIPanelAPI makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
+    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
         return makeButton(text, handler, base, bg, Alignment.MID, CutStyle.ALL, width, height, -1);
     }
 
-    public static UIPanelAPI makeButton(String text, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
+    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
         CustomPanelAPI container = Global.getSettings().createCustom(width, height, null);
         TooltipMakerAPI ttm = container.createUIElement(width, height, false);
         ttm.setButtonFontOrbitron20();
@@ -29,7 +31,7 @@ public abstract class ReflectionUtils {
             button.setShortcut(hotkey, true);
         }
         container.addUIElement(ttm);
-        return container;
+        return new Pair<>(button, container);
     }
 
     public static Object getField(Object o, String fieldName) {
@@ -86,7 +88,7 @@ public abstract class ReflectionUtils {
         }
     }
 
-    public static Object invokeMethodExtWithClasses(Object o, String methodName, boolean isDeclaredAndHidden, Class<?>[] classes, Object[] args) {
+    public static Object invokeMethodExtWithClasses(Object o, String methodName, boolean isDeclaredAndHidden, Class<?>[] classes, Object... args) {
         try {
             return invokeMethodNoCatchExtWithClasses(o, methodName, isDeclaredAndHidden, classes, args);
         } catch (Exception e) {
@@ -129,7 +131,8 @@ public abstract class ReflectionUtils {
     }
 
     public static void setButtonListener(ButtonAPI button, ActionListener listener) {
-        invokeMethodExtWithClasses(button, "setListener", false, new Class[]{ClassRefs.actionListenerInterface}, new Object[]{listener.getProxy()});
+        invokeMethodExtWithClasses(button, "setListener", false, new Class[]{ClassRefs.actionListenerInterface},
+                                   listener.getProxy());
     }
 
     public static Object getButtonListener(ButtonAPI button) {
@@ -182,6 +185,20 @@ public abstract class ReflectionUtils {
             textLabel = label;
             this.panel = panel;
             this.dialog = dialog;
+        }
+    }
+
+    /** Mimics the conditions for a ship to be able to be restored */
+    public static boolean isInRestorableMarket(CoreUIAPI coreUI) {
+        try {
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
+            Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
+            Object refitTab = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getRefitTab");
+            SectorEntityToken other = (SectorEntityToken) ReflectionUtils.invokeMethodNoCatch(refitTab, "getOther");
+            Object tradeMode = ReflectionUtils.invokeMethodNoCatch(coreUI, "getTradeMode");
+            return tradeMode == CampaignUIAPI.CoreUITradeMode.OPEN && other != null && other.getMarket() != null && !other.getMarket().isPlanetConditionMarketOnly();
+        } catch (Exception e) {
+            return false;
         }
     }
 }

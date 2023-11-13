@@ -6,6 +6,8 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.Settings;
+import shipmastery.campaign.Action;
+import shipmastery.campaign.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.ReflectionUtils;
@@ -35,11 +37,19 @@ public class SModTableRowPressed extends ProxyTrigger {
         Object row = args[1];
         MasteryPanel.TableRowData rowData = (MasteryPanel.TableRowData) ReflectionUtils.invokeMethod(row, "getData");
 
-        ButtonAPI button = (ButtonAPI) ReflectionUtils.invokeMethod(row, "getButton");
+        final ButtonAPI button = (ButtonAPI) ReflectionUtils.invokeMethod(row, "getButton");
         if (rowData.cantBuildInReason == null) {
             long newTime = System.currentTimeMillis();
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
+
+                DeferredActionPlugin.performLater(new Action() {
+                    @Override
+                    public void perform() {
+                        button.unhighlight();
+                    }
+                }, Settings.doubleClickInterval);
+
             }
             else if (newTime - lastClickTime > (int) (Settings.doubleClickInterval * 1000f)) {
                 button.unhighlight();

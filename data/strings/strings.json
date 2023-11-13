@@ -1,6 +1,7 @@
 {
   "sms_refitScreen": {
-    "masteryButton": "Mastery"
+    "masteryButton": "Mastery",
+    "masteryLabel": "L: "
   },
 
   "sms_masteryPanel": {
@@ -22,6 +23,14 @@
     "limitReached": "Build-in limit reached",
     "notEnoughCredits": "Insufficient credits",
     "notEnoughMasteryPoints": "Insufficient mastery points",
+    "levelUpMastery": "Upgrade",
+    "upgradeConfirm": "Advanced mastery to level ",
+    "unknownMastery": "Effect hidden until known",
     "dismissWindow": "Finish"
+  },
+
+  "sms_descriptions": {
+    "additionalSModsSingle": "Allows the installation of %s additional S-mod",
+    "additionalSModsPlural": "Allows the installation of %s additional S-mods"
   }
 }

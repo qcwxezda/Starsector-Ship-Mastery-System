@@ -4,9 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.util.ListMap;
 import com.fs.starfarer.api.util.Misc;
 
+import java.awt.*;
 import java.util.*;
 
 public abstract class Utils {
@@ -40,11 +40,6 @@ public abstract class Utils {
                 }
             }
         }
-    }
-
-    public static String getNonDHullId(String hullId) {
-        if (!hullId.endsWith(Misc.D_HULL_SUFFIX)) return hullId;
-        return hullId.substring(0, hullId.length() - Misc.D_HULL_SUFFIX.length());
     }
 
     public static String shortenText(String text, String font, float limit) {
@@ -82,6 +77,10 @@ public abstract class Utils {
             default:
                 return 0;
         }
+    }
+
+    public static Color darkenColor(Color color) {
+        return new Color(color.getRed() / 3, color.getGreen() / 3, color.getBlue() / 3);
     }
 
     public static Object[] interleaveArrays(Object[] arr1, Object[] arr2) {
@@ -123,5 +122,13 @@ public abstract class Utils {
 
         String id = dParentHull != null ? dParentHull.getHullId() : spec.getHullId();
         return hullIdToBaseHullIdMap.containsKey(id) ? hullIdToBaseHullIdMap.get(id) : id;
+    }
+
+    public static float clamp(float x, float min, float max) {
+        return Math.min(max, Math.max(min, x));
+    }
+
+    public static int clamp(int x, int min, int max) {
+        return Math.min(max, Math.max(min, x));
     }
 }
