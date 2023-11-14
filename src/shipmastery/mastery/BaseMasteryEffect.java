@@ -6,6 +6,15 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
+
+/**
+ *  Extend this class instead of implementing {@link MasteryEffect}. <br><br>
+ *  Note: If a method takes an {@code id} as a parameter, the {@code id} given is
+ *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryEffect#isUniqueEffect()} is false, i.e. is stackable, and
+ *  {@code shipmastery_[ID]} otherwise. <br>
+ *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
+ *  unique and stackable elements.
+ *  */
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
     protected float strength = 1f;

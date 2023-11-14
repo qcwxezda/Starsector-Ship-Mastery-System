@@ -5,10 +5,10 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.Strings;
 
@@ -42,7 +42,7 @@ public class AllowOverCapacitySMods extends BaseMasteryEffect {
         int overMax = stats.getVariant().getSMods().size() - SModUtils.getMaxSMods(stats);
         if (overMax > 0) {
             // Should only be applied once per ship, not once per mastery effect
-            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent("_sms_UNIQUE", 100f * DP_PENALTY_PER_SMOD * overMax);
+            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(MasteryUtils.makeSharedId(this), 100f * DP_PENALTY_PER_SMOD * overMax);
         }
     }
 

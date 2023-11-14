@@ -7,6 +7,12 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
+/** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
+ *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryEffect#isUniqueEffect()} is false, i.e. is stackable, and
+ *  {@code shipmastery_[ID]} otherwise. <br>
+ *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
+ *  unique and stackable elements.
+ *  */
 public interface MasteryEffect {
     /** Applied immediately after constructor call.
      *  Effects are constructed once per session, in {@code onApplicationLoad}.

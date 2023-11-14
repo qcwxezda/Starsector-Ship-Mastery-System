@@ -31,6 +31,6 @@ public class EnableSModRemoval extends BaseMasteryEffect {
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.ENABLE_SMOD_REMOVAL_POST, 5f).setAlignment(Alignment.MID);
+        tooltip.addPara(Strings.ENABLE_SMOD_REMOVAL_POST, 5f);
     }
 }

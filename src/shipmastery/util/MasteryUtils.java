@@ -110,6 +110,14 @@ public abstract class MasteryUtils {
     }
 
     public static String makeEffectId(MasteryEffect effect, int level) {
-        return ShipMastery.getId(effect.getClass()) + "_" + level;
+        String id = makeSharedId(effect);
+        if (!effect.isUniqueEffect()) {
+            id += "_" + level;
+        }
+        return id;
+    }
+
+    public static String makeSharedId(MasteryEffect effect) {
+        return "shipmastery_" + ShipMastery.getId(effect.getClass());
     }
 }

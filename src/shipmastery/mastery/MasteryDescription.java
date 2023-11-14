@@ -58,9 +58,9 @@ public class MasteryDescription {
         return this;
     }
 
-    public LabelAPI addLabel(TooltipMakerAPI tooltip) {
+    public void addLabel(TooltipMakerAPI tooltip) {
         Color textColor = Misc.getTextColor();
-        LabelAPI label = tooltip.addPara("\n" + this, textColor, 0f);
+        LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
         if (colors != null) {
             String[] strings = new String[params.length];
             for (int i = 0; i < params.length; i++) {
@@ -74,8 +74,7 @@ public class MasteryDescription {
                 label.setHighlightColors(colors);
             }
         }
-        label.setAlignment(Alignment.MID);
-        return label;
+        label.setAlignment(Alignment.LMID);
     }
 
     @Override

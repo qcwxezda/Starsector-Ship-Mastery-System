@@ -358,48 +358,44 @@ public class MasteryPanel {
 
         float containerPadX = 4f, containerPadY = 8f;
         TooltipMakerAPI masteryDisplay =
-                masteryPanel.createUIElement(containerW + 25f - containerPadX, containerH - containerPadY, true);
+                masteryPanel.createUIElement(containerW + 50f - containerPadX, containerH - containerPadY, true);
 
-        CustomPanelAPI prev = null;
-        float pad = 10f, minDescH = 30f, buttonW = 25f;
+        float pad = 10f, minDescH = 80f, buttonW = 30f;
         float totalH = 0f, scrollToH = 0f;
 
         activeMasteries = MasteryUtils.getActiveMasteries(hullSpec);
         selectedMasteryButtons = new HashSet<>(activeMasteries);
         for (int i = 1; i <= maxMastery; i++) {
-            CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW - 15f, minDescH, null);
-            TooltipMakerAPI description = descriptionPanel.createUIElement(containerW - 15f, minDescH, false);
+            CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW + 50f, minDescH, null);
+            TooltipMakerAPI description = descriptionPanel.createUIElement(containerW - 50f, minDescH, false);
             description.setParaFont(Fonts.INSIGNIA_LARGE);
 
             final MasteryEffect effect = MasteryUtils.getMasteryEffect(hullSpec, i);
             boolean hidden = !effect.alwaysShowDescription() && i > currentMastery + 1;
 
-            LabelAPI descLabel;
             if (!hidden) {
-                descLabel = effect.getDescription().addLabel(description);
-                //description.setParaFontDefault();
-                // effect.addPostDescriptionSection(description);
-                //description.addSpacer(20f);
+                description.addSpacer(20f);
+                effect.getDescription().addLabel(description);
+                description.setParaFontDefault();
+                effect.addPostDescriptionSection(description);
+                description.addSpacer(20f);
             }
             else {
-                descLabel = description.addPara("", 0f);
+                description.addPara("", 0f);
             }
-
-            //descLabel.getPosition().setXAlignOffset(3f);
 
             float descH = Math.max(minDescH, description.getHeightSoFar());
             descriptionPanel.getPosition().setSize(containerW - 15f, descH);
 
-            // Cheap trick: to simulate darken effect, render the outline area checkbox above the text
-            ButtonAPI descOutline = description.addAreaCheckbox(hidden ? Strings.UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                                Misc.getGrayColor(), containerW, descH, -description.getHeightSoFar());
+            TooltipMakerAPI descriptionButton = descriptionPanel.createUIElement(containerW, descH, false);
+            ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                                                                Misc.getGrayColor(), containerW - 5f, descH, 0f);
             descOutline.setClickable(i <= currentMastery);
             descOutline.setGlowBrightness(i <= currentMastery ? 0.8f : 0.15f);
             if (i > currentMastery) {
                 descOutline.setButtonPressedSound(null);
             }
             ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, hullSpec, i));
-            //descOutline.getPosition().setXAlignOffset(-3f);
 
             if (effect.hasTooltip() && !hidden) {
                 description.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
@@ -418,25 +414,6 @@ public class MasteryPanel {
                         effect.addTooltip(tooltip);
                     }
                 }, TooltipMakerAPI.TooltipLocation.LEFT, false);
-            }
-
-            // description.getPanel() is what contains all the items
-            // send the area checkbox to bottom to un-darken
-            if (i <= currentMastery) {
-                Object panel = ReflectionUtils.invokeMethod(description, "getPanel");
-                if (sendToBottomWithinItself == null) {
-                    for (Method method : panel.getClass().getMethods()) {
-                        if ("sendToBottomWithinItself".equals(method.getName())) {
-                            sendToBottomWithinItself = method;
-                            break;
-                        }
-                    }
-                }
-                try {
-                    if (sendToBottomWithinItself != null) {
-                        sendToBottomWithinItself.invoke(panel, descOutline);
-                    }
-                } catch (Exception ignore) {}
             }
 
             TooltipMakerAPI levelButtonTTM = descriptionPanel.createUIElement(buttonW, descH, false);
@@ -467,15 +444,18 @@ public class MasteryPanel {
             if (i == currentMastery) {
                 scrollToH = totalH;
             }
-            descriptionPanel.addUIElement(description).inLMid(50f);
-            descriptionPanel.addUIElement(levelButtonTTM).inLMid(-20f);
 
-            masteryDisplay.addComponent(descriptionPanel).inTR(0f, totalH);
-//            PositionAPI position = masteryDisplay.addComponent(descriptionPanel).inTR(0f, 0f);
-//            if (prev != null) {
-//                position.belowRight(prev, pad);
-//            }
-            prev = descriptionPanel;
+            // Cheap trick: to simulate darken effect, render the outline area checkbox above the text
+            descriptionPanel.addUIElement(levelButtonTTM).inLMid(16f);
+            if (i > currentMastery) {
+                descriptionPanel.addUIElement(description).inLMid(75f);
+                descriptionPanel.addUIElement(descriptionButton).inLMid(45f);
+            }
+            else {
+                descriptionPanel.addUIElement(descriptionButton).inLMid(45f);
+                descriptionPanel.addUIElement(description).inLMid(75f);
+            }
+            masteryDisplay.addComponent(descriptionPanel).inTL(0f, totalH);
             totalH += pad + descH;
         }
         masteryDisplay.setHeightSoFar(totalH - pad);
@@ -486,7 +466,7 @@ public class MasteryPanel {
         }
         else {
             masteryDisplay.getExternalScroller()
-                          .setYOffset(Math.min(Math.max(0f, scrollToH - pad), totalH - containerH));
+                          .setYOffset(Math.max(0f, Math.min(scrollToH - pad, totalH - containerH)));
         }
         savedMasteryDisplay = masteryDisplay;
 
