@@ -1,2 +1,10 @@
 id,script
-sms_AdditionalSMod,shipmastery.mastery.impl.logistics.AdditionalSMods
+sms_CompoundMastery,shipmastery.mastery.impl.compound.CompoundMastery
+### LOGISTICS ###
+sms_AdditionalSMods,shipmastery.mastery.impl.logistics.AdditionalSMods
+sms_ReduceSModCreditsCost,shipmastery.mastery.impl.logistics.ReduceSModCreditsCost
+sms_ReduceSModMPCost,shipmastery.mastery.impl.logistics.ReduceSModMPCost
+sms_ReduceRestorationCost,shipmastery.mastery.impl.logistics.ReduceRestorationCost
+sms_EnableSModRemoval,shipmastery.mastery.impl.logistics.EnableSModRemoval
+sms_AllowOverCapacitySMods,shipmastery.mastery.impl.logistics.AllowOverCapacitySMods
+sms_IgnoreNoBuildIn,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn

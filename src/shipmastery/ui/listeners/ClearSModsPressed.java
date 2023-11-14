@@ -1,22 +1,20 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.Settings;
 import shipmastery.campaign.Action;
 import shipmastery.campaign.DeferredActionPlugin;
+import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.Utils;
+import shipmastery.util.Strings;
 
 import java.util.ArrayList;
 
 public class ClearSModsPressed extends ActionListener {
 
-    static final String CLEAR_CONFIRMED_STR = Utils.getString("sms_masteryPanel", "clearConfirm");
-    static final String CLEAR_ASK_STR = Utils.getString("sms_masteryPanel", "confirmText");
     MasteryPanel masteryPanel;
     String defaultText;
 
@@ -43,7 +41,7 @@ public class ClearSModsPressed extends ActionListener {
                 return;
             }
 
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(CLEAR_CONFIRMED_STR, Misc.getStoryBrightColor());
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CLEAR_CONFIRMED_STR, Misc.getStoryBrightColor());
             Global.getSoundPlayer().playUISound("sms_clear_smods", 1f, 1f);
             masteryPanel.forceRefresh(true);
 
@@ -71,13 +69,13 @@ public class ClearSModsPressed extends ActionListener {
                 public void perform() {
                     endConfirm(button);
                 }
-            }, Settings.doubleClickInterval);
+            }, Settings.DOUBLE_CLICK_INTERVAL);
         }
     }
 
     void beginConfirm(ButtonAPI button) {
         button.setCustomData(true);
-        button.setText(CLEAR_ASK_STR);
+        button.setText(Strings.CLEAR_ASK_STR);
     }
 
     void endConfirm(ButtonAPI button) {

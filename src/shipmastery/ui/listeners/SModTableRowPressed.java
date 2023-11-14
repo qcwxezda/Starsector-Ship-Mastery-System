@@ -1,25 +1,20 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.Settings;
 import shipmastery.campaign.Action;
 import shipmastery.campaign.DeferredActionPlugin;
+import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.ClassRefs;
-import shipmastery.util.ReflectionUtils;
-import shipmastery.util.SModUtils;
-import shipmastery.util.Utils;
+import shipmastery.util.*;
 
 import java.util.List;
 
 public class SModTableRowPressed extends ProxyTrigger {
-
-    static final String ENHANCE_STR = Utils.getString("sms_masteryPanel", "enhanceConfirm");
-    static final String BUILD_IN_STR = Utils.getString("sms_masteryPanel", "builtInConfirm");
 
     MasteryPanel masteryPanel;
     long lastClickTime = 0;
@@ -43,15 +38,20 @@ public class SModTableRowPressed extends ProxyTrigger {
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
+                ShipAPI ship = masteryPanel.getShip();
+                if (ship.getVariant().getSMods().size() >= SModUtils.getMaxSMods(ship.getMutableStats())) {
+                    Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_OVER_MAX_WARNING, Misc.getNegativeHighlightColor());
+                }
+
                 DeferredActionPlugin.performLater(new Action() {
                     @Override
                     public void perform() {
                         button.unhighlight();
                     }
-                }, Settings.doubleClickInterval);
+                }, Settings.DOUBLE_CLICK_INTERVAL);
 
             }
-            else if (newTime - lastClickTime > (int) (Settings.doubleClickInterval * 1000f)) {
+            else if (newTime - lastClickTime > (int) (Settings.DOUBLE_CLICK_INTERVAL * 1000f)) {
                 button.unhighlight();
             } else {
                 ShipVariantAPI variant = masteryPanel.getShip().getVariant();
@@ -60,15 +60,15 @@ public class SModTableRowPressed extends ProxyTrigger {
                     String name = spec.getDisplayName();
                     if (SModUtils.isHullmodBuiltIn(spec, variant)) {
                         variant.getSModdedBuiltIns().add(rowData.hullModSpecId);
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(ENHANCE_STR + name, Misc.getStoryBrightColor());
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.ENHANCE_STR + name, Misc.getStoryBrightColor());
                     }
                     else {
                         variant.addPermaMod(rowData.hullModSpecId, true);
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(BUILD_IN_STR + name, Misc.getStoryBrightColor());
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_STR + name, Misc.getStoryBrightColor());
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 
-                    Settings.spendMasteryPoints(variant.getHullSpec(), rowData.mpCost);
+                    MasteryUtils.spendMasteryPoints(variant.getHullSpec(), rowData.mpCost);
                     Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true);
                 }

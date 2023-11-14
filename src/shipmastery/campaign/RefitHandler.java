@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
+import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -13,9 +14,10 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
-import shipmastery.Settings;
-import shipmastery.listeners.ActionListener;
-import shipmastery.listeners.MasteryButtonPressed;
+import shipmastery.config.Settings;
+import shipmastery.mastery.MasteryEffect;
+import shipmastery.ui.listeners.ActionListener;
+import shipmastery.ui.listeners.MasteryButtonPressed;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
@@ -25,14 +27,42 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
-public class RefitHandler implements CoreUITabListener, EveryFrameScript {
+public class RefitHandler implements CoreUITabListener, EveryFrameScript, CharacterStatsRefreshListener {
     boolean isFirstFrame = true;
     CoreUIAPI coreUI = null;
     float epsilonTime = 0.00001f;
+    boolean insideRefitPanel = false;
     static final String MASTERY_BUTTON_TAG = "sms_mastery_button_tag";
 
     // Keep track of added panels to remove them in later inject calls
     UIPanelAPI mpPanelRef, masteryButtonPanelRef;
+
+    // Keep track of the current ship's hull spec and active mastery set in the refit panel
+    // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
+    HullSpecAndMasteries currentHullSpecAndMasteries = null;
+
+    static class HullSpecAndMasteries {
+        String specId;
+
+        TreeSet<Integer> activeMasteries;
+
+        HullSpecAndMasteries(ShipHullSpecAPI spec) {
+            this.specId = Utils.getBaseHullId(spec);
+            activeMasteries = new TreeSet<>(MasteryUtils.getActiveMasteries(spec));
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof HullSpecAndMasteries)) return false;
+            HullSpecAndMasteries o = (HullSpecAndMasteries) other;
+            return Objects.equals(specId, o.specId) && Objects.equals(activeMasteries, o.activeMasteries);
+        }
+
+        @Override
+        public int hashCode() {
+            return specId.hashCode() + activeMasteries.hashCode();
+        }
+    }
 
     @Override
     public boolean isDone() {
@@ -70,6 +100,29 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
 
         if (!ClassRefs.foundAllClasses()) {
             ClassRefs.findAllClasses();
+        }
+
+        if (!insideRefitPanel || Global.getSector() == null || Global.getSector().getCampaignUI() == null) return;
+
+        CampaignUIAPI ui = Global.getSector().getCampaignUI();
+        if (!CoreUITabId.REFIT.equals(ui.getCurrentCoreTab())) {
+            insideRefitPanel = false;
+        }
+
+        // Due to a bug, if the player ESCs out of the refit screen in a market, the core tab is still shown as REFIT
+        // even though it's been closed. To combat this, check if the savedOptionList is empty. If it is, we're still
+        // in the refit screen; otherwise, we've ESCed out of the refit screen.
+        else if (ui.getCurrentInteractionDialog() != null
+                && ui.getCurrentInteractionDialog().getOptionPanel() != null
+                && !ui.getCurrentInteractionDialog().getOptionPanel().getSavedOptionList().isEmpty()) {
+            insideRefitPanel = false;
+        }
+
+        if (!insideRefitPanel) {
+            if (currentHullSpecAndMasteries != null) {
+                onRefitScreenShipChanged(currentHullSpecAndMasteries, null);
+            }
+            currentHullSpecAndMasteries = null;
         }
     }
 
@@ -258,14 +311,14 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                     FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();
-                        int currentMastery = Settings.getMasteryLevel(spec);
+                        int currentMastery = MasteryUtils.getMasteryLevel(spec);
                         int maxMastery = MasteryUtils.getMaxMastery(spec);
                         if (currentMastery < maxMastery) {
-                            tooltipMaker.addPara(Utils.getString("sms_refitScreen", "masteryLabel") + String.format("%s/%s", currentMastery, maxMastery), Settings.masteryColor, 10f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(Utils.getString("sms_refitScreen", "masteryLabel") + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
                         }
-                        int mp = (int) Settings.getMasteryPoints(spec);
+                        int mp = (int) MasteryUtils.getMasteryPoints(spec);
                         if (mp > 0) {
-                            tooltipMaker.addPara(mp + " MP", Settings.masteryColor, 0f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, 0f).setAlignment(Alignment.LMID);
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;
@@ -290,6 +343,8 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
 
     public void injectRefitScreen(boolean variantChanged, boolean hideMasteryButton) {
         coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
+        checkIfRefitShipChanged();
+
         modifyBuildInButton();
         updateMasteryButton(hideMasteryButton);
         addMPDisplay();
@@ -308,6 +363,51 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript {
                     injectRefitScreen(false);
                 }
             }, epsilonTime);
+            insideRefitPanel = true;
+        }
+    }
+
+    @Override
+    public void reportAboutToRefreshCharacterStatEffects() {}
+
+    /** This is called every time the active ship in the refit screen changes. */
+    @Override
+    public void reportRefreshedCharacterStatEffects() {
+        DeferredActionPlugin.performLater(new Action() {
+            @Override
+            public void perform() {
+                checkIfRefitShipChanged();
+            }
+        }, epsilonTime);
+    }
+
+    void checkIfRefitShipChanged() {
+        if (!insideRefitPanel) return;
+        coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
+        ShipAPI ship = getSelectedShip();
+        HullSpecAndMasteries newSpec = ship == null ? null : new HullSpecAndMasteries(ship.getHullSpec());
+
+        if (!Objects.equals(currentHullSpecAndMasteries, newSpec)) {
+            onRefitScreenShipChanged(
+                    currentHullSpecAndMasteries,
+                    newSpec);
+            currentHullSpecAndMasteries = newSpec;
+        }
+    }
+
+    public void onRefitScreenShipChanged(HullSpecAndMasteries oldSpec, HullSpecAndMasteries newSpec) {
+        if (oldSpec != null && oldSpec.specId != null) {
+            for (int i : oldSpec.activeMasteries.descendingSet()) {
+                MasteryEffect effect = MasteryUtils.getMasteryEffect(oldSpec.specId, i);
+                effect.unapplyEffectsOnEndRefit(Global.getSettings().getHullSpec(oldSpec.specId), MasteryUtils.makeEffectId(effect, i));
+            }
+        }
+
+        if (newSpec != null && newSpec.specId != null) {
+            for (int i : newSpec.activeMasteries) {
+                MasteryEffect effect = MasteryUtils.getMasteryEffect(newSpec.specId, i);
+                effect.applyEffectsOnBeginRefit(Global.getSettings().getHullSpec(newSpec.specId), MasteryUtils.makeEffectId(effect, i));
+            }
         }
     }
 }

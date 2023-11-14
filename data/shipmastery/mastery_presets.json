@@ -1,0 +1,24 @@
+{
+  "default": [
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 4 sms_IgnoreNoBuildIn 2 neural_interface safetyoverrides",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface"
+  ],
+  "default2": [
+    "sms_AdditionalSMods",
+    "sms_ReduceRestorationCost",
+    "sms_EnableSModRemoval",
+    "sms_CompoundMastery 1 1 sms_ReduceSModMPCost 1 sms_ReduceSModCreditsCost",
+    "sms_AdditionalSMods",
+    "sms_ReduceRestorationCost 2.5",
+    "sms_CompoundMastery 1 2 sms_ReduceSModMPCost 2 2 sms_ReduceSModCreditsCost 2",
+    "sms_IgnoreNoBuildIn 1 safetyoverrides",
+    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface"
+  ]
+}

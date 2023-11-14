@@ -8,7 +8,39 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
-    float strength = 1f;
+    protected float strength = 1f;
+
+    @Override
+    public void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id) {}
+
+    @Override
+    public void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id) {}
+
+    @Override
+    public boolean isAutoActivateWhenUnlocked(ShipHullSpecAPI spec) {
+        return true;
+    }
+
+    @Override
+    public boolean isUniqueEffect() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeDeactivated() {
+        return true;
+    }
+
+    @Override
+    public void init(String... args) {
+        if (args == null || args.length == 0) return;
+
+        try {
+            setStrength(Float.parseFloat(args[0]));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("First argument of mastery initialization must be a number", e);
+        }
+    }
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {}
@@ -25,8 +57,8 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public float getRandomizerWeight() {
-        return 1;
+    public Integer getSelectionTier() {
+        return 0;
     }
 
     @Override
@@ -51,13 +83,13 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         return strength;
     }
 
-    public final MasteryEffect setStrength(float strength) {
+    @Override
+    public final void setStrength(float strength) {
         this.strength = strength;
-        return this;
     }
 
     @Override
-    public boolean hideUntilUnlocked() {
+    public boolean alwaysShowDescription() {
         return false;
     }
 }

@@ -1,4 +1,4 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import com.fs.starfarer.api.ui.ButtonAPI;
 import shipmastery.ui.MasteryPanel;

@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Pair;
-import shipmastery.listeners.ActionListener;
+import shipmastery.ui.listeners.ActionListener;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;

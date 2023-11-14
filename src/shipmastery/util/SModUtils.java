@@ -1,16 +1,21 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.TransientSettings;
 
 public abstract class SModUtils {
 
     public static int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
     public static float CREDITS_HARD_CAP = 9999999f;
+    public static int MP_HARD_CAP = 99;
 
     public static int ADDITIONAL_MP_PER_SMOD = 1;
 
@@ -31,10 +36,19 @@ public abstract class SModUtils {
         }
 
         cost += ADDITIONAL_MP_PER_SMOD * nSMods;
-        // Doubled MP cost if going over the limit
-        if (nSMods >= Misc.getMaxPermanentMods(ship)) {
-            cost *= 2;
+
+        // Exponentially increasing MP cost for each S-mod over the limit
+        if (TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() >= 1) {
+            for (int i = Misc.getMaxPermanentMods(ship); i <= nSMods; i++) {
+                cost *= 1.5f;
+                // Hard cap here to avoid overflow
+                cost = Math.min(cost, MP_HARD_CAP);
+            }
         }
+
+        cost -= TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.getModifiedInt();
+        cost = Math.max(1, cost);
+
         return cost;
     }
 
@@ -53,11 +67,23 @@ public abstract class SModUtils {
             cost /= 2f;
         }
 
+        cost *= TransientSettings.SMOD_CREDITS_COST_MULT.getModifiedValue();
+
         // Hard cap at 10 million credits
         return (int) (Math.min(cost, CREDITS_HARD_CAP));
     }
 
     public static boolean isHullmodBuiltIn(HullModSpecAPI spec, ShipVariantAPI variant) {
         return variant.getHullSpec().isBuiltInMod(spec.getId());
+    }
+
+    public static int getMaxSMods(FleetMemberAPI fleetMember) {
+        return getMaxSMods(fleetMember.getStats());
+    }
+
+    public static int getMaxSMods(MutableShipStatsAPI stats) {
+        return (int) stats.getDynamic()
+                          .getMod(Stats.MAX_PERMANENT_HULLMODS_MOD)
+                          .computeEffective(Global.getSettings().getInt("maxPermanentHullmods"));
     }
 }

@@ -1,4 +1,4 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import shipmastery.campaign.RefitHandler;
 import shipmastery.ui.MasteryPanel;

@@ -15,8 +15,11 @@
     "enhanceConfirm": "Enhanced ",
     "builtInConfirm": "Built in ",
     "confirmText": "Confirm?",
+    "confirmText2": "Confirm",
+    "cancelText": "Cancel",
     "clearConfirm": "Removed all S-mods",
     "hullmodListEmptyHint": "No applicable hullmods installed",
+    "buildInOverMaxWarning": "Warning: building in additional S-mods will incur a DP penalty",
     "yes": "Yes",
     "no": "No",
     "cantBuildIn": " can't be built in",
@@ -25,12 +28,28 @@
     "notEnoughMasteryPoints": "Insufficient mastery points",
     "levelUpMastery": "Upgrade",
     "upgradeConfirm": "Advanced mastery to level ",
-    "unknownMastery": "Effect hidden until known",
+    "unknownMastery": "Unlock previous tier to reveal",
+    "changesPending": "Changes pending",
+    "masteryChangesConfirmed": "Updated active mastery effects",
     "dismissWindow": "Finish"
   },
 
   "sms_descriptions": {
-    "additionalSModsSingle": "Allows the installation of %s additional S-mod",
-    "additionalSModsPlural": "Allows the installation of %s additional S-mods"
+    "additionalSModsSingle": "Allows the installation of %s additional S-mod.",
+    "additionalSModsPlural": "Allows the installation of %s additional S-mods.",
+    "reduceSModCreditsCost": "Reduces the credits cost of building-in hullmods by %s.",
+    "reduceSModMPCost": "Reduces the mastery point cost of building-in hullmods by %s, down to a minimum of %s.",
+    "reduceRestorationCost": "Reduces the cost of restoring damaged ships by %s.",
+    "enableSModRemoval": "Enables clearing of all S-mods on a ship.",
+    "enableSModRemovalPost": "All S-mods must be removed. Costs nothing and refunds nothing.",
+    "allowOverCapacitySModsSingle": "Enables installation of %s additional S-mod past the normal limit.",
+    "allowOverCapacitySModsPlural": "Enables installation of %s additional S-mods past the normal limit.",
+    "allowOverCapacitySModsPost": "DP is increased by %s%% for each installed S-mod past the normal limit.",
+    "ignoreNoBuildIn": "Allows %s to be built in to this hull type."
+  },
+
+  "sms_misc": {
+    "effectCantBeDeactivated": "Effect can't be deactivated",
+    "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active"
   }
 }

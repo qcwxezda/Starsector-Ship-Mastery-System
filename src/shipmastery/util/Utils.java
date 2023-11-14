@@ -4,16 +4,15 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.util.Misc;
 
 import java.awt.*;
 import java.util.*;
 
 public abstract class Utils {
 
-    static Map<String, String> hullIdToBaseHullIdMap = new HashMap<>();
-
-    static {
+    public static Map<String, String> hullIdToBaseHullIdMap = new HashMap<>();
+    public static void populateHullIdMap() {
+        hullIdToBaseHullIdMap.clear();
         Map<String, String> hullIdToVariant = new HashMap<>();
         for (String variantId : Global.getSettings().getAllVariantIds()) {
             ShipVariantAPI variant = Global.getSettings().getVariant(variantId);

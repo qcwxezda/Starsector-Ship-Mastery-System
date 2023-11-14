@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
-import shipmastery.Settings;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.util.MasteryUtils;
 
 public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
 
@@ -25,7 +25,6 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         if (fleet == null || !fleet.isPlayerFleet()) {
             return;
         }
-
         // Make sure every ship in the player's fleet has this hullmod installed
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             if (!fm.getVariant().hasHullMod("sms_masteryHandler")) {
@@ -48,7 +47,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         applyAllMasteryEffects(stats.getVariant().getHullSpec(), new MasteryEffectAction() {
             @Override
             public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsBeforeShipCreation(hullSize, stats, makeId(effect, level));
+                effect.applyEffectsBeforeShipCreation(hullSize, stats, MasteryUtils.makeEffectId(effect, level));
             }
         });
     }
@@ -59,7 +58,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         applyAllMasteryEffects(ship.getHullSpec(), new MasteryEffectAction() {
             @Override
             public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsAfterShipCreation(ship, makeId(effect, level));
+                effect.applyEffectsAfterShipCreation(ship, MasteryUtils.makeEffectId(effect, level));
             }
         });
     }
@@ -70,7 +69,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         applyAllMasteryEffects(ship.getHullSpec(), new MasteryEffectAction() {
             @Override
             public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsToFighterSpawnedByShip(fighter, ship, makeId(effect, level));
+                effect.applyEffectsToFighterSpawnedByShip(fighter, ship, MasteryUtils.makeEffectId(effect, level));
             }
         });
     }
@@ -98,23 +97,13 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     }
 
     void applyAllMasteryEffects(ShipHullSpecAPI spec, MasteryEffectAction action) {
-        // Not initialized yet, return
-        if (Settings.MASTERY_TABLE == null) {
-            return;
-        }
-
-        int masteryLevel = Settings.getMasteryLevel(spec);
-        for (int i = 1; i <= masteryLevel; i++) {
-            MasteryEffect effect = Settings.getMasteryEffect(spec, i);
+        for (int i : MasteryUtils.getActiveMasteries(spec)) {
+            MasteryEffect effect = MasteryUtils.getMasteryEffect(spec, i);
             action.perform(effect, i);
         }
     }
 
     interface MasteryEffectAction {
         void perform(MasteryEffect effect, int level);
-    }
-
-    String makeId(MasteryEffect effect, int level) {
-        return Settings.getId(effect.getClass()) + level;
     }
 }

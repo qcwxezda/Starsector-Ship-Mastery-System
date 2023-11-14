@@ -5,16 +5,16 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.ui.UITable;
 import org.jetbrains.annotations.Nullable;
-import shipmastery.Settings;
 import shipmastery.campaign.RefitHandler;
-import shipmastery.listeners.*;
+import shipmastery.config.Settings;
+import shipmastery.config.TransientSettings;
+import shipmastery.ui.listeners.*;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.*;
 
@@ -25,24 +25,7 @@ import java.util.List;
 
 public class MasteryPanel {
 
-    static final String MASTERY_TAB_STR = Utils.getString("sms_masteryPanel", "masteryTab");
-    static final String CREDITS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "creditsDisplay");
-    static final String MASTERY_POINTS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
-    static final String HULLMODS_EMPTY_STR = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
-    static final String CLEAR_BUTTON_STR = Utils.getString("sms_masteryPanel", "clearButton");
-    static final String BUILTIN_DISPLAY_STR = Utils.getString("sms_masteryPanel", "builtInDisplay");
-    static final String DOUBLE_CLICK_HINT_STR = Utils.getString("sms_masteryPanel", "doubleClickHint");
-    static final String YES_STR = Utils.getString("sms_masteryPanel", "yes");
-    static final String NO_STR = Utils.getString("sms_masteryPanel", "no");
-    static final String CANT_BUILD_IN_STR = Utils.getString("sms_masteryPanel", "cantBuildIn");
-    static final String LIMIT_REACHED_STR = Utils.getString("sms_masteryPanel", "limitReached");
-    static final String CREDITS_SHORTFALL_STR = Utils.getString("sms_masteryPanel", "notEnoughCredits");
-    static final String MASTERY_POINTS_SHORTFALL_STR = Utils.getString("sms_masteryPanel", "notEnoughMasteryPoints");
-    static final String DISMISS_WINDOW_STR = Utils.getString("sms_masteryPanel", "dismissWindow");
-    static final String HULLMODS_TAB_STR = Utils.getString("sms_masteryPanel", "hullmodsTab");
-    static final String ADVANCE_MASTERY_STR = Utils.getString("sms_masteryPanel", "levelUpMastery");
-    static final String UNKNOWN_EFFECT_STR = Utils.getString("sms_masteryPanel", "unknownMastery");
-    static Method sendToBottomWithinItself;
+    public static Method sendToBottomWithinItself;
 
     ShipAPI ship;
     RefitHandler handler;
@@ -60,26 +43,39 @@ public class MasteryPanel {
     UIPanelAPI sModPanel, masteryPanel;
     ButtonAPI sModButton, masteryButton;
     boolean isShowingMasteryPanel = false;
+    float savedScrollerLocation = 0f;
+    TooltipMakerAPI savedMasteryDisplay;
+    Set<Integer> selectedMasteryButtons, activeMasteries;
+    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay;
+    int currentMastery, maxMastery;
 
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", DISMISS_WINDOW_STR, 900f, 600f);
+                ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 900f, 600f);
         if (dialogData == null) return;
 
         rootPanel = dialogData.panel;
         this.handler = handler;
-        generateDialog(rootPanel, false);
+        generateDialog(rootPanel, false, false);
     }
 
-    public void forceRefresh(boolean variantChanged) {
+    public void forceRefresh(boolean variantChanged, boolean useSavedScrollerLocation) {
         if (rootPanel == null) return;
 
         if (variantChanged) {
             handler.injectRefitScreen(true);
         }
 
-        generateDialog(rootPanel, true);
+        if (useSavedScrollerLocation) {
+            saveScrollerLocation();
+        }
+
+        generateDialog(rootPanel, true, useSavedScrollerLocation);
+    }
+
+    public void forceRefresh(boolean variantChanged) {
+        forceRefresh(variantChanged, false);
     }
 
     public void togglePanelVisibility(ButtonAPI button) {
@@ -98,7 +94,7 @@ public class MasteryPanel {
         }
     }
 
-    void generateDialog(UIPanelAPI panel, boolean isRefresh) {
+    void generateDialog(UIPanelAPI panel, boolean isRefresh, boolean useSavedScrollerLocation) {
         ship = handler.getSelectedShip();
         if (ship == null) {
             return;
@@ -122,7 +118,7 @@ public class MasteryPanel {
         UIPanelAPI tabButtons = makeTabButtons(120f, 40f);
         UIPanelAPI currencyPanel = makeCurrencyLabels(w);
         sModPanel = makeThisShipPanel(w, h - 100f, ship);
-        masteryPanel = makeMasteryPanel(w, h - 100f, ship);
+        masteryPanel = makeMasteryPanel(w, h - 100f, ship, useSavedScrollerLocation);
         togglePanelVisibility(isShowingMasteryPanel ? masteryButton : sModButton);
 
         panel.addComponent(tabButtons).inTMid(0f);
@@ -139,7 +135,7 @@ public class MasteryPanel {
         CustomPanelAPI tabsPanel = Global.getSettings().createCustom(2 * w + pad, h, null);
         TooltipMakerAPI thisShipTab = tabsPanel.createUIElement(w, h, false);
         thisShipTab.setAreaCheckboxFont(checkboxFont);
-        sModButton = thisShipTab.addAreaCheckbox(HULLMODS_TAB_STR, null, Misc.getBasePlayerColor(),
+        sModButton = thisShipTab.addAreaCheckbox(Strings.HULLMODS_TAB_STR, null, Misc.getBasePlayerColor(),
                                                  Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
         sModButton.setChecked(true);
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
@@ -148,7 +144,7 @@ public class MasteryPanel {
         TooltipMakerAPI hullTypeTab = tabsPanel.createUIElement(w, h, false);
         hullTypeTab.setAreaCheckboxFont(checkboxFont);
         masteryButton =
-                hullTypeTab.addAreaCheckbox(MASTERY_TAB_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                hullTypeTab.addAreaCheckbox(Strings.MASTERY_TAB_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                             Misc.getBrightPlayerColor(), w, h, 0f);
         ReflectionUtils.setButtonListener(masteryButton, tabButtonListener);
         hullTypeTab.setAreaCheckboxFontDefault();
@@ -164,7 +160,7 @@ public class MasteryPanel {
 
         int creditsAmt = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
         String creditsAmtFmt = Misc.getFormat().format(creditsAmt);
-        String creditsString = CREDITS_DISPLAY_STR + creditsAmtFmt;
+        String creditsString = Strings.CREDITS_DISPLAY_STR + creditsAmtFmt;
         float creditsStringWidth =
                 Global.getSettings().computeStringWidth(creditsString + 10f, "graphics/fonts/orbitron20aabold.fnt");
 
@@ -175,8 +171,8 @@ public class MasteryPanel {
         creditsLabel.setHighlight("" + creditsAmtFmt);
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
-        int masteryPointsAmt = (int) Settings.getMasteryPoints(ship.getHullSpec());
-        String masteryPointsString = MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
+        int masteryPointsAmt = (int) MasteryUtils.getMasteryPoints(ship.getHullSpec());
+        String masteryPointsString = Strings.MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
         float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
 
@@ -185,7 +181,7 @@ public class MasteryPanel {
         LabelAPI masteryPointsLabel = masteryPoints.addPara(masteryPointsString, 10f);
         masteryPointsLabel.setAlignment(Alignment.LMID);
         masteryPointsLabel.setHighlight("" + masteryPointsAmt);
-        masteryPointsLabel.setHighlightColor(Settings.masteryColor);
+        masteryPointsLabel.setHighlightColor(Settings.MASTERY_COLOR);
 
         labelsPanel.addUIElement(credits).inBL(20f, 10f);
         labelsPanel.addUIElement(masteryPoints).inBMid(10f);
@@ -249,7 +245,7 @@ public class MasteryPanel {
             buildInList.addImage(spec.getSpriteName(), 50f, tableEntryHeight - 6f, 6f);
         }
 
-        buildInList.addTable(HULLMODS_EMPTY_STR, -1, -buildInList.getHeightSoFar() + 10f);
+        buildInList.addTable(Strings.HULLMODS_EMPTY_STR, -1, -buildInList.getHeightSoFar() + 10f);
         if (table.getRows().size() < 10) {
             table.autoSizeToRows(10);
         }
@@ -258,11 +254,15 @@ public class MasteryPanel {
         TooltipMakerAPI resetButtonTTM = thisShipPanel.createUIElement(resetButtonW, resetButtonH, false);
         resetButtonTTM.setButtonFontOrbitron20();
         ButtonAPI resetButton =
-                resetButtonTTM.addButton(CLEAR_BUTTON_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                resetButtonTTM.addButton(Strings.CLEAR_BUTTON_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                          Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
-        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, CLEAR_BUTTON_STR));
+        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, Strings.CLEAR_BUTTON_STR));
         if (variant.getSMods().size() == 0) {
             resetButton.setEnabled(false);
+        }
+
+        if (!TransientSettings.SMOD_REMOVAL_ENABLED) {
+            ReflectionUtils.invokeMethod(resetButton, "setOpacity", 0f);
         }
 
         float modularCountW = 200f, modularCountH = 40f;
@@ -270,67 +270,81 @@ public class MasteryPanel {
         int sModLimit = Misc.getMaxPermanentMods(ship);
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
         modularCountTTM.setParaOrbitronVeryLarge();
-        LabelAPI modularCount = modularCountTTM.addPara(BUILTIN_DISPLAY_STR + String.format("%s/%s", nSMods, sModLimit),
-                                                        Misc.getBrightPlayerColor(), 0f);
+        LabelAPI modularCount = modularCountTTM.addPara(
+                Strings.BUILTIN_DISPLAY_STR + String.format("%s/%s", nSMods, sModLimit),
+                Misc.getBrightPlayerColor(), 0f);
         modularCount.setAlignment(Alignment.RMID);
         modularCount.setHighlight("" + nSMods, "" + sModLimit);
         modularCount.setHighlightColor(Misc.getHighlightColor());
 
         float hintTextW = 200f, hintTextH = 40f;
         TooltipMakerAPI hintTextTTM = thisShipPanel.createUIElement(hintTextW, hintTextH, false);
-        hintTextTTM.addPara(DOUBLE_CLICK_HINT_STR, Misc.getBasePlayerColor(), 0f);
+        hintTextTTM.addPara(Strings.DOUBLE_CLICK_HINT_STR, Misc.getBasePlayerColor(), 0f);
 
         thisShipPanel.addUIElement(buildInList).inTMid(37f);
         thisShipPanel.addUIElement(buildInListHeader).inTMid(20f);
+
         thisShipPanel.addUIElement(resetButtonTTM).inTR(30f, -20f);
+
         thisShipPanel.addUIElement(hintTextTTM).inTL(20f, -5f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
         return thisShipPanel;
     }
 
-    UIPanelAPI makeMasteryPanel(float width, float height, ShipAPI ship) {
-        CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
+    public void selectMasteryItem(int i) {
+        selectedMasteryButtons.add(i);
+        showUpgradeOrConfirmation();
+    }
 
-        float shipDisplaySize = 250;
-        TooltipMakerAPI shipDisplay = masteryPanel.createUIElement(shipDisplaySize, shipDisplaySize + 25f, false);
+    public void deselectMasteryItem(int i) {
+        selectedMasteryButtons.remove(i);
+        showUpgradeOrConfirmation();
+    }
+
+    void showUpgradeOrConfirmation() {
+        if (selectedMasteryButtons.equals(activeMasteries)) {
+            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
+            ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
+        }
+        else {
+            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
+        }
+    }
+
+    public Set<Integer> getSelectedMasteryButtons() {
+        return selectedMasteryButtons;
+    }
+
+    public Set<Integer> getActiveMasteries() {
+        return activeMasteries;
+    }
+
+    UIPanelAPI makeMasteryPanel(float width, float height, ShipAPI ship, boolean useSavedScrollerLocation) {
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
         ShipHullSpecAPI baseHullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(hullSpec));
-        String spriteName = baseHullSpec.getSpriteName();
-        SpriteAPI sprite = Global.getSettings().getSprite(spriteName);
-        float size = Math.max(sprite.getWidth(), sprite.getHeight());
-        size = Math.min(size, shipDisplaySize - 10f);
-        shipDisplay.setParaOrbitronVeryLarge();
-        shipDisplay.addPara(baseHullSpec.getHullName(), 0f).setAlignment(Alignment.MID);
-        ButtonAPI outline = shipDisplay.addAreaCheckbox("", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                        Misc.getBrightPlayerColor(), shipDisplaySize - 5f,
-                                                        shipDisplaySize - 5f, 0f);
-        outline.setClickable(false);
-        outline.setGlowBrightness(0.3f);
-        outline.setMouseOverSound(null);
-        shipDisplay.addImage(
-                baseHullSpec.getSpriteName(), shipDisplaySize, size, -size - (shipDisplaySize - size) / 2f);
+        currentMastery = MasteryUtils.getMasteryLevel(baseHullSpec);
+        maxMastery = MasteryUtils.getMaxMastery(baseHullSpec);
+
+        CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
+        float shipDisplaySize = 250f;
+        TooltipMakerAPI shipDisplay = masteryPanel.createUIElement(shipDisplaySize, shipDisplaySize + 25f, false);
+        new ShipDisplay(baseHullSpec, shipDisplaySize).create(shipDisplay);
         masteryPanel.addUIElement(shipDisplay).inTL(50f, 70f);
 
-        int currentMastery = Settings.getMasteryLevel(baseHullSpec);
-        int maxMastery = MasteryUtils.getMaxMastery(baseHullSpec);
+        upgradeMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
+        new UpgradeMasteryDisplay(this, baseHullSpec).create(upgradeMasteryDisplay);
+        masteryPanel.addUIElement(upgradeMasteryDisplay).belowMid(shipDisplay, 10f);
 
-        if (currentMastery < maxMastery) {
-            TooltipMakerAPI upgradeTTM = masteryPanel.createUIElement(200f, 100f, false);
-            upgradeTTM.setParaOrbitronLarge();
-            upgradeTTM.setButtonFontOrbitron24Bold();
-            LabelAPI upgradeLabel = upgradeTTM.addPara(ADVANCE_MASTERY_STR, 0f);
-            upgradeLabel.setAlignment(Alignment.MID);
-            upgradeLabel.getPosition().setXAlignOffset(5f);
-            int cost = MasteryUtils.getUpgradeCost(baseHullSpec);
-            String buttonText = "" + cost + " MP";
-            ButtonAPI upgradeButton =
-                    upgradeTTM.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
-                                         Alignment.MID, CutStyle.TL_BR, 150f, 25f, 5f);
-            ReflectionUtils.setButtonListener(upgradeButton, new UpgradeButtonPressed(this, buttonText, baseHullSpec));
-            upgradeButton.setEnabled(Settings.getMasteryPoints(baseHullSpec) >= cost);
-            upgradeButton.getPosition().setXAlignOffset(20f);
-            masteryPanel.addUIElement(upgradeTTM).belowMid(shipDisplay, 10f);
+        if (currentMastery >= maxMastery) {
+            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
         }
+
+        confirmOrCancelDisplay = masteryPanel.createUIElement(225f, 100f, false);
+        new ConfirmOrCancelDisplay(new ConfirmMasteryChangesPressed(this), new CancelMasteryChangesPressed(this)).create(confirmOrCancelDisplay);
+        masteryPanel.addUIElement(confirmOrCancelDisplay).belowMid(shipDisplay, 10f);
+
+        ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
 
         float containerW = 500f, containerH = 450f;
         TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH, false);
@@ -347,38 +361,45 @@ public class MasteryPanel {
                 masteryPanel.createUIElement(containerW + 25f - containerPadX, containerH - containerPadY, true);
 
         CustomPanelAPI prev = null;
-        float pad = 10f, minDescH = 80f, buttonW = 25f;
+        float pad = 10f, minDescH = 30f, buttonW = 25f;
         float totalH = 0f, scrollToH = 0f;
 
+        activeMasteries = MasteryUtils.getActiveMasteries(hullSpec);
+        selectedMasteryButtons = new HashSet<>(activeMasteries);
         for (int i = 1; i <= maxMastery; i++) {
-            CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW, minDescH, null);
-            TooltipMakerAPI description = descriptionPanel.createUIElement(containerW, minDescH, false);
+            CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW - 15f, minDescH, null);
+            TooltipMakerAPI description = descriptionPanel.createUIElement(containerW - 15f, minDescH, false);
             description.setParaFont(Fonts.INSIGNIA_LARGE);
 
-            final MasteryEffect effect = Settings.getMasteryEffect(hullSpec, i);
-            boolean hidden = effect.hideUntilUnlocked() && !Settings.unlockedEffectIds.contains(Settings.getId(effect.getClass()));
+            final MasteryEffect effect = MasteryUtils.getMasteryEffect(hullSpec, i);
+            boolean hidden = !effect.alwaysShowDescription() && i > currentMastery + 1;
 
             LabelAPI descLabel;
             if (!hidden) {
                 descLabel = effect.getDescription().addLabel(description);
-                effect.addPostDescriptionSection(description);
+                //description.setParaFontDefault();
+                // effect.addPostDescriptionSection(description);
+                //description.addSpacer(20f);
             }
             else {
                 descLabel = description.addPara("", 0f);
             }
 
-            descLabel.getPosition().setXAlignOffset(5f);
+            //descLabel.getPosition().setXAlignOffset(3f);
 
             float descH = Math.max(minDescH, description.getHeightSoFar());
-            descriptionPanel.getPosition().setSize(containerW, descH);
+            descriptionPanel.getPosition().setSize(containerW - 15f, descH);
 
             // Cheap trick: to simulate darken effect, render the outline area checkbox above the text
-            ButtonAPI descOutline = description.addAreaCheckbox(hidden ? UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                                Misc.getGrayColor(), containerW, descH,  -description.getHeightSoFar());
-            descOutline.setClickable(false);
-            descOutline.setGlowBrightness(0.3f);
-            descOutline.setMouseOverSound(null);
-            descOutline.getPosition().setXAlignOffset(-5f);
+            ButtonAPI descOutline = description.addAreaCheckbox(hidden ? Strings.UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                                                                Misc.getGrayColor(), containerW, descH, -description.getHeightSoFar());
+            descOutline.setClickable(i <= currentMastery);
+            descOutline.setGlowBrightness(i <= currentMastery ? 0.8f : 0.15f);
+            if (i > currentMastery) {
+                descOutline.setButtonPressedSound(null);
+            }
+            ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, hullSpec, i));
+            //descOutline.getPosition().setXAlignOffset(-3f);
 
             if (effect.hasTooltip() && !hidden) {
                 description.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
@@ -426,34 +447,54 @@ public class MasteryPanel {
             levelButton.setMouseOverSound(null);
 
             levelButton.highlight();
+
             if (i <= currentMastery) {
-                levelButton.setHighlightBrightness(1f);
-                levelButton.setChecked(true);
                 descOutline.highlight();
-                descOutline.setHighlightBrightness(0.75f);
+                levelButton.setHighlightBrightness(0.5f);
+                descOutline.setHighlightBrightness(0.25f);
             }
             else {
                 levelButton.setHighlightBrightness(0.25f);
+                levelButton.setEnabled(false);
+            }
+
+            if (activeMasteries.contains(i)) {
+                descOutline.setChecked(true);
+                descOutline.setHighlightBrightness(0f);
+                levelButton.setChecked(true);
             }
 
             if (i == currentMastery) {
                 scrollToH = totalH;
             }
-            descriptionPanel.addUIElement(description).inLMid(10f);
+            descriptionPanel.addUIElement(description).inLMid(50f);
             descriptionPanel.addUIElement(levelButtonTTM).inLMid(-20f);
 
-            PositionAPI position = masteryDisplay.addComponent(descriptionPanel).inTR(0f, 0f);
-            if (prev != null) {
-                position.belowMid(prev, pad);
-            }
+            masteryDisplay.addComponent(descriptionPanel).inTR(0f, totalH);
+//            PositionAPI position = masteryDisplay.addComponent(descriptionPanel).inTR(0f, 0f);
+//            if (prev != null) {
+//                position.belowRight(prev, pad);
+//            }
             prev = descriptionPanel;
             totalH += pad + descH;
         }
         masteryDisplay.setHeightSoFar(totalH - pad);
         masteryPanel.addUIElement(masteryDisplay).inTR(50f, 20f);
-        masteryDisplay.getExternalScroller().setYOffset(Math.min(Math.max(0f, scrollToH - pad), totalH - containerH));
+
+        if (useSavedScrollerLocation) {
+            masteryDisplay.getExternalScroller().setYOffset(savedScrollerLocation);
+        }
+        else {
+            masteryDisplay.getExternalScroller()
+                          .setYOffset(Math.min(Math.max(0f, scrollToH - pad), totalH - containerH));
+        }
+        savedMasteryDisplay = masteryDisplay;
 
         return masteryPanel;
+    }
+
+    public void saveScrollerLocation() {
+        savedScrollerLocation = savedMasteryDisplay.getExternalScroller().getYOffset();
     }
 
     LabelAPI label(String str, Color color) {
@@ -477,8 +518,8 @@ public class MasteryPanel {
         String mpCostStr = "" + mpCost;
         int creditsCost = SModUtils.getCreditsCost(spec, ship);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
-        String modularString = modular ? YES_STR : NO_STR;
-        Color masteryColor = Settings.masteryColor;
+        String modularString = modular ? Strings.YES_STR : Strings.NO_STR;
+        Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
         String cantBuildInReason = getCantBuildInReason(spec, mpCost, creditsCost);
 
@@ -488,7 +529,7 @@ public class MasteryPanel {
 
         tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, nameColor),
                                 Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost,
-                                Alignment.MID, Settings.masteryColor, label(mpCostStr, masteryColor), Alignment.MID,
+                                Alignment.MID, Settings.MASTERY_COLOR, label(mpCostStr, masteryColor), Alignment.MID,
                                 Misc.getHighlightColor(), label(creditsCostStr, creditsColor), Alignment.MID, nameColor,
                                 label(modularString, nameColor));
 
@@ -539,14 +580,18 @@ public class MasteryPanel {
      * Gives reason the mod can't be built in; returns null if hullmod can be built in
      */
     @Nullable String getCantBuildInReason(HullModSpecAPI spec, int mpCost, int creditsCost) {
-        if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN)) return spec.getDisplayName() + CANT_BUILD_IN_STR;
-        if (ship.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(ship)) return LIMIT_REACHED_STR;
+        if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
+            return spec.getDisplayName() + Strings.CANT_BUILD_IN_STR;
+        }
+        if (ship.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(ship) + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
+            return Strings.LIMIT_REACHED_STR;
+        }
 
         int credits = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
-        int mp = (int) Settings.getMasteryPoints(ship.getHullSpec());
+        int mp = (int) MasteryUtils.getMasteryPoints(ship.getHullSpec());
 
-        String notEnoughCredits = CREDITS_SHORTFALL_STR;
-        String notEnoughMasteryPoints = MASTERY_POINTS_SHORTFALL_STR;
+        String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;
+        String notEnoughMasteryPoints = Strings.MASTERY_POINTS_SHORTFALL_STR;
         if (mpCost > mp && creditsCost > credits) return notEnoughMasteryPoints + ", " + notEnoughCredits;
         if (mpCost > mp) return notEnoughMasteryPoints;
         if (creditsCost > credits) return notEnoughCredits;

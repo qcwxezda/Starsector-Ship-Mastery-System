@@ -4,7 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
-import shipmastery.Settings;
+import shipmastery.ShipMastery;
 import shipmastery.campaign.DeferredActionPlugin;
 import shipmastery.campaign.RefitHandler;
 
@@ -15,12 +15,12 @@ import java.net.URLClassLoader;
 public class ModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() throws Exception {
-        Settings.loadMasteryData();
+        ShipMastery.loadMasteryData();
     }
 
     @Override
     public void onGameLoad(boolean newGame) {
-        Settings.loadMasteryTable();
+        ShipMastery.loadMasteryTable();
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
@@ -42,7 +42,6 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
-            "shipmastery.listeners",
             "shipmastery.ui"
     };
 

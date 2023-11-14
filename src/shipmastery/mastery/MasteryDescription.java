@@ -7,29 +7,60 @@ import com.fs.starfarer.api.util.Misc;
 
 import java.awt.*;
 
-/** Stores a description for a mastery effect. */
+/** Description for a mastery effect. The actual displayed text will be {@code String.format(text, params)}.
+ *  If {@code colors} is specified, {@code params} will be highlighted in the text.
+ *
+ * @see String#format
+ *  */
 public class MasteryDescription {
     /** Will have {@link String#format(String, Object...)} called on it */
-    final String text;
+    public String text;
     /** Variables to replace format specifiers in {@code rawText} with */
-    final Object[] params;
-    /** Colors to highlight the params. Must either be a single element array (highlight all params with one color) or
+    public Object[] params;
+    /** Colors to highlight the params. Must either be a single element array (highlights all params with one color) or
      *  match params in length. */
-    final Color[] colors;
+    public Color[] colors;
 
-    public MasteryDescription(String text, Object... params) {
-        this(text, params, (Color[]) null);
-    }
+    public MasteryDescription() {}
 
     public MasteryDescription(String text, Object[] params, Color... colors) {
         this.text = text;
         this.params = params;
         this.colors = colors;
+        checkColors();
+    }
+
+    void checkColors() {
+        boolean validColors = colors == null || colors.length == 1 || colors.length == params.length;
+        if (!validColors) {
+            throw new RuntimeException("Invalid colors array in MasteryDescription");
+        }
+    }
+
+    public static MasteryDescription init(String formatText) {
+        MasteryDescription description = new MasteryDescription();
+        description.text = formatText;
+        return description;
+    }
+
+    public static MasteryDescription initDefaultHighlight(String formatText) {
+        return init(formatText).colors(Misc.getHighlightColor());
+    }
+
+    public MasteryDescription params(Object... params) {
+        this.params = params;
+        return this;
+    }
+
+    public MasteryDescription colors(Color... colors) {
+        this.colors = colors;
+        checkColors();
+        return this;
     }
 
     public LabelAPI addLabel(TooltipMakerAPI tooltip) {
         Color textColor = Misc.getTextColor();
-        LabelAPI label = tooltip.addPara("\n" + this + "\n", textColor, 0f);
+        LabelAPI label = tooltip.addPara("\n" + this, textColor, 0f);
         if (colors != null) {
             String[] strings = new String[params.length];
             for (int i = 0; i < params.length; i++) {

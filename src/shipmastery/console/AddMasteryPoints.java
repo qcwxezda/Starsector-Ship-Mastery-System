@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.Console;
-import shipmastery.Settings;
+import shipmastery.util.MasteryUtils;
 
 public class AddMasteryPoints implements BaseCommand {
     @Override
@@ -32,7 +32,7 @@ public class AddMasteryPoints implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        Settings.addMasteryPoints(spec, amount);
+        MasteryUtils.addMasteryPoints(spec, amount);
         return CommandResult.SUCCESS;
     }
 

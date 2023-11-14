@@ -1,4 +1,4 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import shipmastery.util.ClassRefs;
 

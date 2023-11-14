@@ -1,4 +1,4 @@
-package shipmastery.listeners;
+package shipmastery.ui.listeners;
 
 import shipmastery.ui.MasteryPanel;
 
