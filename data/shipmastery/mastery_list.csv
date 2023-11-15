@@ -1,10 +1,15 @@
-id,script
-sms_CompoundMastery,shipmastery.mastery.impl.compound.CompoundMastery
+id,tier,tags,script
 ### LOGISTICS ###
-sms_AdditionalSMods,shipmastery.mastery.impl.logistics.AdditionalSMods
-sms_ReduceSModCreditsCost,shipmastery.mastery.impl.logistics.ReduceSModCreditsCost
-sms_ReduceSModMPCost,shipmastery.mastery.impl.logistics.ReduceSModMPCost
-sms_ReduceRestorationCost,shipmastery.mastery.impl.logistics.ReduceRestorationCost
-sms_EnableSModRemoval,shipmastery.mastery.impl.logistics.EnableSModRemoval
-sms_AllowOverCapacitySMods,shipmastery.mastery.impl.logistics.AllowOverCapacitySMods
-sms_IgnoreNoBuildIn,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+AdditionalSMods,3,no_disable,shipmastery.mastery.impl.logistics.AdditionalSMods
+ReduceSModCreditsCost,,negative_strength_allowed,shipmastery.mastery.impl.logistics.ReduceSModCreditsCost
+ReduceSModMPCost,,negative_strength_allowed,shipmastery.mastery.impl.logistics.ReduceSModMPCost
+ReduceRestorationCost,,negative_strength_allowed,shipmastery.mastery.impl.logistics.ReduceRestorationCost
+EnableSModRemoval,4,unique,shipmastery.mastery.impl.logistics.EnableSModRemoval
+AllowOverCapacitySMods,7,no_disable no_auto_activate unique,shipmastery.mastery.impl.logistics.AllowOverCapacitySMods
+IgnoreNoBuildIn,7,no_disable,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+ReduceMaintenance,,negative_strength_allowed,shipmastery.mastery.impl.logistics.ReduceMaintenance
+ReduceFuelUsage,,negative_strength_allowed,shipmastery.mastery.impl.logistics.ReduceFuelUsage
+IncreaseCargoCapacity,,negative_strength_allowed,shipmastery.mastery.impl.logistics.IncreaseCargoCapacity
+IncreaseFuelCapacity,,negative_strength_allowed,shipmastery.mastery.impl.logistics.IncreaseFuelCapacity
+IncreaseMaxCrew,,negative_strength_allowed,shipmastery.mastery.impl.logistics.IncreaseMaxCrew
+IncreaseBurnLevel,,,shipmastery.mastery.impl.logistics.IncreaseBurnLevel

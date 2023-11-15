@@ -1,13 +1,16 @@
-package shipmastery.ui.listeners;
+package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.ShipMastery;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
+
+import java.util.List;
 
 public class MasteryEffectButtonPressed extends ActionListener {
     MasteryPanel masteryPanel;
@@ -22,20 +25,26 @@ public class MasteryEffectButtonPressed extends ActionListener {
     @Override
     public void trigger(Object... args) {
         ButtonAPI button = (ButtonAPI) args[1];
-        MasteryEffect effect = MasteryUtils.getMasteryEffect(spec, level);
+        List<MasteryEffect> effects = ShipMastery.getMasteryEffects(spec, level);
+        boolean canDeactivate = true;
+        for (MasteryEffect effect : effects) {
+            if (!MasteryUtils.canDisable(effect)) {
+                canDeactivate = false;
+            }
+        }
 
         if (button.isChecked()) {
             masteryPanel.selectMasteryItem(level);
             button.setHighlightBrightness(0f);
 
-            if (!effect.canBeDeactivated()) {
+            if (!canDeactivate) {
                 Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                         Strings.EFFECT_CANT_DEACTIVATE_WARNING,
                         Misc.getNegativeHighlightColor());
             }
         }
         else {
-            if (MasteryUtils.getActiveMasteries(spec).contains(level) && !effect.canBeDeactivated()) {
+            if (ShipMastery.getActiveMasteries(spec).contains(level) && !canDeactivate) {
                 button.setChecked(true);
                 Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                         Strings.EFFECT_CANT_DEACTIVATE,

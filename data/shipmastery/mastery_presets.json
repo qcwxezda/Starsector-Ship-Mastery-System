@@ -1,24 +1,27 @@
 {
   "default2": [
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 4 sms_IgnoreNoBuildIn 2 neural_interface safetyoverrides",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface"
+    "AdditionalSMods 1",
+    "ReduceRestorationCost",
+    "EnableSModRemoval",
+    ["ReduceSModMPCost", "ReduceSModCreditsCost", "AdditionalSMods"],
+    "ReduceRestorationCost 2.5",
+    ["ReduceSModMPCost 2", "ReduceSModCreditsCost 2"],
+    "IgnoreNoBuildIn 1 safetyoverrides",
+    ["AllowOverCapacitySMods 1.5", "IgnoreNoBuildIn 1 neural_interface"]
   ],
+
   "default": [
-    "sms_AdditionalSMods",
-    "sms_ReduceRestorationCost",
-    "sms_EnableSModRemoval",
-    "sms_CompoundMastery 1 1 sms_ReduceSModMPCost 1 sms_ReduceSModCreditsCost",
-    "sms_AdditionalSMods",
-    "sms_ReduceRestorationCost 2.5",
-    "sms_CompoundMastery 1 2 sms_ReduceSModMPCost 2 2 sms_ReduceSModCreditsCost 2",
-    "sms_IgnoreNoBuildIn 1 safetyoverrides",
-    "sms_CompoundMastery 1 2 sms_AllowOverCapacitySMods 1.5 3 sms_IgnoreNoBuildIn 1 neural_interface"
+    ["IncreaseBurnLevel 0.1", "IncreaseBurnLevel 1.5", "IncreaseBurnLevel 99"],
+    ["IncreaseBurnLevel -0.1", "IncreaseBurnLevel -3", "IncreaseBurnLevel -999"],
+    ["IncreaseCargoCapacity 0.1", "IncreaseCargoCapacity 1.5", "IncreaseCargoCapacity 99"],
+    ["IncreaseCargoCapacity -0.1", "IncreaseCargoCapacity -3", "IncreaseCargoCapacity -999"],
+    ["IncreaseFuelCapacity 0.1", "IncreaseFuelCapacity 1.5", "IncreaseFuelCapacity 99"],
+    ["IncreaseFuelCapacity -0.1", "IncreaseFuelCapacity -3", "IncreaseFuelCapacity -999"],
+    ["IncreaseMaxCrew 0.1", "IncreaseMaxCrew 1.5", "IncreaseMaxCrew 99"],
+    ["IncreaseMaxCrew -0.1", "IncreaseMaxCrew -3", "IncreaseMaxCrew -999"],
+    ["ReduceFuelUsage 0.1", "ReduceFuelUsage 1.5", "ReduceFuelUsage 99"],
+    ["ReduceFuelUsage -0.1", "ReduceFuelUsage -3", "ReduceFuelUsage -999"],
+    ["ReduceMaintenance 0.1", "ReduceMaintenance 1.5", "ReduceMaintenance 99"],
+    ["ReduceMaintenance -0.1", "ReduceMaintenance -3", "ReduceMaintenance -999"]
   ]
 }

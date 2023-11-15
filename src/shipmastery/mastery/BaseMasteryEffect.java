@@ -6,46 +6,27 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
-
-/**
- *  Extend this class instead of implementing {@link MasteryEffect}. <br><br>
- *  Note: If a method takes an {@code id} as a parameter, the {@code id} given is
- *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryEffect#isUniqueEffect()} is false, i.e. is stackable, and
- *  {@code shipmastery_[ID]} otherwise. <br>
- *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
- *  unique and stackable elements.
- *  */
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
-    protected float strength = 1f;
+    private float strength = 1f;
+    @Override
+    public void onBeginRefit(ShipHullSpecAPI spec, String id) {}
 
     @Override
-    public void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id) {}
+    public void onEndRefit(ShipHullSpecAPI spec, String id) {}
 
     @Override
-    public void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id) {}
+    public void onActivate(ShipHullSpecAPI spec, String id) {}
 
     @Override
-    public boolean isAutoActivateWhenUnlocked(ShipHullSpecAPI spec) {
-        return true;
-    }
-
-    @Override
-    public boolean isUniqueEffect() {
-        return false;
-    }
-
-    @Override
-    public boolean canBeDeactivated() {
-        return true;
-    }
+    public void onDeactivate(ShipHullSpecAPI spec, String id) {}
 
     @Override
     public void init(String... args) {
         if (args == null || args.length == 0) return;
 
         try {
-            setStrength(Float.parseFloat(args[0]));
+            strength = Float.parseFloat(args[0]);
         } catch (NumberFormatException e) {
             throw new RuntimeException("First argument of mastery initialization must be a number", e);
         }
@@ -66,26 +47,21 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public Integer getSelectionTier() {
+    public Integer getSelectionTier(ShipHullSpecAPI spec) {
         return 0;
     }
 
     @Override
-    public void advanceInCampaign(FleetMemberAPI member, float amount) {}
+    public void advanceInCampaign(FleetMemberAPI member, float amount, String id) {}
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount) {}
+    public void advanceInCombat(ShipAPI ship, float amount, String id) {}
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {}
+    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
 
     @Override
-    public void addTooltip(TooltipMakerAPI tooltip) {}
-
-    @Override
-    public boolean hasTooltip() {
-        return false;
-    }
+    public void addTooltip(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
 
     @Override
     public final float getStrength() {
@@ -95,10 +71,5 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public final void setStrength(float strength) {
         this.strength = strength;
-    }
-
-    @Override
-    public boolean alwaysShowDescription() {
-        return false;
     }
 }

@@ -5,26 +5,27 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class ReduceRestorationCost extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription() {
-        return MasteryDescription.initDefaultHighlight(Strings.REDUCE_RESTORATION_COST).params((int) (getMult()*100f) + "%");
+    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+        return Utils.makeGenericNegatableDescription(getMult(), Strings.REDUCE_RESTORATION_COST, Strings.REDUCE_RESTORATION_COST_NEG, true);
     }
 
     @Override
-    public void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
         float mult = Global.getSettings().getFloat("baseRestoreCostMult");
-        Global.getSettings().setFloat("baseRestoreCostMult", (1f-getMult())*mult);
+        Global.getSettings().setFloat("baseRestoreCostMult", (1f - getMult()) * mult);
     }
 
     @Override
-    public void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipHullSpecAPI spec, String id) {
         float mult = Global.getSettings().getFloat("baseRestoreCostMult");
-        Global.getSettings().setFloat("baseRestoreCostMult", 1f/(1f-getMult())*mult);
+        Global.getSettings().setFloat("baseRestoreCostMult", 1f / (1f - getMult()) * mult);
     }
 
-    float getMult() {
+    public float getMult() {
         return Math.min(0.99f, 0.1f * getStrength());
     }
 }

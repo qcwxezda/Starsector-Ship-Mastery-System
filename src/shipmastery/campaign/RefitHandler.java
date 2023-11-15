@@ -14,14 +14,13 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
+import org.lwjgl.input.Keyboard;
+import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.ui.listeners.ActionListener;
-import shipmastery.ui.listeners.MasteryButtonPressed;
-import shipmastery.util.ClassRefs;
-import shipmastery.util.MasteryUtils;
-import shipmastery.util.ReflectionUtils;
-import shipmastery.util.Utils;
+import shipmastery.ui.triggers.ActionListener;
+import shipmastery.ui.triggers.MasteryButtonPressed;
+import shipmastery.util.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
@@ -41,14 +40,16 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
     HullSpecAndMasteries currentHullSpecAndMasteries = null;
 
+    static float savedRestoreCostMult = 1f;
+
     static class HullSpecAndMasteries {
         String specId;
 
-        TreeSet<Integer> activeMasteries;
+        NavigableSet<Integer> activeMasteries;
 
         HullSpecAndMasteries(ShipHullSpecAPI spec) {
             this.specId = Utils.getBaseHullId(spec);
-            activeMasteries = new TreeSet<>(MasteryUtils.getActiveMasteries(spec));
+            activeMasteries = ShipMastery.getActiveMasteries(spec);
         }
 
         @Override
@@ -263,9 +264,9 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
         ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
         Pair<ButtonAPI, CustomPanelAPI> masteryButtonPair = ReflectionUtils.makeButton(
-                Utils.getString("sms_refitScreen", "masteryButton"), new MasteryButtonPressed(this),
+                Strings.MASTERY_BUTTON_STR, new MasteryButtonPressed(this),
                 Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM,
-                permButton.getPosition().getWidth(), permButton.getPosition().getHeight(), 16);
+                permButton.getPosition().getWidth(), permButton.getPosition().getHeight(), Keyboard.KEY_Q);
         ButtonAPI masteryButton = masteryButtonPair.one;
         masteryButton.setCustomData(MASTERY_BUTTON_TAG);
         UIPanelAPI masteryButtonPanel = masteryButtonPair.two;
@@ -311,12 +312,12 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();
-                        int currentMastery = MasteryUtils.getMasteryLevel(spec);
-                        int maxMastery = MasteryUtils.getMaxMastery(spec);
+                        int currentMastery = ShipMastery.getMasteryLevel(spec);
+                        int maxMastery = ShipMastery.getMaxMastery(spec);
                         if (currentMastery < maxMastery) {
-                            tooltipMaker.addPara(Utils.getString("sms_refitScreen", "masteryLabel") + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
                         }
-                        int mp = (int) MasteryUtils.getMasteryPoints(spec);
+                        int mp = (int) ShipMastery.getMasteryPoints(spec);
                         if (mp > 0) {
                             tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, 0f).setAlignment(Alignment.LMID);
                         }
@@ -356,6 +357,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
+        onEnterRefitScreen();
         if (CoreUITabId.REFIT.equals(id)) {
             DeferredActionPlugin.performLater(new Action() {
                 @Override
@@ -381,6 +383,12 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }, epsilonTime);
     }
 
+    /** Not theoretically necessary since masteries' onEndRefit should perfectly undo onBeginRefit, but
+     *  we need do this to avoid possible floating point rounding errors. */
+    void onEnterRefitScreen() {
+        savedRestoreCostMult = Global.getSettings().getFloat("baseRestoreCostMult");
+    }
+
     void checkIfRefitShipChanged() {
         if (!insideRefitPanel) return;
         coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
@@ -397,17 +405,30 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     public void onRefitScreenShipChanged(HullSpecAndMasteries oldSpec, HullSpecAndMasteries newSpec) {
         if (oldSpec != null && oldSpec.specId != null) {
-            for (int i : oldSpec.activeMasteries.descendingSet()) {
-                MasteryEffect effect = MasteryUtils.getMasteryEffect(oldSpec.specId, i);
-                effect.unapplyEffectsOnEndRefit(Global.getSettings().getHullSpec(oldSpec.specId), MasteryUtils.makeEffectId(effect, i));
-            }
+            final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(oldSpec.specId);
+            MasteryUtils.applyAllMasteryEffects(
+                spec, oldSpec.activeMasteries, true, new MasteryUtils.MasteryAction() {
+                    @Override
+                    public void perform(MasteryEffect effect, String id) {
+                        effect.onEndRefit(spec, id);
+                    }
+                });
         }
 
+        /* Not theoretically necessary since masteries' onEndRefit should perfectly undo onBeginRefit, but
+           we need do this to avoid possible floating point rounding errors. */
+        Global.getSettings().setFloat("baseRestoreCostMult", savedRestoreCostMult);
+
         if (newSpec != null && newSpec.specId != null) {
-            for (int i : newSpec.activeMasteries) {
-                MasteryEffect effect = MasteryUtils.getMasteryEffect(newSpec.specId, i);
-                effect.applyEffectsOnBeginRefit(Global.getSettings().getHullSpec(newSpec.specId), MasteryUtils.makeEffectId(effect, i));
-            }
+            final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(newSpec.specId);
+            MasteryUtils.applyAllMasteryEffects(
+                spec, newSpec.activeMasteries, false, new MasteryUtils.MasteryAction() {
+                    @Override
+                    public void perform(MasteryEffect effect, String id) {
+                        effect.onBeginRefit(spec, id);
+                    }
+                });
+
         }
     }
 }

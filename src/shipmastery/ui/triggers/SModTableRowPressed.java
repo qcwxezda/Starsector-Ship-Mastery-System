@@ -1,4 +1,4 @@
-package shipmastery.ui.listeners;
+package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.ShipMastery;
 import shipmastery.campaign.Action;
 import shipmastery.campaign.DeferredActionPlugin;
 import shipmastery.config.Settings;
@@ -14,7 +15,7 @@ import shipmastery.util.*;
 
 import java.util.List;
 
-public class SModTableRowPressed extends ProxyTrigger {
+public class SModTableRowPressed extends TriggerableProxy {
 
     MasteryPanel masteryPanel;
     long lastClickTime = 0;
@@ -68,9 +69,9 @@ public class SModTableRowPressed extends ProxyTrigger {
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 
-                    MasteryUtils.spendMasteryPoints(variant.getHullSpec(), rowData.mpCost);
+                    ShipMastery.spendMasteryPoints(variant.getHullSpec(), rowData.mpCost);
                     Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(rowData.creditsCost);
-                    masteryPanel.forceRefresh(true);
+                    masteryPanel.forceRefresh(true, true);
                 }
                 button.unhighlight();
             }

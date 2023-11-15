@@ -10,7 +10,7 @@ import java.util.Queue;
 public class DeferredActionPlugin implements EveryFrameScript {
 
     final Queue<DeferredAction> actionList = new PriorityQueue<>();
-    public static final String INSTANCE_KEY = "$sms_DeferredActionPlugin";
+    public static final String INSTANCE_KEY = "$shipmastery_DeferredActionPlugin";
 
     public static void performLater(Action action, float delay) {
         DeferredActionPlugin instance = getInstance();

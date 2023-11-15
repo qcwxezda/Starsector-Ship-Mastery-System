@@ -1,123 +1,92 @@
 package shipmastery.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.mastery.impl.compound.CompoundMastery;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import shipmastery.mastery.MasteryTags;
+
+import java.util.*;
 
 public abstract class MasteryUtils {
-    public static int getMaxMastery(ShipHullSpecAPI spec) {
-        String id = Utils.getBaseHullId(spec);
-        return ShipMastery.masteryMap.get(id).size();
-    }
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
-        int level = getMasteryLevel(spec);
+        int level = ShipMastery.getMasteryLevel(spec);
         return (2 + level) * 2;
     }
 
-    public static int getMasteryLevel(ShipHullSpecAPI spec) {
-        if (ShipMastery.MASTERY_TABLE == null) return 0;
-
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(Utils.getBaseHullId(spec));
-        return data == null ? 0 : data.level;
-    }
-
-    public static void advanceMasteryLevel(ShipHullSpecAPI spec) {
-        String id = Utils.getBaseHullId(spec);
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(id);
-
-        if (data == null) {
-            data = new ShipMastery.MasteryData(0, 1);
-            ShipMastery.MASTERY_TABLE.put(id, data);
-        } else {
-            data.level++;
-        }
-
-        MasteryEffect effect = getMasteryEffect(spec, data.level);
-        if (effect.isAutoActivateWhenUnlocked(spec)) {
-            activateMastery(spec, data.level);
-        }
-    }
-
-    public static float getMasteryPoints(ShipHullSpecAPI spec) {
-        if (ShipMastery.MASTERY_TABLE == null) return 0f;
-
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(Utils.getBaseHullId(spec));
-        return data == null ? 0 : data.points;
-    }
-
-    public static void addMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getBaseHullId(spec);
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(id);
-        if (data == null) {
-            ShipMastery.MASTERY_TABLE.put(id, new ShipMastery.MasteryData(amount, 0));
-        }
-        else {
-            data.points += amount;
-        }
-    }
-
-    public static void spendMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getBaseHullId(spec);
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(id);
-        if (data == null) return;
-
-        data.points -= amount;
-        data.points = Math.max(0f, data.points);
-    }
-
-    public static void activateMastery(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(id);
-
-        if (data == null) {
-            data = new ShipMastery.MasteryData(0, 0);
-            ShipMastery.MASTERY_TABLE.put(id, data);
-        }
-        data.activeLevels.add(level);
-    }
-
-    public static void deactivateMastery(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(id);
-
-        if (data == null) {
-            data = new ShipMastery.MasteryData(0, 0);
-            ShipMastery.MASTERY_TABLE.put(id, data);
-        }
-
-        data.activeLevels.remove(level);
-    }
-
-    public static SortedSet<Integer> getActiveMasteries(ShipHullSpecAPI spec) {
-        if (ShipMastery.MASTERY_TABLE == null) return new TreeSet<>();
-
-        ShipMastery.MasteryData data = ShipMastery.MASTERY_TABLE.get(Utils.getBaseHullId(spec));
-        return data == null ? new TreeSet<Integer>() : data.activeLevels;
-    }
-
-    public static MasteryEffect getMasteryEffect(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
-        return ShipMastery.masteryMap.get(id).get(level - 1);
-    }
-
-    public static MasteryEffect getMasteryEffect(String specId, int level) {
-        return getMasteryEffect(Global.getSettings().getHullSpec(specId), level);
-    }
-
-    public static String makeEffectId(MasteryEffect effect, int level) {
+    public static String makeEffectId(MasteryEffect effect, int level, int index) {
         String id = makeSharedId(effect);
-        if (!effect.isUniqueEffect()) {
-            id += "_" + level;
+        if (!isUnique(effect)) {
+            id += "_" + level + "_" + index;
         }
         return id;
     }
 
     public static String makeSharedId(MasteryEffect effect) {
         return "shipmastery_" + ShipMastery.getId(effect.getClass());
+    }
+
+    /**
+     * If the set of masteries to be applied contains duplicate unique masteries, only one is applied.
+     * Masteries are applied in level order, and sequentially within each mastery level.
+     * Note: the unique mastery used is the one with the highest mastery level (and, if part of the same level, the highest index
+     *       in that level). This is to ensure that between activate and deactivate or beginRefit and endRefit calls,
+     *       the selected unique mastery doesn't change. For example, if we were to pick the strongest unique effect,
+     *       and another effect increased the strength of a different effect so that it is now stronger than the previously strongest
+     *       effect, we could have a scenario in which endRefit doesn't exactly undo beginRefit.
+     * */
+    public static void applyAllMasteryEffects(ShipHullSpecAPI spec, Set<Integer> levelsToApply, boolean reverseOrder, MasteryAction action) {
+        // Effect id -> the actual effect to be executed
+        Map<Class<?>, MasteryEffect> uniqueEffects = new HashMap<>();
+
+        // Sort the levels set so that lower mastery levels are applied first
+        NavigableSet<Integer> sortedLevels = new TreeSet<>(levelsToApply);
+
+        for (int i : sortedLevels) {
+            for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, i)) {
+                if (isUnique(effect)) {
+                    uniqueEffects.put(effect.getClass(), effect);
+                }
+            }
+        }
+
+        for (int i : reverseOrder ? sortedLevels.descendingSet() : sortedLevels) {
+            List<MasteryEffect> effects = ShipMastery.getMasteryEffects(spec, i);
+            for (int j = 0, k = effects.size() - 1; j < effects.size(); j++, k--) {
+                int index = reverseOrder ? k : j;
+                MasteryEffect effect = effects.get(index);
+                if (!isUnique(effect)  || effect.equals(uniqueEffects.get(effect.getClass()))) {
+                    action.perform(effect, makeEffectId(effect, i, index));
+                }
+            }
+        }
+    }
+
+    public static boolean isUnique(MasteryEffect effect) {
+        return ShipMastery.hasTag(effect, MasteryTags.TAG_UNIQUE);
+    }
+
+    public static boolean hasTooltip(MasteryEffect effect) {
+        return ShipMastery.hasTag(effect, MasteryTags.TAG_HAS_TOOLTIP);
+    }
+
+    public static boolean canDisable(MasteryEffect effect) {
+        return !ShipMastery.hasTag(effect, MasteryTags.TAG_NO_DISABLE);
+    }
+
+    public static boolean isAutoActivate(MasteryEffect effect) {
+        return !ShipMastery.hasTag(effect, MasteryTags.TAG_NO_AUTO_ACTIVATE);
+    }
+
+    public static boolean alwaysShowDescription(MasteryEffect effect) {
+        return ShipMastery.hasTag(effect, MasteryTags.TAG_NO_HIDE_DESCRIPTION);
+    }
+
+    public static void applyAllActiveMasteryEffects(ShipHullSpecAPI spec, MasteryAction action) {
+        applyAllMasteryEffects(spec, ShipMastery.getActiveMasteries(spec), false, action);
+    }
+
+    public interface MasteryAction {
+        void perform(MasteryEffect effect, String id);
     }
 }

@@ -61,7 +61,7 @@ public class MasteryDescription {
     public void addLabel(TooltipMakerAPI tooltip) {
         Color textColor = Misc.getTextColor();
         LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
-        if (colors != null) {
+        if (colors != null && params != null) {
             String[] strings = new String[params.length];
             for (int i = 0; i < params.length; i++) {
                 strings[i] = params[i].toString();

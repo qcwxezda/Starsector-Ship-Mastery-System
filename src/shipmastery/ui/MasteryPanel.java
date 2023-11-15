@@ -11,22 +11,20 @@ import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.ui.UITable;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
+import shipmastery.ShipMastery;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
-import shipmastery.ui.listeners.*;
+import shipmastery.ui.triggers.*;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.*;
 
 import java.awt.*;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 
 public class MasteryPanel {
-
-    public static Method sendToBottomWithinItself;
-
     ShipAPI ship;
     RefitHandler handler;
     UIPanelAPI rootPanel;
@@ -138,6 +136,7 @@ public class MasteryPanel {
         sModButton = thisShipTab.addAreaCheckbox(Strings.HULLMODS_TAB_STR, null, Misc.getBasePlayerColor(),
                                                  Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
         sModButton.setChecked(true);
+        sModButton.setShortcut(Keyboard.KEY_1, false);
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
         thisShipTab.setAreaCheckboxFontDefault();
 
@@ -146,6 +145,7 @@ public class MasteryPanel {
         masteryButton =
                 hullTypeTab.addAreaCheckbox(Strings.MASTERY_TAB_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                             Misc.getBrightPlayerColor(), w, h, 0f);
+        masteryButton.setShortcut(Keyboard.KEY_2, false);
         ReflectionUtils.setButtonListener(masteryButton, tabButtonListener);
         hullTypeTab.setAreaCheckboxFontDefault();
 
@@ -171,7 +171,7 @@ public class MasteryPanel {
         creditsLabel.setHighlight("" + creditsAmtFmt);
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
-        int masteryPointsAmt = (int) MasteryUtils.getMasteryPoints(ship.getHullSpec());
+        int masteryPointsAmt = (int) ShipMastery.getMasteryPoints(ship.getHullSpec());
         String masteryPointsString = Strings.MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
         float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
@@ -316,15 +316,11 @@ public class MasteryPanel {
         return selectedMasteryButtons;
     }
 
-    public Set<Integer> getActiveMasteries() {
-        return activeMasteries;
-    }
-
     UIPanelAPI makeMasteryPanel(float width, float height, ShipAPI ship, boolean useSavedScrollerLocation) {
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
-        ShipHullSpecAPI baseHullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(hullSpec));
-        currentMastery = MasteryUtils.getMasteryLevel(baseHullSpec);
-        maxMastery = MasteryUtils.getMaxMastery(baseHullSpec);
+        final ShipHullSpecAPI baseHullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(hullSpec));
+        currentMastery = ShipMastery.getMasteryLevel(baseHullSpec);
+        maxMastery = ShipMastery.getMaxMastery(baseHullSpec);
 
         CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
         float shipDisplaySize = 250f;
@@ -363,22 +359,30 @@ public class MasteryPanel {
         float pad = 10f, minDescH = 80f, buttonW = 30f;
         float totalH = 0f, scrollToH = 0f;
 
-        activeMasteries = MasteryUtils.getActiveMasteries(hullSpec);
+        activeMasteries = ShipMastery.getActiveMasteries(baseHullSpec);
         selectedMasteryButtons = new HashSet<>(activeMasteries);
         for (int i = 1; i <= maxMastery; i++) {
             CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW + 50f, minDescH, null);
             TooltipMakerAPI description = descriptionPanel.createUIElement(containerW - 50f, minDescH, false);
-            description.setParaFont(Fonts.INSIGNIA_LARGE);
-
-            final MasteryEffect effect = MasteryUtils.getMasteryEffect(hullSpec, i);
-            boolean hidden = !effect.alwaysShowDescription() && i > currentMastery + 1;
+            final List<MasteryEffect> effects = ShipMastery.getMasteryEffects(baseHullSpec, i);
+            boolean alwaysShow = true;
+            for (MasteryEffect effect : effects) {
+                if (!MasteryUtils.alwaysShowDescription(effect)) {
+                    alwaysShow = false;
+                    break;
+                }
+            }
+            boolean hidden = !alwaysShow && i > currentMastery + 1;
 
             if (!hidden) {
                 description.addSpacer(20f);
-                effect.getDescription().addLabel(description);
-                description.setParaFontDefault();
-                effect.addPostDescriptionSection(description);
-                description.addSpacer(20f);
+                for (MasteryEffect effect : effects) {
+                    description.setParaFont(Fonts.INSIGNIA_LARGE);
+                    effect.getDescription(baseHullSpec).addLabel(description);
+                    description.setParaFontDefault();
+                    effect.addPostDescriptionSection(baseHullSpec, description);
+                    description.addSpacer(20f);
+                }
             }
             else {
                 description.addPara("", 0f);
@@ -395,9 +399,17 @@ public class MasteryPanel {
             if (i > currentMastery) {
                 descOutline.setButtonPressedSound(null);
             }
-            ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, hullSpec, i));
+            ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, baseHullSpec, i));
 
-            if (effect.hasTooltip() && !hidden) {
+            boolean hasTooltip = false;
+            for (MasteryEffect effect : effects) {
+                if (MasteryUtils.hasTooltip(effect)) {
+                    hasTooltip = true;
+                    break;
+                }
+            }
+
+            if (hasTooltip && !hidden) {
                 description.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
                     @Override
                     public boolean isTooltipExpandable(Object o) {
@@ -411,7 +423,9 @@ public class MasteryPanel {
 
                     @Override
                     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                        effect.addTooltip(tooltip);
+                        for (MasteryEffect effect : effects) {
+                            effect.addTooltip(baseHullSpec, tooltip);
+                        }
                     }
                 }, TooltipMakerAPI.TooltipLocation.LEFT, false);
             }
@@ -568,7 +582,7 @@ public class MasteryPanel {
         }
 
         int credits = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
-        int mp = (int) MasteryUtils.getMasteryPoints(ship.getHullSpec());
+        int mp = (int) ShipMastery.getMasteryPoints(ship.getHullSpec());
 
         String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;
         String notEnoughMasteryPoints = Strings.MASTERY_POINTS_SHORTFALL_STR;

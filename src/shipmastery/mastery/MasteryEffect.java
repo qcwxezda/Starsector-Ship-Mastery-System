@@ -7,8 +7,10 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
+import java.util.Set;
+
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
- *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryEffect#isUniqueEffect()} is false, i.e. is stackable, and
+ *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#TAG_UNIQUE} is not set, i.e. is stackable, and
  *  {@code shipmastery_[ID]} otherwise. <br>
  *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
  *  unique and stackable elements.
@@ -34,7 +36,7 @@ public interface MasteryEffect {
     void applyEffectsAfterShipCreation(ShipAPI ship, String id);
 
     /** Will be displayed in the mastery panel. */
-    MasteryDescription getDescription();
+    MasteryDescription getDescription(ShipHullSpecAPI spec);
 
     /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip} */
     void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id);
@@ -47,53 +49,39 @@ public interface MasteryEffect {
      *    - Doesn't apply to randomizer mode, where all effects are available at all levels.<br>
      *    - Return {@code null} to prevent random selection even in randomizer mode.
      **/
-    Integer getSelectionTier();
-
-    /** Prevents the randomized selection process from picking this effect if it already exists in a different
-     *  tier. */
-    boolean isUniqueEffect();
+    Integer getSelectionTier(ShipHullSpecAPI spec);
 
     /** Same usage as {@link HullModEffect#advanceInCampaign} */
-    void advanceInCampaign(FleetMemberAPI member, float amount);
+    void advanceInCampaign(FleetMemberAPI member, float amount, String id);
 
     /** Same usage as {@link HullModEffect#advanceInCombat} */
-    void advanceInCombat(ShipAPI ship, float amount);
+    void advanceInCombat(ShipAPI ship, float amount, String id);
 
     /** Will be displayed in the mastery panel. */
-    void addPostDescriptionSection(TooltipMakerAPI tooltip);
+    void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
 
-    /** Adds a tooltip that shows upon hovering over the effect if {@link MasteryEffect#hasTooltip()}. */
-    void addTooltip(TooltipMakerAPI tooltip);
-    boolean hasTooltip();
-
-    /** If {@code false}, the description is only shown when the effect can be unlocked. */
-    boolean alwaysShowDescription();
+    /** Adds a tooltip that shows upon hovering over the effect.
+     *  {@link MasteryTags#TAG_HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
+    void addTooltip(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code 1} if no parameters are passed. */
     float getStrength();
+
     void setStrength(float strength);
 
     /** Changes will be applied when a ship with hull spec {@code spec} is selected inside the refit screen.
-     *  Any global changes made should be reverted in {@link MasteryEffect#unapplyEffectsOnEndRefit(ShipHullSpecAPI, String)}.
+     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}.
      *  Effects are applied in ascending order of mastery level. */
-    void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id);
+    void onBeginRefit(ShipHullSpecAPI spec, String id);
 
     /** Will be called when a ship with hull spec {@code spec} is no longer selected inside the refit screen.
      *  Effects are reverted in descending order of mastery level. */
-    void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id);
+    void onEndRefit(ShipHullSpecAPI spec, String id);
 
-    /** Whether the mastery effect should automatically be activated upon unlocking it. */
-    boolean isAutoActivateWhenUnlocked(ShipHullSpecAPI spec);
+    /** Called whenever the mastery is activated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    void onActivate(ShipHullSpecAPI spec, String id);
 
-    /** Whether this mastery effect can be toggled off.
-     *  Fine-grained deactivation protocols based on game state are not allowed or possible. To understand why,
-     *  consider the following adversarial example: <br>
-     *     - Use mastery to allow building in of safety overrides <br>
-     *     - Store ship somewhere or sell it <br>
-     *     - Deactivate the mastery effect <br>
-     *     - Retrieve the ship or buy it back <br>
-     *  This shows why we cannot simply detect if a ship in the player's fleet has safety overrides built in and
-     *  only allow deactivation if no such ship exists! */
-    boolean canBeDeactivated();
+    /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    void onDeactivate(ShipHullSpecAPI spec, String id);
 }

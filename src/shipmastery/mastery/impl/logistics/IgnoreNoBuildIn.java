@@ -18,28 +18,18 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
         return MasteryDescription.initDefaultHighlight(Strings.IGNORE_NO_BUILD_IN).params(makeString());
     }
 
     @Override
-    public void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.addAll(hullmodIds);
     }
 
     @Override
-    public boolean isUniqueEffect() {
-        return true;
-    }
-
-    @Override
-    public void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipHullSpecAPI spec, String id) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.removeAll(hullmodIds);
-    }
-
-    @Override
-    public boolean canBeDeactivated() {
-        return false;
     }
 
     String makeString() {

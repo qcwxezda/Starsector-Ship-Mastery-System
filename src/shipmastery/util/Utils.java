@@ -4,13 +4,38 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.util.Misc;
+import shipmastery.mastery.MasteryDescription;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public abstract class Utils {
 
     public static Map<String, String> hullIdToBaseHullIdMap = new HashMap<>();
+
+    public static class ListMapMap<T, U extends Comparable<U>, V> extends HashMap<T, SortedMap<U, List<V>>> {
+        public List<V> get(T key1, U key2) {
+            Map<U, List<V>> inner = get(key1);
+            return inner == null ? null : inner.get(key2);
+        }
+
+        public void add(T key1, U key2, V value) {
+            SortedMap<U, List<V>> inner = get(key1);
+            if (inner == null) {
+                inner = new TreeMap<>();
+                put(key1, inner);
+            }
+            List<V> values = inner.get(key2);
+            if (values == null) {
+                values = new ArrayList<>();
+                inner.put(key2, values);
+            }
+            values.add(value);
+        }
+    }
+
     public static void populateHullIdMap() {
         hullIdToBaseHullIdMap.clear();
         Map<String, String> hullIdToVariant = new HashMap<>();
@@ -111,6 +136,10 @@ public abstract class Utils {
 
     /** For modules, returns the hull id of the root ship. */
     public static String getBaseHullId(ShipHullSpecAPI spec) {
+        if (hullIdToBaseHullIdMap.containsValue(spec.getHullId())) {
+            return spec.getHullId();
+        }
+
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
             dParentHull = spec;
@@ -121,6 +150,16 @@ public abstract class Utils {
 
         String id = dParentHull != null ? dParentHull.getHullId() : spec.getHullId();
         return hullIdToBaseHullIdMap.containsKey(id) ? hullIdToBaseHullIdMap.get(id) : id;
+    }
+
+    public static String absValueAsPercent(float num) {
+        return (int) (Math.abs(num * 100f)) + "%";
+    }
+
+    public static MasteryDescription makeGenericNegatableDescription(float value, String posString, String negString, boolean showAsPercent) {
+        return MasteryDescription.init(value > 0f ? posString: negString)
+                                 .params(showAsPercent ? Utils.absValueAsPercent(value) : Math.abs(value))
+                                 .colors(value > 0f ? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
     }
 
     public static float clamp(float x, float min, float max) {

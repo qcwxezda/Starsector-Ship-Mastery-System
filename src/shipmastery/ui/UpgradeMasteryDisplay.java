@@ -3,7 +3,8 @@ package shipmastery.ui;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.ui.listeners.UpgradeButtonPressed;
+import shipmastery.ShipMastery;
+import shipmastery.ui.triggers.UpgradeButtonPressed;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
@@ -31,7 +32,7 @@ public class UpgradeMasteryDisplay implements CustomUIElement {
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 150f, 25f, 5f);
         ReflectionUtils.setButtonListener(upgradeButton, new UpgradeButtonPressed(panel, buttonText, spec));
-        upgradeButton.setEnabled(MasteryUtils.getMasteryPoints(spec) >= cost);
+        upgradeButton.setEnabled(ShipMastery.getMasteryPoints(spec) >= cost);
         upgradeButton.getPosition().setXAlignOffset(20f);
     }
 }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -14,25 +15,23 @@ import shipmastery.util.Strings;
 
 public class AllowOverCapacitySMods extends BaseMasteryEffect {
     static float DP_PENALTY_PER_SMOD = 0.05f;
+
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
         int count = getCount();
-        return MasteryDescription.initDefaultHighlight(count == 1 ? Strings.ALLOW_OVER_CAPACITY_SMOD_SINGLE : Strings.ALLOW_OVER_CAPACITY_SMOD_PLURAL).params(count);
+        return MasteryDescription.initDefaultHighlight(
+                                         count == 1 ? Strings.ALLOW_OVER_CAPACITY_SMOD_SINGLE : Strings.ALLOW_OVER_CAPACITY_SMOD_PLURAL)
+                                 .params(count);
     }
 
     @Override
-    public void applyEffectsOnBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getCount());
     }
 
     @Override
-    public void unapplyEffectsOnEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipHullSpecAPI spec, String id) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.unmodify(id);
-    }
-
-    @Override
-    public boolean canBeDeactivated() {
-        return false;
     }
 
     @Override
@@ -42,16 +41,19 @@ public class AllowOverCapacitySMods extends BaseMasteryEffect {
         int overMax = stats.getVariant().getSMods().size() - SModUtils.getMaxSMods(stats);
         if (overMax > 0) {
             // Should only be applied once per ship, not once per mastery effect
-            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(MasteryUtils.makeSharedId(this), 100f * DP_PENALTY_PER_SMOD * overMax);
+            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyFlat(
+                    MasteryUtils.makeSharedId(this),
+                    (int) Math.ceil(stats.getFleetMember().getUnmodifiedDeploymentPointsCost() * DP_PENALTY_PER_SMOD *
+                                    overMax));
         }
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
-        tooltip.addPara(String.format(Strings.ALLOW_OVER_CAPACITY_SMOD_POST, (int) (100f * DP_PENALTY_PER_SMOD)), 5f);
+    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.ALLOW_OVER_CAPACITY_SMOD_POST, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
     }
 
-    int getCount() {
-        return Math.max(1, (int) (2f * getStrength()));
+    public int getCount() {
+        return 1 + (int) ((getStrength() - 1) * 0.5f);
     }
 }

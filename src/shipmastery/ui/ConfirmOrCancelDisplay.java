@@ -4,7 +4,7 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.ui.listeners.ActionListener;
+import shipmastery.ui.triggers.ActionListener;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 

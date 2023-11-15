@@ -44,10 +44,11 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats, final String id) {
         if (stats == null || stats.getVariant() == null) return;
-        applyAllMasteryEffects(stats.getVariant().getHullSpec(), new MasteryEffectAction() {
+        ShipHullSpecAPI spec = stats.getVariant().getHullSpec();
+        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
-            public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsBeforeShipCreation(hullSize, stats, MasteryUtils.makeEffectId(effect, level));
+            public void perform(MasteryEffect effect, String id) {
+                effect.applyEffectsBeforeShipCreation(hullSize, stats, id);
             }
         });
     }
@@ -55,10 +56,11 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsAfterShipCreation(final ShipAPI ship, final String id) {
         if (ship == null) return;
-        applyAllMasteryEffects(ship.getHullSpec(), new MasteryEffectAction() {
+        ShipHullSpecAPI spec = ship.getHullSpec();
+        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
-            public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsAfterShipCreation(ship, MasteryUtils.makeEffectId(effect, level));
+            public void perform(MasteryEffect effect, String id) {
+                effect.applyEffectsAfterShipCreation(ship, id);
             }
         });
     }
@@ -66,10 +68,11 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsToFighterSpawnedByShip(final ShipAPI fighter, final ShipAPI ship, final String id) {
         if (ship == null) return;
-        applyAllMasteryEffects(ship.getHullSpec(), new MasteryEffectAction() {
+        ShipHullSpecAPI spec = ship.getHullSpec();
+        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
-            public void perform(MasteryEffect effect, int level) {
-                effect.applyEffectsToFighterSpawnedByShip(fighter, ship, MasteryUtils.makeEffectId(effect, level));
+            public void perform(MasteryEffect effect, String id) {
+                effect.applyEffectsToFighterSpawnedByShip(fighter, ship, id);
             }
         });
     }
@@ -77,10 +80,11 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void advanceInCampaign(final FleetMemberAPI member, final float amount) {
         if (member == null) return;
-        applyAllMasteryEffects(member.getHullSpec(), new MasteryEffectAction() {
+        ShipHullSpecAPI spec = member.getHullSpec();
+        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
-            public void perform(MasteryEffect effect, int level) {
-                effect.advanceInCampaign(member, amount);
+            public void perform(MasteryEffect effect, String id) {
+                effect.advanceInCampaign(member, amount, id);
             }
         });
     }
@@ -88,22 +92,12 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void advanceInCombat(final ShipAPI ship, final float amount) {
         if (ship == null) return;
-        applyAllMasteryEffects(ship.getHullSpec(), new MasteryEffectAction() {
+        ShipHullSpecAPI spec = ship.getHullSpec();
+        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
-            public void perform(MasteryEffect effect, int level) {
-                effect.advanceInCombat(ship, amount);
+            public void perform(MasteryEffect effect, String id) {
+                effect.advanceInCombat(ship, amount, id);
             }
         });
-    }
-
-    void applyAllMasteryEffects(ShipHullSpecAPI spec, MasteryEffectAction action) {
-        for (int i : MasteryUtils.getActiveMasteries(spec)) {
-            MasteryEffect effect = MasteryUtils.getMasteryEffect(spec, i);
-            action.perform(effect, i);
-        }
-    }
-
-    interface MasteryEffectAction {
-        void perform(MasteryEffect effect, int level);
     }
 }

@@ -7,7 +7,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Pair;
-import shipmastery.ui.listeners.ActionListener;
+import org.lwjgl.input.Keyboard;
+import shipmastery.ui.triggers.ActionListener;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -47,6 +48,7 @@ public abstract class ReflectionUtils {
         if (o == null) return null;
         Field field = o.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
+
         return field.get(o);
     }
 
@@ -165,7 +167,7 @@ public abstract class ReflectionUtils {
             show.invoke(confirmDialog, 0.25f, 0.25f);
             LabelAPI label = (LabelAPI) invokeMethod(confirmDialog, "getLabel");
             ButtonAPI dismissButton = (ButtonAPI) invokeMethod(confirmDialog, "getButton", 0);
-            dismissButton.setShortcut(34, true);
+            dismissButton.setShortcut(Keyboard.KEY_G, true);
             return new GenericDialogData(
                     label,
                     (UIPanelAPI) invokeMethod(confirmDialog, "getInnerPanel"),

@@ -28,7 +28,7 @@ public abstract class SModUtils {
         ShipHullSpecAPI hullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(ship.getHullSpec()));
         float dp = hullSpec == null ? 0f : Global.getSettings().getHullSpec(Utils.getBaseHullId(ship.getHullSpec())).getSuppliesToRecover();
 
-        int cost = 1 + (int) (dp / 20f)/*Utils.hullSizeToInt(ship.getHullSize())*/;
+        int cost = 1 + (int) (dp / 20f);
 
         // Built-in mods always have static cost
         if (isHullmodBuiltIn(spec, ship.getVariant())) {
@@ -49,7 +49,7 @@ public abstract class SModUtils {
         cost -= TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.getModifiedInt();
         cost = Math.max(1, cost);
 
-        return cost;
+        return Math.min(cost, MP_HARD_CAP);
     }
 
     public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {

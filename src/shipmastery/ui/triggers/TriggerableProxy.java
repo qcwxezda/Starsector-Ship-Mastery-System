@@ -1,10 +1,10 @@
-package shipmastery.ui.listeners;
+package shipmastery.ui.triggers;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 
-public abstract class ProxyTrigger implements Triggerable {
+public abstract class TriggerableProxy implements Triggerable {
 
     /** [proxy] implements an obfuscated interface
      *  in com.fs.starfarer.ui. Need a proxy in order to avoid using the interface name, which
@@ -15,7 +15,7 @@ public abstract class ProxyTrigger implements Triggerable {
      *  Said interface should have a single method named [methodName].
      *  The method should have return type [void].
      *  When the proxy's method gets called, re-routes the method call to [this.trigger]. */
-    public ProxyTrigger(Class<?> interfc, final String methodName) {
+    public TriggerableProxy(Class<?> interfc, final String methodName) {
         proxy = java.lang.reflect.Proxy.newProxyInstance(
                 interfc.getClassLoader(),
                 new Class<?>[] {interfc},
