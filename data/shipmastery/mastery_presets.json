@@ -11,17 +11,17 @@
   ],
 
   "default": [
-    ["IncreaseBurnLevel 0.1", "IncreaseBurnLevel 1.5", "IncreaseBurnLevel 99"],
-    ["IncreaseBurnLevel -0.1", "IncreaseBurnLevel -3", "IncreaseBurnLevel -999"],
-    ["IncreaseCargoCapacity 0.1", "IncreaseCargoCapacity 1.5", "IncreaseCargoCapacity 99"],
-    ["IncreaseCargoCapacity -0.1", "IncreaseCargoCapacity -3", "IncreaseCargoCapacity -999"],
-    ["IncreaseFuelCapacity 0.1", "IncreaseFuelCapacity 1.5", "IncreaseFuelCapacity 99"],
-    ["IncreaseFuelCapacity -0.1", "IncreaseFuelCapacity -3", "IncreaseFuelCapacity -999"],
-    ["IncreaseMaxCrew 0.1", "IncreaseMaxCrew 1.5", "IncreaseMaxCrew 99"],
-    ["IncreaseMaxCrew -0.1", "IncreaseMaxCrew -3", "IncreaseMaxCrew -999"],
-    ["ReduceFuelUsage 0.1", "ReduceFuelUsage 1.5", "ReduceFuelUsage 99"],
-    ["ReduceFuelUsage -0.1", "ReduceFuelUsage -3", "ReduceFuelUsage -999"],
-    ["ReduceMaintenance 0.1", "ReduceMaintenance 1.5", "ReduceMaintenance 99"],
-    ["ReduceMaintenance -0.1", "ReduceMaintenance -3", "ReduceMaintenance -999"]
+    ["ModifyStatsMult 1 CRPerDeployment 1"],
+    ["ModifyStatsMult 1 CRPerDeployment -1"],
+    ["ModifyStatsMult 1 CRRecoveryRate 1"],
+    ["ModifyStatsMult 1 CRRecoveryRate -1"],
+    ["ModifyStatsMult 1 CrewLoss 1"],
+    ["ModifyStatsMult 1 CrewLoss -1"],
+    ["ModifyStatsMult 1 SensorProfile 1"],
+    ["ModifyStatsMult 1 SensorProfile -1"],
+    ["ModifyStatsMult 1 SensorStrength 1"],
+    ["ModifyStatsMult 1 SensorStrength -1"],
+    ["ModifyStatsFlat 1 CRMax 0.1"],
+    ["ModifyStatsFlat 1 CRMax -0.1"]
   ]
 }

@@ -63,23 +63,23 @@ public abstract class MasteryUtils {
     }
 
     public static boolean isUnique(MasteryEffect effect) {
-        return ShipMastery.hasTag(effect, MasteryTags.TAG_UNIQUE);
+        return effect.hasTag(MasteryTags.TAG_UNIQUE);
     }
 
     public static boolean hasTooltip(MasteryEffect effect) {
-        return ShipMastery.hasTag(effect, MasteryTags.TAG_HAS_TOOLTIP);
+        return effect.hasTag(MasteryTags.TAG_HAS_TOOLTIP);
     }
 
     public static boolean canDisable(MasteryEffect effect) {
-        return !ShipMastery.hasTag(effect, MasteryTags.TAG_NO_DISABLE);
+        return !effect.hasTag(MasteryTags.TAG_NO_DISABLE);
     }
 
     public static boolean isAutoActivate(MasteryEffect effect) {
-        return !ShipMastery.hasTag(effect, MasteryTags.TAG_NO_AUTO_ACTIVATE);
+        return !effect.hasTag(MasteryTags.TAG_NO_AUTO_ACTIVATE);
     }
 
     public static boolean alwaysShowDescription(MasteryEffect effect) {
-        return ShipMastery.hasTag(effect, MasteryTags.TAG_NO_HIDE_DESCRIPTION);
+        return effect.hasTag(MasteryTags.TAG_NO_HIDE_DESCRIPTION);
     }
 
     public static void applyAllActiveMasteryEffects(ShipHullSpecAPI spec, MasteryAction action) {

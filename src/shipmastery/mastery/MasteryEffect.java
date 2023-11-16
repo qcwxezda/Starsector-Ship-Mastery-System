@@ -44,13 +44,6 @@ public interface MasteryEffect {
     /** Used to check mastery eligibility when randomly selected. */
     boolean isApplicableToHull(ShipHullSpecAPI spec);
 
-    /** Controls how the random selection process is allowed to pick this mastery effect:<br>
-     *    - Can only be selected for mastery tiers that are greater than or equal to this method's return value<br>
-     *    - Doesn't apply to randomizer mode, where all effects are available at all levels.<br>
-     *    - Return {@code null} to prevent random selection even in randomizer mode.
-     **/
-    Integer getSelectionTier(ShipHullSpecAPI spec);
-
     /** Same usage as {@link HullModEffect#advanceInCampaign} */
     void advanceInCampaign(FleetMemberAPI member, float amount, String id);
 
@@ -71,7 +64,8 @@ public interface MasteryEffect {
     void setStrength(float strength);
 
     /** Changes will be applied when a ship with hull spec {@code spec} is selected inside the refit screen.
-     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}.
+     *  Any global changes made should be reverted, either in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}
+     *  or inside a {@link shipmastery.campaign.listeners.RefitScreenShipChangedListener}.
      *  Effects are applied in ascending order of mastery level. */
     void onBeginRefit(ShipHullSpecAPI spec, String id);
 
@@ -84,4 +78,20 @@ public interface MasteryEffect {
 
     /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
     void onDeactivate(ShipHullSpecAPI spec, String id);
+
+    Set<String> getTags();
+
+    void addTags(String... tags);
+
+    void removeTags(String... tags);
+
+    boolean hasTag(String tag);
+
+    int getTier();
+
+    void setTier(int tier);
+
+    float getWeight();
+
+    void setWeight(float weight);
 }

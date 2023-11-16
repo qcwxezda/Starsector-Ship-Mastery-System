@@ -156,6 +156,26 @@ public abstract class Utils {
         return (int) (Math.abs(num * 100f)) + "%";
     }
 
+    public static String joinStringList(List<String> strings) {
+        switch (strings.size()) {
+            case 0: return "";
+            case 1: return strings.get(0);
+            case 2: return strings.get(0) + " " + Strings.AND_STR + strings.get(1);
+            default:
+                StringBuilder join = new StringBuilder();
+                for (int i = 0; i < strings.size(); i++) {
+                    join.append(strings.get(i));
+                    if (i < strings.size() - 1) {
+                        join.append(", ");
+                    }
+                    if (i == strings.size() - 2) {
+                        join.append(Strings.AND_STR);
+                    }
+                }
+                return join.toString();
+        }
+    }
+
     public static MasteryDescription makeGenericNegatableDescription(float value, String posString, String negString, boolean showAsPercent) {
         return MasteryDescription.init(value > 0f ? posString: negString)
                                  .params(showAsPercent ? Utils.absValueAsPercent(value) : Math.abs(value))

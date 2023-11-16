@@ -6,6 +6,7 @@ import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.util.*;
 
@@ -19,7 +20,9 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
 
     @Override
     public MasteryDescription getDescription(ShipHullSpecAPI spec) {
-        return MasteryDescription.initDefaultHighlight(Strings.IGNORE_NO_BUILD_IN).params(makeString());
+        Object[] params = new Object[hullmodIds.size()];
+        String str = makeString(params);
+        return MasteryDescription.initDefaultHighlight(Strings.IGNORE_NO_BUILD_IN + str).params(params);
     }
 
     @Override
@@ -32,14 +35,15 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.removeAll(hullmodIds);
     }
 
-    String makeString() {
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> itr = hullmodIds.iterator();
-        sb.append(Global.getSettings().getHullModSpec(itr.next()).getDisplayName());
-
-        while (itr.hasNext()) {
-            sb.append(", ").append(Global.getSettings().getHullModSpec(itr.next()).getDisplayName());
+    String makeString(Object[] params) {
+        List<String> names = new ArrayList<>();
+        int i = 0;
+        for (String id : hullmodIds) {
+            String name = Global.getSettings().getHullModSpec(id).getDisplayName();
+            names.add(name);
+            params[i] = name;
+            i++;
         }
-        return sb.toString();
+        return Utils.joinStringList(names) + ".";
     }
 }

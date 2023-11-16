@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
@@ -43,10 +44,9 @@ public abstract class ShipMastery {
     private static final Utils.ListMapMap<String, Integer, String> presetsMap = new Utils.ListMapMap<>();
     /** Hull id -> Mastery level -> Mastery effects */
     private static final Utils.ListMapMap<String, Integer, MasteryEffect> masteryMap = new Utils.ListMapMap<>();
-    /** Effect id -> set of tags */
-    private static final Map<String, Set<String>> tagMap = new HashMap<>();
-    /** Effect id -> tier */
-    private static final Map<String, Integer> tierMap = new HashMap<>();
+    /** Ship stat id -> singleton object */
+    private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
+
 
     public static int getMaxMastery(ShipHullSpecAPI spec) {
         String id = Utils.getBaseHullId(spec);
@@ -165,17 +165,38 @@ public abstract class ShipMastery {
 
         Utils.populateHullIdMap();
 
+        Map<String, String> tagMap = new HashMap<>();
+        Map<String, Integer> tierMap = new HashMap<>();
+        Map<String, Float> weightMap = new HashMap<>();
+
         for (int i = 0; i < masteryList.length(); i++) {
             JSONObject item = masteryList.getJSONObject(i);
             String id = item.getString("id");
             String className = item.getString("script");
             String tags = item.getString("tags");
             int tier = item.optInt("tier", 1);
+            float weight = (float) item.optDouble("weight", 1f);
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             effectToIdMap.put(cls, id);
             idToEffectMap.put(id, cls);
-            tagMap.put(id, new HashSet<>(Arrays.asList(tags.split("\\s+"))));
+            tagMap.put(id, tags);
             tierMap.put(id, tier);
+            weightMap.put(id, weight);
+        }
+
+        JSONArray statsList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/stats_list.csv");
+        for (int i = 0; i < statsList.length(); i++) {
+            JSONObject item = statsList.getJSONObject(i);
+            String id = item.getString("id");
+            String className = item.getString("location");
+            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
+            ShipStat stat = (ShipStat) cls.newInstance();
+            stat.name = item.getString("name");
+            stat.tierOverride = item.optInt("tier_override", 1);
+            stat.weight = (float) item.optDouble("weight", 1f);
+            stat.defaultAmount = (float) item.optDouble("default_amount", 1f);
+            stat.tags.addAll(Arrays.asList(item.getString("tags").trim().split("\\s+")));
+            statSingletonMap.put(id, stat);
         }
 
         JSONObject masteryPresets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
@@ -208,8 +229,12 @@ public abstract class ShipMastery {
                 List<String> strings = entry.getValue();
                 for (String str : strings) {
                     String[] params = str.trim().split("\\s+");
-                    Class<?> cls = idToEffectMap.get(params[0]);
+                    String id = params[0];
+                    Class<?> cls = idToEffectMap.get(id);
                     MasteryEffect effect = (MasteryEffect) cls.newInstance();
+                    effect.setTier(tierMap.get(id));
+                    effect.setWeight(weightMap.get(id));
+                    effect.addTags(tagMap.get(id).trim().split("\\s+"));
                     effect.init(Arrays.copyOfRange(params, 1, params.length));
                     masteryMap.add(hullId, level, effect);
                 }
@@ -236,15 +261,5 @@ public abstract class ShipMastery {
         return effectToIdMap.get(effectClass);
     }
 
-    /** All instances of a mastery effect (with the same class) share the same tags. */
-    public static boolean hasTag(MasteryEffect effect, String tag) {
-        Set<String> tags = getTags(effect);
-        return (tags != null && tags.contains(tag));
-    }
-
-    /** Returns a modifiable reference */
-    public static Set<String> getTags(MasteryEffect effect) {
-        return tagMap.get(getId(effect.getClass()));
-    }
-
+    public static ShipStat getStatParams(String id) { return statSingletonMap.get(id); }
 }

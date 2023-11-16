@@ -1,0 +1,13 @@
+id,name,tier_override,weight,default_amount,tags,location
+MaxBurnLevel,maximum burn level,4,2,0.25,modify_flat require_integer,shipmastery.stats.logistics.MaxBurnLevel
+CargoCapacity,cargo capacity,,,0.1,,shipmastery.stats.logistics.CargoCapacity
+FuelCapacity,fuel capacity,,,0.1,,shipmastery.stats.logistics.FuelCapacity
+CrewCapacity,crew capacity,,,0.1,,shipmastery.stats.logistics.CrewCapacity
+FuelUsage,fuel usage,,,-0.1,,shipmastery.stats.logistics.FuelUsage
+SupplyUsage,maintenance,,,-0.1,,shipmastery.stats.logistics.SupplyUsage
+CRPerDeployment,combat readiness lost per deployment,,,-0.1,,shipmastery.stats.logistics.CRPerDeployment
+CRRecoveryRate,combat readiness recovery rate,,,0.1,,shipmastery.stats.logistics.CRRecoveryRate
+CrewLoss,crew loss,,,-0.1,,shipmastery.stats.logistics.CrewLoss
+SensorProfile,sensor profile,,,-0.1,,shipmastery.stats.logistics.SensorProfile
+SensorStrength,sensor strength,,,0.1,,shipmastery.stats.logistics.SensorStrength
+CRMax,maximum combat readiness,6,3,0.05,modify_flat display_as_percent,shipmastery.stats.logistics.CRMax

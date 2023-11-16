@@ -16,6 +16,7 @@ import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.listeners.RefitScreenShipChangedListener;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.triggers.ActionListener;
@@ -39,8 +40,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     // Keep track of the current ship's hull spec and active mastery set in the refit panel
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
     HullSpecAndMasteries currentHullSpecAndMasteries = null;
-
-    static float savedRestoreCostMult = 1f;
 
     static class HullSpecAndMasteries {
         String specId;
@@ -357,7 +356,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
-        onEnterRefitScreen();
         if (CoreUITabId.REFIT.equals(id)) {
             DeferredActionPlugin.performLater(new Action() {
                 @Override
@@ -383,12 +381,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }, epsilonTime);
     }
 
-    /** Not theoretically necessary since masteries' onEndRefit should perfectly undo onBeginRefit, but
-     *  we need do this to avoid possible floating point rounding errors. */
-    void onEnterRefitScreen() {
-        savedRestoreCostMult = Global.getSettings().getFloat("baseRestoreCostMult");
-    }
-
     void checkIfRefitShipChanged() {
         if (!insideRefitPanel) return;
         coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
@@ -404,7 +396,16 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     public void onRefitScreenShipChanged(HullSpecAndMasteries oldSpec, HullSpecAndMasteries newSpec) {
-        if (oldSpec != null && oldSpec.specId != null) {
+        String oldSpecId = oldSpec == null ? null : oldSpec.specId;
+        String newSpecId = newSpec == null ? null : newSpec.specId;
+
+        List<RefitScreenShipChangedListener> listeners = Global.getSector().getListenerManager().getListeners(
+                RefitScreenShipChangedListener.class);
+        for (RefitScreenShipChangedListener listener : listeners) {
+            listener.onRefitScreenBeforeMasteriesChanged(oldSpecId, newSpecId);
+        }
+
+        if (oldSpecId != null) {
             final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(oldSpec.specId);
             MasteryUtils.applyAllMasteryEffects(
                 spec, oldSpec.activeMasteries, true, new MasteryUtils.MasteryAction() {
@@ -415,11 +416,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                 });
         }
 
-        /* Not theoretically necessary since masteries' onEndRefit should perfectly undo onBeginRefit, but
-           we need do this to avoid possible floating point rounding errors. */
-        Global.getSettings().setFloat("baseRestoreCostMult", savedRestoreCostMult);
-
-        if (newSpec != null && newSpec.specId != null) {
+        if (newSpecId != null) {
             final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(newSpec.specId);
             MasteryUtils.applyAllMasteryEffects(
                 spec, newSpec.activeMasteries, false, new MasteryUtils.MasteryAction() {
@@ -429,6 +426,10 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     }
                 });
 
+        }
+
+        for (RefitScreenShipChangedListener listener : listeners) {
+            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
         }
     }
 }

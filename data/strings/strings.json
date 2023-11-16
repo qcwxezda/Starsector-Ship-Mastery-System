@@ -47,22 +47,16 @@
     "allowOverCapacitySModsSingle": "Grants the ability to bypass the standard S-mod limit, enabling installation of an additional %s S-mod",
     "allowOverCapacitySModsPlural": "Grants the ability to bypass the standard S-mod limit, enabling installation of an additional %s S-mods.",
     "allowOverCapacitySModsPost": "DP is increased by %s for each installed S-mod past the normal limit, rounded up.",
-    "ignoreNoBuildIn": "Enables building in of %s.",
-    "increaseBurnLevel": "Increases maximum burn by %s.",
-    "increaseCargoCapacity": "Increases cargo capacity by %s.",
-    "increaseCargoCapacityNeg": "Decreases cargo capacity by %s.",
-    "increaseFuelCapacity": "Increases fuel capacity by %s.",
-    "increaseFuelCapacityNeg": "Decreases fuel capacity by %s.",
-    "increaseMaxCrew": "Increases maximum crew count by %s.",
-    "increaseMaxCrewNeg": "Decreases maximum crew count by %s.",
-    "reduceFuelUsage": "Reduces fuel usage in hyperspace by %s.",
-    "reduceFuelUsageNeg": "Increases fuel usage in hyperspace by %s.",
-    "reduceMaintenance": "Reduces supply consumption by %s.",
-    "reduceMaintenanceNeg": "Increases supply consumption by %s."
+    "ignoreNoBuildIn": "Enables building in of ",
+    "modifyStatIncrease": "Increases ",
+    "modifyStatDecrease": "Decreases ",
+    "modifyStatListItem": "%s by %s"
   },
 
   "sms_misc": {
     "effectCantBeDeactivated": "Effect can't be deactivated",
-    "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active"
+    "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
+    "shipMasteryEffect": "Ship mastery effect",
+    "and": "and "
   }
 }
