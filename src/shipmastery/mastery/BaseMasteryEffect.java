@@ -16,6 +16,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private final Set<String> tags = new HashSet<>();
     private int tier = 1;
     private float weight = 1f;
+    private int priority = 0;
 
 
     @Override
@@ -54,12 +55,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public boolean isApplicableToHull(ShipHullSpecAPI spec) {
         return true;
     }
-
-    @Override
-    public void advanceInCampaign(FleetMemberAPI member, float amount, String id) {}
-
-    @Override
-    public void advanceInCombat(ShipAPI ship, float amount, String id) {}
 
     @Override
     public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
@@ -102,6 +97,16 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public final float getWeight() {
         return weight;
+    }
+
+    @Override
+    public final int getPriority() {
+        return priority;
+    }
+
+    @Override
+    public final void setPriority(int priority) {
+        this.priority = priority;
     }
 
     @Override

@@ -26,10 +26,13 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             return;
         }
         // Make sure every ship in the player's fleet has this hullmod installed
+        // The mastery hullmod should be the last hullmod in every ship's hullmod list
+        // in order to accommodate effects that check for other hullmods
+        // Therefore, we remove and reinsert the hullmod each time the fleet syncs
+        // (hullmods are applied in insertion order, backing data structure is LinkedHashSet)
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            if (!fm.getVariant().hasHullMod("sms_masteryHandler")) {
-                addHandlerMod(fm);
-            }
+            fm.getVariant().removePermaMod("sms_masteryHandler");
+            addHandlerMod(fm);
         }
     }
 
@@ -73,30 +76,6 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             @Override
             public void perform(MasteryEffect effect, String id) {
                 effect.applyEffectsToFighterSpawnedByShip(fighter, ship, id);
-            }
-        });
-    }
-
-    @Override
-    public void advanceInCampaign(final FleetMemberAPI member, final float amount) {
-        if (member == null) return;
-        ShipHullSpecAPI spec = member.getHullSpec();
-        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
-            @Override
-            public void perform(MasteryEffect effect, String id) {
-                effect.advanceInCampaign(member, amount, id);
-            }
-        });
-    }
-
-    @Override
-    public void advanceInCombat(final ShipAPI ship, final float amount) {
-        if (ship == null) return;
-        ShipHullSpecAPI spec = ship.getHullSpec();
-        MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
-            @Override
-            public void perform(MasteryEffect effect, String id) {
-                effect.advanceInCombat(ship, amount, id);
             }
         });
     }

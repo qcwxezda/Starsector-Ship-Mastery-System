@@ -104,10 +104,6 @@ public abstract class Utils {
         }
     }
 
-    public static Color darkenColor(Color color) {
-        return new Color(color.getRed() / 3, color.getGreen() / 3, color.getBlue() / 3);
-    }
-
     public static Object[] interleaveArrays(Object[] arr1, Object[] arr2) {
         Object[] arr3 = new Object[arr1.length + arr2.length];
         int i = 0, j = 0;
@@ -181,14 +177,6 @@ public abstract class Utils {
         return MasteryDescription.init(value > 0f ? posString: negString)
                                  .params(showAsPercent ? Utils.absValueAsPercent(value) : Math.abs(value))
                                  .colors(value > 0f ? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
-    }
-
-    public static float clamp(float x, float min, float max) {
-        return Math.min(max, Math.max(min, x));
-    }
-
-    public static int clamp(int x, int min, int max) {
-        return Math.min(max, Math.max(min, x));
     }
 
     public static boolean hasShield(ShipHullSpecAPI spec) {

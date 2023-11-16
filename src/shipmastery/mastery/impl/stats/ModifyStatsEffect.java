@@ -22,6 +22,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     public void init(String... args) {
         super.init(args);
 
+        float weight = 0f;
         for (int i = 1; i < args.length; i++) {
             String id = args[i];
             ShipStat stat = ShipMastery.getStatParams(id);
@@ -29,7 +30,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
                 throw new RuntimeException("Unknown stat id: " + id);
             }
             setTier(Math.max(getTier(), stat.tierOverride));
-            setWeight(getWeight() + stat.weight);
+            weight += stat.weight;
             float amount;
             try {
                 amount = Float.parseFloat(args[i + 1]);
@@ -40,6 +41,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             Float existing = amounts.get(stat);
             amounts.put(stat, existing == null ? amount : existing + amount);
         }
+        setWeight(getWeight() * weight);
     }
 
     @Override

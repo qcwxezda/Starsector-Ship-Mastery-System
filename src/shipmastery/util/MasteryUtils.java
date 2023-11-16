@@ -1,6 +1,7 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
@@ -28,7 +29,7 @@ public abstract class MasteryUtils {
 
     /**
      * If the set of masteries to be applied contains duplicate unique masteries, only one is applied.
-     * Masteries are applied in level order, and sequentially within each mastery level.
+     * Masteries are applied in priority order, then level order, and finally, sequentially within each mastery level.
      * Note: the unique mastery used is the one with the highest mastery level (and, if part of the same level, the highest index
      *       in that level). This is to ensure that between activate and deactivate or beginRefit and endRefit calls,
      *       the selected unique mastery doesn't change. For example, if we were to pick the strongest unique effect,
@@ -36,29 +37,54 @@ public abstract class MasteryUtils {
      *       effect, we could have a scenario in which endRefit doesn't exactly undo beginRefit.
      * */
     public static void applyAllMasteryEffects(ShipHullSpecAPI spec, Set<Integer> levelsToApply, boolean reverseOrder, MasteryAction action) {
+        if (levelsToApply.isEmpty()) return;
         // Effect id -> the actual effect to be executed
         Map<Class<?>, MasteryEffect> uniqueEffects = new HashMap<>();
-
         // Sort the levels set so that lower mastery levels are applied first
         NavigableSet<Integer> sortedLevels = new TreeSet<>(levelsToApply);
+        PriorityQueue<MasteryEffectData> priorityOrder = new PriorityQueue<>(10, reverseOrder ? Collections.reverseOrder() : null);
 
         for (int i : sortedLevels) {
-            for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, i)) {
+            List<MasteryEffect> masteryEffects = ShipMastery.getMasteryEffects(spec, i);
+            for (int j = 0; j < masteryEffects.size(); j++) {
+                MasteryEffect effect = masteryEffects.get(j);
                 if (isUnique(effect)) {
                     uniqueEffects.put(effect.getClass(), effect);
                 }
+                priorityOrder.add(new MasteryEffectData(effect, i, j));
             }
         }
 
-        for (int i : reverseOrder ? sortedLevels.descendingSet() : sortedLevels) {
-            List<MasteryEffect> effects = ShipMastery.getMasteryEffects(spec, i);
-            for (int j = 0, k = effects.size() - 1; j < effects.size(); j++, k--) {
-                int index = reverseOrder ? k : j;
-                MasteryEffect effect = effects.get(index);
-                if (!isUnique(effect)  || effect.equals(uniqueEffects.get(effect.getClass()))) {
-                    action.perform(effect, makeEffectId(effect, i, index));
-                }
+        System.out.println("Performing: ");
+        while (!priorityOrder.isEmpty()) {
+            MasteryEffectData data = priorityOrder.poll();
+            MasteryEffect effect = data.effect;
+            if (!isUnique(effect)  || effect.equals(uniqueEffects.get(effect.getClass()))) {
+                action.perform(effect, makeEffectId(effect, data.level, data.index));
+                System.out.print("(" + data.level + ", " + data.index + ")  ");
             }
+        }
+        System.out.println();
+    }
+
+    private static class MasteryEffectData implements Comparable<MasteryEffectData>  {
+        MasteryEffect effect;
+        int level;
+        int index;
+
+        private MasteryEffectData(MasteryEffect effect, int level, int index) {
+            this.effect = effect;
+            this.level = level;
+            this.index = index;
+        }
+
+        @Override
+        public int compareTo(@NotNull MasteryUtils.MasteryEffectData o) {
+            int p = Integer.compare(effect.getPriority(), o.effect.getPriority());
+            if (p != 0) return p;
+            int q = Integer.compare(level, o.level);
+            if (q != 0) return q;
+            return Integer.compare(index, o.index);
         }
     }
 

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 import java.util.Set;
@@ -13,7 +12,8 @@ import java.util.Set;
  *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#TAG_UNIQUE} is not set, i.e. is stackable, and
  *  {@code shipmastery_[ID]} otherwise. <br>
  *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
- *  unique and stackable elements.
+ *  unique and stackable elements. <br>
+ *  {@code advanceInCombat} not supported, add an {@link com.fs.starfarer.api.combat.listeners.AdvanceableListener} instead.
  *  */
 public interface MasteryEffect {
     /** Applied immediately after constructor call.
@@ -29,26 +29,26 @@ public interface MasteryEffect {
      *  */
     void init(String... args);
 
-    /** Same usage as {@link HullModEffect#applyEffectsBeforeShipCreation} */
+    /** Same usage as {@link HullModEffect#applyEffectsBeforeShipCreation}. <br>
+     *  All mastery effects are applied after all other hullmod effects.
+     *  Among each other, effects are applied in ascending priority order. */
     void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id);
 
-    /** Same usage as {@link HullModEffect#applyEffectsAfterShipCreation} */
+    /** Same usage as {@link HullModEffect#applyEffectsAfterShipCreation} <br>
+     *  All mastery effects are applied after all other hullmod effects.
+     *  Among each other, effects are applied in ascending priority order. */
     void applyEffectsAfterShipCreation(ShipAPI ship, String id);
 
     /** Will be displayed in the mastery panel. */
     MasteryDescription getDescription(ShipHullSpecAPI spec);
 
-    /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip} */
+    /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip}  <br>
+     *  All mastery effects are applied after all other hullmod effects.
+     *  Among each other, effects are applied in ascending priority order. */
     void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id);
 
     /** Used to check mastery eligibility when randomly selected. */
     boolean isApplicableToHull(ShipHullSpecAPI spec);
-
-    /** Same usage as {@link HullModEffect#advanceInCampaign} */
-    void advanceInCampaign(FleetMemberAPI member, float amount, String id);
-
-    /** Same usage as {@link HullModEffect#advanceInCombat} */
-    void advanceInCombat(ShipAPI ship, float amount, String id);
 
     /** Will be displayed in the mastery panel. */
     void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
@@ -65,8 +65,7 @@ public interface MasteryEffect {
 
     /** Changes will be applied when a ship with hull spec {@code spec} is selected inside the refit screen.
      *  Any global changes made should be reverted, either in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}
-     *  or inside a {@link shipmastery.campaign.listeners.RefitScreenShipChangedListener}.
-     *  Effects are applied in ascending order of mastery level. */
+     *  or inside a {@link shipmastery.campaign.listeners.RefitScreenShipChangedListener}. */
     void onBeginRefit(ShipHullSpecAPI spec, String id);
 
     /** Will be called when a ship with hull spec {@code spec} is no longer selected inside the refit screen.
@@ -78,6 +77,12 @@ public interface MasteryEffect {
 
     /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
     void onDeactivate(ShipHullSpecAPI spec, String id);
+
+    /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
+    int getPriority();
+
+    /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
+    void setPriority(int priority);
 
     Set<String> getTags();
 

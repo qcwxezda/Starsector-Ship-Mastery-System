@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.impl.stats.ModifyStatsFlat;
+import shipmastery.mastery.impl.stats.ModifyStatsMult;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -245,8 +246,8 @@ public abstract class ShipMastery {
         for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
             int i = 0;
             for (String id : statSingletonMap.keySet()) {
-                MasteryEffect effect = new ModifyStatsFlat();
-                effect.init("" + 1, id, "" + 2);
+                MasteryEffect effect = new ModifyStatsMult();
+                effect.init("" + 1, id, "" + -0.1);
                 masteryMap.add(hullId, i++, effect);
             }
         }
@@ -262,11 +263,6 @@ public abstract class ShipMastery {
             MASTERY_TABLE = (MasteryTable) persistentData.get(MASTERY_KEY);
         }
     }
-
-    public static Class<?> getEffectClass(String id) {
-        return idToEffectMap.get(id);
-    }
-
     public static String getId(Class<?> effectClass) {
         return effectToIdMap.get(effectClass);
     }
