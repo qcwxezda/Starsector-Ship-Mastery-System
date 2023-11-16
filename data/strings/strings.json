@@ -5,6 +5,8 @@
   },
 
   "sms_masteryPanel": {
+    "mustBeDockedHullmods": "Must be docked at a market to build in hullmods.",
+    "mustBeDockedMasteries": "Must be docked at a market to change active masteries",
     "hullmodsTab": "Hullmods",
     "masteryTab": "Mastery",
     "doubleClickHint": "Double-click to build in",
@@ -56,7 +58,7 @@
   "sms_misc": {
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
-    "shipMasteryEffect": "Ship mastery effect",
+    "shipMasteryEffect": "Mastery Effect",
     "and": "and "
   }
 }

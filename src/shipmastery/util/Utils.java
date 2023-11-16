@@ -1,6 +1,7 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -188,5 +189,9 @@ public abstract class Utils {
 
     public static int clamp(int x, int min, int max) {
         return Math.min(max, Math.max(min, x));
+    }
+
+    public static boolean hasShield(ShipHullSpecAPI spec) {
+        return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 }

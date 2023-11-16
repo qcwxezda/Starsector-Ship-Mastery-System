@@ -28,26 +28,33 @@ public class ModifyStatsMult extends ModifyStatsEffect {
         for (Map.Entry<ShipStat, Float> entry : amounts.entrySet()) {
             ShipStat stat = entry.getKey();
             float amount = getStrength() * entry.getValue();
-            float mult = Math.max(0f, 1f + amount);
-
-            Object o = stat.get(stats);
-            // Negative effects stack multiplicatively
-            // Positive effects stack additively
+            modify(stat.get(stats), id, amount);
+        }
+    }
+    
+    void modify(Object statOrList, String id, float amount) {
+        // Negative effects stack multiplicatively
+        // Positive effects stack additively
+        float mult = Math.max(0f, 1f + amount);
+        if (statOrList instanceof StatBonus) {
             if (mult > 1) {
-                if (o instanceof StatBonus) {
-                    ((StatBonus) o).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
-                }
-                else {
-                    ((MutableStat) o).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
-                }
+                ((StatBonus) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
             }
             else {
-                if (o instanceof StatBonus) {
-                    ((StatBonus) o).modifyMult(id, mult);
-                }
-                else {
-                    ((MutableStat) o).modifyMult(id, mult);
-                }
+                ((StatBonus) statOrList).modifyMult(id, mult);
+            }
+        }
+        else if (statOrList instanceof MutableStat) {
+            if (mult > 1) {
+                ((MutableStat) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
+            }
+            else {
+                ((MutableStat) statOrList).modifyMult(id, mult);
+            }
+        }
+        else {
+            for (Object stat : (List<?>) statOrList) {
+                modify(stat, id, amount);
             }
         }
     }

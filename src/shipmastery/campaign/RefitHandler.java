@@ -270,10 +270,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         masteryButton.setCustomData(MASTERY_BUTTON_TAG);
         UIPanelAPI masteryButtonPanel = masteryButtonPair.two;
 
-        if (!ReflectionUtils.isInRestorableMarket(coreUI)) {
-            masteryButton.setEnabled(false);
-        }
-
         modsPanel.addComponent(masteryButtonPanel).belowMid(permButton, -25f).setXAlignOffset(-5f);
         masteryButtonPanelRef = masteryButtonPanel;
     }
@@ -307,7 +303,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
                     if (!(sortedButtonList.get(i) instanceof ButtonAPI)) continue;
                     float h2 = tooltipMaker.getHeightSoFar();
-                    //noinspection ReassignedVariable,SuspiciousMethodCalls
+                    //noinspection SuspiciousMethodCalls
                     FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();

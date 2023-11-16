@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.impl.stats.ModifyStatsFlat;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -223,21 +224,30 @@ public abstract class ShipMastery {
             }
         }
 
+//        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+//            for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
+//                int level = entry.getKey();
+//                List<String> strings = entry.getValue();
+//                for (String str : strings) {
+//                    String[] params = str.trim().split("\\s+");
+//                    String id = params[0];
+//                    Class<?> cls = idToEffectMap.get(id);
+//                    MasteryEffect effect = (MasteryEffect) cls.newInstance();
+//                    effect.setTier(tierMap.get(id));
+//                    effect.setWeight(weightMap.get(id));
+//                    effect.addTags(tagMap.get(id).trim().split("\\s+"));
+//                    effect.init(Arrays.copyOfRange(params, 1, params.length));
+//                    masteryMap.add(hullId, level, effect);
+//                }
+//            }
+//        }
+
         for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
-            for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
-                int level = entry.getKey();
-                List<String> strings = entry.getValue();
-                for (String str : strings) {
-                    String[] params = str.trim().split("\\s+");
-                    String id = params[0];
-                    Class<?> cls = idToEffectMap.get(id);
-                    MasteryEffect effect = (MasteryEffect) cls.newInstance();
-                    effect.setTier(tierMap.get(id));
-                    effect.setWeight(weightMap.get(id));
-                    effect.addTags(tagMap.get(id).trim().split("\\s+"));
-                    effect.init(Arrays.copyOfRange(params, 1, params.length));
-                    masteryMap.add(hullId, level, effect);
-                }
+            int i = 0;
+            for (String id : statSingletonMap.keySet()) {
+                MasteryEffect effect = new ModifyStatsFlat();
+                effect.init("" + 1, id, "" + 2);
+                masteryMap.add(hullId, i++, effect);
             }
         }
     }

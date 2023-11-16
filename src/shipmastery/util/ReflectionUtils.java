@@ -191,7 +191,7 @@ public abstract class ReflectionUtils {
     }
 
     /** Mimics the conditions for a ship to be able to be restored */
-    public static boolean isInRestorableMarket(CoreUIAPI coreUI) {
+    public static boolean isInRestorableMarket(UIPanelAPI coreUI) {
         try {
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");

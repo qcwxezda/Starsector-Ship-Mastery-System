@@ -67,7 +67,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             descriptionListPos.add(Strings.MODIFY_STAT_LIST_ITEM);
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
-            colors.add(Misc.getTextColor());
+            colors.add(null);
             colors.add(!(item.one.defaultAmount < 0)? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
         }
 
@@ -75,7 +75,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             descriptionListNeg.add(Strings.MODIFY_STAT_LIST_ITEM);
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
-            colors.add(Misc.getTextColor());
+            colors.add(null);
             colors.add(item.one.defaultAmount < 0? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
         }
 

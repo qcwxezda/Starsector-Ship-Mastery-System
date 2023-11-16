@@ -4,9 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
-import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 
 import java.util.HashSet;

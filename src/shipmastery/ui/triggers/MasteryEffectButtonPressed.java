@@ -24,6 +24,15 @@ public class MasteryEffectButtonPressed extends ActionListener {
     }
     @Override
     public void trigger(Object... args) {
+
+//        if (!masteryPanel.isInRestorableMarket()) {
+//            Global.getSoundPlayer().playUISound("ui_button_disabled_pressed", 1f, 1f);
+//            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+//                    Strings.MUST_BE_DOCKED_MASTERIES,
+//                    Misc.getNegativeHighlightColor());
+//            return;
+//        }
+
         ButtonAPI button = (ButtonAPI) args[1];
         List<MasteryEffect> effects = ShipMastery.getMasteryEffects(spec, level);
         boolean canDeactivate = true;

@@ -1,5 +1,6 @@
 package shipmastery.ui;
 
+import com.fs.graphics.util.Fader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -41,6 +42,7 @@ public class MasteryPanel {
     UIPanelAPI sModPanel, masteryPanel;
     ButtonAPI sModButton, masteryButton;
     boolean isShowingMasteryPanel = false;
+    boolean isInRestorableMarket = false;
     float savedScrollerLocation = 0f;
     TooltipMakerAPI savedMasteryDisplay;
     Set<Integer> selectedMasteryButtons, activeMasteries;
@@ -98,6 +100,8 @@ public class MasteryPanel {
             return;
         }
 
+        isInRestorableMarket = ReflectionUtils.isInRestorableMarket(ReflectionUtils.getCoreUI());
+
         if (isRefresh) {
             List<?> children = (List<?>) ReflectionUtils.invokeMethod(panel, "getChildrenNonCopy");
 
@@ -117,7 +121,7 @@ public class MasteryPanel {
         UIPanelAPI currencyPanel = makeCurrencyLabels(w);
         sModPanel = makeThisShipPanel(w, h - 100f, ship);
         masteryPanel = makeMasteryPanel(w, h - 100f, ship, useSavedScrollerLocation);
-        togglePanelVisibility(isShowingMasteryPanel ? masteryButton : sModButton);
+        togglePanelVisibility(!isInRestorableMarket || isShowingMasteryPanel ? masteryButton : sModButton);
 
         panel.addComponent(tabButtons).inTMid(0f);
         panel.addComponent(sModPanel).belowMid(tabButtons, 10f);
@@ -135,10 +139,30 @@ public class MasteryPanel {
         thisShipTab.setAreaCheckboxFont(checkboxFont);
         sModButton = thisShipTab.addAreaCheckbox(Strings.HULLMODS_TAB_STR, null, Misc.getBasePlayerColor(),
                                                  Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
-        sModButton.setChecked(true);
         sModButton.setShortcut(Keyboard.KEY_1, false);
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
         thisShipTab.setAreaCheckboxFontDefault();
+
+        if (!isInRestorableMarket) {
+            sModButton.setEnabled(false);
+            thisShipTab.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+                @Override
+                public boolean isTooltipExpandable(Object o) {
+                    return false;
+                }
+
+                @Override
+                public float getTooltipWidth(Object o) {
+                    return 300f;
+                }
+
+                @Override
+                public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                    tooltip.setParaSmallInsignia();
+                    tooltip.addPara(Strings.MUST_BE_DOCKED_HULLMODS, 0f);
+                }
+            }, TooltipMakerAPI.TooltipLocation.BELOW, false);
+        }
 
         TooltipMakerAPI hullTypeTab = tabsPanel.createUIElement(w, h, false);
         hullTypeTab.setAreaCheckboxFont(checkboxFont);
@@ -311,7 +335,6 @@ public class MasteryPanel {
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
         }
     }
-
     public Set<Integer> getSelectedMasteryButtons() {
         return selectedMasteryButtons;
     }
@@ -446,8 +469,13 @@ public class MasteryPanel {
             }
             else {
                 levelButton.setHighlightBrightness(0.25f);
+                descOutline.setHighlightBrightness(0f);
                 levelButton.setEnabled(false);
             }
+
+            // Instantly set the highlight strength to get rid of unwanted flickering when refreshing the panel
+            ((Fader) ReflectionUtils.invokeMethod(descOutline, "getHighlightFader")).forceIn();
+            ((Fader) ReflectionUtils.invokeMethod(levelButton, "getHighlightFader")).forceIn();
 
             if (activeMasteries.contains(i)) {
                 descOutline.setChecked(true);

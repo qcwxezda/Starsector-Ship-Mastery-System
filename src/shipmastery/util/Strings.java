@@ -4,6 +4,8 @@ public interface Strings {
     String MASTERY_BUTTON_STR = Utils.getString("sms_refitScreen", "masteryButton");
     String MASTERY_LABEL_STR = Utils.getString("sms_refitScreen", "masteryLabel");
 
+    String MUST_BE_DOCKED_HULLMODS = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
+    String MUST_BE_DOCKED_MASTERIES = Utils.getString("sms_masteryPanel", "mustBeDockedMasteries");
     String MASTERY_TAB_STR = Utils.getString("sms_masteryPanel", "masteryTab");
     String CREDITS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "creditsDisplay");
     String MASTERY_POINTS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");

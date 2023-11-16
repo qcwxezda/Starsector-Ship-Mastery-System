@@ -18,7 +18,7 @@ public class MasteryDescription {
     /** Variables to replace format specifiers in {@code rawText} with */
     public Object[] params;
     /** Colors to highlight the params. Must either be a single element array (highlights all params with one color) or
-     *  match params in length. */
+     *  match params in length. Each element may be null, in which case no highlight is applied for the corresponding param. */
     public Color[] colors;
 
     public MasteryDescription() {}
@@ -62,6 +62,12 @@ public class MasteryDescription {
         Color textColor = Misc.getTextColor();
         LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
         if (colors != null && params != null) {
+            // Replace null colors with default text color
+            for (int i = 0; i < colors.length; i++) {
+                if (colors[i] == null) {
+                    colors[i] = textColor;
+                }
+            }
             String[] strings = new String[params.length];
             for (int i = 0; i < params.length; i++) {
                 strings[i] = params[i].toString();
