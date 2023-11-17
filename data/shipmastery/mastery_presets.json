@@ -11,17 +11,19 @@
   ],
 
   "default": [
-    ["ModifyStatsMult 1 CRPerDeployment 1"],
-    ["ModifyStatsMult 1 CRPerDeployment -1"],
-    ["ModifyStatsMult 1 CRRecoveryRate 1"],
-    ["ModifyStatsMult 1 CRRecoveryRate -1"],
-    ["ModifyStatsMult 1 CrewLoss 1"],
-    ["ModifyStatsMult 1 CrewLoss -1"],
-    ["ModifyStatsMult 1 SensorProfile 1"],
-    ["ModifyStatsMult 1 SensorProfile -1"],
-    ["ModifyStatsMult 1 SensorStrength 1"],
-    ["ModifyStatsMult 1 SensorStrength -1"],
-    ["ModifyStatsFlat 1 CRMax 0.1"],
-    ["ModifyStatsFlat 1 CRMax -0.1"]
+    ["AdditionalSMods"],
+    ["ReduceSModCreditsCost"],
+    ["ReduceSModMPCost"],
+    ["ReduceRestorationCost"],
+    ["ReduceRestorationCost"],
+    ["EnableSModRemoval"],
+    ["AllowOverCapacitySMods"],
+    ["IgnoreNoBuildIn 1 targetingunit turretgyros armoredweapons"],
+    ["ModifyStatsMult 1 SensorStrength"],
+    ["ModifyStatsFlat 2 MaxBurnLevel"],
+    ["IncreaseFluxByShieldUpkeep -0.5"],
+    ["IncreaseFluxByShieldUpkeep"],
+    ["IncreaseRangeIfNoBonuses"],
+    ["BoostOtherMasteries"]
   ]
 }

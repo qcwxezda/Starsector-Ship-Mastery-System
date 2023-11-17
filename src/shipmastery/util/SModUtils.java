@@ -57,7 +57,7 @@ public abstract class SModUtils {
 
         float valueFrac = Math.max(1, ship.getHullSpec().getBaseValue() / BASE_VALUE_AMTS[hullSizeOrd]);
         float cost = 10000f
-                * (float) Math.max(1f, Math.pow(spec.getCostFor(ship.getHullSize()), 0.4f))
+                * (float) Math.pow(Math.max(1f, spec.getCostFor(ship.getHullSize())), 0.4f)
                 * (float) Math.pow(valueFrac, 0.8f)
                 * (float) Math.pow((hullSizeOrd + 1), 1.1f);
         cost = (float) (Math.ceil(cost/1000f)*1000f);

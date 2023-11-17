@@ -32,7 +32,6 @@ public interface Strings {
     String CLEAR_CONFIRMED_STR = Utils.getString("sms_masteryPanel", "clearConfirm");
     String CLEAR_ASK_STR = Utils.getString("sms_masteryPanel", "confirmText");
     String CHANGES_PENDING = Utils.getString("sms_masteryPanel", "changesPending");
-    String MASTERY_CHANGES_CONFIRMED = Utils.getString("sms_masteryPanel", "masteryChangesConfirmed");
     String BUILD_IN_OVER_MAX_WARNING = Utils.getString("sms_masteryPanel", "buildInOverMaxWarning");
 
     String ADDITIONAL_SMOD_DESCRIPTION = Utils.getString("sms_descriptions", "additionalSMods");
@@ -51,6 +50,15 @@ public interface Strings {
     String MODIFY_STAT_INCREASE = Utils.getString("sms_descriptions", "modifyStatIncrease");
     String MODIFY_STAT_DECREASE = Utils.getString("sms_descriptions", "modifyStatDecrease");
     String MODIFY_STAT_LIST_ITEM = Utils.getString("sms_descriptions", "modifyStatListItem");
+    String BOOST_OTHER_MASTERIES = Utils.getString("sms_descriptions", "boostOtherMasteries");
+    String BOOST_OTHER_MASTERIES_NEG = Utils.getString("sms_descriptions", "boostOtherMasteriesNeg");
+    String BOOST_OTHER_MASTERIES_POST = Utils.getString("sms_descriptions", "boostOtherMasteriesPost");
+    String INCREASE_FLUX_BY_SHIELD_UPKEEP = Utils.getString("sms_descriptions", "increaseFluxByShieldUpkeep");
+    String INCREASE_FLUX_BY_SHIELD_UPKEEP_NEG = Utils.getString("sms_descriptions", "increaseFluxByShieldUpkeepNeg");
+    String INCREASE_FLUX_BY_SHIELD_UPKEEP_POST = Utils.getString("sms_descriptions", "increaseFluxByShieldUpkeepPost");
+    String INCREASE_RANGE_IF_NO_BONUSES = Utils.getString("sms_descriptions", "increaseRangeIfNoBonuses");
+    String INCREASE_RANGE_IF_NO_BONUSES_NEG = Utils.getString("sms_descriptions", "increaseRangeIfNoBonusesNeg");
+    String INCREASE_RANGE_IF_NO_BONUSES_POST  = Utils.getString("sms_descriptions", "increaseRangeIfNoBonusesPost");
     String EFFECT_CANT_DEACTIVATE = Utils.getString("sms_misc", "effectCantBeDeactivated");
     String EFFECT_CANT_DEACTIVATE_WARNING = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
     String SHIP_MASTERY_EFFECT = Utils.getString("sms_misc", "shipMasteryEffect");

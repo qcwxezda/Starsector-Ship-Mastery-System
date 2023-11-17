@@ -11,9 +11,13 @@ public class ShieldUpkeep extends ShipStat {
     public Object get(MutableShipStatsAPI stats) {
         return stats.getShieldUpkeepMult();
     }
-    @Override
-    public boolean isApplicableToHull(ShipHullSpecAPI spec) {
-        return Utils.hasShield(spec);
-    }
 
+    @Override
+    public float getSelectionWeight(ShipHullSpecAPI spec) {
+        // No civilian ships
+        if (spec.isCivilianNonCarrier()) return 0f;
+        if (!Utils.hasShield(spec)) return 0f;
+        // Prefer ships with higher shield upkeep
+        return (float) Math.log(spec.getShieldSpec().getUpkeepCost() + 2f);
+    }
 }

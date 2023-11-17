@@ -2,10 +2,8 @@ package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.Strings;
 
 import java.util.HashSet;
 import java.util.NavigableSet;
@@ -26,7 +24,7 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
         final ShipHullSpecAPI spec = masteryPanel.getShip().getHullSpec();
 
         Set<Integer> union = new HashSet<>();
-        Set<Integer> activeSet = ShipMastery.getActiveMasteries(spec);
+        Set<Integer> activeSet = ShipMastery.getActiveMasteriesCopy(spec);
         Set<Integer> newSet = masteryPanel.getSelectedMasteryButtons();
         NavigableSet<Integer> toActivate = new TreeSet<>();
         NavigableSet<Integer> toDeactivate = new TreeSet<>();
@@ -54,8 +52,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
             ShipMastery.activateMastery(spec, i);
         }
 
-        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MASTERY_CHANGES_CONFIRMED,
-                                                                          Misc.getHighlightColor());
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);
         masteryPanel.forceRefresh(true, true);
     }

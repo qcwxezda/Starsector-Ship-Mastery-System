@@ -55,16 +55,16 @@ public abstract class MasteryUtils {
             }
         }
 
-        System.out.println("Performing: ");
+        //System.out.println("Performing: ");
         while (!priorityOrder.isEmpty()) {
             MasteryEffectData data = priorityOrder.poll();
             MasteryEffect effect = data.effect;
             if (!isUnique(effect)  || effect.equals(uniqueEffects.get(effect.getClass()))) {
                 action.perform(effect, makeEffectId(effect, data.level, data.index));
-                System.out.print("(" + data.level + ", " + data.index + ")  ");
+                //System.out.print("(" + data.level + ", " + data.index + ")  ");
             }
         }
-        System.out.println();
+        //System.out.println();
     }
 
     private static class MasteryEffectData implements Comparable<MasteryEffectData>  {
@@ -109,7 +109,7 @@ public abstract class MasteryUtils {
     }
 
     public static void applyAllActiveMasteryEffects(ShipHullSpecAPI spec, MasteryAction action) {
-        applyAllMasteryEffects(spec, ShipMastery.getActiveMasteries(spec), false, action);
+        applyAllMasteryEffects(spec, ShipMastery.getActiveMasteriesCopy(spec), false, action);
     }
 
     public interface MasteryAction {

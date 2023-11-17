@@ -21,6 +21,7 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         ShipMastery.loadMasteryTable();
+        ShipMastery.clearInvalidActiveLevels();
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
@@ -43,6 +44,7 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",
+            "shipmastery.stats.logistics"
     };
 
     private static ReflectionEnabledClassLoader getClassLoader() {

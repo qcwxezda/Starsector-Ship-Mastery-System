@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.Utils;
 
 public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
 
@@ -47,7 +48,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats, final String id) {
         if (stats == null || stats.getVariant() == null) return;
-        ShipHullSpecAPI spec = stats.getVariant().getHullSpec();
+        ShipHullSpecAPI spec = Utils.getBaseHullSpec(stats.getVariant().getHullSpec());
         MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
             public void perform(MasteryEffect effect, String id) {
@@ -59,7 +60,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsAfterShipCreation(final ShipAPI ship, final String id) {
         if (ship == null) return;
-        ShipHullSpecAPI spec = ship.getHullSpec();
+        ShipHullSpecAPI spec = Utils.getBaseHullSpec(ship.getHullSpec());
         MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
             public void perform(MasteryEffect effect, String id) {
@@ -71,7 +72,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     @Override
     public void applyEffectsToFighterSpawnedByShip(final ShipAPI fighter, final ShipAPI ship, final String id) {
         if (ship == null) return;
-        ShipHullSpecAPI spec = ship.getHullSpec();
+        ShipHullSpecAPI spec = Utils.getBaseHullSpec(ship.getHullSpec());
         MasteryUtils.applyAllActiveMasteryEffects(spec, new MasteryUtils.MasteryAction() {
             @Override
             public void perform(MasteryEffect effect, String id) {

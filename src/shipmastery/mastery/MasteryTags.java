@@ -17,7 +17,7 @@ public interface MasteryTags {
      *  only allow deactivation if no such ship exists! */
     String TAG_NO_DISABLE = "no_disable";
 
-    /** Set in conjunction with {@link MasteryEffect#addTooltip(ShipHullSpecAPI, TooltipMakerAPI)} to add a tooltip on mouse hover */
+    /** Set in conjunction with {@link MasteryEffect#addTooltipIfHasTooltipTag(ShipHullSpecAPI, TooltipMakerAPI)} to add a tooltip on mouse hover */
     String TAG_HAS_TOOLTIP = "has_tooltip";
 
     /** If set, will not be automatically activated when unlocked. Should be used for effects that have a downside

@@ -6,8 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.mastery.impl.stats.ModifyStatsFlat;
-import shipmastery.mastery.impl.stats.ModifyStatsMult;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -19,11 +17,11 @@ public abstract class ShipMastery {
 
     public static class MasteryData {
         /** Count of MP currency */
-        public float points;
+        float points;
         /** Mastery level attained */
-        public int level;
+        int level;
         /** Set of mastery levels whose effects are active */
-        public NavigableSet<Integer> activeLevels;
+        NavigableSet<Integer> activeLevels;
 
         public MasteryData(float points, int level) {
             this.points = points;
@@ -126,7 +124,7 @@ public abstract class ShipMastery {
         List<MasteryEffect> effects = getMasteryEffects(spec, level);
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            effect.onActivate(spec, MasteryUtils.makeEffectId(effect, level, i));
+            effect.onActivate(Global.getSettings().getHullSpec(id), MasteryUtils.makeEffectId(effect, level, i));
         }
     }
 
@@ -143,22 +141,22 @@ public abstract class ShipMastery {
         List<MasteryEffect> effects = getMasteryEffects(spec, level);
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            effect.onDeactivate(spec, MasteryUtils.makeEffectId(effect, level, i));
+            effect.onDeactivate(Global.getSettings().getHullSpec(id), MasteryUtils.makeEffectId(effect, level, i));
         }
     }
 
     /** Returns a copy of the original data */
-    public static NavigableSet<Integer> getActiveMasteries(ShipHullSpecAPI spec) {
+    public static NavigableSet<Integer> getActiveMasteriesCopy(ShipHullSpecAPI spec) {
         if (MASTERY_TABLE == null) return new TreeSet<>();
 
         MasteryData data = MASTERY_TABLE.get(Utils.getBaseHullId(spec));
         return data == null ? new TreeSet<Integer>() : new TreeSet<>(data.activeLevels);
     }
 
-    /** Returns a copy of the original data */
+    /** This function 1-indexed */
     public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level) {
         String id = Utils.getBaseHullId(spec);
-        return new ArrayList<>(masteryMap.get(id, level - 1));
+        return masteryMap.get(id, level - 1);
     }
 
     public static void loadMasteryData()
@@ -169,7 +167,7 @@ public abstract class ShipMastery {
 
         Map<String, String> tagMap = new HashMap<>();
         Map<String, Integer> tierMap = new HashMap<>();
-        Map<String, Float> weightMap = new HashMap<>();
+        Map<String, Float> defaultStrengthMap = new HashMap<>();
 
         for (int i = 0; i < masteryList.length(); i++) {
             JSONObject item = masteryList.getJSONObject(i);
@@ -177,13 +175,13 @@ public abstract class ShipMastery {
             String className = item.getString("script");
             String tags = item.getString("tags");
             int tier = item.optInt("tier", 1);
-            float weight = (float) item.optDouble("weight", 1f);
+            float defaultStrength = (float) item.optDouble("default_strength", 0f);
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             effectToIdMap.put(cls, id);
             idToEffectMap.put(id, cls);
             tagMap.put(id, tags);
             tierMap.put(id, tier);
-            weightMap.put(id, weight);
+            defaultStrengthMap.put(id, defaultStrength);
         }
 
         JSONArray statsList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/stats_list.csv");
@@ -194,8 +192,7 @@ public abstract class ShipMastery {
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             ShipStat stat = (ShipStat) cls.newInstance();
             stat.name = item.getString("name");
-            stat.tierOverride = item.optInt("tier_override", 1);
-            stat.weight = (float) item.optDouble("weight", 1f);
+            stat.tier = item.optInt("tier", 1);
             stat.defaultAmount = (float) item.optDouble("default_amount", 1f);
             stat.tags.addAll(Arrays.asList(item.getString("tags").trim().split("\\s+")));
             statSingletonMap.put(id, stat);
@@ -225,32 +222,36 @@ public abstract class ShipMastery {
             }
         }
 
-//        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
-//            for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
-//                int level = entry.getKey();
-//                List<String> strings = entry.getValue();
-//                for (String str : strings) {
-//                    String[] params = str.trim().split("\\s+");
-//                    String id = params[0];
-//                    Class<?> cls = idToEffectMap.get(id);
-//                    MasteryEffect effect = (MasteryEffect) cls.newInstance();
-//                    effect.setTier(tierMap.get(id));
-//                    effect.setWeight(weightMap.get(id));
-//                    effect.addTags(tagMap.get(id).trim().split("\\s+"));
-//                    effect.init(Arrays.copyOfRange(params, 1, params.length));
-//                    masteryMap.add(hullId, level, effect);
-//                }
-//            }
-//        }
-
         for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
-            int i = 0;
-            for (String id : statSingletonMap.keySet()) {
-                MasteryEffect effect = new ModifyStatsMult();
-                effect.init("" + 1, id, "" + -0.1);
-                masteryMap.add(hullId, i++, effect);
+            for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
+                int level = entry.getKey();
+                List<String> strings = entry.getValue();
+                for (String str : strings) {
+                    String[] params = str.trim().split("\\s+");
+                    String id = params[0];
+                    // If no params, use default strength
+                    if (params.length == 1) {
+                        params = new String[] {id, "" + defaultStrengthMap.get(id)};
+                    }
+                    Class<?> cls = idToEffectMap.get(id);
+                    MasteryEffect effect = (MasteryEffect) cls.newInstance();
+                    effect.setTier(tierMap.get(id));
+                    //effect.setWeight(weightMap.get(id));
+                    effect.addTags(tagMap.get(id).trim().split("\\s+"));
+                    effect.init(Arrays.copyOfRange(params, 1, params.length));
+                    masteryMap.add(hullId, level, effect);
+                }
             }
         }
+
+//        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+//            int i = 0;
+//            for (String id : statSingletonMap.keySet()) {
+//                MasteryEffect effect = new ModifyStatsMult();
+//                effect.init("" + 1, id, "" + -0.1);
+//                masteryMap.add(hullId, i++, effect);
+//            }
+//        }
     }
 
     public static void loadMasteryTable() {
@@ -268,4 +269,18 @@ public abstract class ShipMastery {
     }
 
     public static ShipStat getStatParams(String id) { return statSingletonMap.get(id); }
+
+    public static void clearInvalidActiveLevels() {
+        for (String id : Utils.hullIdToBaseHullIdMap.values()) {
+            ShipHullSpecAPI spec = Global.getSettings().getHullSpec(id);
+            MasteryData data = MASTERY_TABLE.get(id);
+            if (data == null) continue;
+            Iterator<Integer> itr = data.activeLevels.iterator();
+            while (itr.hasNext()) {
+                if (itr.next() > ShipMastery.getMaxMastery(spec)) {
+                    itr.remove();
+                }
+            }
+        }
+    }
 }

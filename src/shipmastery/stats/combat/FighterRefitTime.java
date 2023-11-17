@@ -12,7 +12,9 @@ public class FighterRefitTime extends ShipStat {
     }
 
     @Override
-    public boolean isApplicableToHull(ShipHullSpecAPI spec) {
-        return spec.getFighterBays() > 0;
+    public float getSelectionWeight(ShipHullSpecAPI spec) {
+        // No civilian ships
+        if (spec.isCivilianNonCarrier()) return 0f;
+        return spec.getFighterBays() <= 0 ? 0f : 1f;
     }
 }

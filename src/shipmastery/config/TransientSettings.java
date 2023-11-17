@@ -7,10 +7,8 @@ import shipmastery.mastery.MasteryEffect;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Settings here generally only apply to one ship hull spec at a time
- *  and must be changed when needed via e.g. {@link MasteryEffect#onBeginRefit}.
- *  Stacks with coincident settings in global {@link Settings}. The stacking is multiplicative.
- *  */
+/** These settings only apply to one ship hull spec at a time
+ *  and must be changed when needed via e.g. {@link MasteryEffect#onBeginRefit}. */
 public abstract class TransientSettings {
     public static boolean SMOD_REMOVAL_ENABLED = false;
     public static final Set<String> IGNORE_NO_BUILD_IN_HULLMOD_IDS = new HashSet<>();

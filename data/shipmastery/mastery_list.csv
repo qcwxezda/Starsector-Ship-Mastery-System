@@ -1,21 +1,26 @@
-id,tier,weight,tags,priority,script
+id,tier,tags,priority,default_strength,script
 ### Minimum (and default) tier is 1 ###
-### Tier = 0 ==> Not eligible for random selection except in randomizer mode ###
+## Tier = 0 ==> Not eligible for random selection except in randomizer mode ###
 ### Tier < 0 ==> Not eligible for random selection even in randomizer mode ###
 ### Weight is a multiplier on random selection chance ###
 ### LOGISTICS ###
-AdditionalSMods,3,,no_disable,,shipmastery.mastery.impl.logistics.AdditionalSMods
-ReduceSModCreditsCost,,,negative_strength_allowed,,shipmastery.mastery.impl.logistics.ReduceSModCreditsCost
-ReduceSModMPCost,,,negative_strength_allowed,,shipmastery.mastery.impl.logistics.ReduceSModMPCost
-ReduceRestorationCost,,,negative_strength_allowed,,shipmastery.mastery.impl.logistics.ReduceRestorationCost
-EnableSModRemoval,4,,unique,,shipmastery.mastery.impl.logistics.EnableSModRemoval
-AllowOverCapacitySMods,7,,no_disable no_auto_activate unique,,shipmastery.mastery.impl.logistics.AllowOverCapacitySMods
+AdditionalSMods,3,no_disable,,0.5,shipmastery.mastery.impl.logistics.AdditionalSMods
+ReduceSModCreditsCost,,negative_strength_allowed,,-0.2,shipmastery.mastery.impl.logistics.ReduceSModCreditsCost
+ReduceSModMPCost,,negative_strength_allowed,,-1,shipmastery.mastery.impl.logistics.ReduceSModMPCost
+ReduceRestorationCost,,negative_strength_allowed,,-0.2,shipmastery.mastery.impl.logistics.ReduceRestorationCost
+EnableSModRemoval,4,unique,,1,shipmastery.mastery.impl.logistics.EnableSModRemoval
+AllowOverCapacitySMods,7,no_disable no_auto_activate unique,,2,shipmastery.mastery.impl.logistics.AllowOverCapacitySMods
+BoostOtherMasteries,9,negative_strength_allowed,,0.5,shipmastery.mastery.impl.logistics.BoostOtherMasteries
 # IgnoreNoBuildIn <hullmodId1> [hullmodId2] [...]
-IgnoreNoBuildIn,7,,no_disable,,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+IgnoreNoBuildIn,7,no_disable,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+#### STATS ####
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
 # ModifyStatsMult <statId1> [amount1] [ statId2 [amount2] ] [...]
-ModifyStatsMult,,,negative_strength_allowed,,shipmastery.mastery.impl.stats.ModifyStatsMult
+ModifyStatsMult,,negative_strength_allowed,,1,shipmastery.mastery.impl.stats.ModifyStatsMult
 # If amounts aren't specified, the default_amount from stats_list.csv is used
 # ModifyStatsFlat <statId1> [amount1] [ statId2 [amount2] ] [...]
-ModifyStatsFlat,,,negative_strength_allowed,,shipmastery.mastery.impl.stats.ModifyStatsFlat
+ModifyStatsFlat,,negative_strength_allowed,,1,shipmastery.mastery.impl.stats.ModifyStatsFlat
+#### COMBAT ####
+IncreaseFluxByShieldUpkeep,6,negative_strength_allowed,1,0.3,shipmastery.mastery.impl.combat.IncreaseFluxByShieldUpkeep
+IncreaseRangeIfNoBonuses,3,negative_strength_allowed,1,0.3,shipmastery.mastery.impl.combat.IncreaseRangeIfNoBonuses

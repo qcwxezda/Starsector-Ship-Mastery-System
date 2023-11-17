@@ -7,26 +7,25 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.TransientSettings;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.Strings;
 
-public class AllowOverCapacitySMods extends BaseMasteryEffect {
+public class AllowOverCapacitySMods extends AdditiveMasteryEffect {
     static float DP_PENALTY_PER_SMOD = 0.05f;
 
     @Override
     public MasteryDescription getDescription(ShipHullSpecAPI spec) {
-        int count = getCount();
         return MasteryDescription.initDefaultHighlight(
-                                         count == 1 ? Strings.ALLOW_OVER_CAPACITY_SMOD_SINGLE : Strings.ALLOW_OVER_CAPACITY_SMOD_PLURAL)
-                                 .params(count);
+                                         getIncrease() == 1 ? Strings.ALLOW_OVER_CAPACITY_SMOD_SINGLE : Strings.ALLOW_OVER_CAPACITY_SMOD_PLURAL)
+                                 .params(getIncrease());
     }
 
     @Override
     public void onBeginRefit(ShipHullSpecAPI spec, String id) {
-        TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getCount());
+        TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getIncrease());
     }
 
     @Override
@@ -51,9 +50,5 @@ public class AllowOverCapacitySMods extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
         tooltip.addPara(Strings.ALLOW_OVER_CAPACITY_SMOD_POST, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
-    }
-
-    public int getCount() {
-        return 1 + (int) ((getStrength() - 1) * 0.5f);
     }
 }

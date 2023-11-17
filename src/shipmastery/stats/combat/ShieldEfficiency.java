@@ -8,12 +8,16 @@ import shipmastery.util.Utils;
 
 public class ShieldEfficiency extends ShipStat {
     @Override
-    public boolean isApplicableToHull(ShipHullSpecAPI spec) {
-        return Utils.hasShield(spec);
+    public Object get(MutableShipStatsAPI stats) {
+        return stats.getShieldDamageTakenMult();
     }
 
     @Override
-    public Object get(MutableShipStatsAPI stats) {
-        return stats.getShieldDamageTakenMult();
+    public float getSelectionWeight(ShipHullSpecAPI spec) {
+        // No civilian ships
+        if (spec.isCivilianNonCarrier()) return 0f;
+        if (!Utils.hasShield(spec)) return 0f;
+        // Prefer shields with already good efficiency
+        return Math.max(0.5f, 1.5f - spec.getBaseShieldFluxPerDamageAbsorbed());
     }
 }

@@ -12,7 +12,9 @@ public class OverloadTime extends ShipStat {
     }
 
     @Override
-    public boolean isApplicableToHull(ShipHullSpecAPI spec) {
-        return Utils.hasShield(spec);
+    public float getSelectionWeight(ShipHullSpecAPI spec) {
+        // No civilian ships
+        if (spec.isCivilianNonCarrier()) return 0f;
+        return !Utils.hasShield(spec) ? 0f : 1f;
     }
 }

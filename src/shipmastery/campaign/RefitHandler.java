@@ -16,7 +16,6 @@ import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.listeners.RefitScreenShipChangedListener;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.triggers.ActionListener;
@@ -48,7 +47,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
         HullSpecAndMasteries(ShipHullSpecAPI spec) {
             this.specId = Utils.getBaseHullId(spec);
-            activeMasteries = ShipMastery.getActiveMasteries(spec);
+            activeMasteries = ShipMastery.getActiveMasteriesCopy(spec);
         }
 
         @Override
@@ -99,6 +98,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }
 
         if (!ClassRefs.foundAllClasses()) {
+            Global.getSector().getCampaignUI().setDisallowPlayerInteractionsForOneFrame();
             ClassRefs.findAllClasses();
         }
 
@@ -380,8 +380,17 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     void checkIfRefitShipChanged() {
         if (!insideRefitPanel) return;
         coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
-        ShipAPI ship = getSelectedShip();
+        final ShipAPI ship = getSelectedShip();
         HullSpecAndMasteries newSpec = ship == null ? null : new HullSpecAndMasteries(ship.getHullSpec());
+
+        if (newSpec != null) {
+            MasteryUtils.applyAllActiveMasteryEffects(Global.getSettings().getHullSpec(newSpec.specId), new MasteryUtils.MasteryAction() {
+                @Override
+                public void perform(MasteryEffect effect, String id) {
+                    effect.applyEffectsAfterShipCreation(ship, id);
+                }
+            });
+        }
 
         if (!Objects.equals(currentHullSpecAndMasteries, newSpec)) {
             onRefitScreenShipChanged(
@@ -395,11 +404,11 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         String oldSpecId = oldSpec == null ? null : oldSpec.specId;
         String newSpecId = newSpec == null ? null : newSpec.specId;
 
-        List<RefitScreenShipChangedListener> listeners = Global.getSector().getListenerManager().getListeners(
-                RefitScreenShipChangedListener.class);
-        for (RefitScreenShipChangedListener listener : listeners) {
-            listener.onRefitScreenBeforeMasteriesChanged(oldSpecId, newSpecId);
-        }
+//        List<RefitScreenShipChangedListener> listeners = Global.getSector().getListenerManager().getListeners(
+//                RefitScreenShipChangedListener.class);
+//        for (RefitScreenShipChangedListener listener : listeners) {
+//            listener.onRefitScreenBeforeMasteriesChanged(oldSpecId, newSpecId);
+//        }
 
         if (oldSpecId != null) {
             final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(oldSpec.specId);
@@ -424,8 +433,8 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
         }
 
-        for (RefitScreenShipChangedListener listener : listeners) {
-            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
-        }
+//        for (RefitScreenShipChangedListener listener : listeners) {
+//            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
+//        }
     }
 }

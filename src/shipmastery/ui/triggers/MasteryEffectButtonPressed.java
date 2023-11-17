@@ -53,7 +53,7 @@ public class MasteryEffectButtonPressed extends ActionListener {
             }
         }
         else {
-            if (ShipMastery.getActiveMasteries(spec).contains(level) && !canDeactivate) {
+            if (ShipMastery.getActiveMasteriesCopy(spec).contains(level) && !canDeactivate) {
                 button.setChecked(true);
                 Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                         Strings.EFFECT_CANT_DEACTIVATE,

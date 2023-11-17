@@ -32,18 +32,17 @@
     "upgradeConfirm": "Advanced mastery to level ",
     "unknownMastery": "Unlock previous tier to reveal",
     "changesPending": "Changes pending",
-    "masteryChangesConfirmed": "Updated active mastery effects",
     "dismissWindow": "Finish"
   },
 
   "sms_descriptions": {
     "additionalSMods": "Increases S-mod capacity by %s.",
-    "reduceSModCreditsCost": "Reduces the credits cost of building in hullmods by %s.",
-    "reduceSModCreditsCostNeg": "Increases the credits cost of building in hullmods by %s.",
-    "reduceSModMPCost": "Reduces the mastery point cost of building in hullmods by %s, down to a minimum of %s.",
-    "reduceSModMPCostNeg": "Increases the mastery point cost of building in hullmods by %s.",
-    "reduceRestorationCost": "Reduces the cost of restoring damaged ships by %s.",
-    "reduceRestorationCostNeg": "Increases the cost of restoring damaged ships by %s.",
+    "reduceSModCreditsCost": "Increases the credits cost of building in hullmods by %s.",
+    "reduceSModCreditsCostNeg": "Reduces the credits cost of building in hullmods by %s.",
+    "reduceSModMPCost": "Increases the mastery point cost of building in hullmods by %s, down to a minimum of %s.",
+    "reduceSModMPCostNeg": "Reduces the mastery point cost of building in hullmods by %s.",
+    "reduceRestorationCost": "Increases the cost of restoring damaged ships by %s.",
+    "reduceRestorationCostNeg": "Reduces the cost of restoring damaged ships by %s.",
     "enableSModRemoval": "Grants the ability to clear S-mods from ships.",
     "enableSModRemovalPost": "All S-mods must be removed. Costs nothing and refunds nothing.",
     "allowOverCapacitySModsSingle": "Grants the ability to bypass the standard S-mod limit, enabling installation of an additional %s S-mod",
@@ -52,7 +51,16 @@
     "ignoreNoBuildIn": "Enables building in of ",
     "modifyStatIncrease": "Increases ",
     "modifyStatDecrease": "Decreases ",
-    "modifyStatListItem": "%s by %s"
+    "modifyStatListItem": "%s by %s",
+    "boostOtherMasteries": "Increases the effectiveness of all other mastery bonuses by %s.",
+    "boostOtherMasteriesNeg": "Reduces the effectiveness of all other mastery bonuses by %s.",
+    "boostOtherMasteriesPost": "Doesn't affect mastery bonuses that aren't scalable. May not affect some flat boosts as integer bonuses are rounded down.",
+    "increaseFluxByShieldUpkeep": "Increases flux dissipation by %s and flux capacity by %s of shield upkeep cost.",
+    "increaseFluxByShieldUpkeepNeg": "Reduces flux dissipation by %s and flux capacity by %s of shield upkeep cost.",
+    "increaseFluxByShieldUpkeepPost": "No effect if the ship has no shields.",
+    "increaseRangeIfNoBonuses": "Increases base ballistic and energy weapon ranges by %s if not affected by any other bonuses.",
+    "increaseRangeIfNoBonusesNeg": "Reduces base ballistic and energy weapon ranges by %s if not affected by any other bonuses.",
+    "increaseRangeIfNoBonusesPost": "Only counts base range bonuses. Conditional bonuses such as those occurring past a threshold do not negate this effect."
   },
 
   "sms_misc": {

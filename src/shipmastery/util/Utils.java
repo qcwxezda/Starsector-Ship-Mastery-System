@@ -5,12 +5,8 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.util.Misc;
-import shipmastery.mastery.MasteryDescription;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public abstract class Utils {
 
@@ -149,6 +145,10 @@ public abstract class Utils {
         return hullIdToBaseHullIdMap.containsKey(id) ? hullIdToBaseHullIdMap.get(id) : id;
     }
 
+    public static ShipHullSpecAPI getBaseHullSpec(ShipHullSpecAPI spec) {
+        return Global.getSettings().getHullSpec(getBaseHullId(spec));
+    }
+
     public static String absValueAsPercent(float num) {
         return (int) (Math.abs(num * 100f)) + "%";
     }
@@ -171,12 +171,6 @@ public abstract class Utils {
                 }
                 return join.toString();
         }
-    }
-
-    public static MasteryDescription makeGenericNegatableDescription(float value, String posString, String negString, boolean showAsPercent) {
-        return MasteryDescription.init(value > 0f ? posString: negString)
-                                 .params(showAsPercent ? Utils.absValueAsPercent(value) : Math.abs(value))
-                                 .colors(value > 0f ? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
     }
 
     public static boolean hasShield(ShipHullSpecAPI spec) {

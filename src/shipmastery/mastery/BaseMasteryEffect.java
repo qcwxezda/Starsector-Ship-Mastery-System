@@ -1,9 +1,9 @@
 package shipmastery.mastery;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 import java.util.Arrays;
@@ -12,11 +12,10 @@ import java.util.Set;
 
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
-    private float strength = 1f;
+    private MutableStat strength;
     private final Set<String> tags = new HashSet<>();
     private int tier = 1;
-    private float weight = 1f;
-    private int priority = 0;
+    private final int priority = 0;
 
 
     @Override
@@ -33,10 +32,10 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     @Override
     public void init(String... args) {
-        if (args == null || args.length == 0) return;
+        if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect called with null or 0 args");
 
         try {
-            strength = Float.parseFloat(args[0]);
+            strength = new MutableStat(Float.parseFloat(args[0]));
         } catch (NumberFormatException e) {
             throw new RuntimeException("First argument in mastery params list must be its strength", e);
         }
@@ -52,20 +51,15 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
 
     @Override
-    public boolean isApplicableToHull(ShipHullSpecAPI spec) {
-        return true;
+    public float getSelectionWeight(ShipHullSpecAPI spec) {
+        return 1f;
     }
 
     @Override
     public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
 
     @Override
-    public void addTooltip(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
-
-    @Override
-    public final Set<String> getTags() {
-        return tags;
-    }
+    public void addTooltipIfHasTooltipTag(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
 
     @Override
     public final void addTags(String... tags) {
@@ -95,32 +89,27 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public final float getWeight() {
-        return weight;
-    }
-
-    @Override
     public final int getPriority() {
         return priority;
     }
 
     @Override
-    public final void setPriority(int priority) {
-        this.priority = priority;
+    public final void modifyStrengthMultiplicative(String id, float fraction) {
+        strength.modifyMult(id, fraction);
     }
 
     @Override
-    public final void setWeight(float weight) {
-        this.weight = weight;
+    public final void unmodifyStrength(String id) {
+        strength.unmodify(id);
+    }
+
+    @Override
+    public final void modifyStrengthAdditive(String id, float fraction) {
+        strength.modifyPercent(id, 100f*(fraction - 1f));
     }
 
     @Override
     public final float getStrength() {
-        return strength;
-    }
-
-    @Override
-    public final void setStrength(float strength) {
-        this.strength = strength;
+        return strength.getModifiedValue();
     }
 }

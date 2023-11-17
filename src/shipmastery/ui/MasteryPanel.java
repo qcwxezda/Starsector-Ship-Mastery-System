@@ -17,13 +17,13 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
-import shipmastery.ui.triggers.*;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.ui.triggers.*;
 import shipmastery.util.*;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class MasteryPanel {
     ShipAPI ship;
@@ -377,12 +377,12 @@ public class MasteryPanel {
 
         float containerPadX = 4f, containerPadY = 8f;
         TooltipMakerAPI masteryDisplay =
-                masteryPanel.createUIElement(containerW + 50f - containerPadX, containerH - containerPadY, true);
+                masteryPanel.createUIElement(containerW + 50f - containerPadX, containerH + 2f - containerPadY, true);
 
         float pad = 10f, minDescH = 80f, buttonW = 30f;
         float totalH = 0f, scrollToH = 0f;
 
-        activeMasteries = ShipMastery.getActiveMasteries(baseHullSpec);
+        activeMasteries = ShipMastery.getActiveMasteriesCopy(baseHullSpec);
         selectedMasteryButtons = new HashSet<>(activeMasteries);
         for (int i = 1; i <= maxMastery; i++) {
             CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW + 50f, minDescH, null);
@@ -433,7 +433,7 @@ public class MasteryPanel {
             }
 
             if (hasTooltip && !hidden) {
-                description.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+                descriptionButton.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
                     @Override
                     public boolean isTooltipExpandable(Object o) {
                         return false;
@@ -447,10 +447,10 @@ public class MasteryPanel {
                     @Override
                     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                         for (MasteryEffect effect : effects) {
-                            effect.addTooltip(baseHullSpec, tooltip);
+                            effect.addTooltipIfHasTooltipTag(baseHullSpec, tooltip);
                         }
                     }
-                }, TooltipMakerAPI.TooltipLocation.LEFT, false);
+                }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
             }
 
             TooltipMakerAPI levelButtonTTM = descriptionPanel.createUIElement(buttonW, descH, false);
@@ -483,7 +483,7 @@ public class MasteryPanel {
                 levelButton.setChecked(true);
             }
 
-            if (i == currentMastery) {
+            if (i <= currentMastery) {
                 scrollToH = totalH;
             }
 
@@ -501,7 +501,7 @@ public class MasteryPanel {
             totalH += pad + descH;
         }
         masteryDisplay.setHeightSoFar(totalH - pad);
-        masteryPanel.addUIElement(masteryDisplay).inTR(50f, 20f);
+        masteryPanel.addUIElement(masteryDisplay).inTR(50f, 18f);
 
         if (useSavedScrollerLocation) {
             masteryDisplay.getExternalScroller().setYOffset(savedScrollerLocation);

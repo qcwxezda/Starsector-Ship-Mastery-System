@@ -6,8 +6,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
-import java.util.Set;
-
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
  *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#TAG_UNIQUE} is not set, i.e. is stackable, and
  *  {@code shipmastery_[ID]} otherwise. <br>
@@ -23,8 +21,8 @@ public interface MasteryEffect {
      *
      *  Place {@code args} in {@code mastery_assignments.json} values: <br>
      *    - "effectId" passes no args <br>
-     *    - "effectId 1.5" will set the effect strength to 1.5 upon generation <br>
-     *    - "effectId 1.5 hello 3" will result in calling {@code init("1.5", "hello", "3")} <br>
+     *    - "effectId 0.5" will set the effect strength to 0.5 upon generation <br>
+     *    - "effectId 0.5 hello 3" will result in calling {@code init("0.5", "hello", "3")} <br>
      *  If passing args, effect strength must be the first argument.
      *  */
     void init(String... args);
@@ -47,25 +45,26 @@ public interface MasteryEffect {
      *  Among each other, effects are applied in ascending priority order. */
     void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id);
 
-    /** Used to check mastery eligibility when randomly selected. */
-    boolean isApplicableToHull(ShipHullSpecAPI spec);
+    /** The likelihood of the mastery being generated when randomly selected.
+     *  Return 0 to indicate that this mastery is not applicable to {@code spec}.*/
+    float getSelectionWeight(ShipHullSpecAPI spec);
 
     /** Will be displayed in the mastery panel. */
     void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
 
     /** Adds a tooltip that shows upon hovering over the effect.
      *  {@link MasteryTags#TAG_HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
-    void addTooltip(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
+    void addTooltipIfHasTooltipTag(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
-     *  parameter, and defaults to {@code 1} if no parameters are passed. */
+     *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
     float getStrength();
-
-    void setStrength(float strength);
+    void modifyStrengthMultiplicative(String id, float fraction);
+    void modifyStrengthAdditive(String id, float fraction);
+    void unmodifyStrength(String id);
 
     /** Changes will be applied when a ship with hull spec {@code spec} is selected inside the refit screen.
-     *  Any global changes made should be reverted, either in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}
-     *  or inside a {@link shipmastery.campaign.listeners.RefitScreenShipChangedListener}. */
+     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}. */
     void onBeginRefit(ShipHullSpecAPI spec, String id);
 
     /** Will be called when a ship with hull spec {@code spec} is no longer selected inside the refit screen.
@@ -81,11 +80,6 @@ public interface MasteryEffect {
     /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
     int getPriority();
 
-    /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
-    void setPriority(int priority);
-
-    Set<String> getTags();
-
     void addTags(String... tags);
 
     void removeTags(String... tags);
@@ -95,8 +89,4 @@ public interface MasteryEffect {
     int getTier();
 
     void setTier(int tier);
-
-    float getWeight();
-
-    void setWeight(float weight);
 }
