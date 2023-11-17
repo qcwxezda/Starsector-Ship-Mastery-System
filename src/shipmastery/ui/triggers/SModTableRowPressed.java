@@ -11,7 +11,10 @@ import shipmastery.campaign.Action;
 import shipmastery.campaign.DeferredActionPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.*;
+import shipmastery.util.ClassRefs;
+import shipmastery.util.ReflectionUtils;
+import shipmastery.util.SModUtils;
+import shipmastery.util.Strings;
 
 import java.util.List;
 

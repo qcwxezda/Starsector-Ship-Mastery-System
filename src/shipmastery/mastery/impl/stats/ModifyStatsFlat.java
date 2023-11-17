@@ -5,8 +5,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.stats.StatTags;
 import shipmastery.stats.ShipStat;
+import shipmastery.stats.StatTags;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 

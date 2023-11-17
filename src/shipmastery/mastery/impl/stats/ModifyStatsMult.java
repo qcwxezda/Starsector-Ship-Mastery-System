@@ -1,11 +1,15 @@
 package shipmastery.mastery.impl.stats;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public class ModifyStatsMult extends ModifyStatsEffect {
     @Override
