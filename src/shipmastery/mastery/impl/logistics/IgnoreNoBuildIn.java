@@ -19,10 +19,10 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         Object[] params = new Object[hullmodIds.size()];
         String str = makeString(params);
-        return MasteryDescription.initDefaultHighlight(Strings.IGNORE_NO_BUILD_IN + str).params(params);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.IgnoreNoBuildIn + str).params(params);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import shipmastery.deferred.Action;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -22,19 +24,22 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     public boolean withOnFleetSync() {return true;}
 
     @Override
-    public void onFleetSync(CampaignFleetAPI fleet) {
+    public void onFleetSync(final CampaignFleetAPI fleet) {
         if (fleet == null || !fleet.isPlayerFleet()) {
             return;
         }
         // Make sure every ship in the player's fleet has this hullmod installed
-        // The mastery hullmod should be the last hullmod in every ship's hullmod list
-        // in order to accommodate effects that check for other hullmods
-        // Therefore, we remove and reinsert the hullmod each time the fleet syncs
-        // (hullmods are applied in insertion order, backing data structure is LinkedHashSet)
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            fm.getVariant().removePermaMod("sms_masteryHandler");
-            addHandlerMod(fm);
-        }
+        // Do it outside this call stack as changing the ship immediately actually causes some unexpected changes
+        // i.e. the "you just purchased a ship" screen no longer appears as the purchased ship is
+        // no longer the same as the one in the player's fleet
+        DeferredActionPlugin.performLater(new Action() {
+            @Override
+            public void perform() {
+                for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+                    addHandlerMod(fm);
+                }
+            }
+        }, 0f);
     }
 
     void addHandlerMod(FleetMemberAPI fm) {
@@ -42,7 +47,9 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             fm.setVariant(fm.getVariant().clone(), false, false);
             fm.getVariant().setSource(VariantSource.REFIT);
         }
-        fm.getVariant().addPermaMod("sms_masteryHandler", false);
+        // Bypass the arbitrary checks in removeMod since we're adding it back anyway
+        fm.getVariant().getHullMods().remove("sms_masteryHandler");
+        fm.getVariant().getHullMods().add("sms_masteryHandler");
     }
 
     @Override

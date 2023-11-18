@@ -1,4 +1,4 @@
-package shipmastery.campaign;
+package shipmastery.deferred;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
@@ -40,20 +40,7 @@ public class DeferredActionPlugin implements EveryFrameScript {
             actionList.poll();
             firstItem.action.perform();
         }
+
     }
 
-    public static class DeferredAction implements Comparable<DeferredAction> {
-        Action action;
-        long timeToPerform;
-
-        public DeferredAction(Action action, long time) {
-            this.action = action;
-            timeToPerform = time;
-        }
-
-        @Override
-        public int compareTo(DeferredAction other) {
-            return Long.compare(timeToPerform, other.timeToPerform);
-        }
-    }
 }

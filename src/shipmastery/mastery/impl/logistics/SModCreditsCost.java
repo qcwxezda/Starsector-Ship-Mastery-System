@@ -6,12 +6,12 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 
-public class ReduceSModCreditsCost extends MultiplicativeMasteryEffect {
+public class SModCreditsCost extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         return makeGenericDescription(
-                Strings.SMOD_CREDITS_REDUCTION,
-                Strings.SMOD_CREDITS_REDUCTION_NEG,
+                Strings.Descriptions.SModCreditsCost,
+                Strings.Descriptions.SModCreditsCostNeg,
                 true, true, getIncrease());
     }
 

@@ -6,10 +6,10 @@ import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 
-public class ReduceSModMPCost extends AdditiveMasteryEffect {
+public class SModMPCost extends AdditiveMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
-        return makeGenericDescription(Strings.SMOD_MP_REDUCTION, Strings.SMOD_MP_REDUCTION_NEG, true, getIncrease());
+    public MasteryDescription getDescription() {
+        return makeGenericDescription(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncrease());
     }
 
     @Override

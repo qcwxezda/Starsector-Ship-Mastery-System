@@ -25,8 +25,8 @@ public abstract class SModUtils {
 
         int nSMods = variant.getSMods().size();
 
-        ShipHullSpecAPI hullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(ship.getHullSpec()));
-        float dp = hullSpec == null ? 0f : Global.getSettings().getHullSpec(Utils.getBaseHullId(ship.getHullSpec())).getSuppliesToRecover();
+        ShipHullSpecAPI hullSpec = ship.getHullSpec();
+        float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
 
         int cost = 1 + (int) (dp / 20f);
 

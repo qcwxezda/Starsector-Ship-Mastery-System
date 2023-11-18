@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
@@ -159,15 +160,16 @@ public abstract class ShipMastery {
         return masteryMap.get(id, level - 1);
     }
 
+    static Map<String, String> tagMap = new HashMap<>();
+    static Map<String, Integer> tierMap = new HashMap<>();
+    static Map<String, Integer> priorityMap = new HashMap<>();
+    static Map<String, Float> defaultStrengthMap = new HashMap<>();
+
     public static void loadMasteryData()
             throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         JSONArray masteryList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
 
         Utils.populateHullIdMap();
-
-        Map<String, String> tagMap = new HashMap<>();
-        Map<String, Integer> tierMap = new HashMap<>();
-        Map<String, Float> defaultStrengthMap = new HashMap<>();
 
         for (int i = 0; i < masteryList.length(); i++) {
             JSONObject item = masteryList.getJSONObject(i);
@@ -175,12 +177,14 @@ public abstract class ShipMastery {
             String className = item.getString("script");
             String tags = item.getString("tags");
             int tier = item.optInt("tier", 1);
+            int priority = item.optInt("priority", 0);
             float defaultStrength = (float) item.optDouble("default_strength", 0f);
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             effectToIdMap.put(cls, id);
             idToEffectMap.put(id, cls);
             tagMap.put(id, tags);
             tierMap.put(id, tier);
+            priorityMap.put(id, priority);
             defaultStrengthMap.put(id, defaultStrength);
         }
 
@@ -222,6 +226,23 @@ public abstract class ShipMastery {
             }
         }
 
+
+        // Call onActivate on activated masteries at the beginning of game...
+
+
+//        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+//            int i = 0;
+//            for (String id : statSingletonMap.keySet()) {
+//                MasteryEffect effect = new ModifyStatsMult();
+//                effect.init("" + 1, id, "" + -0.1);
+//                masteryMap.add(hullId, i++, effect);
+//            }
+//        }
+    }
+
+    public static void createMasteryEffects() throws InstantiationException, IllegalAccessException {
+        masteryMap.clear();
+
         for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
             for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
                 int level = entry.getKey();
@@ -234,24 +255,33 @@ public abstract class ShipMastery {
                         params = new String[] {id, "" + defaultStrengthMap.get(id)};
                     }
                     Class<?> cls = idToEffectMap.get(id);
-                    MasteryEffect effect = (MasteryEffect) cls.newInstance();
+                    if (cls == null) {
+                        throw new RuntimeException("Unknown effect: " + id);
+                    }
+                    BaseMasteryEffect effect = (BaseMasteryEffect) cls.newInstance();
                     effect.setTier(tierMap.get(id));
+                    effect.setPriority(priorityMap.get(id));
                     //effect.setWeight(weightMap.get(id));
+                    effect.setHullSpec(Global.getSettings().getHullSpec(hullId));
                     effect.addTags(tagMap.get(id).trim().split("\\s+"));
                     effect.init(Arrays.copyOfRange(params, 1, params.length));
                     masteryMap.add(hullId, level, effect);
                 }
             }
         }
+    }
 
-//        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
-//            int i = 0;
-//            for (String id : statSingletonMap.keySet()) {
-//                MasteryEffect effect = new ModifyStatsMult();
-//                effect.init("" + 1, id, "" + -0.1);
-//                masteryMap.add(hullId, i++, effect);
-//            }
-//        }
+    public static void activateInitialMasteries() {
+        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+            MasteryUtils.applyAllActiveMasteryEffects(
+                    Global.getSettings().getHullSpec(hullId), new MasteryUtils.MasteryAction() {
+                        @Override
+                        public void perform(MasteryEffect effect, String id) {
+                            effect.onActivate(effect.getHullSpec(), id);
+                        }
+                    }
+            );
+        }
     }
 
     public static void loadMasteryTable() {

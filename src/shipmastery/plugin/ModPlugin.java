@@ -5,7 +5,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.DeferredActionPlugin;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.campaign.RefitHandler;
 
 import java.net.URL;
@@ -20,8 +20,15 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        try {
+            ShipMastery.createMasteryEffects();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         ShipMastery.loadMasteryTable();
         ShipMastery.clearInvalidActiveLevels();
+        ShipMastery.activateInitialMasteries();
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
@@ -37,6 +44,16 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+
+//        List<CampaignEngine> remove = new ArrayList<>();
+//        for (CampaignEngine engine : CampaignEngine.getAllInstances().keySet()) {
+//            if (engine != CampaignEngine.getInstance()) {
+//                remove.add(engine);
+//            }
+//        }
+//        for (CampaignEngine r : remove) {
+//            CampaignEngine.getAllInstances().remove(r);
+//        }
     }
 
     private static final String[] reflectionWhitelist = new String[] {
@@ -55,7 +72,7 @@ public class ModPlugin extends BaseModPlugin {
     public static class ReflectionEnabledClassLoader extends URLClassLoader {
 
         public ReflectionEnabledClassLoader(URL url, ClassLoader parent) {
-            super(new URL[] {url}, parent);
+            super(new URL[]{url}, parent);
         }
 
         @Override

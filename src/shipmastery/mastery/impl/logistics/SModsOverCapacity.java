@@ -13,13 +13,13 @@ import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.Strings;
 
-public class AllowOverCapacitySMods extends AdditiveMasteryEffect {
+public class SModsOverCapacity extends AdditiveMasteryEffect {
     static float DP_PENALTY_PER_SMOD = 0.05f;
 
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         return MasteryDescription.initDefaultHighlight(
-                                         getIncrease() == 1 ? Strings.ALLOW_OVER_CAPACITY_SMOD_SINGLE : Strings.ALLOW_OVER_CAPACITY_SMOD_PLURAL)
+                                         getIncrease() == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
                                  .params(getIncrease());
     }
 
@@ -48,7 +48,7 @@ public class AllowOverCapacitySMods extends AdditiveMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.ALLOW_OVER_CAPACITY_SMOD_POST, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
     }
 }

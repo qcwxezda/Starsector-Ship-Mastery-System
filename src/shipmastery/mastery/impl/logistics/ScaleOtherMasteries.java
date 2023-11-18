@@ -7,13 +7,13 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
-public class BoostOtherMasteries extends MultiplicativeMasteryEffect {
+public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         return makeGenericDescription(
-                Strings.BOOST_OTHER_MASTERIES,
-                Strings.BOOST_OTHER_MASTERIES_NEG,
+                Strings.Descriptions.ScaleOtherMasteries,
+                Strings.Descriptions.ScaleOtherMasteriesNeg,
                 true, false, getIncrease());
     }
 
@@ -22,7 +22,7 @@ public class BoostOtherMasteries extends MultiplicativeMasteryEffect {
         float mult = getMult();
         for (int i = 1; i <= ShipMastery.getMaxMastery(spec); i++) {
             for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, i)) {
-                if (effect instanceof BoostOtherMasteries) continue;
+                if (effect instanceof ScaleOtherMasteries) continue;
                 if (mult > 1) {
                     effect.modifyStrengthAdditive(id, mult);
                 }
@@ -43,7 +43,7 @@ public class BoostOtherMasteries extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.BOOST_OTHER_MASTERIES_POST, 5f);
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Descriptions.ScaleOtherMasteriesPost, 5f);
     }
 }

@@ -16,52 +16,32 @@ import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
+import shipmastery.deferred.Action;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.triggers.ActionListener;
 import shipmastery.ui.triggers.MasteryButtonPressed;
 import shipmastery.util.*;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
 public class RefitHandler implements CoreUITabListener, EveryFrameScript, CharacterStatsRefreshListener {
     boolean isFirstFrame = true;
-    CoreUIAPI coreUI = null;
+    WeakReference<CoreUIAPI> coreUI = new WeakReference<>(null);
     float epsilonTime = 0.00001f;
     boolean insideRefitPanel = false;
     static final String MASTERY_BUTTON_TAG = "sms_mastery_button_tag";
 
     // Keep track of added panels to remove them in later inject calls
-    UIPanelAPI mpPanelRef, masteryButtonPanelRef;
+    WeakReference<UIPanelAPI> mpPanelRef = new WeakReference<>(null), masteryButtonPanelRef = new WeakReference<>(null);
 
     // Keep track of the current ship's hull spec and active mastery set in the refit panel
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
-    HullSpecAndMasteries currentHullSpecAndMasteries = null;
-
-    static class HullSpecAndMasteries {
-        String specId;
-
-        NavigableSet<Integer> activeMasteries;
-
-        HullSpecAndMasteries(ShipHullSpecAPI spec) {
-            this.specId = Utils.getBaseHullId(spec);
-            activeMasteries = ShipMastery.getActiveMasteriesCopy(spec);
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof HullSpecAndMasteries)) return false;
-            HullSpecAndMasteries o = (HullSpecAndMasteries) other;
-            return Objects.equals(specId, o.specId) && Objects.equals(activeMasteries, o.activeMasteries);
-        }
-
-        @Override
-        public int hashCode() {
-            return specId.hashCode() + activeMasteries.hashCode();
-        }
-    }
+    HullSpecAndMasteries currentHullSpecAndMasteries;
 
     @Override
     public boolean isDone() {
@@ -88,13 +68,11 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                                                .newInstance(
                                                        Global.getSettings().getScreenWidth(),
                                                        Global.getSettings().getScreenHeight()));
-                    ClassRefs.findAllClasses();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             isFirstFrame = false;
-            return;
         }
 
         if (!ClassRefs.foundAllClasses()) {
@@ -119,17 +97,14 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }
 
         if (!insideRefitPanel) {
-            if (currentHullSpecAndMasteries != null) {
-                onRefitScreenShipChanged(currentHullSpecAndMasteries, null);
-            }
-            currentHullSpecAndMasteries = null;
+            checkIfRefitShipChanged();
         }
     }
 
     public ShipAPI getSelectedShip() {
         ShipAPI ship;
         try {
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             Object shipDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getShipDisplay");
             ship = (ShipAPI) ReflectionUtils.invokeMethodNoCatch(shipDisplay, "getShip");
@@ -139,19 +114,20 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         return ship;
     }
 
-    void syncRefitScreenWithVariant() {
+    void syncRefitScreenWithVariant(boolean saveVariant) {
         try {
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
-            // save the variant so can't undo s-mods
-            ReflectionUtils.invokeMethodNoCatch(refitPanel, "saveCurrentVariant");
             ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
 
-            // This is necessary if allowing mastery panel to be open while in the menu for adding hullmods
-            // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().getVariant());
-
-            // To disable the undo button
-            ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", false);
+            if (saveVariant) {
+                // save the variant so can't undo s-mods
+                ReflectionUtils.invokeMethodNoCatch(refitPanel, "saveCurrentVariant");
+                // This is necessary if allowing mastery panel to be open while in the menu for adding hullmods
+                // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().getVariant());
+                // To disable the undo button
+                ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", false);
+            }
         } catch (Exception ignore) {
         }
     }
@@ -162,22 +138,22 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
      * - In rare instances, rapid clicking of the Add button can generate multiple separate mods panels
      */
     public LinkedList<UIPanelAPI> getAllModsPanels() {
-        if (coreUI == null) return null;
+        if (coreUI.get() == null) return null;
 
         LinkedList<UIPanelAPI> panelList = new LinkedList<>();
         try {
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             Object modDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getModDisplay");
             panelList.add((UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(modDisplay, "getMods"));
 
             // The screen for adding hull mods has a different mod display object for some reason
-            List<?> coreChildren = (List<?>) ReflectionUtils.invokeMethod(coreUI, "getChildrenNonCopy");
+            List<?> coreChildren = (List<?>) ReflectionUtils.invokeMethod(coreUI.get(), "getChildrenNonCopy");
             for (Object child : coreChildren) {
                 if (child instanceof ModPickerDialogV3) {
                     List<?> subChildren = (List<?>) ReflectionUtils.invokeMethod(child, "getChildrenNonCopy");
                     for (Object subChild : subChildren) {
-                        if (subChild.getClass().equals(modDisplay.getClass())) {
+                        if (modDisplay != null && subChild.getClass().equals(modDisplay.getClass())) {
                             panelList.add((UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(subChild, "getMods"));
                         }
                     }
@@ -196,7 +172,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     void modifyBuildInButton() {
-        if (coreUI == null) return;
+        if (coreUI.get() == null) return;
 
         // Modify the "build-in" button
         try {
@@ -245,7 +221,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     void updateMasteryButton(boolean shouldHide) {
-        if (coreUI == null) return;
+        if (coreUI.get() == null) return;
 
         UIPanelAPI modsPanel = getModsPanel();
 
@@ -254,7 +230,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         Iterator<?> itr = children.listIterator();
         while (itr.hasNext()) {
             Object child = itr.next();
-            if (child == masteryButtonPanelRef) {
+            if (child == masteryButtonPanelRef.get()) {
                 itr.remove();
             }
         }
@@ -271,13 +247,13 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         UIPanelAPI masteryButtonPanel = masteryButtonPair.two;
 
         modsPanel.addComponent(masteryButtonPanel).belowMid(permButton, -25f).setXAlignOffset(-5f);
-        masteryButtonPanelRef = masteryButtonPanel;
+        masteryButtonPanelRef = new WeakReference<>(masteryButtonPanel);
     }
 
     void addMPDisplay() {
-        if (coreUI == null) return;
+        if (coreUI.get() == null) return;
 
-        UIPanelAPI currentTab = (UIPanelAPI) ReflectionUtils.invokeMethod(coreUI, "getCurrentTab");
+        UIPanelAPI currentTab = (UIPanelAPI) ReflectionUtils.invokeMethod(coreUI.get(), "getCurrentTab");
         // Add MP display to the ship displays on the left side of the refit screen
         try {
             //noinspection unchecked
@@ -291,7 +267,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                 Iterator<?> itr = sortedButtonList.listIterator();
                 while (itr.hasNext()) {
                     Object child = itr.next();
-                    if (child == mpPanelRef) {
+                    if (child == mpPanelRef.get()) {
                         itr.remove();
                     }
                 }
@@ -326,7 +302,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                 }
                 custom.addUIElement(tooltipMaker);
                 parent.addComponent(custom).inBL(2f, -6f);
-                mpPanelRef = custom;
+                mpPanelRef = new WeakReference<>((UIPanelAPI) custom);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -338,16 +314,13 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     public void injectRefitScreen(boolean variantChanged, boolean hideMasteryButton) {
-        coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
-        checkIfRefitShipChanged();
+        coreUI = new WeakReference<>((CoreUIAPI) ReflectionUtils.getCoreUI());
 
         modifyBuildInButton();
         updateMasteryButton(hideMasteryButton);
         addMPDisplay();
 
-        if (variantChanged) {
-            syncRefitScreenWithVariant();
-        }
+        syncRefitScreenWithVariant(variantChanged);
     }
 
     @Override
@@ -357,47 +330,53 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                 @Override
                 public void perform() {
                     injectRefitScreen(false);
+                    checkIfRefitShipChanged();
                 }
             }, epsilonTime);
             insideRefitPanel = true;
         }
     }
 
+    /** This is called every time the active ship in the refit screen changes. */
     @Override
     public void reportAboutToRefreshCharacterStatEffects() {}
 
+
+    boolean skipRefresh = false;
     /** This is called every time the active ship in the refit screen changes. */
     @Override
     public void reportRefreshedCharacterStatEffects() {
-        DeferredActionPlugin.performLater(new Action() {
-            @Override
-            public void perform() {
-                checkIfRefitShipChanged();
-            }
-        }, epsilonTime);
+        // checkIfRefitShipChanged will call syncRefitScreenWithVariant,
+        // which internally refreshes the character stats, so use a flag
+        // to prevent recursion.
+        if (!skipRefresh) {
+            checkIfRefitShipChanged();
+        }
     }
 
     void checkIfRefitShipChanged() {
-        if (!insideRefitPanel) return;
-        coreUI = (CoreUIAPI) ReflectionUtils.getCoreUI();
-        final ShipAPI ship = getSelectedShip();
+        coreUI = new WeakReference<>((CoreUIAPI) ReflectionUtils.getCoreUI());
+        final ShipAPI ship = insideRefitPanel ? getSelectedShip() : null;
         HullSpecAndMasteries newSpec = ship == null ? null : new HullSpecAndMasteries(ship.getHullSpec());
 
-        if (newSpec != null) {
-            MasteryUtils.applyAllActiveMasteryEffects(Global.getSettings().getHullSpec(newSpec.specId), new MasteryUtils.MasteryAction() {
-                @Override
-                public void perform(MasteryEffect effect, String id) {
-                    effect.applyEffectsAfterShipCreation(ship, id);
-                }
-            });
+        boolean shouldSync = false;
+        skipRefresh = true;
+        if (ship != null) {
+            // bypass the arbitrary checks in removeMod since we're adding it back anyway
+            ship.getVariant().getHullMods().remove("sms_masteryHandler");
+            ship.getVariant().getHullMods().add("sms_masteryHandler");
+            shouldSync = true;
         }
 
         if (!Objects.equals(currentHullSpecAndMasteries, newSpec)) {
-            onRefitScreenShipChanged(
-                    currentHullSpecAndMasteries,
-                    newSpec);
+            System.out.println("Refit ship changed: " + (currentHullSpecAndMasteries == null ? "null" : currentHullSpecAndMasteries.specId) + " -> " + (newSpec == null ? "null" : newSpec.specId));
+            onRefitScreenShipChanged(currentHullSpecAndMasteries, newSpec);
             currentHullSpecAndMasteries = newSpec;
         }
+        if (shouldSync) {
+            syncRefitScreenWithVariant(false);
+        }
+        skipRefresh = false;
     }
 
     public void onRefitScreenShipChanged(HullSpecAndMasteries oldSpec, HullSpecAndMasteries newSpec) {
@@ -436,5 +415,34 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 //        for (RefitScreenShipChangedListener listener : listeners) {
 //            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
 //        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println(this+" collected");
+        super.finalize();
+    }
+
+    static class HullSpecAndMasteries {
+        String specId;
+
+        NavigableSet<Integer> activeMasteries;
+
+        HullSpecAndMasteries(ShipHullSpecAPI spec) {
+            this.specId = Utils.getBaseHullId(spec);
+            activeMasteries = ShipMastery.getActiveMasteriesCopy(spec);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof HullSpecAndMasteries)) return false;
+            HullSpecAndMasteries o = (HullSpecAndMasteries) other;
+            return Objects.equals(specId, o.specId) && Objects.equals(activeMasteries, o.activeMasteries);
+        }
+
+        @Override
+        public int hashCode() {
+            return specId.hashCode() + activeMasteries.hashCode();
+        }
     }
 }

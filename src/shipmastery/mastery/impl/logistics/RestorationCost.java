@@ -7,12 +7,12 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 
-public class ReduceRestorationCost extends MultiplicativeMasteryEffect {
+public class RestorationCost extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         return makeGenericDescription(
-                Strings.REDUCE_RESTORATION_COST,
-                Strings.REDUCE_RESTORATION_COST_NEG,
+                Strings.Descriptions.RestorationCost,
+                Strings.Descriptions.RestorationCostNeg,
                 true, true, getIncrease());
     }
 

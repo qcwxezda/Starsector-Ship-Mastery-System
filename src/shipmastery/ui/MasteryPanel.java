@@ -53,7 +53,11 @@ public class MasteryPanel {
 
         ReflectionUtils.GenericDialogData dialogData =
                 ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 900f, 600f);
-        if (dialogData == null) return;
+        if (dialogData == null) {
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CANT_OPEN_PANEL, Misc.getNegativeHighlightColor());
+            return;
+        }
+
 
         rootPanel = dialogData.panel;
         this.handler = handler;
@@ -63,10 +67,7 @@ public class MasteryPanel {
     public void forceRefresh(boolean variantChanged, boolean useSavedScrollerLocation) {
         if (rootPanel == null) return;
 
-        if (variantChanged) {
-            handler.injectRefitScreen(true);
-        }
-
+        handler.injectRefitScreen(variantChanged);
         if (useSavedScrollerLocation) {
             saveScrollerLocation();
         }
@@ -401,9 +402,9 @@ public class MasteryPanel {
                 description.addSpacer(20f);
                 for (MasteryEffect effect : effects) {
                     description.setParaFont(Fonts.INSIGNIA_LARGE);
-                    effect.getDescription(baseHullSpec).addLabel(description);
+                    effect.getDescription().addLabel(description);
                     description.setParaFontDefault();
-                    effect.addPostDescriptionSection(baseHullSpec, description);
+                    effect.addPostDescriptionSection(description);
                     description.addSpacer(20f);
                 }
             }
@@ -447,7 +448,7 @@ public class MasteryPanel {
                     @Override
                     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                         for (MasteryEffect effect : effects) {
-                            effect.addTooltipIfHasTooltipTag(baseHullSpec, tooltip);
+                            effect.addTooltipIfHasTooltipTag(tooltip);
                         }
                     }
                 }, TooltipMakerAPI.TooltipLocation.ABOVE, false);

@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
- *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#TAG_UNIQUE} is not set, i.e. is stackable, and
+ *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#UNIQUE} is not set, i.e. is stackable, and
  *  {@code shipmastery_[ID]} otherwise. <br>
  *  Use {@link shipmastery.util.MasteryUtils#makeSharedId} to get a non-unique {@code id}, useful for effects that have both
  *  unique and stackable elements. <br>
@@ -38,7 +38,7 @@ public interface MasteryEffect {
     void applyEffectsAfterShipCreation(ShipAPI ship, String id);
 
     /** Will be displayed in the mastery panel. */
-    MasteryDescription getDescription(ShipHullSpecAPI spec);
+    MasteryDescription getDescription();
 
     /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip}  <br>
      *  All mastery effects are applied after all other hullmod effects.
@@ -47,14 +47,14 @@ public interface MasteryEffect {
 
     /** The likelihood of the mastery being generated when randomly selected.
      *  Return 0 to indicate that this mastery is not applicable to {@code spec}.*/
-    float getSelectionWeight(ShipHullSpecAPI spec);
+    float getSelectionWeight();
 
     /** Will be displayed in the mastery panel. */
-    void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
+    void addPostDescriptionSection(TooltipMakerAPI tooltip);
 
     /** Adds a tooltip that shows upon hovering over the effect.
-     *  {@link MasteryTags#TAG_HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
-    void addTooltipIfHasTooltipTag(ShipHullSpecAPI spec, TooltipMakerAPI tooltip);
+     *  {@link MasteryTags#HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
+    void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
@@ -89,4 +89,7 @@ public interface MasteryEffect {
     int getTier();
 
     void setTier(int tier);
+
+    /** Hull spec assigned to this mastery effect on generation. Can't be changed. */
+    ShipHullSpecAPI getHullSpec();
 }

@@ -11,15 +11,15 @@ import shipmastery.util.Strings;
 
 import java.util.Collection;
 
-public class IncreaseRangeIfNoBonuses extends MultiplicativeMasteryEffect {
+public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         return makeGenericDescription(
-                Strings.INCREASE_RANGE_IF_NO_BONUSES,
-                Strings.INCREASE_RANGE_IF_NO_BONUSES_NEG,
+                Strings.Descriptions.RangeIfNoBonuses,
+                Strings.Descriptions.RangeIfNoBonusesNeg,
                 true,
                 false,
-                getIncreaseFor(spec));
+                getIncreaseFor(getHullSpec()));
     }
 
     @Override
@@ -51,23 +51,17 @@ public class IncreaseRangeIfNoBonuses extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.INCREASE_RANGE_IF_NO_BONUSES_POST, 5f);
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Descriptions.RangeIfNoBonusesPost, 5f);
     }
 
     public float getIncreaseFor(ShipHullSpecAPI spec) {
-        float increase = getIncrease();
+        float increase = getStrength();
         switch (spec.getHullSize()) {
-            case FRIGATE:
-                return increase / 6f;
-            case DESTROYER:
-                return 2f*increase/6f;
-            case CRUISER:
-                return 4f*increase/6f;
-            case CAPITAL_SHIP:
-                return increase;
-            default:
-                return 0f;
+            case FRIGATE: increase /= 6f; break;
+            case DESTROYER: increase /= 3f; break;
+            case CRUISER: increase *= 2f / 3f; break;
         }
+        return Math.max(increase, -1f);
     }
 }

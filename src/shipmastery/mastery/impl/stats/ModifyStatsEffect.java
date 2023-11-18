@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.stats;
 
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import shipmastery.ShipMastery;
@@ -40,7 +39,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         List<Pair<ShipStat, Float>> positiveAmounts = new ArrayList<>();
         List<Pair<ShipStat, Float>> negativeAmounts = new ArrayList<>();
 
@@ -61,7 +60,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
         List<Color> colors = new ArrayList<>();
 
         for (Pair<ShipStat, Float> item : positiveAmounts) {
-            descriptionListPos.add(Strings.MODIFY_STAT_LIST_ITEM);
+            descriptionListPos.add(Strings.Descriptions.StatListItem);
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
@@ -69,7 +68,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
         }
 
         for (Pair<ShipStat, Float> item : negativeAmounts) {
-            descriptionListNeg.add(Strings.MODIFY_STAT_LIST_ITEM);
+            descriptionListNeg.add(Strings.Descriptions.StatListItem);
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
@@ -79,7 +78,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
         StringBuilder sb = new StringBuilder();
 
         if (!positiveAmounts.isEmpty()) {
-            sb.append(Strings.MODIFY_STAT_INCREASE);
+            sb.append(Strings.Descriptions.StatIncrease);
             sb.append(Utils.joinStringList(descriptionListPos));
         }
 
@@ -87,7 +86,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             if (!positiveAmounts.isEmpty()) {
                 sb.append("\n");
             }
-            sb.append(Strings.MODIFY_STAT_DECREASE);
+            sb.append(Strings.Descriptions.StatDecrease);
             sb.append(Utils.joinStringList(descriptionListNeg));
         }
 

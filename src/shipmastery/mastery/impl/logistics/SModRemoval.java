@@ -7,10 +7,10 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 
-public class EnableSModRemoval extends BaseMasteryEffect {
+public class SModRemoval extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
-        return MasteryDescription.init(Strings.ENABLE_SMOD_REMOVAL);
+    public MasteryDescription getDescription() {
+        return MasteryDescription.init(Strings.Descriptions.SModRemoval);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class EnableSModRemoval extends BaseMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.ENABLE_SMOD_REMOVAL_POST, 5f);
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Descriptions.SModRemovalPost, 5f);
     }
 }

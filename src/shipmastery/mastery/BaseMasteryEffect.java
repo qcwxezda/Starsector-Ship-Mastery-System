@@ -15,7 +15,8 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private MutableStat strength;
     private final Set<String> tags = new HashSet<>();
     private int tier = 1;
-    private final int priority = 0;
+    private int priority = 0;
+    private ShipHullSpecAPI spec;
 
 
     @Override
@@ -32,7 +33,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     @Override
     public void init(String... args) {
-        if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect called with null or 0 args");
+        if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect init called with null or 0 args");
 
         try {
             strength = new MutableStat(Float.parseFloat(args[0]));
@@ -51,15 +52,15 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public float getSelectionWeight() {
         return 1f;
     }
 
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {}
 
     @Override
-    public void addTooltipIfHasTooltipTag(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {}
+    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip) {}
 
     @Override
     public final void addTags(String... tags) {
@@ -71,6 +72,18 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         for (String tag : tags) {
             this.tags.remove(tag);
         }
+    }
+
+    @Override
+    public final ShipHullSpecAPI getHullSpec() {
+        return spec;
+    }
+
+    public final void setHullSpec(ShipHullSpecAPI spec) {
+        if (this.spec != null) {
+            throw new RuntimeException("Changing the hull spec of a mastery effect is not allowed");
+        }
+        this.spec = spec;
     }
 
     @Override
@@ -91,6 +104,10 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public final int getPriority() {
         return priority;
+    }
+
+    public final void setPriority(int priority) {
+        this.priority = priority;
     }
 
     @Override

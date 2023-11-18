@@ -1,29 +1,12 @@
 {
-  "default2": [
-    "AdditionalSMods 1",
-    "ReduceRestorationCost",
-    "EnableSModRemoval",
-    ["ReduceSModMPCost", "ReduceSModCreditsCost", "AdditionalSMods"],
-    "ReduceRestorationCost 2.5",
-    ["ReduceSModMPCost 2", "ReduceSModCreditsCost 2"],
-    "IgnoreNoBuildIn 1 safetyoverrides",
-    ["AllowOverCapacitySMods 1.5", "IgnoreNoBuildIn 1 neural_interface"]
-  ],
-
   "default": [
-    ["AdditionalSMods"],
-    ["ReduceSModCreditsCost"],
-    ["ReduceSModMPCost"],
-    ["ReduceRestorationCost"],
-    ["ReduceRestorationCost"],
-    ["EnableSModRemoval"],
-    ["AllowOverCapacitySMods"],
+    ["SModCapacity"],
+    ["SModRemoval"],
+    ["SModsOverCapacity"],
+    ["ScaleOtherMasteries"],
     ["IgnoreNoBuildIn 1 targetingunit turretgyros armoredweapons"],
-    ["ModifyStatsMult 1 SensorStrength"],
-    ["ModifyStatsFlat 2 MaxBurnLevel"],
-    ["IncreaseFluxByShieldUpkeep -0.5"],
-    ["IncreaseFluxByShieldUpkeep"],
-    ["IncreaseRangeIfNoBonuses"],
-    ["BoostOtherMasteries"]
+    ["FluxByShieldUpkeep 0.5"],
+    ["RangeIfNoBonuses"],
+    ["FortressShieldReflection"]
   ]
 }

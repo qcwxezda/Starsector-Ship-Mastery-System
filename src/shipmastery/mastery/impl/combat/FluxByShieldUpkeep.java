@@ -3,17 +3,16 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 
-public class IncreaseFluxByShieldUpkeep extends BaseMasteryEffect {
+public class FluxByShieldUpkeep extends BaseMasteryEffect {
     @Override
-    public void addPostDescriptionSection(ShipHullSpecAPI spec, TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.INCREASE_FLUX_BY_SHIELD_UPKEEP_POST, 5f);
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Descriptions.FluxByShieldUpkeepPost, 5f);
     }
 
     @Override
@@ -30,11 +29,12 @@ public class IncreaseFluxByShieldUpkeep extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipHullSpecAPI spec) {
+    public MasteryDescription getDescription() {
         float increase = Math.max(getStrength(), -1f);
-        return MultiplicativeMasteryEffect.makeGenericDescription(
-                Strings.INCREASE_FLUX_BY_SHIELD_UPKEEP,
-                Strings.INCREASE_FLUX_BY_SHIELD_UPKEEP_NEG,
+        return MultiplicativeMasteryEffect.makeGenericDescriptionStatic(
+                Strings.Descriptions.FluxByShieldUpkeep,
+                Strings.Descriptions.FluxByShieldUpkeepNeg,
+                increase > 0f,
                 true,
                 false,
                 increase,

@@ -150,8 +150,10 @@ public abstract class Utils {
     }
 
     public static String absValueAsPercent(float num) {
-        return (int) (Math.abs(num * 100f)) + "%";
+        return asPercent(Math.abs(num));
     }
+
+    public static String asPercent(float num) {return (int) (num * 100f) + "%";}
 
     public static String joinStringList(List<String> strings) {
         switch (strings.size()) {
