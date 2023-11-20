@@ -3,7 +3,8 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.mastery.MasteryDescription;
@@ -18,7 +19,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     static final float MAX_HULL_MODIFIER = 0.9f;
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         MasteryDescription description = makeGenericDescription(
                 Strings.Descriptions.MaxOPForHull,
                 null,
@@ -48,17 +49,18 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         Global.getSector().getPlayerStats().getShipOrdnancePointBonus().modifyMult(id, getMult());
     }
 
     @Override
-    public void onEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         Global.getSector().getPlayerStats().getShipOrdnancePointBonus().unmodify(id);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 5f, Misc.getNegativeHighlightColor(),
                         Utils.absValueAsPercent(1f - MAX_HULL_MODIFIER),
                         Utils.absValueAsPercent(1f - MIN_HULL_MODIFIER));

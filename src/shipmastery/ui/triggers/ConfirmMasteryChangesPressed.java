@@ -13,16 +13,15 @@ import java.util.TreeSet;
 public class ConfirmMasteryChangesPressed extends ActionListener {
 
     MasteryPanel masteryPanel;
+    ShipHullSpecAPI spec;
 
-    public ConfirmMasteryChangesPressed(MasteryPanel masteryPanel) {
+    public ConfirmMasteryChangesPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
+        this.spec = spec;
     }
 
     @Override
     public void trigger(Object... args) {
-
-        final ShipHullSpecAPI spec = masteryPanel.getShip().getHullSpec();
-
         Set<Integer> union = new HashSet<>();
         Set<Integer> activeSet = ShipMastery.getActiveMasteriesCopy(spec);
         Set<Integer> newSet = masteryPanel.getSelectedMasteryButtons();

@@ -17,7 +17,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     static float MAX_INCREASE = 1f;
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.PeakCRMultipleShips,
                 Strings.Descriptions.PeakCRMultipleShipsNeg,
@@ -31,12 +31,12 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = stats.getFleetMember();
         if (fm == null) return;
-        String thisHullId = Utils.getBaseHullId(stats.getVariant().getHullSpec());
+        String thisHullId = Utils.getRootRestoredHullSpecId(stats.getVariant());
         FleetDataAPI fleetData = fm.getFleetData();
         if (fleetData == null) return;
         int count = -1;
         for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            if (thisHullId.equals(Utils.getBaseHullId(member.getHullSpec()))) {
+            if (thisHullId.equals(Utils.getRootRestoredHullSpecId(member.getVariant()))) {
                 count++;
             }
         }
@@ -47,7 +47,8 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 5f, Misc.getHighlightColor(), "" + MAX_STACKS,
                         Utils.absValueAsPercent(MAX_INCREASE));
     }

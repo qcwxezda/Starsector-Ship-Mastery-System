@@ -38,6 +38,7 @@ public interface Strings {
     String EFFECT_CANT_DEACTIVATE_WARNING = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
     String SHIP_MASTERY_EFFECT = Utils.getString("sms_misc", "shipMasteryEffect");
     String AND_STR = Utils.getString("sms_misc", "and");
+    String DOESNT_AFFECT_MODULES = Utils.getString("sms_misc", "doesntAffectModules");
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
         String SModCreditsCost = Utils.getString("sms_descriptions", "SModCreditsCost");

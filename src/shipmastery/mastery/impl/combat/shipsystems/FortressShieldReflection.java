@@ -3,15 +3,17 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
-import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.vector.Vector2f;
+import particleengine.Emitter;
+import particleengine.Particles;
+import particleengine.Utils;
 import shipmastery.combat.listeners.ShipSystemListener;
-import shipmastery.deferred.Action;
-import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
-import shipmastery.util.ReflectionUtils;
 
 import java.awt.*;
 
@@ -20,8 +22,32 @@ public class FortressShieldReflection extends BaseMasteryEffect implements ShipS
     float activatedTime = 0f;
 
     @Override
-    public void onActivate(ShipAPI ship) {
+    public void onActivate(final ShipAPI ship) {
         activatedTime = 0f;
+        final Emitter test = Particles.initialize(ship.getLocation());
+        test.circleOffset(10f, 100f);
+        test.radialVelocity(-5f, -10f);
+        test.revolutionRate(-30f, 30f);
+        test.radialAcceleration(-20f, 20f);
+        test.setSyncSize(true);
+        test.growthRate(-5f, 5f);
+        test.life(10f, 10f);
+        test.size(25, 25);
+        test.fadeTime(1f, 1f, 1f, 1);
+        test.sinusoidalMotionX(100f, 200f, 0.25f, 0.5f, 0f, 0f);
+        test.setBlendMode(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL14.GL_FUNC_ADD);
+        test.enableDynamicAnchoring();
+        Particles.anchorEmitter(test, ship);
+        final Emitter test2 = Particles.createCopy(test, Utils.getLoadedSprite("graphics/fx/explosion1.png"), GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL14.GL_FUNC_ADD);
+        final Emitter test3 = Particles.createCopy(test, Utils.getLoadedSprite("graphics/fx/explosion2.png"), GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL14.GL_FUNC_ADD);
+        Particles.anchorEmitter(test2, ship);
+        test2.enableDynamicAnchoring();
+        Particles.anchorEmitter(test3, ship);
+        test3.enableDynamicAnchoring();
+        test3.setLayer(CombatEngineLayers.BELOW_SHIPS_LAYER);
+
+        test.randomHSVA(360, 1, 1, 0);
+        Particles.stream(test, 999, 100000, 10);
     }
 
     @Override
@@ -46,6 +72,7 @@ public class FortressShieldReflection extends BaseMasteryEffect implements ShipS
     public void advanceWhileOn(ShipAPI ship, float amount) {
         activatedTime += amount;
         ship.setJitterUnder(ship, Color.WHITE, Math.min(activatedTime, getMaxTime() - activatedTime), 5, 20f);
+        //ship.addAfterimage(Color.WHITE, )
     }
 
     @Override
@@ -56,11 +83,12 @@ public class FortressShieldReflection extends BaseMasteryEffect implements ShipS
         }
         ship.setJitterShields(true);
         ship.setCircularJitter(true);
+        ship.setShowModuleJitterUnder(true);
         ship.getSystem().setFluxPerUse(2000f);
     }
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init("Placeholder text!");
     }
 

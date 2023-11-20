@@ -50,19 +50,20 @@ public abstract class ShipMastery {
 
 
     public static int getMaxMastery(ShipHullSpecAPI spec) {
-        String id = Utils.getBaseHullId(spec);
-        return masteryMap.get(id).size();
+        String id = Utils.getRestoredHullSpecId(spec);
+        SortedMap<Integer, List<MasteryEffect>> count = masteryMap.get(id);
+        return count == null ? 0 : count.size();
     }
 
     public static int getMasteryLevel(ShipHullSpecAPI spec) {
         if (MASTERY_TABLE == null) return 0;
 
-        MasteryData data = MASTERY_TABLE.get(Utils.getBaseHullId(spec));
+        MasteryData data = MASTERY_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? 0 : data.level;
     }
 
     public static void advanceMasteryLevel(ShipHullSpecAPI spec) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
 
         if (data == null) {
@@ -88,12 +89,12 @@ public abstract class ShipMastery {
     public static float getMasteryPoints(ShipHullSpecAPI spec) {
         if (MASTERY_TABLE == null) return 0f;
 
-        MasteryData data = MASTERY_TABLE.get(Utils.getBaseHullId(spec));
+        MasteryData data = MASTERY_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? 0 : data.points;
     }
 
     public static void addMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
         if (data == null) {
             MASTERY_TABLE.put(id, new MasteryData(amount, 0));
@@ -104,7 +105,7 @@ public abstract class ShipMastery {
     }
 
     public static void spendMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
         if (data == null) return;
 
@@ -113,7 +114,7 @@ public abstract class ShipMastery {
     }
 
     public static void activateMastery(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
 
         if (data == null) {
@@ -125,12 +126,12 @@ public abstract class ShipMastery {
         List<MasteryEffect> effects = getMasteryEffects(spec, level);
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            effect.onActivate(Global.getSettings().getHullSpec(id), MasteryUtils.makeEffectId(effect, level, i));
+            effect.onActivate(MasteryUtils.makeEffectId(effect, level, i));
         }
     }
 
     public static void deactivateMastery(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         MasteryData data = MASTERY_TABLE.get(id);
 
         if (data == null) {
@@ -142,21 +143,21 @@ public abstract class ShipMastery {
         List<MasteryEffect> effects = getMasteryEffects(spec, level);
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            effect.onDeactivate(Global.getSettings().getHullSpec(id), MasteryUtils.makeEffectId(effect, level, i));
+            effect.onDeactivate(MasteryUtils.makeEffectId(effect, level, i));
         }
     }
 
     /** Returns a copy of the original data */
     public static NavigableSet<Integer> getActiveMasteriesCopy(ShipHullSpecAPI spec) {
-        if (MASTERY_TABLE == null) return new TreeSet<>();
+        if (MASTERY_TABLE == null || spec == null) return new TreeSet<>();
 
-        MasteryData data = MASTERY_TABLE.get(Utils.getBaseHullId(spec));
+        MasteryData data = MASTERY_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? new TreeSet<Integer>() : new TreeSet<>(data.activeLevels);
     }
 
     /** This function 1-indexed */
     public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level) {
-        String id = Utils.getBaseHullId(spec);
+        String id = Utils.getRestoredHullSpecId(spec);
         return masteryMap.get(id, level - 1);
     }
 
@@ -169,7 +170,7 @@ public abstract class ShipMastery {
             throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         JSONArray masteryList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
 
-        Utils.populateHullIdMap();
+        Utils.populateVariantIdToBaseHullIds();
 
         for (int i = 0; i < masteryList.length(); i++) {
             JSONObject item = masteryList.getJSONObject(i);
@@ -243,7 +244,7 @@ public abstract class ShipMastery {
     public static void createMasteryEffects() throws InstantiationException, IllegalAccessException {
         masteryMap.clear();
 
-        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+        for (String hullId : new HashSet<>(Utils.variantIdToBaseHullIdMap.values())) {
             for (Map.Entry<Integer, List<String>> entry : presetsMap.get(DEFAULT_PRESET_NAME).entrySet()) {
                 int level = entry.getKey();
                 List<String> strings = entry.getValue();
@@ -272,12 +273,12 @@ public abstract class ShipMastery {
     }
 
     public static void activateInitialMasteries() {
-        for (String hullId : Utils.hullIdToBaseHullIdMap.values()) {
+        for (String hullId : new HashSet<>(Utils.variantIdToBaseHullIdMap.values())) {
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSettings().getHullSpec(hullId), new MasteryUtils.MasteryAction() {
                         @Override
                         public void perform(MasteryEffect effect, String id) {
-                            effect.onActivate(effect.getHullSpec(), id);
+                            effect.onActivate(id);
                         }
                     }
             );
@@ -301,7 +302,7 @@ public abstract class ShipMastery {
     public static ShipStat getStatParams(String id) { return statSingletonMap.get(id); }
 
     public static void clearInvalidActiveLevels() {
-        for (String id : Utils.hullIdToBaseHullIdMap.values()) {
+        for (String id : new HashSet<>(Utils.variantIdToBaseHullIdMap.values())) {
             ShipHullSpecAPI spec = Global.getSettings().getHullSpec(id);
             MasteryData data = MASTERY_TABLE.get(id);
             if (data == null) continue;

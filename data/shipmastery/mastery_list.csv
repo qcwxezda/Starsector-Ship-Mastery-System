@@ -6,7 +6,7 @@ SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.im
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
 SModRemoval,4,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
-SModsOverCapacity,7,no_disable no_auto_activate unique logistic,,2,shipmastery.mastery.impl.logistics.SModsOverCapacity
+SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,,2,shipmastery.mastery.impl.logistics.SModsOverCapacity
 ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.5,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
@@ -25,7 +25,7 @@ RangeIfNoBonuses,3,negative_strength_allowed combat,1,0.3,shipmastery.mastery.im
 # due to reversion of global changes after selecting a different ship, an OP malus would
 # incorrectly cause ships in the refit/fleet panel to display unused OP.
 MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
-DPIfOnlyShip,6,negative_strength_allowed combat,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
-PeakCRMultipleShips,5,negative_strength_allowed combat,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
+DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
+PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 #### SHIP SYSTEM ENHANCEMENTS ####
-FortressShieldReflection,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FortressShieldReflection
+FortressShieldReflection,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FortressShieldReflection

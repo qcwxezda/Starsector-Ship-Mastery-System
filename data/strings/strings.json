@@ -73,6 +73,7 @@
   },
 
   "sms_misc": {
+    "doesntAffectModules": "This effect doesn't apply to modules.",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",

@@ -9,17 +9,20 @@ import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.MasteryTags;
 import shipmastery.ui.triggers.ActionListener;
 import shipmastery.ui.triggers.MasteryButtonPressed;
 import shipmastery.util.*;
@@ -41,7 +44,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     // Keep track of the current ship's hull spec and active mastery set in the refit panel
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
-    HullSpecAndMasteries currentHullSpecAndMasteries;
+    ShipInfo currentShipInfo = new ShipInfo(null, null);
 
     @Override
     public boolean isDone() {
@@ -101,7 +104,13 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }
     }
 
-    public ShipAPI getSelectedShip() {
+    private ShipAPI lastSelectedRealShip;
+    /** (Currently selected module, last selected ship with a fleet member attached)
+     *  (null, null) if not inside the refit screen */
+    public @NotNull Pair<ShipAPI, ShipAPI> getSelectedShip() {
+        if (!insideRefitPanel) {
+            return new Pair<>(null, null);
+        }
         ShipAPI ship;
         try {
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
@@ -109,22 +118,28 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
             Object shipDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getShipDisplay");
             ship = (ShipAPI) ReflectionUtils.invokeMethodNoCatch(shipDisplay, "getShip");
         } catch (Exception e) {
-            ship = null;
+            return new Pair<>(null, null);
         }
-        return ship;
+
+        if (ship != null && ship.getFleetMember() != null && ship.getFleetMember().getShipName() != null) {
+            lastSelectedRealShip = ship;
+            return new Pair<>(ship, ship);
+        }
+        return new Pair<>(ship, lastSelectedRealShip);
     }
 
     void syncRefitScreenWithVariant(boolean saveVariant) {
         try {
+            // This is necessary if allowing mastery panel to be open while in the menu for adding hullmods
+            // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().one);
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
             ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
 
+
             if (saveVariant) {
                 // save the variant so can't undo s-mods
                 ReflectionUtils.invokeMethodNoCatch(refitPanel, "saveCurrentVariant");
-                // This is necessary if allowing mastery panel to be open while in the menu for adding hullmods
-                // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().getVariant());
                 // To disable the undo button
                 ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", false);
             }
@@ -260,7 +275,17 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
             Map<ButtonAPI, FleetMember> buttonToMemberMap = (Map<ButtonAPI, FleetMember>) ReflectionUtils.invokeMethodNoCatch(
                     currentTab, "getButtonToMember");
             if (buttonToMemberMap != null && !buttonToMemberMap.isEmpty()) {
-                ButtonAPI randomButton = buttonToMemberMap.keySet().iterator().next();
+                // Find a random button to get the sorted button list
+                // However, if that button is for selecting a module, it's a different type of button
+                // So, skip those with fleet member name == null
+                Map.Entry<ButtonAPI, FleetMember> randomEntry = null;
+                for (Map.Entry<ButtonAPI, FleetMember> entry : buttonToMemberMap.entrySet()) {
+                    randomEntry = entry;
+                    if (randomEntry.getValue() != null && randomEntry.getValue().getShipName() != null) {
+                        break;
+                    }
+                }
+                ButtonAPI randomButton = randomEntry.getKey();
                 UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(randomButton, "getParent");
                 List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");
                 // Delete MP panels we may have previously added
@@ -356,32 +381,39 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     void checkIfRefitShipChanged() {
         coreUI = new WeakReference<>((CoreUIAPI) ReflectionUtils.getCoreUI());
-        final ShipAPI ship = insideRefitPanel ? getSelectedShip() : null;
-        HullSpecAndMasteries newSpec = ship == null ? null : new HullSpecAndMasteries(ship.getHullSpec());
+        Pair<ShipAPI, ShipAPI> moduleAndRoot = getSelectedShip();
+        ShipAPI module = moduleAndRoot.one;
+        ShipAPI root = moduleAndRoot.two;
+        ShipInfo newShipInfo = new ShipInfo(module, root);
 
         boolean shouldSync = false;
-        skipRefresh = true;
-        if (ship != null) {
+        if (module != null && !skipRefresh) {
             // bypass the arbitrary checks in removeMod since we're adding it back anyway
-            ship.getVariant().getHullMods().remove("sms_masteryHandler");
-            ship.getVariant().getHullMods().add("sms_masteryHandler");
+            module.getVariant().getHullMods().remove("sms_masteryHandler");
+            module.getVariant().getHullMods().add("sms_masteryHandler");
             shouldSync = true;
         }
 
-        if (!Objects.equals(currentHullSpecAndMasteries, newSpec)) {
-            System.out.println("Refit ship changed: " + (currentHullSpecAndMasteries == null ? "null" : currentHullSpecAndMasteries.specId) + " -> " + (newSpec == null ? "null" : newSpec.specId));
-            onRefitScreenShipChanged(currentHullSpecAndMasteries, newSpec);
-            currentHullSpecAndMasteries = newSpec;
+        if (!Objects.equals(currentShipInfo, newShipInfo)) {
+            System.out.println(
+                    "Refit ship changed: " + (
+                            (currentShipInfo.rootSpec == null ? "null" : currentShipInfo.rootSpec.getHullId()) + ", " + (currentShipInfo.moduleVariant == null ? "null" :currentShipInfo.moduleVariant.getHullVariantId())) + " -> " +
+                            (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
+            onRefitScreenShipChanged(currentShipInfo, newShipInfo);
+            currentShipInfo = newShipInfo;
         }
         if (shouldSync) {
+            skipRefresh = true;
             syncRefitScreenWithVariant(false);
         }
         skipRefresh = false;
     }
 
-    public void onRefitScreenShipChanged(HullSpecAndMasteries oldSpec, HullSpecAndMasteries newSpec) {
-        String oldSpecId = oldSpec == null ? null : oldSpec.specId;
-        String newSpecId = newSpec == null ? null : newSpec.specId;
+    List<EffectActivationRecord> effectsToDeactivate = new ArrayList<>();
+
+    public void onRefitScreenShipChanged(ShipInfo oldInfo, ShipInfo newInfo) {
+        final ShipHullSpecAPI newSpec = newInfo.rootSpec;
+        final ShipVariantAPI newVariant = newInfo.moduleVariant;
 
 //        List<RefitScreenShipChangedListener> listeners = Global.getSector().getListenerManager().getListeners(
 //                RefitScreenShipChangedListener.class);
@@ -389,60 +421,103 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 //            listener.onRefitScreenBeforeMasteriesChanged(oldSpecId, newSpecId);
 //        }
 
-        if (oldSpecId != null) {
-            final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(oldSpec.specId);
+//        if (oldSpec != null && oldVariant != null) {
+//            MasteryUtils.applyAllMasteryEffects(
+//                oldSpec, oldInfo.activeMasteries, true, new MasteryUtils.MasteryAction() {
+//                    @Override
+//                    public void perform(MasteryEffect effect, String id) {
+//                        boolean isModule = Objects.equals(Utils.getRestoredHullSpecId(oldVariant.getHullSpec()), oldSpec.getHullId());
+//                        if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+//                            effect.onEndRefit(oldVariant, isModule, id);
+//                        }
+//                    }
+//                });
+//        }
+
+        for (int i = effectsToDeactivate.size() - 1; i >= 0; i--) {
+            EffectActivationRecord toDeactivate = effectsToDeactivate.get(i);
+            toDeactivate.effect.onEndRefit(toDeactivate.moduleVariant, toDeactivate.isModule, toDeactivate.id);
+            System.out.println("Unapply: " + toDeactivate.id + " to " + toDeactivate.moduleVariant.getHullVariantId() + ", " + toDeactivate.isModule);
+        }
+
+        effectsToDeactivate.clear();
+
+        if (newSpec != null && newVariant != null) {
             MasteryUtils.applyAllMasteryEffects(
-                spec, oldSpec.activeMasteries, true, new MasteryUtils.MasteryAction() {
+                newSpec, newInfo.activeMasteries, false, new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect, String id) {
-                        effect.onEndRefit(spec, id);
+                        boolean isModule = !Objects.equals(Utils.getRestoredHullSpecId(newVariant.getHullSpec()), newSpec.getHullId());
+                        if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                            effect.onBeginRefit(newVariant, isModule, id);
+                            System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
+                            effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule, id));
+                        }
                     }
                 });
         }
 
-        if (newSpecId != null) {
-            final ShipHullSpecAPI spec = Global.getSettings().getHullSpec(newSpec.specId);
-            MasteryUtils.applyAllMasteryEffects(
-                spec, newSpec.activeMasteries, false, new MasteryUtils.MasteryAction() {
-                    @Override
-                    public void perform(MasteryEffect effect, String id) {
-                        effect.onBeginRefit(spec, id);
-                    }
-                });
-
-        }
+        System.out.println("-------------");
 
 //        for (RefitScreenShipChangedListener listener : listeners) {
 //            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
 //        }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        System.out.println(this+" collected");
-        super.finalize();
+    static class EffectActivationRecord {
+        MasteryEffect effect;
+        ShipVariantAPI moduleVariant;
+        boolean isModule;
+        String id;
+
+        EffectActivationRecord(MasteryEffect effect, ShipVariantAPI moduleVariant, boolean isModule, String id) {
+            this.effect = effect;
+            this.moduleVariant = moduleVariant;
+            this.isModule = isModule;
+            this.id = id;
+        }
     }
 
-    static class HullSpecAndMasteries {
-        String specId;
+    static class ShipInfo {
+        /** Hull spec of the root ship (so parent if ship is a module) */
+        ShipHullSpecAPI rootSpec;
 
+        /** Currently selected module variant */
+        ShipVariantAPI moduleVariant;
+
+        /** Active masteries at the time of selection -- if these change, need to refresh the ship */
         NavigableSet<Integer> activeMasteries;
 
-        HullSpecAndMasteries(ShipHullSpecAPI spec) {
-            this.specId = Utils.getBaseHullId(spec);
-            activeMasteries = ShipMastery.getActiveMasteriesCopy(spec);
+        ShipInfo(ShipAPI moduleShip, ShipAPI rootShip) {
+            if (rootShip == null) {
+                rootSpec = null;
+                activeMasteries = new TreeSet<>();
+            }
+            else {
+                rootSpec = Utils.getRestoredHullSpec(rootShip.getHullSpec());
+                activeMasteries = ShipMastery.getActiveMasteriesCopy(rootSpec);
+            }
+            moduleVariant = moduleShip == null ? null : moduleShip.getVariant();
         }
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof HullSpecAndMasteries)) return false;
-            HullSpecAndMasteries o = (HullSpecAndMasteries) other;
-            return Objects.equals(specId, o.specId) && Objects.equals(activeMasteries, o.activeMasteries);
+            if (!(other instanceof ShipInfo)) return false;
+            ShipInfo o = (ShipInfo) other;
+            boolean sameRootSpec = (rootSpec == null && o.rootSpec == null)
+                    || (rootSpec != null && o.rootSpec != null && rootSpec.getHullId().equals(o.rootSpec.getHullId()));
+            boolean sameModuleVariant = moduleVariant == o.moduleVariant;//(moduleVariant == null && o.moduleVariant == null)
+                    //|| (moduleVariant != null && o.moduleVariant != null && moduleVariant.getHullVariantId().equals(o.moduleVariant.getHullVariantId()));
+            boolean sameActiveMasteries = Objects.equals(activeMasteries, o.activeMasteries);
+            return sameRootSpec && sameModuleVariant && sameActiveMasteries;
         }
 
         @Override
         public int hashCode() {
-            return specId.hashCode() + activeMasteries.hashCode();
+            int i = activeMasteries.hashCode();
+            if (rootSpec != null) i += 31 * rootSpec.getHullId().hashCode() + 17;
+            if (moduleVariant != null) i += 31 * moduleVariant.hashCode() + 17;
+            return i;
         }
     }
 }

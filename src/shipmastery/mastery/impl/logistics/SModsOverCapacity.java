@@ -2,7 +2,8 @@ package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -17,19 +18,19 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     static float DP_PENALTY_PER_SMOD = 0.05f;
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(
                                          getIncrease() == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
                                  .params(getIncrease());
     }
 
     @Override
-    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getIncrease());
     }
 
     @Override
-    public void onEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.unmodify(id);
     }
 
@@ -48,7 +49,8 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
     }
 }

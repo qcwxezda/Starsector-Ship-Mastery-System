@@ -1,9 +1,7 @@
 package shipmastery.mastery;
 
-import com.fs.starfarer.api.combat.HullModEffect;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
@@ -38,23 +36,27 @@ public interface MasteryEffect {
     void applyEffectsAfterShipCreation(ShipAPI ship, String id);
 
     /** Will be displayed in the mastery panel. */
-    MasteryDescription getDescription();
+    MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 
     /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip}  <br>
      *  All mastery effects are applied after all other hullmod effects.
      *  Among each other, effects are applied in ascending priority order. */
     void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id);
 
-    /** The likelihood of the mastery being generated when randomly selected.
-     *  Return 0 to indicate that this mastery is not applicable to {@code spec}.*/
-    float getSelectionWeight();
+    /**
+     * The likelihood of the mastery being generated when randomly selected.
+     * Return 0 (or less) to indicate that this mastery should not be normally selected.
+     * Return {@code null} to indicate that this mastery is not applicable at all and should not be selected
+     * even in randomizer mode.
+     */
+    Float getSelectionWeight();
 
     /** Will be displayed in the mastery panel. */
-    void addPostDescriptionSection(TooltipMakerAPI tooltip);
+    void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 
     /** Adds a tooltip that shows upon hovering over the effect.
      *  {@link MasteryTags#HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
-    void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip);
+    void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
@@ -63,19 +65,21 @@ public interface MasteryEffect {
     void modifyStrengthAdditive(String id, float fraction);
     void unmodifyStrength(String id);
 
-    /** Changes will be applied when a ship with hull spec {@code spec} is selected inside the refit screen.
-     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipHullSpecAPI, String)}. */
-    void onBeginRefit(ShipHullSpecAPI spec, String id);
+    /** Called whenever a ship or module is selected in the refit screen and that ship/module's root ship shares
+     *  this mastery's hull spec.
+     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipVariantAPI, boolean, String)}. */
+    void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id);
 
-    /** Will be called when a ship with hull spec {@code spec} is no longer selected inside the refit screen.
+    /** Called whenever a ship or module is selected in the refit screen and the root ship of the ship/module that was
+     *  previously selected shares this mastery's hull spec.
      *  Effects are reverted in descending order of mastery level. */
-    void onEndRefit(ShipHullSpecAPI spec, String id);
+    void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id);
 
     /** Called whenever the mastery is activated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onActivate(ShipHullSpecAPI spec, String id);
+    void onActivate(String id);
 
     /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onDeactivate(ShipHullSpecAPI spec, String id);
+    void onDeactivate(String id);
 
     /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
     int getPriority();

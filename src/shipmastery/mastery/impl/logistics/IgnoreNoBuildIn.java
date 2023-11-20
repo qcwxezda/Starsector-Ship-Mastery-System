@@ -1,7 +1,9 @@
 package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -19,19 +21,19 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         Object[] params = new Object[hullmodIds.size()];
         String str = makeString(params);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.IgnoreNoBuildIn + str).params(params);
     }
 
     @Override
-    public void onBeginRefit(ShipHullSpecAPI spec, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.addAll(hullmodIds);
     }
 
     @Override
-    public void onEndRefit(ShipHullSpecAPI spec, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.removeAll(hullmodIds);
     }
 

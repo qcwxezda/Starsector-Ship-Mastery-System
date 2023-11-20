@@ -12,7 +12,7 @@ import shipmastery.util.Utils;
 
 public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.DPIfOnlyShip,
                 Strings.Descriptions.DPIfOnlyShipNeg,
@@ -26,12 +26,12 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = stats.getFleetMember();
         if (fm == null) return;
-        String thisHullId = Utils.getBaseHullId(stats.getVariant().getHullSpec());
+        String thisHullId = Utils.getRootRestoredHullSpecId(stats.getVariant());
         FleetDataAPI fleetData = fm.getFleetData();
         if (fleetData == null) return;
         int count = 0;
         for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            if (thisHullId.equals(Utils.getBaseHullId(member.getHullSpec()))) {
+            if (thisHullId.equals(Utils.getRootRestoredHullSpecId(member.getVariant()))) {
                 count++;
                 if (count > 1) return;
             }

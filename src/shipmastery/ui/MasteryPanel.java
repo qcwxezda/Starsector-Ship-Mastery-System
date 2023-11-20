@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.ui.UITable;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -18,6 +19,7 @@ import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.MasteryTags;
 import shipmastery.ui.triggers.*;
 import shipmastery.util.*;
 
@@ -26,7 +28,8 @@ import java.util.List;
 import java.util.*;
 
 public class MasteryPanel {
-    ShipAPI ship;
+    ShipAPI root;
+    ShipAPI module;
     RefitHandler handler;
     UIPanelAPI rootPanel;
     static String tableFont = Fonts.INSIGNIA_LARGE;
@@ -96,8 +99,10 @@ public class MasteryPanel {
     }
 
     void generateDialog(UIPanelAPI panel, boolean isRefresh, boolean useSavedScrollerLocation) {
-        ship = handler.getSelectedShip();
-        if (ship == null) {
+        Pair<ShipAPI, ShipAPI> moduleAndShip = handler.getSelectedShip();
+        module = moduleAndShip.one;
+        root = moduleAndShip.two;
+        if (root == null || module == null) {
             return;
         }
 
@@ -120,8 +125,8 @@ public class MasteryPanel {
         float w = panel.getPosition().getWidth() + 20f, h = panel.getPosition().getHeight();
         UIPanelAPI tabButtons = makeTabButtons(120f, 40f);
         UIPanelAPI currencyPanel = makeCurrencyLabels(w);
-        sModPanel = makeThisShipPanel(w, h - 100f, ship);
-        masteryPanel = makeMasteryPanel(w, h - 100f, ship, useSavedScrollerLocation);
+        sModPanel = makeThisShipPanel(w, h - 100f, module, root);
+        masteryPanel = makeMasteryPanel(w, h - 100f, module, root, useSavedScrollerLocation);
         togglePanelVisibility(!isInRestorableMarket || isShowingMasteryPanel ? masteryButton : sModButton);
 
         panel.addComponent(tabButtons).inTMid(0f);
@@ -196,7 +201,7 @@ public class MasteryPanel {
         creditsLabel.setHighlight("" + creditsAmtFmt);
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
-        int masteryPointsAmt = (int) ShipMastery.getMasteryPoints(ship.getHullSpec());
+        int masteryPointsAmt = (int) ShipMastery.getMasteryPoints(root.getHullSpec());
         String masteryPointsString = Strings.MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
         float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
@@ -213,19 +218,18 @@ public class MasteryPanel {
         return labelsPanel;
     }
 
-    UIPanelAPI makeThisShipPanel(float width, float height, ShipAPI ship) {
-        ShipVariantAPI variant = ship.getVariant();
-
+    UIPanelAPI makeThisShipPanel(float width, float height, ShipAPI module, ShipAPI ship) {
+        ShipVariantAPI moduleVariant = module.getVariant();
         List<HullModSpecAPI> applicableSpecs = new ArrayList<>();
-        for (String id : variant.getHullSpec().getBuiltInMods()) {
+        for (String id : moduleVariant.getHullSpec().getBuiltInMods()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(id);
             HullModEffect effect = spec.getEffect();
             if (effect.hasSModEffect() && !effect.isSModEffectAPenalty() &&
-                    !variant.getSModdedBuiltIns().contains(id)) {
+                    !moduleVariant.getSModdedBuiltIns().contains(id)) {
                 applicableSpecs.add(spec);
             }
         }
-        for (String id : variant.getNonBuiltInHullmods()) {
+        for (String id : moduleVariant.getNonBuiltInHullmods()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(id);
             if (!spec.isHidden() && !spec.isHiddenEverywhere()) {
                 applicableSpecs.add(spec);
@@ -261,12 +265,12 @@ public class MasteryPanel {
                                                          columnData);
         ReflectionUtils.invokeMethodExtWithClasses(table, "setRowClickDelegate", false,
                                                    new Class[]{ClassRefs.uiTableDelegateClass},
-                                                   new SModTableRowPressed(this).getProxy());
+                                                   new SModTableRowPressed(this, module).getProxy());
 
         buildInList.addSpacer(7f);
 
         for (HullModSpecAPI spec : applicableSpecs) {
-            addRowToHullModTable(buildInList, table, spec, !SModUtils.isHullmodBuiltIn(spec, ship.getVariant()));
+            addRowToHullModTable(buildInList, table, spec, moduleVariant, !SModUtils.isHullmodBuiltIn(spec, moduleVariant));
             buildInList.addImage(spec.getSpriteName(), 50f, tableEntryHeight - 6f, 6f);
         }
 
@@ -281,8 +285,8 @@ public class MasteryPanel {
         ButtonAPI resetButton =
                 resetButtonTTM.addButton(Strings.CLEAR_BUTTON_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                          Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
-        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, Strings.CLEAR_BUTTON_STR));
-        if (variant.getSMods().size() == 0) {
+        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, Strings.CLEAR_BUTTON_STR));
+        if (moduleVariant.getSMods().size() == 0) {
             resetButton.setEnabled(false);
         }
 
@@ -291,8 +295,8 @@ public class MasteryPanel {
         }
 
         float modularCountW = 200f, modularCountH = 40f;
-        int nSMods = variant.getSMods().size();
-        int sModLimit = Misc.getMaxPermanentMods(ship);
+        int nSMods = moduleVariant.getSMods().size();
+        int sModLimit = Misc.getMaxPermanentMods(module);
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
         modularCountTTM.setParaOrbitronVeryLarge();
         LabelAPI modularCount = modularCountTTM.addPara(
@@ -340,9 +344,9 @@ public class MasteryPanel {
         return selectedMasteryButtons;
     }
 
-    UIPanelAPI makeMasteryPanel(float width, float height, ShipAPI ship, boolean useSavedScrollerLocation) {
-        ShipHullSpecAPI hullSpec = ship.getHullSpec();
-        final ShipHullSpecAPI baseHullSpec = Global.getSettings().getHullSpec(Utils.getBaseHullId(hullSpec));
+    UIPanelAPI makeMasteryPanel(float width, float height, final ShipAPI module, final ShipAPI root, boolean useSavedScrollerLocation) {
+        ShipVariantAPI variant = root.getVariant();
+        final ShipHullSpecAPI baseHullSpec = Utils.getRootRestoredHullSpec(variant);
         currentMastery = ShipMastery.getMasteryLevel(baseHullSpec);
         maxMastery = ShipMastery.getMaxMastery(baseHullSpec);
 
@@ -361,7 +365,7 @@ public class MasteryPanel {
         }
 
         confirmOrCancelDisplay = masteryPanel.createUIElement(225f, 100f, false);
-        new ConfirmOrCancelDisplay(new ConfirmMasteryChangesPressed(this), new CancelMasteryChangesPressed(this)).create(confirmOrCancelDisplay);
+        new ConfirmOrCancelDisplay(new ConfirmMasteryChangesPressed(this, root.getHullSpec()), new CancelMasteryChangesPressed(this)).create(confirmOrCancelDisplay);
         masteryPanel.addUIElement(confirmOrCancelDisplay).belowMid(shipDisplay, 10f);
 
         ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
@@ -402,9 +406,13 @@ public class MasteryPanel {
                 description.addSpacer(20f);
                 for (MasteryEffect effect : effects) {
                     description.setParaFont(Fonts.INSIGNIA_LARGE);
-                    effect.getDescription().addLabel(description);
+                    effect.getDescription(module, root.getFleetMember()).addLabel(description);
                     description.setParaFontDefault();
-                    effect.addPostDescriptionSection(description);
+                    effect.addPostDescriptionSection(description, module, root.getFleetMember());
+                    if (!root.getFleetMember().equals(module.getFleetMember()) && effect.hasTag(
+                            MasteryTags.DOESNT_AFFECT_MODULES)) {
+                        description.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
+                    }
                     description.addSpacer(20f);
                 }
             }
@@ -448,7 +456,7 @@ public class MasteryPanel {
                     @Override
                     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                         for (MasteryEffect effect : effects) {
-                            effect.addTooltipIfHasTooltipTag(tooltip);
+                            effect.addTooltipIfHasTooltipTag(tooltip, module, root.getFleetMember());
                         }
                     }
                 }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
@@ -530,21 +538,20 @@ public class MasteryPanel {
         return label;
     }
 
-    void addRowToHullModTable(TooltipMakerAPI tableTTM, UITable table, final HullModSpecAPI spec, boolean modular) {
-        final ShipVariantAPI variant = ship.getVariant();
+    void addRowToHullModTable(TooltipMakerAPI tableTTM, UITable table, final HullModSpecAPI spec, ShipVariantAPI moduleVariant, boolean modular) {
         String name = Utils.shortenText(spec.getDisplayName(), tableFont, columnWidths[1]);
         String designType = Utils.shortenText(spec.getManufacturer(), Fonts.DEFAULT_SMALL, columnWidths[2]);
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
-        String opCost = "" + (modular ? spec.getCostFor(variant.getHullSize()) : 0);
-        int mpCost = SModUtils.getMPCost(spec, ship);
+        String opCost = "" + (modular ? spec.getCostFor(root.getHullSize()) : 0);
+        int mpCost = SModUtils.getMPCost(spec, root);
         String mpCostStr = "" + mpCost;
-        int creditsCost = SModUtils.getCreditsCost(spec, ship);
+        int creditsCost = SModUtils.getCreditsCost(spec, root);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.YES_STR : Strings.NO_STR;
         Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
-        String cantBuildInReason = getCantBuildInReason(spec, mpCost, creditsCost);
+        String cantBuildInReason = getCantBuildInReason(spec, moduleVariant, mpCost, creditsCost);
 
         if (cantBuildInReason != null) {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
@@ -560,7 +567,7 @@ public class MasteryPanel {
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                 HullModEffect effect = spec.getEffect();
-                ShipAPI.HullSize hullSize = variant.getHullSize();
+                ShipAPI.HullSize hullSize = root.getHullSize();
                 tooltip.addTitle(spec.getDisplayName());
                 tooltip.addSpacer(10f);
                 if (effect.shouldAddDescriptionToTooltip(hullSize, null, true)) {
@@ -602,16 +609,17 @@ public class MasteryPanel {
     /**
      * Gives reason the mod can't be built in; returns null if hullmod can be built in
      */
-    @Nullable String getCantBuildInReason(HullModSpecAPI spec, int mpCost, int creditsCost) {
+    @Nullable String getCantBuildInReason(HullModSpecAPI spec, ShipVariantAPI moduleVariant, int mpCost, int creditsCost) {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
             return spec.getDisplayName() + Strings.CANT_BUILD_IN_STR;
         }
-        if (ship.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(ship) + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
+        if (moduleVariant.getSMods().size() >= Misc.getMaxPermanentMods(
+                root) + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
             return Strings.LIMIT_REACHED_STR;
         }
 
         int credits = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
-        int mp = (int) ShipMastery.getMasteryPoints(ship.getHullSpec());
+        int mp = (int) ShipMastery.getMasteryPoints(root.getHullSpec());
 
         String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;
         String notEnoughMasteryPoints = Strings.MASTERY_POINTS_SHORTFALL_STR;
@@ -619,10 +627,6 @@ public class MasteryPanel {
         if (mpCost > mp) return notEnoughMasteryPoints;
         if (creditsCost > credits) return notEnoughCredits;
         return null;
-    }
-
-    public ShipAPI getShip() {
-        return ship;
     }
 
     public static class TableRowData {
@@ -655,19 +659,19 @@ public class MasteryPanel {
         }
 
         if (columnNames[3].equals(columnName)) {
-            return spec.getCostFor(ship.getHullSize());
+            return spec.getCostFor(root.getHullSize());
         }
 
         if (columnNames[4].equals(columnName)) {
-            return SModUtils.getMPCost(spec, ship);
+            return SModUtils.getMPCost(spec, root);
         }
 
         if (columnNames[5].equals(columnName)) {
-            return SModUtils.getCreditsCost(spec, ship);
+            return SModUtils.getCreditsCost(spec, root);
         }
 
         if (columnNames[6].equals(columnName)) {
-            return !SModUtils.isHullmodBuiltIn(spec, ship.getVariant());
+            return !SModUtils.isHullmodBuiltIn(spec, module.getVariant());
         }
 
         return null;

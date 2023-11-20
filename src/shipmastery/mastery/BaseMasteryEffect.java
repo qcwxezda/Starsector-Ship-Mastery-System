@@ -1,9 +1,7 @@
 package shipmastery.mastery;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 
 import java.util.Arrays;
@@ -20,16 +18,16 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
 
     @Override
-    public void onBeginRefit(ShipHullSpecAPI spec, String id) {}
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {}
 
     @Override
-    public void onEndRefit(ShipHullSpecAPI spec, String id) {}
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {}
 
     @Override
-    public void onActivate(ShipHullSpecAPI spec, String id) {}
+    public void onActivate(String id) {}
 
     @Override
-    public void onDeactivate(ShipHullSpecAPI spec, String id) {}
+    public void onDeactivate(String id) {}
 
     @Override
     public void init(String... args) {
@@ -52,15 +50,17 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
 
     @Override
-    public float getSelectionWeight() {
+    public Float getSelectionWeight() {
         return 1f;
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {}
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {}
 
     @Override
-    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip) {}
+    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {}
 
     @Override
     public final void addTags(String... tags) {

@@ -5,8 +5,8 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.campaign.RefitHandler;
+import shipmastery.deferred.DeferredActionPlugin;
 
 import java.net.URL;
 import java.net.URLClassLoader;

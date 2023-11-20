@@ -1,13 +1,14 @@
 package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.Strings;
 
@@ -16,20 +17,22 @@ import java.util.ArrayList;
 public class ClearSModsPressed extends ActionListener {
 
     MasteryPanel masteryPanel;
+    ShipAPI module;
     String defaultText;
 
-    public ClearSModsPressed(MasteryPanel masteryPanel, String defaultText) {
+    public ClearSModsPressed(MasteryPanel masteryPanel, ShipAPI module, String defaultText) {
         this.masteryPanel = masteryPanel;
+        this.module = module;
         this.defaultText = defaultText;
     }
 
     @Override
     public void trigger(Object... args) {
         final ButtonAPI button = (ButtonAPI) args[1];
+        ShipVariantAPI variant = module.getVariant();
         if (isConfirming(button)) {
             endConfirm(button);
 
-            ShipVariantAPI variant = masteryPanel.getShip().getVariant();
             int removedCount = 0;
             // Copy required as removePermaMod also calls getSMods().remove()
             for (String id : new ArrayList<>(variant.getSMods())) {
@@ -52,7 +55,7 @@ public class ClearSModsPressed extends ActionListener {
                 changed = false;
                 for (String id : variant.getNonBuiltInHullmods()) {
                     HullModSpecAPI spec = Global.getSettings().getHullModSpec(id);
-                    if (spec.getEffect() != null && !spec.getEffect().isApplicableToShip(masteryPanel.getShip())) {
+                    if (spec.getEffect() != null && !spec.getEffect().isApplicableToShip(module)) {
                         variant.removeMod(id);
                         changed = true;
                     }

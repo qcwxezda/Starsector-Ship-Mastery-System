@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
@@ -13,7 +14,7 @@ import java.util.Collection;
 
 public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.RangeIfNoBonuses,
                 Strings.Descriptions.RangeIfNoBonusesNeg,
@@ -51,7 +52,8 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.RangeIfNoBonusesPost, 5f);
     }
 

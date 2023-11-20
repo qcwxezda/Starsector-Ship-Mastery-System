@@ -1,5 +1,7 @@
 package shipmastery.mastery.impl.stats;
 
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import shipmastery.ShipMastery;
@@ -39,7 +41,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription() {
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         List<Pair<ShipStat, Float>> positiveAmounts = new ArrayList<>();
         List<Pair<ShipStat, Float>> negativeAmounts = new ArrayList<>();
 
