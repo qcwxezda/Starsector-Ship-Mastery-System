@@ -92,4 +92,7 @@ public interface MasteryEffect {
 
     /** Hull spec assigned to this mastery effect on generation. Can't be changed. */
     ShipHullSpecAPI getHullSpec();
+
+    /** id assigned to this mastery effect on generation. Can't be changed. */
+    String getId();
 }

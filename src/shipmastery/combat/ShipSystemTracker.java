@@ -1,32 +1,16 @@
-package shipmastery.combat.listeners;
+package shipmastery.combat;
 
-import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
-import com.fs.starfarer.api.input.InputEventAPI;
-import com.fs.starfarer.combat.CombatEngine;
+import shipmastery.combat.listeners.ShipSystemListener;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
-public class ShipSystemManager extends BaseEveryFrameCombatPlugin {
-
-    private CombatEngineAPI engine;
+public class ShipSystemTracker {
     private final Map<ShipAPI, StateData> stateLastFrameMap = new HashMap<>();
-
-    @Override
-    public void init(CombatEngineAPI engine) {
-        this.engine = engine;
-    }
-
-    @Override
-    public void advance(float amount, List<InputEventAPI> events) {
-        if (engine == null || engine.isPaused()) return;
-
-        List<ShipAPI> ships = engine.getShips();
+    void advance(List<ShipAPI> ships, float amount) {
         for (ShipAPI ship : ships) {
             List<ShipSystemListener> listeners = ship.getListeners(ShipSystemListener.class);
             if (listeners.isEmpty() || ship.getSystem() == null) continue;

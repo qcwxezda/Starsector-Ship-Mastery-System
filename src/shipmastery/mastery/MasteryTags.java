@@ -5,6 +5,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 public interface MasteryTags {
     /** If set, only the last (in level order) active instance will be used if multiple are simultaneously active.*/
     String UNIQUE = "unique";
+
     /** If set, can't be disabled once activated.
      *  Fine-grained deactivation protocols based on game state are not allowed or possible. To understand why,
      *  consider the following adversarial example: <br>

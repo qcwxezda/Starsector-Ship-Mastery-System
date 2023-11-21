@@ -2,7 +2,7 @@
   "maxPermanentHullmods":0,
 
   "plugins": {
-    "sms_ShipSystemManager": "shipmastery.combat.listeners.ShipSystemManager",
+    "sms_CombatListenerManager": "shipmastery.combat.CombatListenerManager",
     "sms_CombatDeferredActionPlugin": "shipmastery.deferred.CombatDeferredActionPlugin"
   }
 }

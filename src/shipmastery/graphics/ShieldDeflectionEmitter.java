@@ -9,11 +9,13 @@ import particleengine.BaseIEmitter;
 import particleengine.ParticleData;
 import shipmastery.util.Utils;
 
-public class FortressShieldDeflectionEmitter extends BaseIEmitter {
+import java.awt.*;
+
+public class ShieldDeflectionEmitter extends BaseIEmitter {
 
     ShieldAPI shield;
 
-    public FortressShieldDeflectionEmitter(ShipAPI ship) {
+    public ShieldDeflectionEmitter(ShipAPI ship) {
         this.shield = ship.getShield();
     }
 
@@ -41,18 +43,20 @@ public class FortressShieldDeflectionEmitter extends BaseIEmitter {
     protected ParticleData initParticle(int i) {
         ParticleData data = new ParticleData();
         float activeArc = shield.getActiveArc();
-        float radius = shield.getRadius();//Utils.randBetween(shield.getRadius() * 0.95f, shield.getRadius() * 1.05f);
+        float radius = Utils.randBetween(shield.getRadius() * 0.998f, shield.getRadius() * 1.002f);
         float theta = Utils.randBetween(Misc.RAD_PER_DEG * -activeArc / 2f, Misc.RAD_PER_DEG * activeArc / 2f);
         Vector2f offset = new Vector2f(radius * (float) Math.cos(theta), radius * (float) Math.sin(theta));
         data.offset(offset);
-        float life = Utils.randBetween(0.4f, 0.8f);
+        float life = Utils.randBetween(0.6f, 0.8f);
         data.life(life);
-        float size = Utils.randBetween(15f, 20f);
+        float size = Utils.randBetween(20f, 25f);
         data.size(size, size);
-        data.color(shield.getInnerColor());
-        float velocityScale = Utils.randBetween(-0.05f, 0.05f);
+        Color shieldColor = shield.getInnerColor();
+        data.color(shieldColor.getRed() / (float) 255, shieldColor.getGreen() / (float) 255, shieldColor.getBlue() / (float) 255, 0.75f);
+        float velocityScale = Utils.randBetween(-0.03f, 0.03f);
         data.velocity(new Vector2f(velocityScale * offset.x , velocityScale * offset.y));
-        data.fadeTime(Utils.randBetween(life / 4f, life / 2f), Utils.randBetween(life / 4f, life / 2f));
+        data.growthRate(-0.25f * size / life, -0.25f * size / life);
+        data.fadeTime(0f, life);
         return data;
     }
 }

@@ -12,7 +12,7 @@ public abstract class AdditiveMasteryEffect extends BaseMasteryEffect {
     }
 
     /** Uses the first param to determine if the effect is positive or negative */
-    public static MasteryDescription makeGenericDescription(String positiveText, @Nullable String negativeText, boolean invertColors, int... params) {
+    public static MasteryDescription makeGenericDescriptionStatic(String positiveText, @Nullable String negativeText, boolean invertColors, int... params) {
         float increase = params[0];
         Object[] newParams = new Object[params.length];
         for (int i = 0; i < params.length; i++) {

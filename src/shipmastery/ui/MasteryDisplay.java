@@ -5,12 +5,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.ui.ButtonAPI;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.Fonts;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
-import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
 import shipmastery.deferred.Action;
 import shipmastery.mastery.MasteryEffect;
@@ -131,6 +127,21 @@ public class MasteryDisplay implements CustomUIElement {
         savedTooltip = tooltip;
     }
 
+    void addMasteryDescriptions(List<MasteryEffect> effects, TooltipMakerAPI tooltip) {
+        for (int i = 0; i < effects.size(); i++) {
+            MasteryEffect effect = effects.get(i);
+            tooltip.setParaFont(Fonts.INSIGNIA_LARGE);
+            effect.getDescription(selectedModule, rootFleetMember).addLabel(tooltip);
+            tooltip.setParaFontDefault();
+            effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
+            if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
+                    MasteryTags.DOESNT_AFFECT_MODULES)) {
+                tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
+            }
+            tooltip.addSpacer(i == effects.size() - 1 ? 20f : 10f);
+        }
+    }
+
     /** Returns the final height of the description. */
     float addEffectsDisplay(final List<MasteryEffect> effects, int level, boolean isOption2, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter) {
         int currentMastery = ShipMastery.getMasteryLevel(rootSpec);
@@ -145,17 +156,7 @@ public class MasteryDisplay implements CustomUIElement {
 
         if (!hidden) {
             innerTooltip.addSpacer(20f);
-            for (MasteryEffect effect : effects) {
-                innerTooltip.setParaFont(Fonts.INSIGNIA_LARGE);
-                effect.getDescription(selectedModule, rootFleetMember).addLabel(innerTooltip);
-                innerTooltip.setParaFontDefault();
-                effect.addPostDescriptionSection(innerTooltip, selectedModule, rootFleetMember);
-                if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
-                        MasteryTags.DOESNT_AFFECT_MODULES)) {
-                    innerTooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
-                }
-                innerTooltip.addSpacer(20f);
-            }
+            addMasteryDescriptions(effects, innerTooltip);
         }
         else {
             innerTooltip.addPara("", 0f);

@@ -2,16 +2,15 @@
   "none": {},
 
   "default": {
-    "maxLevel": 8,
+    "maxLevel": 9,
     "levels": {
-      "1": "SModCapacity",
-      "2": "SModRemoval",
-      "3": "SModsOverCapacity",
-      "4": "ScaleOtherMasteries",
-      "5": "IgnoreNoBuildIn 1 targetingunit turretgyros armoredweapons",
-      "6": "FluxByShieldUpkeep 0.5",
-      "7": "RangeIfNoBonuses",
-      "8": "FortressShieldDeflection"
+      "2": "SModCapacity",
+      "4": "SModRemoval",
+      "6": "SModCapacity",
+      "8": {
+        "A": "SModsOverCapacity",
+        "B": "ScaleOtherMasteries"
+      }
     }
   }
 }

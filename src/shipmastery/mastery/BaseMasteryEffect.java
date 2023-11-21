@@ -14,6 +14,9 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
     private ShipHullSpecAPI spec;
+    private String ID = null;
+    /** Same as id but can be accessed directly without a getter */
+    protected String id = null;
 
 
     @Override
@@ -37,6 +40,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         } catch (NumberFormatException e) {
             throw new RuntimeException("First argument in mastery params list must be its strength", e);
         }
+        id = ID;
     }
 
     @Override
@@ -117,5 +121,17 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public final float getStrength() {
         return strength.getModifiedValue();
+    }
+
+    @Override
+    public String getId() {
+        return ID;
+    }
+
+    public final void setId(String id) {
+        if (this.ID != null) {
+            throw new RuntimeException("Changing the id of a mastery effect is not allowed");
+        }
+        this.ID = id;
     }
 }

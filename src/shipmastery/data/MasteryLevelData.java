@@ -8,7 +8,6 @@ import java.util.List;
 
 /** Data for a specific mastery level. One instance per ship hull type per level. */
 public class MasteryLevelData {
-
     final List<MasteryEffect> effectsListOption1 = new ArrayList<>();
 
     final List<MasteryEffect> effectsListOption2 = new ArrayList<>();

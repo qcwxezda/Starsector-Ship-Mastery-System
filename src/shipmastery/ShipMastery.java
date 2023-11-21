@@ -291,14 +291,22 @@ public abstract class ShipMastery {
         while (assignmentsIterator.hasNext()) {
             String hullId = assignmentsIterator.next();
             JSONObject assignment = masteryAssignments.getJSONObject(hullId);
-            int maxLevel = assignment.optInt("maxLevel", 0);
+            int maxLevel;
             String presetName = assignment.optString("preset", null);
             if (presetName != null) {
                 assignmentsToPresetsMap.put(hullId, presetName);
-                maxLevel = Math.max(maxLevel, ShipMastery.presetsMaxLevelMap.get(presetName));
             }
             else {
                 assignmentsToPresetsMap.put(hullId, DEFAULT_PRESET_NAME);
+            }
+            if (assignment.has("maxLevel")) {
+                maxLevel = assignment.getInt("maxLevel");
+            }
+            else if (presetName != null && presetsMaxLevelMap.containsKey(presetName)) {
+                maxLevel = presetsMaxLevelMap.get(presetName);
+            }
+            else {
+                maxLevel = presetsMaxLevelMap.get(DEFAULT_PRESET_NAME);
             }
             maxLevelMap.put(hullId, maxLevel);
             JSONObject levelsJson = assignment.getJSONObject("levels");
@@ -348,7 +356,7 @@ public abstract class ShipMastery {
         }
     }
 
-    static MasteryEffect instantiateEffect(String generator, ShipHullSpecAPI hullSpec) throws InstantiationException, IllegalAccessException {
+    static MasteryEffect instantiateEffect(String generator, ShipHullSpecAPI hullSpec, int level, int index) throws InstantiationException, IllegalAccessException {
         String[] params = generator.trim().split("\\s+");
         String id = params[0];
         // If no params, use default strength
@@ -362,6 +370,7 @@ public abstract class ShipMastery {
         BaseMasteryEffect effect = (BaseMasteryEffect) cls.newInstance();
         effect.setPriority(priorityMap.get(id));
         effect.setHullSpec(hullSpec);
+        effect.setId(MasteryUtils.makeEffectId(effect, level, index));
         effect.addTags(tagMap.get(id).trim().split("\\s+"));
         effect.init(Arrays.copyOfRange(params, 1, params.length));
         return effect;
@@ -384,7 +393,7 @@ public abstract class ShipMastery {
         HullMasteryData masteryData = new HullMasteryData(restoredSpec);
         for (int i = 1; i <= maxLevel; i++) {
             MasteryLevelData levelData = new MasteryLevelData(restoredSpec, i);
-            Pair<List<String>, List<String>> masteryOptions;
+            Pair<List<String>, List<String>> masteryOptions = null;
             // Mastery assignments contains an entry, so use that
             if (masteries.containsKey(i)) {
                 masteryOptions = masteries.get(i);
@@ -395,15 +404,19 @@ public abstract class ShipMastery {
                 masteryOptions = presetsMap.get(assignmentsToPresetsMap.get(restoredSpecId)).get(i);
             }
             // Neither the assignments nor the preset have data for this level, so need to randomly generate it
-            else {
+            if (masteryOptions == null) {
                 masteryOptions = new Pair<List<String>, List<String>>(new ArrayList<String>(), new ArrayList<String>());
                 masteryOptions.one.add("ModifyStatsMult 1 FluxCapacity");
             }
-            for (String generator : masteryOptions.one) {
-                levelData.addEffectToOption1(instantiateEffect(generator, restoredSpec));
+            List<String> one = masteryOptions.one;
+            for (int j = 0; j < one.size(); j++) {
+                String generator = one.get(j);
+                levelData.addEffectToOption1(instantiateEffect(generator, restoredSpec, i, j));
             }
-            for (String generator : masteryOptions.two) {
-                levelData.addEffectToOption2(instantiateEffect(generator, restoredSpec));
+            List<String> two = masteryOptions.two;
+            for (int j = 0; j < two.size(); j++) {
+                String generator = two.get(j);
+                levelData.addEffectToOption2(instantiateEffect(generator, restoredSpec, i, j));
             }
             masteryData.addLevelData(levelData);
         }

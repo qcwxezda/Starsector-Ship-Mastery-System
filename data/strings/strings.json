@@ -76,12 +76,14 @@
     "PeakCRMultipleShips": "Increases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsPost": "Effect stacks up to %s times and has a hard cap of %s increase to peak CR.",
-    "FortressShieldDeflection": "Placeholder text!"
+    "ShieldDeflection": "%s: shield deflects all incoming projectiles for %s seconds when activated. Increases shield upkeep by %s and decreases shield unfolding rate by %s.",
+    "ShieldDeflectionPost": "Shields take %s damage from deflected projectiles."
   },
 
   "sms_misc": {
     "failedToGenerateMasteries": "Failed to generate mastery effects! Check stack trace for details",
     "doesntAffectModules": "This effect doesn't apply to modules.",
+    "flagshipOnly": "Flagship only",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",

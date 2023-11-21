@@ -11,7 +11,7 @@ import shipmastery.util.Strings;
 public class SModMPCost extends AdditiveMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return makeGenericDescription(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncrease());
+        return makeGenericDescriptionStatic(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncrease());
     }
 
     @Override
