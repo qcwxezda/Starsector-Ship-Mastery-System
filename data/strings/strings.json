@@ -33,7 +33,14 @@
     "unknownMastery": "Unlock previous tier to reveal",
     "changesPending": "Changes pending",
     "dismissWindow": "Finish",
-    "cantOpenPanel": "Error initializing mastery panel -- close all interfaces and retry."
+    "cantOpenPanel": "Error initializing mastery panel -- close all interfaces and retry.",
+    "iconHeader": "Icon",
+    "hullmodHeader": "Hullmod",
+    "designTypeHeader": "Design Type",
+    "ordnancePointsHeader": "OP",
+    "masteryPointsHeader": "MP",
+    "creditsHeader": "Credits",
+    "modularHeader": "Modular?"
   },
 
   "sms_descriptions": {
@@ -59,8 +66,8 @@
     "FluxByShieldUpkeep": "Increases flux dissipation by %s and flux capacity by %s of shield upkeep cost.",
     "FluxByShieldUpkeepNeg": "Reduces flux dissipation by %s and flux capacity by %s of shield upkeep cost.",
     "FluxByShieldUpkeepPost": "No effect if the ship has no shields.",
-    "RangeIfNoBonuses": "Increases base ballistic and energy weapon ranges by %s if not affected by any other bonuses.",
-    "RangeIfNoBonusesNeg": "Reduces base ballistic and energy weapon ranges by %s if not affected by any other bonuses.",
+    "RangeIfNoBonuses": "Increases base ballistic and energy weapon ranges by %s if they aren't affected by any other bonuses.",
+    "RangeIfNoBonusesNeg": "Reduces base ballistic and energy weapon ranges by %s if they aren't affected by any other bonuses.",
     "RangeIfNoBonusesPost": "Only counts base range bonuses. Conditional bonuses such as those occurring past a threshold do not negate this effect.",
     "MaxOPForHull": "Increases ordnance points by %s. Each %s of OP used past the base limit reduces hull integrity by %s.",
     "MaxOPForHullPost": "Hull reduction applied by this effect has a floor of %s and a cap of %s.",
@@ -69,10 +76,11 @@
     "PeakCRMultipleShips": "Increases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsPost": "Effect stacks up to %s times and has a hard cap of %s increase to peak CR.",
-    "FortressShieldReflection": "Placeholder text!"
+    "FortressShieldDeflection": "Placeholder text!"
   },
 
   "sms_misc": {
+    "failedToGenerateMasteries": "Failed to generate mastery effects! Check stack trace for details",
     "doesntAffectModules": "This effect doesn't apply to modules.",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",

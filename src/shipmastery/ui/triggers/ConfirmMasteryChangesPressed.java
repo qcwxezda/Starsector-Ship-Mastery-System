@@ -5,10 +5,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ui.MasteryPanel;
 
-import java.util.HashSet;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ConfirmMasteryChangesPressed extends ActionListener {
 
@@ -22,33 +19,32 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
-        Set<Integer> union = new HashSet<>();
-        Set<Integer> activeSet = ShipMastery.getActiveMasteriesCopy(spec);
-        Set<Integer> newSet = masteryPanel.getSelectedMasteryButtons();
-        NavigableSet<Integer> toActivate = new TreeSet<>();
-        NavigableSet<Integer> toDeactivate = new TreeSet<>();
-        union.addAll(activeSet);
-        union.addAll(newSet);
+        Map<Integer, Boolean> activeSet = ShipMastery.getActiveMasteriesCopy(spec);
+        Map<Integer, Boolean> newSet = masteryPanel.getSelectedMasteryButtons();
+        NavigableMap<Integer, Boolean> toActivate = new TreeMap<>();
+        NavigableMap<Integer, Boolean> toDeactivate = new TreeMap<>();
 
-        for (int i : union) {
-            boolean wasActive = activeSet.contains(i);
-            boolean nowActive = newSet.contains(i);
-
-            if (wasActive && !nowActive) {
-                // Effect was deactivated
-                toDeactivate.add(i);
-            }
-            else if (!wasActive && nowActive) {
-                // Effect was activated
-                toActivate.add(i);
+        for (Map.Entry<Integer, Boolean> entry : activeSet.entrySet()) {
+            int level = entry.getKey();
+            boolean wasOption2 = entry.getValue();
+            if (!newSet.containsKey(level) || newSet.get(level) != wasOption2) {
+                toDeactivate.put(level, wasOption2);
             }
         }
 
-        for (int i : toDeactivate.descendingSet()) {
-            ShipMastery.deactivateMastery(spec, i);
+        for (Map.Entry<Integer, Boolean> entry : newSet.entrySet()) {
+            int level = entry.getKey();
+            boolean isOption2 = entry.getValue();
+            if (!activeSet.containsKey(level) || activeSet.get(level) != isOption2) {
+                toActivate.put(level, isOption2);
+            }
         }
-        for (int i : toActivate) {
-            ShipMastery.activateMastery(spec, i);
+
+        for (Map.Entry<Integer, Boolean> entry : toDeactivate.descendingMap().entrySet()) {
+            ShipMastery.deactivateMastery(spec, entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> entry : toActivate.entrySet()) {
+            ShipMastery.activateMastery(spec, entry.getKey(), entry.getValue());
         }
 
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);

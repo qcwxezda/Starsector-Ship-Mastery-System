@@ -22,7 +22,7 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
     public void onActivate(String id) {
         float mult = getMult();
         for (int i = 1; i <= ShipMastery.getMaxMastery(getHullSpec()); i++) {
-            for (MasteryEffect effect : ShipMastery.getMasteryEffects(getHullSpec(), i)) {
+            for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(getHullSpec(), i)) {
                 if (effect instanceof ScaleOtherMasteries) continue;
                 if (mult > 1) {
                     effect.modifyStrengthAdditive(id, mult);
@@ -37,7 +37,7 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
     @Override
     public void onDeactivate(String id) {
         for (int i = 1; i <= ShipMastery.getMaxMastery(getHullSpec()); i++) {
-            for (MasteryEffect effect : ShipMastery.getMasteryEffects(getHullSpec(), i)) {
+            for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(getHullSpec(), i)) {
                 effect.unmodifyStrength(id);
             }
         }

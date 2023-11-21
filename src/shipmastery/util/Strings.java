@@ -34,11 +34,19 @@ public interface Strings {
     String CHANGES_PENDING = Utils.getString("sms_masteryPanel", "changesPending");
     String BUILD_IN_OVER_MAX_WARNING = Utils.getString("sms_masteryPanel", "buildInOverMaxWarning");
     String CANT_OPEN_PANEL = Utils.getString("sms_masteryPanel", "cantOpenPanel");
+    String ICON_HEADER = Utils.getString("sms_masteryPanel", "iconHeader");
+    String HULLMOD_HEADER = Utils.getString("sms_masteryPanel", "hullmodHeader");
+    String DESIGN_TYPE_HEADER = Utils.getString("sms_masteryPanel", "designTypeHeader");
+    String ORDNANCE_POINTS_HEADER = Utils.getString("sms_masteryPanel", "ordnancePointsHeader");
+    String MASTERY_POINTS_HEADER = Utils.getString("sms_masteryPanel", "masteryPointsHeader");
+    String CREDITS_HEADER = Utils.getString("sms_masteryPanel", "creditsHeader");
+    String MODULAR_HEADER = Utils.getString("sms_masteryPanel", "modularHeader");
     String EFFECT_CANT_DEACTIVATE = Utils.getString("sms_misc", "effectCantBeDeactivated");
     String EFFECT_CANT_DEACTIVATE_WARNING = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
     String SHIP_MASTERY_EFFECT = Utils.getString("sms_misc", "shipMasteryEffect");
     String AND_STR = Utils.getString("sms_misc", "and");
     String DOESNT_AFFECT_MODULES = Utils.getString("sms_misc", "doesntAffectModules");
+    String FAILED_TO_GENERATE_MASTERIES = Utils.getString("sms_misc", "failedToGenerateMasteries");
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
         String SModCreditsCost = Utils.getString("sms_descriptions", "SModCreditsCost");

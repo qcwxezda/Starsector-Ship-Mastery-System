@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
+import shipmastery.data.SaveData;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 
@@ -36,22 +37,22 @@ public abstract class MasteryUtils {
      *       and another effect increased the strength of a different effect so that it is now stronger than the previously strongest
      *       effect, we could have a scenario in which endRefit doesn't exactly undo beginRefit.
      * */
-    public static void applyAllMasteryEffects(ShipHullSpecAPI spec, Set<Integer> levelsToApply, boolean reverseOrder, MasteryAction action) {
+    public static void applyAllMasteryEffects(ShipHullSpecAPI spec, Map<Integer, Boolean> levelsToApply, boolean reverseOrder, MasteryAction action) {
         if (levelsToApply.isEmpty()) return;
         // Effect id -> the actual effect to be executed
         Map<Class<?>, MasteryEffect> uniqueEffects = new HashMap<>();
         // Sort the levels set so that lower mastery levels are applied first
-        NavigableSet<Integer> sortedLevels = new TreeSet<>(levelsToApply);
+        Map<Integer, Boolean> sortedLevels = new TreeMap<>(levelsToApply);
         PriorityQueue<MasteryEffectData> priorityOrder = new PriorityQueue<>(10, reverseOrder ? Collections.reverseOrder() : null);
 
-        for (int i : sortedLevels) {
-            List<MasteryEffect> masteryEffects = ShipMastery.getMasteryEffects(spec, i);
+        for (Map.Entry<Integer, Boolean> levelData : sortedLevels.entrySet()) {
+            List<MasteryEffect> masteryEffects = ShipMastery.getMasteryEffects(spec, levelData.getKey(), levelData.getValue());
             for (int j = 0; j < masteryEffects.size(); j++) {
                 MasteryEffect effect = masteryEffects.get(j);
                 if (isUnique(effect)) {
                     uniqueEffects.put(effect.getClass(), effect);
                 }
-                priorityOrder.add(new MasteryEffectData(effect, i, j));
+                priorityOrder.add(new MasteryEffectData(effect, levelData.getKey(), j));
             }
         }
 

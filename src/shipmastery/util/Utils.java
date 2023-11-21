@@ -5,45 +5,12 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 
 import java.util.*;
 
 public abstract class Utils {
-
-    public static Map<String, String> variantIdToBaseHullIdMap = new HashMap<>();
-
-
-    public static void populateVariantIdToBaseHullIds() {
-        for (String id : Global.getSettings().getAllVariantIds()) {
-            // Already populated by a parent, skip
-            if (variantIdToBaseHullIdMap.containsKey(id)) continue;
-
-            ShipVariantAPI variant = Global.getSettings().getVariant(id);
-            String baseHullId = getRootRestoredHullSpec(variant).getHullId();
-            Queue<ShipVariantAPI> children = new LinkedList<>();
-            children.add(variant);
-            while (!children.isEmpty()) {
-                ShipVariantAPI child = children.poll();
-                variantIdToBaseHullIdMap.put(child.getHullVariantId(), baseHullId);
-                for (String moduleId : child.getModuleSlots()) {
-                    children.add(child.getModuleVariant(moduleId));
-                }
-            }
-        }
-    }
-
-    public static ShipHullSpecAPI getRootRestoredHullSpec(ShipVariantAPI variant) {
-        String variantId = variant.getHullVariantId();
-        if (variantIdToBaseHullIdMap.containsKey(variantId)) {
-            return Global.getSettings().getHullSpec(variantIdToBaseHullIdMap.get(variantId));
-        }
-        return getRestoredHullSpec(variant.getHullSpec());
-    }
-
-    public static String getRootRestoredHullSpecId(ShipVariantAPI variant) {
-        return getRootRestoredHullSpec(variant).getHullId();
-    }
-
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
@@ -60,56 +27,47 @@ public abstract class Utils {
         return getRestoredHullSpec(spec).getHullId();
     }
 
-    public static class ListMapMap<T, U extends Comparable<U>, V> extends HashMap<T, SortedMap<U, List<V>>> {
-        public List<V> get(T key1, U key2) {
-            Map<U, List<V>> inner = get(key1);
-            return inner == null ? null : inner.get(key2);
+    public static class ListPairMapMap<T, U extends Comparable<U>, V> extends HashMap<T, SortedMap<U, Pair<List<V>, List<V>>>> {
+
+        Pair<List<V>, List<V>> getPair(T key1, U key2, boolean addIfNotPresent) {
+            SortedMap<U, Pair<List<V>, List<V>>> inner = get(key1);
+            if (inner == null) {
+                if (addIfNotPresent) {
+                    inner = new TreeMap<>();
+                    put(key1, inner);
+                } else {
+                    return null;
+                }
+
+            }
+            Pair<List<V>, List<V>> pair = inner.get(key2);
+            if (pair == null && addIfNotPresent) {
+                pair = new Pair<List<V>, List<V>>(new ArrayList<V>(), new ArrayList<V>());
+                inner.put(key2, pair);
+            }
+            return pair;
         }
 
-        public void add(T key1, U key2, V value) {
-            SortedMap<U, List<V>> inner = get(key1);
-            if (inner == null) {
-                inner = new TreeMap<>();
-                put(key1, inner);
-            }
-            List<V> values = inner.get(key2);
-            if (values == null) {
-                values = new ArrayList<>();
-                inner.put(key2, values);
-            }
-            values.add(value);
+        public List<V> get1(T key1, U key2) {
+            Pair<List<V>, List<V>> pair = getPair(key1, key2, false);
+            return pair == null ? null : pair.one;
+        }
+
+        public List<V> get2(T key1, U key2) {
+            Pair<List<V>, List<V>> pair = getPair(key1, key2, false);
+            return pair == null ? null : pair.two;
+        }
+
+        public void add1(T key1, U key2, V value) {
+            Pair<List<V>, List<V>> pair = getPair(key1, key2, true);
+            pair.one.add(value);
+        }
+
+        public void add2(T key1, U key2, V value) {
+            Pair<List<V>, List<V>> pair = getPair(key1, key2, true);
+            pair.two.add(value);
         }
     }
-
-//    public static void populateHullIdMap() {
-//        hullIdToBaseHullIdMap.clear();
-//        Map<String, String> hullIdToVariant = new HashMap<>();
-//        for (String variantId : Global.getSettings().getAllVariantIds()) {
-//            ShipVariantAPI variant = Global.getSettings().getVariant(variantId);
-//            hullIdToVariant.put(variant.getHullSpec().getHullId(), variantId);
-//        }
-//
-//        for (Map.Entry<String, String> entry : hullIdToVariant.entrySet()) {
-//            String baseId = entry.getKey();
-//
-//            // Already populated by a parent; skip
-//            if (hullIdToBaseHullIdMap.containsKey(baseId)) {
-//                continue;
-//            }
-//
-//            Queue<ShipVariantAPI> variants = new LinkedList<>();
-//            variants.add(Global.getSettings().getVariant(entry.getValue()));
-//            while (!variants.isEmpty()) {
-//                ShipVariantAPI variant = variants.poll();
-//                String childId = variant.getHullSpec().getHullId();
-//                hullIdToBaseHullIdMap.put(childId, baseId);
-//
-//                for (String moduleId : variant.getModuleSlots()) {
-//                    variants.add(variant.getModuleVariant(moduleId));
-//                }
-//            }
-//        }
-//    }
 
     public static String shortenText(String text, String font, float limit) {
         if (text == null) {
@@ -175,28 +133,6 @@ public abstract class Utils {
         return Global.getSettings().getString(key1, key2);
     }
 
-//    /** For modules, returns the hull id of the root ship. */
-//    public static String getBaseHullId(ShipHullSpecAPI spec) {
-//        if (hullIdToBaseHullIdMap.containsValue(spec.getHullId())) {
-//            return spec.getHullId();
-//        }
-//
-//        ShipHullSpecAPI dParentHull = spec.getDParentHull();
-//        if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
-//            dParentHull = spec;
-//        }
-//        if (dParentHull == null && spec.isRestoreToBase()) {
-//            dParentHull = spec.getBaseHull();
-//        }
-//
-//        String id = dParentHull != null ? dParentHull.getHullId() : spec.getHullId();
-//        return hullIdToBaseHullIdMap.containsKey(id) ? hullIdToBaseHullIdMap.get(id) : id;
-//    }
-
-//    public static ShipHullSpecAPI getBaseHullSpec(ShipHullSpecAPI spec) {
-//        return Global.getSettings().getHullSpec(getBaseHullId(spec));
-//    }
-
     public static String absValueAsPercent(float num) {
         return asPercent(Math.abs(num));
     }
@@ -221,6 +157,10 @@ public abstract class Utils {
                 }
                 return join.toString();
         }
+    }
+
+    public static float randBetween(float a, float b) {
+        return a + (b-a) * Misc.random.nextFloat();
     }
 
     public static boolean hasShield(ShipHullSpecAPI spec) {

@@ -72,6 +72,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             ShipVariantAPI moduleVariant = variant.getModuleVariant(id);
             moduleVariant.addTag(MODULE_INDICATOR_TAG);
             moduleVariant.addTag(MODULE_SOURCE_TAG + rootSpecId);
+            moduleVariant.setHullVariantId(moduleVariant.getHullVariantId());
             addHandlerMod(variant.getModuleVariant(id), rootSpecId);
         }
     }

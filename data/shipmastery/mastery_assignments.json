@@ -1,0 +1,24 @@
+{
+  "paragon": {
+    "maxLevel": 6,
+    "preset": "default",
+    "levels": {
+      "1": {
+        "A": ["ModifyStatsMult 1 ArmorPoints", "ModifyStatsMult 1 HullPoints"],
+        "B": ["ModifyStatsMult 1 CRMax", "ModifyStatsMult 1 FuelUsage", "ModifyStatsMult 1 CargoCapacity"]
+      },
+      "2": {
+        "B": ["ModifyStatsMult 1 ArmorPoints", "ModifyStatsMult 1 HullPoints"],
+        "A": ["ModifyStatsMult 1 CRMax", "ModifyStatsMult 1 FuelUsage", "ModifyStatsMult 1 CargoCapacity"]
+      },
+      "4": {
+        "A": "SModRemoval",
+        "B": "SModCreditsCost"
+      },
+      "6": {
+        "A": ["SModCapacity"],
+        "B": ["FluxByShieldUpkeep"]
+      }
+    }
+  }
+}

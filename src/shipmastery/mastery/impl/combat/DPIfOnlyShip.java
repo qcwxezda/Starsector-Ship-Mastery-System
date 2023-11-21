@@ -26,12 +26,12 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = stats.getFleetMember();
         if (fm == null) return;
-        String thisHullId = Utils.getRootRestoredHullSpecId(stats.getVariant());
+        String thisHullId = Utils.getRestoredHullSpecId(getHullSpec());
         FleetDataAPI fleetData = fm.getFleetData();
         if (fleetData == null) return;
         int count = 0;
         for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            if (thisHullId.equals(Utils.getRootRestoredHullSpecId(member.getVariant()))) {
+            if (thisHullId.equals(Utils.getRestoredHullSpecId(getHullSpec()))) {
                 count++;
                 if (count > 1) return;
             }

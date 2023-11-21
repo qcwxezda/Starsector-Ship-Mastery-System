@@ -90,10 +90,6 @@ public interface MasteryEffect {
 
     boolean hasTag(String tag);
 
-    int getTier();
-
-    void setTier(int tier);
-
     /** Hull spec assigned to this mastery effect on generation. Can't be changed. */
     ShipHullSpecAPI getHullSpec();
 }

@@ -20,12 +20,6 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        try {
-            ShipMastery.createMasteryEffects();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         ShipMastery.loadMasteryTable();
         ShipMastery.clearInvalidActiveLevels();
         ShipMastery.activateInitialMasteries();

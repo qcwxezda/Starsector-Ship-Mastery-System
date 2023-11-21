@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.combat.CombatEngine;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ShipSystemManager extends BaseEveryFrameCombatPlugin {
 
     @Override
     public void advance(float amount, List<InputEventAPI> events) {
-        if (engine == null) return;
+        if (engine == null || engine.isPaused()) return;
 
         List<ShipAPI> ships = engine.getShips();
         for (ShipAPI ship : ships) {

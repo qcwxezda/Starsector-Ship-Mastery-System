@@ -15,7 +15,6 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -107,7 +106,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     private ShipAPI lastSelectedRealShip;
     /** (Currently selected module, last selected ship with a fleet member attached)
      *  (null, null) if not inside the refit screen */
-    public @NotNull Pair<ShipAPI, ShipAPI> getSelectedShip() {
+    public Pair<ShipAPI, ShipAPI> getSelectedShip() {
         if (!insideRefitPanel) {
             return new Pair<>(null, null);
         }
@@ -399,7 +398,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     "Refit ship changed: " + (
                             (currentShipInfo.rootSpec == null ? "null" : currentShipInfo.rootSpec.getHullId()) + ", " + (currentShipInfo.moduleVariant == null ? "null" :currentShipInfo.moduleVariant.getHullVariantId())) + " -> " +
                             (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
-            onRefitScreenShipChanged(currentShipInfo, newShipInfo);
+            onRefitScreenShipChanged(newShipInfo);
             currentShipInfo = newShipInfo;
         }
         if (shouldSync) {
@@ -410,34 +409,14 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     List<EffectActivationRecord> effectsToDeactivate = new ArrayList<>();
-
-    public void onRefitScreenShipChanged(ShipInfo oldInfo, ShipInfo newInfo) {
+    public void onRefitScreenShipChanged(ShipInfo newInfo) {
         final ShipHullSpecAPI newSpec = newInfo.rootSpec;
         final ShipVariantAPI newVariant = newInfo.moduleVariant;
-
-//        List<RefitScreenShipChangedListener> listeners = Global.getSector().getListenerManager().getListeners(
-//                RefitScreenShipChangedListener.class);
-//        for (RefitScreenShipChangedListener listener : listeners) {
-//            listener.onRefitScreenBeforeMasteriesChanged(oldSpecId, newSpecId);
-//        }
-
-//        if (oldSpec != null && oldVariant != null) {
-//            MasteryUtils.applyAllMasteryEffects(
-//                oldSpec, oldInfo.activeMasteries, true, new MasteryUtils.MasteryAction() {
-//                    @Override
-//                    public void perform(MasteryEffect effect, String id) {
-//                        boolean isModule = Objects.equals(Utils.getRestoredHullSpecId(oldVariant.getHullSpec()), oldSpec.getHullId());
-//                        if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-//                            effect.onEndRefit(oldVariant, isModule, id);
-//                        }
-//                    }
-//                });
-//        }
 
         for (int i = effectsToDeactivate.size() - 1; i >= 0; i--) {
             EffectActivationRecord toDeactivate = effectsToDeactivate.get(i);
             toDeactivate.effect.onEndRefit(toDeactivate.moduleVariant, toDeactivate.isModule, toDeactivate.id);
-            System.out.println("Unapply: " + toDeactivate.id + " to " + toDeactivate.moduleVariant.getHullVariantId() + ", " + toDeactivate.isModule);
+            //System.out.println("Unapply: " + toDeactivate.id + " to " + toDeactivate.moduleVariant.getHullVariantId() + ", " + toDeactivate.isModule);
         }
 
         effectsToDeactivate.clear();
@@ -450,18 +429,14 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                         boolean isModule = !Objects.equals(Utils.getRestoredHullSpecId(newVariant.getHullSpec()), newSpec.getHullId());
                         if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                             effect.onBeginRefit(newVariant, isModule, id);
-                            System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
+                            //System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
                             effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule, id));
                         }
                     }
                 });
         }
 
-        System.out.println("-------------");
-
-//        for (RefitScreenShipChangedListener listener : listeners) {
-//            listener.onRefitScreenAfterMasteriesChanged(oldSpecId, newSpecId);
-//        }
+        //System.out.println("-------------");
     }
 
     static class EffectActivationRecord {
@@ -486,12 +461,12 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         ShipVariantAPI moduleVariant;
 
         /** Active masteries at the time of selection -- if these change, need to refresh the ship */
-        NavigableSet<Integer> activeMasteries;
+        NavigableMap<Integer, Boolean> activeMasteries;
 
         ShipInfo(ShipAPI moduleShip, ShipAPI rootShip) {
             if (rootShip == null) {
                 rootSpec = null;
-                activeMasteries = new TreeSet<>();
+                activeMasteries = new TreeMap<>();
             }
             else {
                 rootSpec = Utils.getRestoredHullSpec(rootShip.getHullSpec());

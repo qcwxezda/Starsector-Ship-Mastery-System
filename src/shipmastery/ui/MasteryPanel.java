@@ -1,6 +1,5 @@
 package shipmastery.ui;
 
-import com.fs.graphics.util.Fader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -18,8 +17,7 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
-import shipmastery.mastery.MasteryEffect;
-import shipmastery.mastery.MasteryTags;
+import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.*;
 import shipmastery.util.*;
 
@@ -34,9 +32,16 @@ public class MasteryPanel {
     UIPanelAPI rootPanel;
     static String tableFont = Fonts.INSIGNIA_LARGE;
     static String checkboxFont = Fonts.ORBITRON_24AABOLD;
-    public final static Float[] columnWidths = new Float[]{50f, 350f, 150f, 50f, 50f, 100f, 100f};
+    public final static Float[] columnWidths = new Float[]{50f, 350f, 150f, 75f, 75f, 150f, 100f};
     public final static String[] columnNames =
-            new String[]{"Icon", "Hullmod", "Design Type", "OP", "MP", "Credits", "Modular?"};
+            new String[]{
+                    Strings.ICON_HEADER,
+                    Strings.HULLMOD_HEADER,
+                    Strings.DESIGN_TYPE_HEADER,
+                    Strings.ORDNANCE_POINTS_HEADER,
+                    Strings.MASTERY_POINTS_HEADER,
+                    Strings.CREDITS_HEADER,
+                    Strings.MODULAR_HEADER};
     public static float tableEntryHeight = 38f;
 
 
@@ -46,16 +51,14 @@ public class MasteryPanel {
     ButtonAPI sModButton, masteryButton;
     boolean isShowingMasteryPanel = false;
     boolean isInRestorableMarket = false;
-    float savedScrollerLocation = 0f;
-    TooltipMakerAPI savedMasteryDisplay;
-    Set<Integer> selectedMasteryButtons, activeMasteries;
+    MasteryDisplay savedMasteryDisplay;
     TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay;
     int currentMastery, maxMastery;
 
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 900f, 600f);
+                ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 1000f, 600f);
         if (dialogData == null) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CANT_OPEN_PANEL, Misc.getNegativeHighlightColor());
             return;
@@ -72,7 +75,7 @@ public class MasteryPanel {
 
         handler.injectRefitScreen(variantChanged);
         if (useSavedScrollerLocation) {
-            saveScrollerLocation();
+            savedMasteryDisplay.saveScrollerHeight();
         }
 
         generateDialog(rootPanel, true, useSavedScrollerLocation);
@@ -125,8 +128,8 @@ public class MasteryPanel {
         float w = panel.getPosition().getWidth() + 20f, h = panel.getPosition().getHeight();
         UIPanelAPI tabButtons = makeTabButtons(120f, 40f);
         UIPanelAPI currencyPanel = makeCurrencyLabels(w);
-        sModPanel = makeThisShipPanel(w, h - 100f, module, root);
-        masteryPanel = makeMasteryPanel(w, h - 100f, module, root, useSavedScrollerLocation);
+        sModPanel = makeThisShipPanel(w, h - 100f);
+        masteryPanel = makeMasteryPanel(w, h - 100f, useSavedScrollerLocation);
         togglePanelVisibility(!isInRestorableMarket || isShowingMasteryPanel ? masteryButton : sModButton);
 
         panel.addComponent(tabButtons).inTMid(0f);
@@ -218,7 +221,7 @@ public class MasteryPanel {
         return labelsPanel;
     }
 
-    UIPanelAPI makeThisShipPanel(float width, float height, ShipAPI module, ShipAPI ship) {
+    UIPanelAPI makeThisShipPanel(float width, float height) {
         ShipVariantAPI moduleVariant = module.getVariant();
         List<HullModSpecAPI> applicableSpecs = new ArrayList<>();
         for (String id : moduleVariant.getHullSpec().getBuiltInMods()) {
@@ -270,7 +273,7 @@ public class MasteryPanel {
         buildInList.addSpacer(7f);
 
         for (HullModSpecAPI spec : applicableSpecs) {
-            addRowToHullModTable(buildInList, table, spec, moduleVariant, !SModUtils.isHullmodBuiltIn(spec, moduleVariant));
+            addRowToHullModTable(buildInList, table, spec, !SModUtils.isHullmodBuiltIn(spec, moduleVariant));
             buildInList.addImage(spec.getSpriteName(), 50f, tableEntryHeight - 6f, 6f);
         }
 
@@ -320,18 +323,8 @@ public class MasteryPanel {
         return thisShipPanel;
     }
 
-    public void selectMasteryItem(int i) {
-        selectedMasteryButtons.add(i);
-        showUpgradeOrConfirmation();
-    }
-
-    public void deselectMasteryItem(int i) {
-        selectedMasteryButtons.remove(i);
-        showUpgradeOrConfirmation();
-    }
-
     void showUpgradeOrConfirmation() {
-        if (selectedMasteryButtons.equals(activeMasteries)) {
+        if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
         }
@@ -340,13 +333,13 @@ public class MasteryPanel {
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
         }
     }
-    public Set<Integer> getSelectedMasteryButtons() {
-        return selectedMasteryButtons;
+
+    public Map<Integer, Boolean> getSelectedMasteryButtons() {
+        return savedMasteryDisplay == null ? new HashMap<Integer, Boolean>() : savedMasteryDisplay.getSelectedLevels();
     }
 
-    UIPanelAPI makeMasteryPanel(float width, float height, final ShipAPI module, final ShipAPI root, boolean useSavedScrollerLocation) {
-        ShipVariantAPI variant = root.getVariant();
-        final ShipHullSpecAPI baseHullSpec = Utils.getRootRestoredHullSpec(variant);
+    UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation) {
+        final ShipHullSpecAPI baseHullSpec = Utils.getRestoredHullSpec(root.getHullSpec());
         currentMastery = ShipMastery.getMasteryLevel(baseHullSpec);
         maxMastery = ShipMastery.getMaxMastery(baseHullSpec);
 
@@ -370,162 +363,35 @@ public class MasteryPanel {
 
         ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
 
-        float containerW = 500f, containerH = 450f;
+        float containerW = 600f, containerH = 450f;
         TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH, false);
-        ButtonAPI containerOutline =
-                masteryContainer.addAreaCheckbox("", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                 Misc.getBrightPlayerColor(), containerW - 5f, containerH - 5f, 0f);
-        containerOutline.setClickable(false);
-        containerOutline.setGlowBrightness(0f);
-        containerOutline.setMouseOverSound(null);
+        new MasteryDisplayOutline(containerW, containerH).create(masteryContainer);
         masteryPanel.addUIElement(masteryContainer).inRMid(50f);
 
         float containerPadX = 4f, containerPadY = 8f;
-        TooltipMakerAPI masteryDisplay =
+        TooltipMakerAPI masteryDisplayTTM =
                 masteryPanel.createUIElement(containerW + 50f - containerPadX, containerH + 2f - containerPadY, true);
 
-        float pad = 10f, minDescH = 80f, buttonW = 30f;
-        float totalH = 0f, scrollToH = 0f;
-
-        activeMasteries = ShipMastery.getActiveMasteriesCopy(baseHullSpec);
-        selectedMasteryButtons = new HashSet<>(activeMasteries);
-        for (int i = 1; i <= maxMastery; i++) {
-            CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(containerW + 50f, minDescH, null);
-            TooltipMakerAPI description = descriptionPanel.createUIElement(containerW - 50f, minDescH, false);
-            final List<MasteryEffect> effects = ShipMastery.getMasteryEffects(baseHullSpec, i);
-            boolean alwaysShow = true;
-            for (MasteryEffect effect : effects) {
-                if (!MasteryUtils.alwaysShowDescription(effect)) {
-                    alwaysShow = false;
-                    break;
-                }
+        float pad = 25f;
+        MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, new Action() {
+            @Override
+            public void perform() {
+                showUpgradeOrConfirmation();
             }
-            boolean hidden = !alwaysShow && i > currentMastery + 1;
+        });
+        display.create(masteryDisplayTTM);
+        masteryDisplayTTM.setHeightSoFar(display.getTotalHeight() - pad);
+        masteryPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
 
-            if (!hidden) {
-                description.addSpacer(20f);
-                for (MasteryEffect effect : effects) {
-                    description.setParaFont(Fonts.INSIGNIA_LARGE);
-                    effect.getDescription(module, root.getFleetMember()).addLabel(description);
-                    description.setParaFontDefault();
-                    effect.addPostDescriptionSection(description, module, root.getFleetMember());
-                    if (!root.getFleetMember().equals(module.getFleetMember()) && effect.hasTag(
-                            MasteryTags.DOESNT_AFFECT_MODULES)) {
-                        description.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
-                    }
-                    description.addSpacer(20f);
-                }
-            }
-            else {
-                description.addPara("", 0f);
-            }
-
-            float descH = Math.max(minDescH, description.getHeightSoFar());
-            descriptionPanel.getPosition().setSize(containerW - 15f, descH);
-
-            TooltipMakerAPI descriptionButton = descriptionPanel.createUIElement(containerW, descH, false);
-            ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                                Misc.getGrayColor(), containerW - 5f, descH, 0f);
-            descOutline.setClickable(i <= currentMastery);
-            descOutline.setGlowBrightness(i <= currentMastery ? 0.8f : 0.15f);
-            if (i > currentMastery) {
-                descOutline.setButtonPressedSound(null);
-            }
-            ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, baseHullSpec, i));
-
-            boolean hasTooltip = false;
-            for (MasteryEffect effect : effects) {
-                if (MasteryUtils.hasTooltip(effect)) {
-                    hasTooltip = true;
-                    break;
-                }
-            }
-
-            if (hasTooltip && !hidden) {
-                descriptionButton.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
-                    @Override
-                    public boolean isTooltipExpandable(Object o) {
-                        return false;
-                    }
-
-                    @Override
-                    public float getTooltipWidth(Object o) {
-                        return 500f;
-                    }
-
-                    @Override
-                    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                        for (MasteryEffect effect : effects) {
-                            effect.addTooltipIfHasTooltipTag(tooltip, module, root.getFleetMember());
-                        }
-                    }
-                }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
-            }
-
-            TooltipMakerAPI levelButtonTTM = descriptionPanel.createUIElement(buttonW, descH, false);
-            ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox("" + i, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                   Misc.getBrightPlayerColor(), buttonW, descH, 0f);
-            levelButton.setClickable(false);
-            levelButton.setGlowBrightness(0.3f);
-            levelButton.setMouseOverSound(null);
-
-            levelButton.highlight();
-
-            if (i <= currentMastery) {
-                descOutline.highlight();
-                levelButton.setHighlightBrightness(0.5f);
-                descOutline.setHighlightBrightness(0.25f);
-            }
-            else {
-                levelButton.setHighlightBrightness(0.25f);
-                descOutline.setHighlightBrightness(0f);
-                levelButton.setEnabled(false);
-            }
-
-            // Instantly set the highlight strength to get rid of unwanted flickering when refreshing the panel
-            ((Fader) ReflectionUtils.invokeMethod(descOutline, "getHighlightFader")).forceIn();
-            ((Fader) ReflectionUtils.invokeMethod(levelButton, "getHighlightFader")).forceIn();
-
-            if (activeMasteries.contains(i)) {
-                descOutline.setChecked(true);
-                descOutline.setHighlightBrightness(0f);
-                levelButton.setChecked(true);
-            }
-
-            if (i <= currentMastery) {
-                scrollToH = totalH;
-            }
-
-            // Cheap trick: to simulate darken effect, render the outline area checkbox above the text
-            descriptionPanel.addUIElement(levelButtonTTM).inLMid(16f);
-            if (i > currentMastery) {
-                descriptionPanel.addUIElement(description).inLMid(75f);
-                descriptionPanel.addUIElement(descriptionButton).inLMid(45f);
-            }
-            else {
-                descriptionPanel.addUIElement(descriptionButton).inLMid(45f);
-                descriptionPanel.addUIElement(description).inLMid(75f);
-            }
-            masteryDisplay.addComponent(descriptionPanel).inTL(0f, totalH);
-            totalH += pad + descH;
-        }
-        masteryDisplay.setHeightSoFar(totalH - pad);
-        masteryPanel.addUIElement(masteryDisplay).inTR(50f, 18f);
-
-        if (useSavedScrollerLocation) {
-            masteryDisplay.getExternalScroller().setYOffset(savedScrollerLocation);
+        if (savedMasteryDisplay != null && useSavedScrollerLocation) {
+            display.scrollToHeight(savedMasteryDisplay.getSavedScrollerHeight());
         }
         else {
-            masteryDisplay.getExternalScroller()
-                          .setYOffset(Math.max(0f, Math.min(scrollToH - pad, totalH - containerH)));
+            display.scrollToHeight(Math.max(0f, Math.min(display.getScrollToHeight() - pad, display.getTotalHeight() - containerH - pad)));
         }
-        savedMasteryDisplay = masteryDisplay;
 
+        savedMasteryDisplay = display;
         return masteryPanel;
-    }
-
-    public void saveScrollerLocation() {
-        savedScrollerLocation = savedMasteryDisplay.getExternalScroller().getYOffset();
     }
 
     LabelAPI label(String str, Color color) {
@@ -538,20 +404,20 @@ public class MasteryPanel {
         return label;
     }
 
-    void addRowToHullModTable(TooltipMakerAPI tableTTM, UITable table, final HullModSpecAPI spec, ShipVariantAPI moduleVariant, boolean modular) {
+    void addRowToHullModTable(TooltipMakerAPI tableTTM, UITable table, final HullModSpecAPI spec, boolean modular) {
         String name = Utils.shortenText(spec.getDisplayName(), tableFont, columnWidths[1]);
         String designType = Utils.shortenText(spec.getManufacturer(), Fonts.DEFAULT_SMALL, columnWidths[2]);
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
-        String opCost = "" + (modular ? spec.getCostFor(root.getHullSize()) : 0);
-        int mpCost = SModUtils.getMPCost(spec, root);
+        String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
+        int mpCost = SModUtils.getMPCost(spec, module);
         String mpCostStr = "" + mpCost;
-        int creditsCost = SModUtils.getCreditsCost(spec, root);
+        int creditsCost = SModUtils.getCreditsCost(spec, module);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.YES_STR : Strings.NO_STR;
         Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
-        String cantBuildInReason = getCantBuildInReason(spec, moduleVariant, mpCost, creditsCost);
+        String cantBuildInReason = getCantBuildInReason(spec, mpCost, creditsCost);
 
         if (cantBuildInReason != null) {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
@@ -567,7 +433,7 @@ public class MasteryPanel {
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                 HullModEffect effect = spec.getEffect();
-                ShipAPI.HullSize hullSize = root.getHullSize();
+                ShipAPI.HullSize hullSize = module.getHullSize();
                 tooltip.addTitle(spec.getDisplayName());
                 tooltip.addSpacer(10f);
                 if (effect.shouldAddDescriptionToTooltip(hullSize, null, true)) {
@@ -609,12 +475,12 @@ public class MasteryPanel {
     /**
      * Gives reason the mod can't be built in; returns null if hullmod can be built in
      */
-    @Nullable String getCantBuildInReason(HullModSpecAPI spec, ShipVariantAPI moduleVariant, int mpCost, int creditsCost) {
+    @Nullable String getCantBuildInReason(HullModSpecAPI spec, int mpCost, int creditsCost) {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
             return spec.getDisplayName() + Strings.CANT_BUILD_IN_STR;
         }
-        if (moduleVariant.getSMods().size() >= Misc.getMaxPermanentMods(
-                root) + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
+        if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
+                + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
             return Strings.LIMIT_REACHED_STR;
         }
 
@@ -659,15 +525,15 @@ public class MasteryPanel {
         }
 
         if (columnNames[3].equals(columnName)) {
-            return spec.getCostFor(root.getHullSize());
+            return spec.getCostFor(module.getHullSize());
         }
 
         if (columnNames[4].equals(columnName)) {
-            return SModUtils.getMPCost(spec, root);
+            return SModUtils.getMPCost(spec, module);
         }
 
         if (columnNames[5].equals(columnName)) {
-            return SModUtils.getCreditsCost(spec, root);
+            return SModUtils.getCreditsCost(spec, module);
         }
 
         if (columnNames[6].equals(columnName)) {

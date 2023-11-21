@@ -12,7 +12,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     private MutableStat strength;
     private final Set<String> tags = new HashSet<>();
-    private int tier = 1;
     private int priority = 0;
     private ShipHullSpecAPI spec;
 
@@ -89,16 +88,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public final boolean hasTag(String tag) {
         return tags.contains(tag);
-    }
-
-    @Override
-    public final int getTier() {
-        return tier;
-    }
-
-    @Override
-    public final void setTier(int tier) {
-        this.tier = tier;
     }
 
     @Override
