@@ -6,7 +6,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ShipMasteryNPC;
-import shipmastery.campaign.NPCMasteryAdder;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.deferred.DeferredActionPlugin;
 
