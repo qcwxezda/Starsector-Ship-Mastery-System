@@ -373,7 +373,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         // checkIfRefitShipChanged will call syncRefitScreenWithVariant,
         // which internally refreshes the character stats, so use a flag
         // to prevent recursion.
-        if (!skipRefresh) {
+        if (insideRefitPanel && !skipRefresh) {
             checkIfRefitShipChanged();
         }
     }

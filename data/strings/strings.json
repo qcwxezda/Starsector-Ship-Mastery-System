@@ -77,7 +77,8 @@
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsPost": "Effect stacks up to %s times and has a hard cap of %s increase to peak CR.",
     "ShieldDeflection": "%s: shield deflects all incoming projectiles for %s seconds when activated. Increases shield upkeep by %s and decreases shield unfolding rate by %s.",
-    "ShieldDeflectionPost": "Shields take %s damage from deflected projectiles."
+    "ShieldDeflectionPost": "Shields take %s damage from deflected projectiles.",
+    "HighFrequencyMotes": "%s: "
   },
 
   "sms_misc": {

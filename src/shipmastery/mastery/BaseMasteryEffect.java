@@ -1,8 +1,11 @@
 package shipmastery.mastery;
 
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,7 +20,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private String ID = null;
     /** Same as id but can be accessed directly without a getter */
     protected String id = null;
-
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
@@ -113,16 +115,17 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         strength.unmodify(id);
     }
 
+
+    @Override
+    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {}
+
+    @Override
+    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {}
+
     @Override
     public final void modifyStrengthAdditive(float fraction) {
         strength.modifyPercent(id, 100f*(fraction - 1f));
     }
-
-    @Override
-    public void onFlagshipStatusGained(ShipAPI ship) {}
-
-    @Override
-    public void onFlagshipStatusLost(ShipAPI ship) {}
 
     @Override
     public final float getStrength() {

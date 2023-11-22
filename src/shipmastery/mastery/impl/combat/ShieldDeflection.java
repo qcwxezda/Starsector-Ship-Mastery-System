@@ -1,14 +1,17 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.graphics.ShieldDeflectionEmitter;
@@ -23,43 +26,29 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
-public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableListener {
+public class ShieldDeflection extends BaseMasteryEffect {
 
     static final DecimalFormat numberFormat = new DecimalFormat("0.#");
     static final float damageTakenMult = 0.5f;
     static final float upkeepMult = 1.5f;
     static final float unfoldRateMult = 0.5f;
-    float activatedTime = 0f;
-    ShieldDeflectionEmitter emitter;
-    ShipAPI playerFlagship;
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        super.applyEffectsAfterShipCreation(ship);
-    }
-
-    @Override
-    public void onFlagshipStatusGained(ShipAPI ship) {
-        if (ship.getOwner() == FleetSide.PLAYER.ordinal()
+    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
+        stats.getShieldUpkeepMult().modifyMult(id, upkeepMult);
+        stats.getShieldUnfoldRateMult().modifyMult(id, unfoldRateMult);
+        if (ship != null
                 && ship.getShield() != null
                 && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
                 && ship.getShield().getType() != ShieldAPI.ShieldType.NONE) {
-            playerFlagship = ship;
-            emitter = new ShieldDeflectionEmitter(ship);
-            emitter.enableDynamicAnchoring();
-            ship.getMutableStats().getShieldUpkeepMult().modifyMult(id, upkeepMult);
-            ship.getMutableStats().getShieldUnfoldRateMult().modifyMult(id, unfoldRateMult);
-            ship.addListener(this);
-            activatedTime = 99999f; // Force player to flicker shields off and on to start effect activation
+            ship.addListener(new ShieldDeflectionScript(ship, getMaxTime()));
         }
     }
-
     @Override
-    public void onFlagshipStatusLost(ShipAPI ship) {
-        playerFlagship = null;
-        ship.getMutableStats().getShieldUpkeepMult().unmodify(id);
-        ship.getMutableStats().getShieldUnfoldRateMult().unmodify(id);
-        ship.removeListener(this);
+    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
+        stats.getShieldUpkeepMult().unmodify(id);
+        stats.getShieldUnfoldRateMult().unmodify(id);
+        ship.removeListenerOfClass(ShieldDeflectionScript.class);
     }
 
     @Override
@@ -86,88 +75,101 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
                         Utils.absValueAsPercent(damageTakenMult));
     }
 
-    @Override
-    public void advance(float amount) {
-        if (playerFlagship == null) {
-            return;
+    public static class ShieldDeflectionScript implements AdvanceableListener {
+        float activatedTime = 99999f;
+        final float maxTime;
+        final ShieldDeflectionEmitter emitter;
+        final ShipAPI ship;
+
+        ShieldDeflectionScript(ShipAPI ship, float maxTime) {
+            this.ship = ship;
+            this.maxTime = maxTime;
+            this.emitter = new ShieldDeflectionEmitter(ship);
+            emitter.enableDynamicAnchoring();
         }
-        if (playerFlagship.getShield().isOff()) {
-            activatedTime = 0f;
-            return;
-        }
-        if (activatedTime > getMaxTime()) {
-            return;
-        }
-        activatedTime += amount;
-        ShipAPI ship = playerFlagship;
-        Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 5f));
-        float gridSize = 2f*ship.getShieldRadiusEvenIfNoShield() + 100f;
-        Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
-        while (itr.hasNext()) {
-            Object o = itr.next();
-            if (!(o instanceof DamagingProjectileAPI)) continue;
-            DamagingProjectileAPI proj = (DamagingProjectileAPI) o;
-            if (proj.getOwner() == ship.getOwner()) continue;
-            Vector2f loc = proj.getLocation(), vel = proj.getVelocity();
-            Vector2f scaledVel = MathUtils.inDirectionWithLength(vel, Math.max(30f, vel.length() * amount));
-            Vector2f nextFrame = new Vector2f(loc.x + scaledVel.x, loc.y + scaledVel.y);
-            Vector2f shieldCenter = ship.getShieldCenterEvenIfNoShield();
-            Vector2f pt = CollisionUtils.rayCollisionCheckShield(loc, nextFrame, ship.getShield());
-            if (pt != null) {
-                float newFacing;
-                Vector2f towardCenter = new Vector2f(pt.x - shieldCenter.x, pt.y - shieldCenter.y);
-                final Vector2f reflect;
 
-                if (towardCenter.lengthSquared() > 0f) {
-                    towardCenter.normalise();
-                    float dot = Vector2f.dot(towardCenter, vel);
-                    Vector2f parallel = new Vector2f(towardCenter.x * dot, towardCenter.y * dot);
-                    reflect = new Vector2f(-vel.x + 2f * (vel.x - parallel.x), -vel.y + 2 * (vel.y - parallel.y));
-                    newFacing = Misc.getAngleInDegrees(reflect);
-                }
-                else {
-                    reflect = new Vector2f(1f, 0f);
-                    newFacing = 0f;
-                }
+        @Override
+        public void advance(float amount) {
+            if (ship == null) {
+                return;
+            }
+            if (ship.getShield().isOff()) {
+                activatedTime = 0f;
+                return;
+            }
+            if (activatedTime > maxTime) {
+                return;
+            }
+            activatedTime += amount;
+            Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 5f));
+            float gridSize = 2f*ship.getShieldRadiusEvenIfNoShield() + 100f;
+            Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
+            while (itr.hasNext()) {
+                Object o = itr.next();
+                if (!(o instanceof DamagingProjectileAPI)) continue;
+                DamagingProjectileAPI proj = (DamagingProjectileAPI) o;
+                if (proj.getOwner() == ship.getOwner()) continue;
+                Vector2f loc = proj.getLocation(), vel = proj.getVelocity();
+                Vector2f scaledVel = MathUtils.inDirectionWithLength(vel, Math.max(30f, vel.length() * amount));
+                Vector2f nextFrame = new Vector2f(loc.x + scaledVel.x, loc.y + scaledVel.y);
+                Vector2f shieldCenter = ship.getShieldCenterEvenIfNoShield();
+                Vector2f pt = CollisionUtils.rayCollisionCheckShield(loc, nextFrame, ship.getShield());
+                if (pt != null) {
+                    float newFacing;
+                    Vector2f towardCenter = new Vector2f(pt.x - shieldCenter.x, pt.y - shieldCenter.y);
+                    final Vector2f reflect;
 
-                Vector2f tailEnd = proj.getTailEnd();
-                if (tailEnd != null) {
-                    float length = MathUtils.dist(loc, tailEnd);
-                    Vector2f scaledReflect = new Vector2f(reflect);
-                    MathUtils.safeNormalize(scaledReflect).scale(length);
-                    proj.getTailEnd().set(pt);
-                    proj.getLocation().set(new Vector2f(pt.x + scaledReflect.x, pt.y + scaledReflect.y));
-                }
-                else {
-                    Vector2f scaledReflect = new Vector2f(reflect);
-                    MathUtils.safeNormalize(scaledReflect).scale(scaledVel.length());
-                    proj.getLocation().set(pt.x + scaledReflect.x, pt.y + scaledReflect.y);
-                }
+                    if (towardCenter.lengthSquared() > 0f) {
+                        towardCenter.normalise();
+                        float dot = Vector2f.dot(towardCenter, vel);
+                        Vector2f parallel = new Vector2f(towardCenter.x * dot, towardCenter.y * dot);
+                        reflect = new Vector2f(-vel.x + 2f * (vel.x - parallel.x), -vel.y + 2 * (vel.y - parallel.y));
+                        newFacing = Misc.getAngleInDegrees(reflect);
+                    }
+                    else {
+                        reflect = new Vector2f(1f, 0f);
+                        newFacing = 0f;
+                    }
 
-                proj.setFacing(newFacing);
-                proj.getVelocity().set(reflect);
-                proj.setOwner(100);
-                proj.setSource(ship);
+                    Vector2f tailEnd = proj.getTailEnd();
+                    if (tailEnd != null) {
+                        float length = MathUtils.dist(loc, tailEnd);
+                        Vector2f scaledReflect = new Vector2f(reflect);
+                        MathUtils.safeNormalize(scaledReflect).scale(length);
+                        proj.getTailEnd().set(pt);
+                        proj.getLocation().set(new Vector2f(pt.x + scaledReflect.x, pt.y + scaledReflect.y));
+                    }
+                    else {
+                        Vector2f scaledReflect = new Vector2f(reflect);
+                        MathUtils.safeNormalize(scaledReflect).scale(scaledVel.length());
+                        proj.getLocation().set(pt.x + scaledReflect.x, pt.y + scaledReflect.y);
+                    }
 
-                Global.getCombatEngine().applyDamage(
-                        ship,
-                        ship,
-                        pt,
-                        proj.getDamageAmount() * damageTakenMult,
-                        proj.getDamageType(),
-                        proj.getEmpAmount(),
-                        false,
-                        false,
-                        proj.getSource(),
-                        true);
-                if (proj.getProjectileSpec() != null) {
-                    Color glowColor = proj.getProjectileSpec().getGlowColor();
-                    float glowRadius = proj.getProjectileSpec().getHitGlowRadius();
-                    if (glowColor != null) {
-                        Global.getCombatEngine()
-                              .addHitParticle(pt, ship.getVelocity(), 2f * glowRadius, 0.3f, glowColor);
-                        Global.getCombatEngine()
-                              .addHitParticle(pt, ship.getVelocity(), 0.5f * glowRadius, 0.6f, glowColor);
+                    proj.setFacing(newFacing);
+                    proj.getVelocity().set(reflect);
+                    proj.setOwner(100);
+                    proj.setSource(ship);
+
+                    Global.getCombatEngine().applyDamage(
+                            ship,
+                            ship,
+                            pt,
+                            proj.getDamageAmount() * damageTakenMult,
+                            proj.getDamageType(),
+                            proj.getEmpAmount(),
+                            false,
+                            false,
+                            proj.getSource(),
+                            true);
+                    if (proj.getProjectileSpec() != null) {
+                        Color glowColor = proj.getProjectileSpec().getGlowColor();
+                        float glowRadius = proj.getProjectileSpec().getHitGlowRadius();
+                        if (glowColor != null) {
+                            Global.getCombatEngine()
+                                  .addHitParticle(pt, ship.getVelocity(), 2f * glowRadius, 0.3f, glowColor);
+                            Global.getCombatEngine()
+                                  .addHitParticle(pt, ship.getVelocity(), 0.5f * glowRadius, 0.6f, glowColor);
+                        }
                     }
                 }
             }

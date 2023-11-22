@@ -1,9 +1,7 @@
 package shipmastery.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.ShipMasteryNPC;
@@ -100,6 +98,7 @@ public abstract class MasteryUtils {
         return effect.hasTag(MasteryTags.HAS_TOOLTIP);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean canDisable(MasteryEffect effect) {
         return !effect.hasTag(MasteryTags.NO_DISABLE);
     }
@@ -114,16 +113,8 @@ public abstract class MasteryUtils {
 
     public static void applyAllActiveMasteryEffects(PersonAPI commander, ShipHullSpecAPI spec, MasteryAction action) {
         if (commander == null) return;
-        if (Objects.equals(commander, Global.getSector().getPlayerPerson())) {
-            applyMasteryEffects(spec, ShipMastery.getActiveMasteriesCopy(spec), false, action);
-        }
-        else {
-            Map<Pair<String, ShipHullSpecAPI>, NavigableMap<Integer, Boolean>> masteries = ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES;
-            if (masteries == null) return;
-            Map<Integer, Boolean> levelsToApply = masteries.get(new Pair<>(commander.getId(), spec));
-            if (levelsToApply == null) return;
-            applyMasteryEffects(spec, levelsToApply, false, action);
-        }
+        Map<Integer, Boolean> levelsToApply = ShipMasteryNPC.getActiveMasteriesForCommander(commander, spec);
+        applyMasteryEffects(spec, levelsToApply, false, action);
     }
 
     public interface MasteryAction {

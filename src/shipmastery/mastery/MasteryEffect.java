@@ -1,8 +1,11 @@
 package shipmastery.mastery;
 
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
  *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#UNIQUE} is not set, i.e. is stackable, and
@@ -80,23 +83,20 @@ public interface MasteryEffect {
 
     /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
     void onDeactivate();
+    /** If {@code ship} is null, the game is not actually in combat and {@code stats} should be modified for display purposes only.
+     *  The equivalent flagshipStatusLost call does not happen for calls with null {@code ship}.
+     *  Note: There may be more than 2 possible values for {@code commander} due to the ability for fleets to merge prior to combat. */
+    void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship);
+    /** Note: There may be more than 2 possible values for {@code commander} due to the ability for fleets to merge prior to combat. */
+    void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship);
 
-    /**
-     * Called for a mastery effect when {@code ship}'s hull spec has that mastery enabled  and {@code ship} becomes
-     *  the flagship.
-     *  */
-    void onFlagshipStatusGained(ShipAPI ship);
-
-    /**
-     * Called when a ship that had {@code onFlagshipStatusGained} called on it loses its flagship status.
-     */
-    void onFlagshipStatusLost(ShipAPI ship);
 
     /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
     int getPriority();
 
     void addTags(String... tags);
 
+    @SuppressWarnings("unused")
     void removeTags(String... tags);
 
     boolean hasTag(String tag);

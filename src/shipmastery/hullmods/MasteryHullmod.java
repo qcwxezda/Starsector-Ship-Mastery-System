@@ -1,8 +1,8 @@
 package shipmastery.hullmods;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
@@ -15,7 +15,6 @@ import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
-import java.util.List;
 import java.util.NavigableMap;
 import java.util.Objects;
 
@@ -30,9 +29,6 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     private static final String MODULE_INDICATOR_TAG = "shipmastery_is_module";
     private static final String MODULE_SOURCE_TAG = "shipmastery_module_root_";
     private static final String NPC_INDICATOR_TAG = "shipmastery_is_npc";
-
-    public static String LAST_SEEN_COMBINED_NPC_FLEET_ID;
-
 
     @Override
     public void advanceInCampaign(CampaignFleetAPI fleet) {
@@ -49,47 +45,27 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     }
 
     @Override
-    public void onFleetSync(CampaignFleetAPI fleet) {
+    public void onFleetSync(final CampaignFleetAPI fleet) {
         if (fleet == null) {
             return;
-        }
-        if (!fleet.isPlayerFleet()) {
-            BattleAPI battle = fleet.getBattle();
-            if (battle == null) return;
-            List<CampaignFleetAPI> nonPlayerSide = battle.getNonPlayerSide();
-            CampaignFleetAPI combinedTwo = battle.getCombinedTwo();
-            if (nonPlayerSide == null ||
-                    combinedTwo == null ||
-                    Objects.equals(LAST_SEEN_COMBINED_NPC_FLEET_ID, combinedTwo.getId())) return;
-            ShipMasteryNPC.generateMasteryLevelsForNPCFleet(nonPlayerSide);
-            LAST_SEEN_COMBINED_NPC_FLEET_ID = combinedTwo.getId();
-            fleet = combinedTwo;
         }
         // Make sure every ship in the player's fleet has this hullmod installed
         // Do it outside this call stack as changing the ship immediately actually causes some unexpected changes
         // i.e. the "you just purchased a ship" screen no longer appears as the purchased ship is
         // no longer the same as the one in the player's fleet
-        final CampaignFleetAPI finalFleet = fleet;
         DeferredActionPlugin.performLater(new Action() {
             @Override
             public void perform() {
-                for (FleetMemberAPI fm : finalFleet.getFleetData().getMembersListCopy()) {
+                for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
                     if (fm.getVariant().isStockVariant()) {
                         fm.setVariant(fm.getVariant().clone(), false, false);
                     }
-                    if (!finalFleet.isPlayerFleet()) {
+                    // Add mastery indicator hullmods to NPC fleets
+                    if (!fleet.isPlayerFleet()) {
                         fm.getVariant().addTag(NPC_INDICATOR_TAG);
-                        // Necessary to remove all indicators because the same fleet member may have a different
-                        // commander based on what other fleets joined in, and the masteries should be based
-                        // on the commander and not the fleet member
-                        for (int i = 1; i <= 9; i++) {
-                            fm.getVariant().removeMod("sms_npcIndicator" + i);
-                        }
                         NavigableMap<Integer, Boolean>
-                                levels = ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.get(
-                                new Pair<>(fm.getFleetCommander().getId(),
-                                           Utils.getRestoredHullSpec(fm.getHullSpec())));
-                        if (levels != null && !levels.isEmpty()) {
+                                levels = ShipMasteryNPC.getActiveMasteriesForCommander(fm.getFleetCommanderForStats(), fm.getHullSpec());
+                        if (!levels.isEmpty()) {
                             int maxLevel = levels.lastEntry().getKey();
                             if (maxLevel >= 1) {
                                 maxLevel = Math.min(maxLevel, 9);
@@ -116,9 +92,6 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             ShipVariantAPI moduleVariant = variant.getModuleVariant(id);
             moduleVariant.addTag(MODULE_INDICATOR_TAG);
             moduleVariant.addTag(MODULE_SOURCE_TAG + rootSpecId);
-            if (variant.hasTag(NPC_INDICATOR_TAG)) {
-                moduleVariant.addTag(NPC_INDICATOR_TAG);
-            }
             moduleVariant.setHullVariantId(moduleVariant.getHullVariantId());
             addHandlerMod(variant.getModuleVariant(id), rootSpecId);
         }
@@ -145,18 +118,32 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         return new Pair<>(rootHullSpec, isModule);
     }
 
+    private PersonAPI getCommanderForFleetMember(FleetMemberAPI fm) {
+        if (fm == null) return null;
+        // First, check if it has a fleet commander for stats. This won't work in the refit screen, so
+        if (fm.getFleetCommanderForStats() != null) return fm.getFleetCommanderForStats();
+        // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
+        if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
+        return null;
+    }
+
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats,
                                                final String id) {
         if (stats == null || stats.getVariant() == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(stats.getVariant());
+        final PersonAPI commander = getCommanderForFleetMember(stats.getFleetMember());
         MasteryUtils.applyAllActiveMasteryEffects(
-                stats.getFleetMember() == null ? null : stats.getFleetMember().getFleetCommander(),
+                commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {
                         if (!rootHullData.two || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                             effect.applyEffectsBeforeShipCreation(hullSize, stats);
+                            // For display purposes only
+                            if (commander != null && Objects.equals(commander, stats.getFleetMember().getCaptain())) {
+                                effect.onFlagshipStatusGained(commander, stats, null);
+                            }
                         }
                     }
                 });
@@ -166,16 +153,21 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     public void applyEffectsAfterShipCreation(final ShipAPI ship, final String id) {
         if (ship == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(ship.getVariant());
+        // ship.getFleetMember() is null,
+        // ship.getFleetCommander() doesn't work for merged fleets with multiple commanders
+        // ship.getMutableStats().getFleetMember().getFleetCommanderForStats() actually differentiates between commanders in merged fleets
+        // However, it's null for player ships...
+        final PersonAPI commander = getCommanderForFleetMember(ship.getMutableStats().getFleetMember());
         MasteryUtils.applyAllActiveMasteryEffects(
-                ship.getFleetMember() == null ? null : ship.getFleetMember().getFleetCommander(),
+                commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {
                         if (!rootHullData.two || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                             effect.applyEffectsAfterShipCreation(ship);
-                            // This is only for refit screen display purposes, so it's hardcoded to only affect the player fleet
-                            if (Global.getSector().getPlayerPerson().equals(ship.getCaptain())) {
-                                effect.onFlagshipStatusGained(ship);
+                            // For display purposes only
+                            if (commander != null && Objects.equals(commander, ship.getCaptain())) {
+                                effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
                             }
                         }
                     }
@@ -188,7 +180,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         if (ship == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(ship.getVariant());
         MasteryUtils.applyAllActiveMasteryEffects(
-                ship.getFleetMember() == null ? null : ship.getFleetMember().getFleetCommander(),
+                ship.getFleetMember() == null ? null : ship.getFleetMember().getFleetCommanderForStats(),
                 rootHullData.one, new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {
