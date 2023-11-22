@@ -40,7 +40,7 @@ public abstract class SModUtils {
         // Exponentially increasing MP cost for each S-mod over the limit
         if (TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() >= 1) {
             for (int i = Misc.getMaxPermanentMods(ship); i <= nSMods; i++) {
-                cost *= 1.5f;
+                cost *= 1.25f;
                 // Hard cap here to avoid overflow
                 cost = Math.min(cost, MP_HARD_CAP);
             }

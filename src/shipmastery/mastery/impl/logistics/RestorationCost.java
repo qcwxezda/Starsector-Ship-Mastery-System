@@ -19,13 +19,13 @@ public class RestorationCost extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         modifyDefault(TransientSettings.SHIP_RESTORE_COST_MULT, id);
         Global.getSettings().setFloat("baseRestoreCostMult", TransientSettings.SHIP_RESTORE_COST_MULT.getModifiedValue());
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SHIP_RESTORE_COST_MULT.unmodify(id);
         Global.getSettings().setFloat("baseRestoreCostMult", TransientSettings.SHIP_RESTORE_COST_MULT.getModifiedValue());
     }

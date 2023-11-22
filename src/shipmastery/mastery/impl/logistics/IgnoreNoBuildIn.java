@@ -28,12 +28,12 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.addAll(hullmodIds);
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.removeAll(hullmodIds);
     }
 

@@ -24,7 +24,9 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         if (engine == null || engine.isPaused()) return;
 
         List<ShipAPI> ships = engine.getShips();
+        // Ship system listeners stored per ship
         shipSystemTracker.advance(ships, amount);
-        flagshipTracker.advance(engine, ships, amount);
+        // Flagship trackers stored in engine
+        flagshipTracker.advance(engine);
     }
 }

@@ -1,14 +1,16 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
-import shipmastery.combat.listeners.FlagshipListener;
 import shipmastery.graphics.ShieldDeflectionEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -21,7 +23,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
-public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableListener, FlagshipListener {
+public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableListener {
 
     static final DecimalFormat numberFormat = new DecimalFormat("0.#");
     static final float damageTakenMult = 0.5f;
@@ -29,20 +31,35 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
     static final float unfoldRateMult = 0.5f;
     float activatedTime = 0f;
     ShieldDeflectionEmitter emitter;
-    ShipAPI ship;
-    boolean enabled = false;
-    String id = "";
-
+    ShipAPI playerFlagship;
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        if (!ship.hasListenerOfClass(ShieldDeflection.class)) {
-            ship.addListener(this);
-            this.ship = ship;
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {
+        super.applyEffectsAfterShipCreation(ship);
+    }
+
+    @Override
+    public void onFlagshipStatusGained(ShipAPI ship) {
+        if (ship.getOwner() == FleetSide.PLAYER.ordinal()
+                && ship.getShield() != null
+                && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
+                && ship.getShield().getType() != ShieldAPI.ShieldType.NONE) {
+            playerFlagship = ship;
             emitter = new ShieldDeflectionEmitter(ship);
             emitter.enableDynamicAnchoring();
-            this.id = id;
+            ship.getMutableStats().getShieldUpkeepMult().modifyMult(id, upkeepMult);
+            ship.getMutableStats().getShieldUnfoldRateMult().modifyMult(id, unfoldRateMult);
+            ship.addListener(this);
+            activatedTime = 99999f; // Force player to flicker shields off and on to start effect activation
         }
+    }
+
+    @Override
+    public void onFlagshipStatusLost(ShipAPI ship) {
+        playerFlagship = null;
+        ship.getMutableStats().getShieldUpkeepMult().unmodify(id);
+        ship.getMutableStats().getShieldUnfoldRateMult().unmodify(id);
+        ship.removeListener(this);
     }
 
     @Override
@@ -59,7 +76,7 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
     }
 
     float getMaxTime() {
-        return 8f * getStrength();
+        return 6f * getStrength();
     }
 
     @Override
@@ -71,11 +88,10 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
 
     @Override
     public void advance(float amount) {
-        if (!enabled) {
-            activatedTime = 99999f; // Force turning shields off and back on again if transferring command
+        if (playerFlagship == null) {
             return;
         }
-        if (ship.getShield().isOff()) {
+        if (playerFlagship.getShield().isOff()) {
             activatedTime = 0f;
             return;
         }
@@ -83,6 +99,7 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
             return;
         }
         activatedTime += amount;
+        ShipAPI ship = playerFlagship;
         Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 5f));
         float gridSize = 2f*ship.getShieldRadiusEvenIfNoShield() + 100f;
         Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
@@ -155,28 +172,5 @@ public class ShieldDeflection extends BaseMasteryEffect implements AdvanceableLi
                 }
             }
         }
-    }
-
-    void applyOrUnapplyPassiveEffects() {
-        if (enabled) {
-
-        }
-        else {
-
-        }
-    }
-
-    @Override
-    public void playerFlagshipChanged(ShipAPI from, ShipAPI to) {
-        if (to.getOwner() != ship.getOwner()) return;
-        enabled = to == ship;
-        applyOrUnapplyPassiveEffects();
-    }
-
-    @Override
-    public void enemyFlagshipChanged(ShipAPI from, ShipAPI to) {
-        if (to.getOwner() != ship.getOwner()) return;
-        enabled = to == ship;
-        applyOrUnapplyPassiveEffects();
     }
 }

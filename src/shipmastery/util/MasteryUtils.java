@@ -1,9 +1,12 @@
 package shipmastery.util;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
-import shipmastery.data.SaveData;
+import shipmastery.ShipMasteryNPC;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 
@@ -37,7 +40,7 @@ public abstract class MasteryUtils {
      *       and another effect increased the strength of a different effect so that it is now stronger than the previously strongest
      *       effect, we could have a scenario in which endRefit doesn't exactly undo beginRefit.
      * */
-    public static void applyAllMasteryEffects(ShipHullSpecAPI spec, Map<Integer, Boolean> levelsToApply, boolean reverseOrder, MasteryAction action) {
+    public static void applyMasteryEffects(ShipHullSpecAPI spec, Map<Integer, Boolean> levelsToApply, boolean reverseOrder, MasteryAction action) {
         if (levelsToApply.isEmpty()) return;
         // Effect id -> the actual effect to be executed
         Map<Class<?>, MasteryEffect> uniqueEffects = new HashMap<>();
@@ -61,7 +64,7 @@ public abstract class MasteryUtils {
             MasteryEffectData data = priorityOrder.poll();
             MasteryEffect effect = data.effect;
             if (!isUnique(effect)  || effect.equals(uniqueEffects.get(effect.getClass()))) {
-                action.perform(effect, makeEffectId(effect, data.level, data.index));
+                action.perform(effect);
                 //System.out.print("(" + data.level + ", " + data.index + ")  ");
             }
         }
@@ -109,11 +112,21 @@ public abstract class MasteryUtils {
         return effect.hasTag(MasteryTags.NO_HIDE_DESCRIPTION);
     }
 
-    public static void applyAllActiveMasteryEffects(ShipHullSpecAPI spec, MasteryAction action) {
-        applyAllMasteryEffects(spec, ShipMastery.getActiveMasteriesCopy(spec), false, action);
+    public static void applyAllActiveMasteryEffects(PersonAPI commander, ShipHullSpecAPI spec, MasteryAction action) {
+        if (commander == null) return;
+        if (Objects.equals(commander, Global.getSector().getPlayerPerson())) {
+            applyMasteryEffects(spec, ShipMastery.getActiveMasteriesCopy(spec), false, action);
+        }
+        else {
+            Map<Pair<String, ShipHullSpecAPI>, NavigableMap<Integer, Boolean>> masteries = ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES;
+            if (masteries == null) return;
+            Map<Integer, Boolean> levelsToApply = masteries.get(new Pair<>(commander.getId(), spec));
+            if (levelsToApply == null) return;
+            applyMasteryEffects(spec, levelsToApply, false, action);
+        }
     }
 
     public interface MasteryAction {
-        void perform(MasteryEffect effect, String id);
+        void perform(MasteryEffect effect);
     }
 }

@@ -18,12 +18,12 @@ public class SModCreditsCost extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         modifyDefault(TransientSettings.SMOD_CREDITS_COST_MULT, id);
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SMOD_CREDITS_COST_MULT.unmodify(id);
     }
 }

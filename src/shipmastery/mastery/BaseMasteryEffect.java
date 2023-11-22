@@ -20,16 +20,16 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {}
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {}
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
 
     @Override
-    public void onActivate(String id) {}
+    public void onActivate() {}
 
     @Override
-    public void onDeactivate(String id) {}
+    public void onDeactivate() {}
 
     @Override
     public void init(String... args) {
@@ -44,13 +44,13 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {}
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {}
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {}
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {}
 
     @Override
-    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
+    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship) {}
 
     @Override
     public Float getSelectionWeight() {
@@ -104,19 +104,25 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public final void modifyStrengthMultiplicative(String id, float fraction) {
+    public final void modifyStrengthMultiplicative(float fraction) {
         strength.modifyMult(id, fraction);
     }
 
     @Override
-    public final void unmodifyStrength(String id) {
+    public final void unmodifyStrength() {
         strength.unmodify(id);
     }
 
     @Override
-    public final void modifyStrengthAdditive(String id, float fraction) {
+    public final void modifyStrengthAdditive(float fraction) {
         strength.modifyPercent(id, 100f*(fraction - 1f));
     }
+
+    @Override
+    public void onFlagshipStatusGained(ShipAPI ship) {}
+
+    @Override
+    public void onFlagshipStatusLost(ShipAPI ship) {}
 
     @Override
     public final float getStrength() {

@@ -5,7 +5,9 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ui.MasteryPanel;
 
-import java.util.*;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class ConfirmMasteryChangesPressed extends ActionListener {
 

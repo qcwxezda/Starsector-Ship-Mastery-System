@@ -28,7 +28,7 @@ public class ModifyStatsMult extends ModifyStatsEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         for (Map.Entry<ShipStat, Float> entry : amounts.entrySet()) {
             ShipStat stat = entry.getKey();
             float amount = getStrength() * entry.getValue();

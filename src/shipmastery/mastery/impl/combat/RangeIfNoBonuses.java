@@ -24,7 +24,7 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {
         StatBonus energyStats = ship.getMutableStats().getEnergyWeaponRangeBonus();
         StatBonus ballisticStats = ship.getMutableStats().getBallisticWeaponRangeBonus();
         boolean hasEnergyBonus = checkForBonusIn(energyStats.getFlatBonuses().values(), 0f);

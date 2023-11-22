@@ -25,17 +25,17 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getIncrease());
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.OVER_LIMIT_SMOD_COUNT.unmodify(id);
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         if (stats == null || stats.getVariant() == null || stats.getFleetMember() == null) return;
 
         int overMax = stats.getVariant().getSMods().size() - SModUtils.getMaxSMods(stats);

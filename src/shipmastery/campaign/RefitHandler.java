@@ -415,22 +415,22 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
         for (int i = effectsToDeactivate.size() - 1; i >= 0; i--) {
             EffectActivationRecord toDeactivate = effectsToDeactivate.get(i);
-            toDeactivate.effect.onEndRefit(toDeactivate.moduleVariant, toDeactivate.isModule, toDeactivate.id);
+            toDeactivate.effect.onEndRefit(toDeactivate.moduleVariant, toDeactivate.isModule);
             //System.out.println("Unapply: " + toDeactivate.id + " to " + toDeactivate.moduleVariant.getHullVariantId() + ", " + toDeactivate.isModule);
         }
 
         effectsToDeactivate.clear();
 
         if (newSpec != null && newVariant != null) {
-            MasteryUtils.applyAllMasteryEffects(
+            MasteryUtils.applyMasteryEffects(
                 newSpec, newInfo.activeMasteries, false, new MasteryUtils.MasteryAction() {
                     @Override
-                    public void perform(MasteryEffect effect, String id) {
+                    public void perform(MasteryEffect effect) {
                         boolean isModule = !Objects.equals(Utils.getRestoredHullSpecId(newVariant.getHullSpec()), newSpec.getHullId());
                         if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                            effect.onBeginRefit(newVariant, isModule, id);
+                            effect.onBeginRefit(newVariant, isModule);
                             //System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
-                            effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule, id));
+                            effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule));
                         }
                     }
                 });
@@ -443,13 +443,11 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         MasteryEffect effect;
         ShipVariantAPI moduleVariant;
         boolean isModule;
-        String id;
 
-        EffectActivationRecord(MasteryEffect effect, ShipVariantAPI moduleVariant, boolean isModule, String id) {
+        EffectActivationRecord(MasteryEffect effect, ShipVariantAPI moduleVariant, boolean isModule) {
             this.effect = effect;
             this.moduleVariant = moduleVariant;
             this.isModule = isModule;
-            this.id = id;
         }
     }
 

@@ -28,12 +28,12 @@ public interface MasteryEffect {
     /** Same usage as {@link HullModEffect#applyEffectsBeforeShipCreation}. <br>
      *  All mastery effects are applied after all other hullmod effects.
      *  Among each other, effects are applied in ascending priority order. */
-    void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id);
+    void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats);
 
     /** Same usage as {@link HullModEffect#applyEffectsAfterShipCreation} <br>
      *  All mastery effects are applied after all other hullmod effects.
      *  Among each other, effects are applied in ascending priority order. */
-    void applyEffectsAfterShipCreation(ShipAPI ship, String id);
+    void applyEffectsAfterShipCreation(ShipAPI ship);
 
     /** Will be displayed in the mastery panel. */
     MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
@@ -41,7 +41,7 @@ public interface MasteryEffect {
     /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip}  <br>
      *  All mastery effects are applied after all other hullmod effects.
      *  Among each other, effects are applied in ascending priority order. */
-    void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id);
+    void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship);
 
     /**
      * The likelihood of the mastery being generated when randomly selected.
@@ -61,25 +61,36 @@ public interface MasteryEffect {
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
     float getStrength();
-    void modifyStrengthMultiplicative(String id, float fraction);
-    void modifyStrengthAdditive(String id, float fraction);
-    void unmodifyStrength(String id);
+    void modifyStrengthMultiplicative(float fraction);
+    void modifyStrengthAdditive(float fraction);
+    void unmodifyStrength();
 
     /** Called whenever a ship or module is selected in the refit screen and that ship/module's root ship shares
      *  this mastery's hull spec.
-     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipVariantAPI, boolean, String)}. */
-    void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id);
+     *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipVariantAPI, boolean)}. */
+    void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule);
 
     /** Called whenever a ship or module is selected in the refit screen and the root ship of the ship/module that was
      *  previously selected shares this mastery's hull spec.
      *  Effects are reverted in descending order of mastery level. */
-    void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id);
+    void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule);
 
     /** Called whenever the mastery is activated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onActivate(String id);
+    void onActivate();
 
     /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onDeactivate(String id);
+    void onDeactivate();
+
+    /**
+     * Called for a mastery effect when {@code ship}'s hull spec has that mastery enabled  and {@code ship} becomes
+     *  the flagship.
+     *  */
+    void onFlagshipStatusGained(ShipAPI ship);
+
+    /**
+     * Called when a ship that had {@code onFlagshipStatusGained} called on it loses its flagship status.
+     */
+    void onFlagshipStatusLost(ShipAPI ship);
 
     /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
     int getPriority();

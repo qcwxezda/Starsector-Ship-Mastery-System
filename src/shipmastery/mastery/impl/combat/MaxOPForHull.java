@@ -34,7 +34,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         int opExcess = -stats.getVariant().getUnusedOP(null);
         int maxOP = stats.getVariant().getHullSpec().getOrdnancePoints(null);
 
@@ -49,12 +49,12 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         Global.getSector().getPlayerStats().getShipOrdnancePointBonus().modifyMult(id, getMult());
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         Global.getSector().getPlayerStats().getShipOrdnancePointBonus().unmodify(id);
     }
 

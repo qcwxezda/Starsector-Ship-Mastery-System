@@ -16,12 +16,12 @@ public class SModRemoval extends BaseMasteryEffect {
     }
 
     @Override
-    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SMOD_REMOVAL_ENABLED = true;
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule, String id) {
+    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SMOD_REMOVAL_ENABLED = false;
     }
 

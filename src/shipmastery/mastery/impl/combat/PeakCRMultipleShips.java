@@ -28,7 +28,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         FleetMemberAPI fm = stats.getFleetMember();
         if (fm == null) return;
         String thisHullId = Utils.getRestoredHullSpecId(getHullSpec());

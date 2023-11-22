@@ -18,7 +18,7 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {
         // Note: not recommended in general to modify stats in applyEffectsAfterShipCreation
         // however, flux capacity and flux dissipation do get properly updated here
         // other stats may not

@@ -1,10 +1,10 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 
@@ -165,5 +165,12 @@ public abstract class Utils {
 
     public static boolean hasShield(ShipHullSpecAPI spec) {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
+    }
+
+    public static String getPlayerFleetId() {
+        if (Global.getSector() == null) return "";
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet == null) return "";
+        return playerFleet.getId();
     }
 }

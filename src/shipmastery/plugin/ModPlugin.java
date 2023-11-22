@@ -5,6 +5,8 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
+import shipmastery.ShipMasteryNPC;
+import shipmastery.campaign.NPCMasteryAdder;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.deferred.DeferredActionPlugin;
 
@@ -13,6 +15,7 @@ import java.net.URLClassLoader;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
+
     @Override
     public void onApplicationLoad() throws Exception {
         ShipMastery.loadMasteryData();
@@ -38,6 +41,7 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+        ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
 
 //        List<CampaignEngine> remove = new ArrayList<>();
 //        for (CampaignEngine engine : CampaignEngine.getAllInstances().keySet()) {

@@ -1,2 +1,11 @@
 name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hiddenEverywhere,cost_frigate,cost_dest,cost_cruiser,cost_capital,script,desc,short,sprite
 Ship Mastery Handler,sms_masteryHandler,,,,,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.MasteryHullmod,Handles mastery effects,Handles mastery effects,graphics/hullmods/generic_mod.png
+Mastery - Level 1,sms_npcIndicator1,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator1,,,graphics/hullmods/generic_mod.png
+Mastery - Level 2,sms_npcIndicator2,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator2,,,graphics/hullmods/generic_mod.png
+Mastery - Level 3,sms_npcIndicator3,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator3,,,graphics/hullmods/generic_mod.png
+Mastery - Level 4,sms_npcIndicator4,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator4,,,graphics/hullmods/generic_mod.png
+Mastery - Level 5,sms_npcIndicator5,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator5,,,graphics/hullmods/generic_mod.png
+Mastery - Level 6,sms_npcIndicator6,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator6,,,graphics/hullmods/generic_mod.png
+Mastery - Level 7,sms_npcIndicator7,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator7,,,graphics/hullmods/generic_mod.png
+Mastery - Level 8,sms_npcIndicator8,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator8,,,graphics/hullmods/generic_mod.png
+Mastery - Level 9+,sms_npcIndicator9,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.npc.NPCIndicator9,,,graphics/hullmods/generic_mod.png
