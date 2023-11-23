@@ -54,24 +54,20 @@ public abstract class ShipMastery {
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
 
 
-    public static int getMaxMastery(ShipHullSpecAPI spec) {
+    public static int getPlayerMaxMastery(ShipHullSpecAPI spec) {
         String id = Utils.getRestoredHullSpecId(spec);
         HullMasteryData data = masteryMap.get(id);
         return data == null ? 0 : data.getMaxLevel();
     }
 
-    public static boolean hasMasteryData(ShipHullSpecAPI spec) {
-        return masteryMap.containsKey(spec.getHullId());
-    }
-
-    public static int getMasteryLevel(ShipHullSpecAPI spec) {
+    public static int getPlayerMasteryLevel(ShipHullSpecAPI spec) {
         if (SAVE_DATA_TABLE == null) return 0;
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? 0 : data.level;
     }
 
-    public static void advanceMasteryLevel(ShipHullSpecAPI spec) {
+    public static void advancePlayerMasteryLevel(ShipHullSpecAPI spec) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
 
@@ -93,19 +89,19 @@ public abstract class ShipMastery {
                 }
             }
             if (autoActivate) {
-                activateMastery(spec, data.level, false);
+                activatePlayerMastery(spec, data.level, false);
             }
         }
     }
 
-    public static float getMasteryPoints(ShipHullSpecAPI spec) {
+    public static float getPlayerMasteryPoints(ShipHullSpecAPI spec) {
         if (SAVE_DATA_TABLE == null) return 0f;
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? 0 : data.points;
     }
 
-    public static void addMasteryPoints(ShipHullSpecAPI spec, float amount) {
+    public static void addPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
         if (data == null) {
@@ -115,7 +111,7 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void spendMasteryPoints(ShipHullSpecAPI spec, float amount) {
+    public static void spendPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
         if (data == null) return;
@@ -124,7 +120,7 @@ public abstract class ShipMastery {
         data.points = Math.max(0f, data.points);
     }
 
-    public static void activateMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static void activatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
 
@@ -136,11 +132,11 @@ public abstract class ShipMastery {
         data.activateLevel(level, isOption2);
         List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
         for (MasteryEffect effect : effects) {
-            effect.onActivate();
+            effect.onActivate(Global.getSector().getPlayerPerson());
         }
     }
 
-    public static void deactivateMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static void deactivatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
 
@@ -152,14 +148,14 @@ public abstract class ShipMastery {
         data.deactivateLevel(level);
         List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
         for (MasteryEffect effect : effects) {
-            effect.onDeactivate();
+            effect.onDeactivate(Global.getSector().getPlayerPerson());
         }
     }
 
     /**
      * Returns a copy of the original data
      */
-    public static NavigableMap<Integer, Boolean> getActiveMasteriesCopy(ShipHullSpecAPI spec) {
+    public static NavigableMap<Integer, Boolean> getPlayerActiveMasteriesCopy(ShipHullSpecAPI spec) {
         if (SAVE_DATA_TABLE == null || spec == null) return new TreeMap<>();
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
@@ -430,17 +426,32 @@ public abstract class ShipMastery {
         loadAssignments();
     }
 
-    public static void activateInitialMasteries() {
+    public static void generateAllMasteries() throws InstantiationException, IllegalAccessException {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
-            String hullId = Utils.getRestoredHullSpecId(spec);
+            spec = Utils.getRestoredHullSpec(spec);
+
+            generateMasteries(spec);
+            clearInvalidActiveLevels(spec);
+
             MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(),
-                    Global.getSettings().getHullSpec(hullId), new MasteryUtils.MasteryAction() {
+                    Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
                         @Override
                         public void perform(MasteryEffect effect) {
-                            effect.onActivate();
+                            effect.onActivate(Global.getSector().getPlayerPerson());
                         }
                     });
+        }
+    }
+
+    static void clearInvalidActiveLevels(ShipHullSpecAPI spec) {
+        spec = Utils.getRestoredHullSpec(spec);
+        SaveData data = SAVE_DATA_TABLE.get(spec.getHullId());
+        if (data == null) return;
+        Iterator<Map.Entry<Integer, Boolean>> itr = data.activeLevels.entrySet().iterator();
+        while (itr.hasNext()) {
+            if (itr.next().getKey() > getPlayerMaxMastery(spec)) {
+                itr.remove();
+            }
         }
     }
 
@@ -462,15 +473,5 @@ public abstract class ShipMastery {
         return statSingletonMap.get(id);
     }
 
-    public static void clearInvalidActiveLevels() {
-        for (Map.Entry<String, SaveData> entry : SAVE_DATA_TABLE.entrySet()) {
-            SaveData data = entry.getValue();
-            Iterator<Map.Entry<Integer, Boolean>> itr = data.activeLevels.entrySet().iterator();
-            while (itr.hasNext()) {
-                if (itr.next().getKey() > getMaxMastery(Global.getSettings().getHullSpec(entry.getKey()))) {
-                    itr.remove();
-                }
-            }
-        }
-    }
+
 }

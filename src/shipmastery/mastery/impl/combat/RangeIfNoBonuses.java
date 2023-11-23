@@ -1,5 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -9,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.util.Collection;
 
@@ -20,7 +23,7 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
                 Strings.Descriptions.RangeIfNoBonusesNeg,
                 true,
                 false,
-                getIncreaseFor(getHullSpec()));
+                getIncreaseFor(Global.getSector().getPlayerPerson(), getHullSpec()));
     }
 
     @Override
@@ -35,10 +38,10 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
         hasBallisticBonus |= checkForBonusIn(ballisticStats.getPercentBonuses().values(), 0f);
 
         if (!hasEnergyBonus) {
-            modify(energyStats, id, getIncreaseFor(ship.getHullSpec()) + 1f);
+            modify(energyStats, id, getIncreaseFor(ship, ship.getHullSpec()) + 1f);
         }
         if (!hasBallisticBonus) {
-            modify(ballisticStats, id, getIncreaseFor(ship.getHullSpec()) + 1f);
+            modify(ballisticStats, id, getIncreaseFor(ship, ship.getHullSpec()) + 1f);
         }
     }
 
@@ -57,8 +60,12 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
         tooltip.addPara(Strings.Descriptions.RangeIfNoBonusesPost, 5f);
     }
 
-    public float getIncreaseFor(ShipHullSpecAPI spec) {
-        float increase = getStrength();
+    public float getIncreaseFor(ShipAPI ship, ShipHullSpecAPI spec) {
+        return getIncreaseFor(Utils.getCommanderForFleetMember(ship.getFleetMember()), spec);
+    }
+
+    public float getIncreaseFor(PersonAPI commander, ShipHullSpecAPI spec) {
+        float increase = getStrength(commander);
         switch (spec.getHullSize()) {
             case FRIGATE: increase /= 6f; break;
             case DESTROYER: increase /= 3f; break;

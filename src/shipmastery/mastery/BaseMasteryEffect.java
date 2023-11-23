@@ -1,19 +1,21 @@
 package shipmastery.mastery;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.util.Utils;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
-    private MutableStat strength;
+    /** Commander id -> strength modifier for that commander */
+    private Map<String, MutableStat> strengthModifierMap = new HashMap<>();
+    private float baseStrength = 1f;
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
     private ShipHullSpecAPI spec;
@@ -28,17 +30,17 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
 
     @Override
-    public void onActivate() {}
+    public void onActivate(PersonAPI commander) {}
 
     @Override
-    public void onDeactivate() {}
+    public void onDeactivate(PersonAPI commander) {}
 
     @Override
     public void init(String... args) {
         if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect init called with null or 0 args");
 
         try {
-            strength = new MutableStat(Float.parseFloat(args[0]));
+            baseStrength = Float.parseFloat(args[0]);
         } catch (NumberFormatException e) {
             throw new RuntimeException("First argument in mastery params list must be its strength", e);
         }
@@ -106,13 +108,36 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public final void modifyStrengthMultiplicative(float fraction) {
-        strength.modifyMult(id, fraction);
+    public final void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId) {
+        if (commander == null) return;
+        String id = commander.getId();
+        MutableStat modifier = strengthModifierMap.get(id);
+        if (modifier == null) {
+            modifier = new MutableStat(1f);
+            strengthModifierMap.put(id, modifier);
+        }
+        modifier.modifyMult(sourceId, fraction);
     }
 
     @Override
-    public final void unmodifyStrength() {
-        strength.unmodify(id);
+    public final void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId) {
+        if (commander == null) return;
+        String id = commander.getId();
+        MutableStat modifier = strengthModifierMap.get(id);
+        if (modifier == null) {
+            modifier = new MutableStat(1f);
+            strengthModifierMap.put(id, modifier);
+        }
+        modifier.modifyPercent(sourceId, 100f*(fraction - 1f));
+    }
+
+    @Override
+    public final void unmodifyStrength(PersonAPI commander, String sourceId) {
+        if (commander == null) return;
+        String id = commander.getId();
+        MutableStat modifier = strengthModifierMap.get(id);
+        if (modifier == null) return;
+        modifier.unmodify(sourceId);
     }
 
 
@@ -123,13 +148,28 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {}
 
     @Override
-    public final void modifyStrengthAdditive(float fraction) {
-        strength.modifyPercent(id, 100f*(fraction - 1f));
+    public final float getStrength(PersonAPI commander) {
+        if (commander == null) return baseStrength;
+        String id = commander.getId();
+        MutableStat modifier = strengthModifierMap.get(id);
+        if (modifier == null) return baseStrength;
+        return baseStrength * modifier.getModifiedValue();
     }
 
-    @Override
-    public final float getStrength() {
-        return strength.getModifiedValue();
+    public final float getStrengthForPlayer() {
+        return getStrength(Global.getSector().getPlayerPerson());
+    }
+
+    public final float getStrength(ShipAPI ship) {
+        return getStrength(ship.getFleetMember());
+    }
+
+    public final float getStrength(MutableShipStatsAPI stats) {
+        return getStrength(stats.getFleetMember());
+    }
+
+    public final float getStrength(FleetMemberAPI fm) {
+        return getStrength(Utils.getCommanderForFleetMember(fm));
     }
 
     @Override

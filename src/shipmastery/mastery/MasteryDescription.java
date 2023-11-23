@@ -87,27 +87,6 @@ public class MasteryDescription {
             }
         }
         tooltip.addPara(formatString, 0f, newColors.toArray(new Color[0]), newParams.toArray(new String[0])).setAlignment(Alignment.LMID);
-//        LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
-//        if (colors != null && params != null) {
-//            // Replace null colors with default text color
-//            for (int i = 0; i < colors.length; i++) {
-//                if (colors[i] == null) {
-//                    colors[i] = textColor;
-//                }
-//            }
-//            String[] strings = new String[params.length];
-//            for (int i = 0; i < params.length; i++) {
-//                strings[i] = params[i].toString();
-//            }
-//            label.setHighlight(strings);
-//            if (colors.length == 1) {
-//                label.setHighlightColor(colors[0]);
-//            }
-//            else {
-//                label.setHighlightColors(colors);
-//            }
-//        }
-//        label.setAlignment(Alignment.LMID);
     }
 
 

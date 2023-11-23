@@ -1,6 +1,8 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -19,7 +21,7 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
                 true,
                 true,
                 getHullSpec().getHullName(),
-                getIncreaseFor(getHullSpec().getHullSize()));
+                getIncreaseFor(Global.getSector().getPlayerPerson(), getHullSpec().getHullSize()));
     }
 
     @Override
@@ -31,17 +33,21 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         if (fleetData == null) return;
         int count = 0;
         for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            if (thisHullId.equals(Utils.getRestoredHullSpecId(getHullSpec()))) {
+            if (thisHullId.equals(Utils.getRestoredHullSpecId(member.getHullSpec()))) {
                 count++;
                 if (count > 1) return;
             }
         }
 
-        stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, getIncreaseFor(hullSize) + 1f);
+        stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, getIncreaseFor(stats, hullSize) + 1f);
     }
 
-    public float getIncreaseFor(ShipAPI.HullSize hullSize) {
-        float increase = getStrength();
+    public float getIncreaseFor(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize) {
+        return getIncreaseFor(Utils.getCommanderForFleetMember(stats.getFleetMember()), hullSize);
+    }
+
+    public float getIncreaseFor(PersonAPI commander, ShipAPI.HullSize hullSize) {
+        float increase = getStrength(commander);
         switch (Utils.hullSizeToInt(hullSize)) {
             case 1: increase *= 0.75f; break;
             case 2: increase *= 0.5f; break;

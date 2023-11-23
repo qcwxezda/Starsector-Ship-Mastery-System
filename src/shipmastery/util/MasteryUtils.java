@@ -13,7 +13,7 @@ import java.util.*;
 public abstract class MasteryUtils {
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
-        int level = ShipMastery.getMasteryLevel(spec);
+        int level = ShipMastery.getPlayerMasteryLevel(spec);
         return (2 + level) * 2;
     }
 

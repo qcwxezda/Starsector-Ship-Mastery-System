@@ -74,7 +74,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 
-                    ShipMastery.spendMasteryPoints(variant.getHullSpec(), rowData.mpCost);
+                    ShipMastery.spendPlayerMasteryPoints(variant.getHullSpec(), rowData.mpCost);
                     Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true, true);
                 }

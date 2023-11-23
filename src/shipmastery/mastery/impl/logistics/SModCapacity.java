@@ -15,12 +15,12 @@ public class SModCapacity extends AdditiveMasteryEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .init(Strings.Descriptions.SModCapacity)
-                .params(getIncrease())
+                .params(getIncreasePlayer())
                 .colors(Misc.getHighlightColor());
     }
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
-        stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, getIncrease());
+        stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, getIncrease(stats));
     }
 }

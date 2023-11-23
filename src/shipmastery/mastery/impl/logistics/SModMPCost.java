@@ -11,12 +11,12 @@ import shipmastery.util.Strings;
 public class SModMPCost extends AdditiveMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return makeGenericDescriptionStatic(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncrease());
+        return makeGenericDescriptionStatic(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncreasePlayer());
     }
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.modifyFlat(id, getIncrease());
+        TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.modifyFlat(id, getIncreasePlayer());
     }
 
     @Override

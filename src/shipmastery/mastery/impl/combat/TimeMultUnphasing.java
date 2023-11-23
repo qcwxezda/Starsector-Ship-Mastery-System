@@ -4,10 +4,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.combat.PhaseCloakStats;
 import com.fs.starfarer.combat.entities.Ship;
-import particleengine.IEmitter;
 import particleengine.Particles;
 import shipmastery.graphics.JitterEmitter;
 import shipmastery.graphics.OutlineEmitter;
@@ -22,12 +20,10 @@ public class TimeMultUnphasing extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        ship.addListener(new TimeMultUnphasingScript(ship, getStrength(), id));
+        ship.addListener(new TimeMultUnphasingScript(ship, getStrength(ship), id));
     }
 
-
     public static class TimeMultUnphasingScript implements AdvanceableListener {
-
         final float maxTime;
         boolean isAcceleratedUnphased = false;
         float timeAcceleratedUnphased = 0f;

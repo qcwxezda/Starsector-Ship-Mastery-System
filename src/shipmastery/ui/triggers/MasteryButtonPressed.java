@@ -18,19 +18,6 @@ public class MasteryButtonPressed extends ActionListener {
     }
     @Override
     public void trigger(Object... args) {
-        ShipAPI root = handler.getSelectedShip().two;
-        if (root == null) return;
-        ShipHullSpecAPI spec = Utils.getRestoredHullSpec(root.getHullSpec());
-        try {
-            if (!ShipMastery.hasMasteryData(spec)) {
-                ShipMastery.generateMasteries(spec);
-            }
-            new MasteryPanel(handler);
-        } catch (InstantiationException | IllegalAccessException e) {
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                    Strings.FAILED_TO_GENERATE_MASTERIES,
-                    Misc.getNegativeHighlightColor());
-            e.printStackTrace();
-        }
+        new MasteryPanel(handler);
     }
 }

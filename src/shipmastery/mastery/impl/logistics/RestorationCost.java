@@ -15,12 +15,12 @@ public class RestorationCost extends MultiplicativeMasteryEffect {
         return makeGenericDescription(
                 Strings.Descriptions.RestorationCost,
                 Strings.Descriptions.RestorationCostNeg,
-                true, true, getIncrease());
+                true, true, getIncreasePlayer());
     }
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        modifyDefault(TransientSettings.SHIP_RESTORE_COST_MULT, id);
+        modifyPlayer(TransientSettings.SHIP_RESTORE_COST_MULT, id);
         Global.getSettings().setFloat("baseRestoreCostMult", TransientSettings.SHIP_RESTORE_COST_MULT.getModifiedValue());
     }
 

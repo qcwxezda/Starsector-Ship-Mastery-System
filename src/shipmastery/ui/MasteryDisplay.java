@@ -52,7 +52,7 @@ public class MasteryDisplay implements CustomUIElement {
         rootSpec = Utils.getRestoredHullSpec(rootShip.getHullSpec());
         rootFleetMember = rootShip.getFleetMember();
         this.onButtonClick = onButtonClick;
-        activeLevels = ShipMastery.getActiveMasteriesCopy(rootSpec);
+        activeLevels = ShipMastery.getPlayerActiveMasteriesCopy(rootSpec);
         selectedLevels = new TreeMap<>(activeLevels);
         this.resetScrollbar = resetScrollbar;
         paddingBetweenLevels = pad;
@@ -111,7 +111,7 @@ public class MasteryDisplay implements CustomUIElement {
 
     @Override
     public void create(TooltipMakerAPI tooltip) {
-        int maxMastery = ShipMastery.getMaxMastery(rootSpec);
+        int maxMastery = ShipMastery.getPlayerMaxMastery(rootSpec);
 
         for (int i = 1; i <= maxMastery; i++) {
             CustomPanelAPI descriptionPanel1 = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
@@ -154,7 +154,7 @@ public class MasteryDisplay implements CustomUIElement {
 
     /** Returns the final height of the description. */
     float addEffectsDisplay(final List<MasteryEffect> effects, int level, boolean isOption2, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter) {
-        int currentMastery = ShipMastery.getMasteryLevel(rootSpec);
+        int currentMastery = ShipMastery.getPlayerMasteryLevel(rootSpec);
         boolean alwaysShow = true;
         for (MasteryEffect effect : effects) {
             if (!MasteryUtils.alwaysShowDescription(effect)) {

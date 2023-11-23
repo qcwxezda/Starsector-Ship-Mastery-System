@@ -50,7 +50,7 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         for (Map.Entry<ShipStat, Float> entry : amounts.entrySet()) {
             ShipStat stat = entry.getKey();
-            float amount = getModifiedAmount(stat, getStrength() * entry.getValue());
+            float amount = getModifiedAmount(stat, getStrength(stats) * entry.getValue());
             modify(stat.get(stats), id, amount);
         }
     }

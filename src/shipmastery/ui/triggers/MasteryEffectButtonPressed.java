@@ -45,7 +45,7 @@ public class MasteryEffectButtonPressed extends ActionListener {
             }
         }
 
-        NavigableMap<Integer, Boolean> activeMasteries = ShipMastery.getActiveMasteriesCopy(spec);
+        NavigableMap<Integer, Boolean> activeMasteries = ShipMastery.getPlayerActiveMasteriesCopy(spec);
 
         if (button.isChecked()) {
             // If the other option is selected and can't be disabled, disallow selecting of this one

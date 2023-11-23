@@ -2,9 +2,11 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Pair;
 
 import java.text.DecimalFormat;
@@ -164,10 +166,12 @@ public abstract class Utils {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 
-    public static String getPlayerFleetId() {
-        if (Global.getSector() == null) return "";
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) return "";
-        return playerFleet.getId();
+    public static PersonAPI getCommanderForFleetMember(FleetMemberAPI fm) {
+        if (fm == null) return null;
+        // First, check if it has a fleet commander for stats. This won't work in the refit screen, so
+        if (fm.getFleetCommanderForStats() != null) return fm.getFleetCommanderForStats();
+        // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
+        if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
+        return null;
     }
 }

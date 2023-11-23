@@ -32,7 +32,7 @@ public class UpgradeMasteryDisplay implements CustomUIElement {
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 150f, 25f, 5f);
         ReflectionUtils.setButtonListener(upgradeButton, new UpgradeButtonPressed(panel, buttonText, spec));
-        upgradeButton.setEnabled(ShipMastery.getMasteryPoints(spec) >= cost);
+        upgradeButton.setEnabled(ShipMastery.getPlayerMasteryPoints(spec) >= cost);
         upgradeButton.getPosition().setXAlignOffset(20f);
     }
 }

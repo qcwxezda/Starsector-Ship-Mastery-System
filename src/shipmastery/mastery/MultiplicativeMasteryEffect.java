@@ -1,5 +1,7 @@
 package shipmastery.mastery;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
@@ -9,14 +11,18 @@ import shipmastery.util.Utils;
 import java.awt.*;
 
 public abstract class MultiplicativeMasteryEffect extends BaseMasteryEffect {
-    public final float getMult() {
-        return Math.max(1f + getStrength(), 0f);
+    public final float getMult(PersonAPI commander) {
+        return Math.max(1f + getStrength(commander), 0f);
     }
 
-    public final float getIncrease() {return Math.max(getStrength(), -1f);}
+    public final float getIncrease(PersonAPI commander) {return Math.max(getStrength(commander), -1f);}
 
-    public final void modifyDefault(MutableStat stat, String id) {
-        modify(stat, id, getMult());
+    public final float getMultPlayer() {return getMult(Global.getSector().getPlayerPerson());}
+
+    public final float getIncreasePlayer() {return getIncrease(Global.getSector().getPlayerPerson());}
+
+    public final void modifyPlayer(MutableStat stat, String id) {
+        modify(stat, id, getMultPlayer());
     }
 
     public final void modify(MutableStat stat, String id, float mult) {
@@ -64,6 +70,6 @@ public abstract class MultiplicativeMasteryEffect extends BaseMasteryEffect {
     }
 
     public final MasteryDescription makeGenericDescription(String positiveText, @Nullable String negativeText, boolean showAsPercent, boolean invertColors, Object... params) {
-        return makeGenericDescriptionStatic(positiveText, negativeText, getIncrease() >= 0f, showAsPercent, invertColors, params);
+        return makeGenericDescriptionStatic(positiveText, negativeText, getIncreasePlayer() >= 0f, showAsPercent, invertColors, params);
     }
 }

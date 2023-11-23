@@ -47,7 +47,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
         for (Map.Entry<ShipStat, Float> entry : amounts.entrySet()) {
             ShipStat stat = entry.getKey();
-            float amount = getModifiedAmount(stat, getStrength() * entry.getValue());
+            float amount = getModifiedAmount(stat, getStrengthForPlayer() * entry.getValue());
             if (amount < 0f) {
                 negativeAmounts.add(new Pair<>(stat, amount));
             }

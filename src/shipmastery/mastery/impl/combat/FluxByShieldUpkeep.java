@@ -25,14 +25,14 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
         if (ship.getShield() == null || ship.getShield().getType() == ShieldAPI.ShieldType.PHASE) return;
         MutableShipStatsAPI stats = ship.getMutableStats();
         float upkeep = stats.getShieldUpkeepMult().getModifiedValue() * stats.getVariant().getHullSpec().getShieldSpec().getUpkeepCost();
-        float flatIncrease = upkeep * getStrength();
+        float flatIncrease = upkeep * getStrength(ship);
         stats.getFluxDissipation().modifyFlat(id, flatIncrease);
         stats.getFluxCapacity().modifyFlat(id, flatIncrease * 10f);
     }
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float increase = Math.max(getStrength(), -1f);
+        float increase = Math.max(getStrengthForPlayer(), -1f);
         return MultiplicativeMasteryEffect.makeGenericDescriptionStatic(
                 Strings.Descriptions.FluxByShieldUpkeep,
                 Strings.Descriptions.FluxByShieldUpkeepNeg,

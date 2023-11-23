@@ -32,7 +32,7 @@ public class AddMasteryPoints implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        ShipMastery.addMasteryPoints(spec, amount);
+        ShipMastery.addPlayerMasteryPoints(spec, amount);
         return CommandResult.SUCCESS;
     }
 

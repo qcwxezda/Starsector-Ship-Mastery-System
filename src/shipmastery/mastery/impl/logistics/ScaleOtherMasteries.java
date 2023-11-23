@@ -1,5 +1,7 @@
 package shipmastery.mastery.impl.logistics;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -15,30 +17,30 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
         return makeGenericDescription(
                 Strings.Descriptions.ScaleOtherMasteries,
                 Strings.Descriptions.ScaleOtherMasteriesNeg,
-                true, false, getIncrease());
+                true, false, getIncreasePlayer());
     }
 
     @Override
-    public void onActivate() {
-        float mult = getMult();
-        for (int i = 1; i <= ShipMastery.getMaxMastery(getHullSpec()); i++) {
+    public void onActivate(PersonAPI commander) {
+        float mult = getMultPlayer();
+        for (int i = 1; i <= ShipMastery.getPlayerMaxMastery(getHullSpec()); i++) {
             for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(getHullSpec(), i)) {
                 if (effect instanceof ScaleOtherMasteries) continue;
                 if (mult > 1) {
-                    effect.modifyStrengthAdditive(mult);
+                    effect.modifyStrengthAdditive(Global.getSector().getPlayerPerson(), mult, id);
                 }
                 else {
-                    effect.modifyStrengthMultiplicative(mult);
+                    effect.modifyStrengthMultiplicative(commander, mult, id);
                 }
             }
         }
     }
 
     @Override
-    public void onDeactivate() {
-        for (int i = 1; i <= ShipMastery.getMaxMastery(getHullSpec()); i++) {
+    public void onDeactivate(PersonAPI commander) {
+        for (int i = 1; i <= ShipMastery.getPlayerMaxMastery(getHullSpec()); i++) {
             for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(getHullSpec(), i)) {
-                effect.unmodifyStrength();
+                effect.unmodifyStrength(commander, id);
             }
         }
     }

@@ -23,8 +23,12 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         ShipMastery.loadMasteryTable();
-        ShipMastery.clearInvalidActiveLevels();
-        ShipMastery.activateInitialMasteries();
+        // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
+        try {
+            ShipMastery.generateAllMasteries();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to generate mastery effects", e);
+        }
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         try {
@@ -42,16 +46,6 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
         Global.getSector().addTransientListener(new ShipMasteryNPC(false));
         ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
-
-//        List<CampaignEngine> remove = new ArrayList<>();
-//        for (CampaignEngine engine : CampaignEngine.getAllInstances().keySet()) {
-//            if (engine != CampaignEngine.getInstance()) {
-//                remove.add(engine);
-//            }
-//        }
-//        for (CampaignEngine r : remove) {
-//            CampaignEngine.getAllInstances().remove(r);
-//        }
     }
 
     private static final String[] reflectionWhitelist = new String[] {

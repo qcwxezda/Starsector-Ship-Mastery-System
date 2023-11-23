@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -311,12 +310,12 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();
-                        int currentMastery = ShipMastery.getMasteryLevel(spec);
-                        int maxMastery = ShipMastery.getMaxMastery(spec);
+                        int currentMastery = ShipMastery.getPlayerMasteryLevel(spec);
+                        int maxMastery = ShipMastery.getPlayerMaxMastery(spec);
                         if (currentMastery < maxMastery) {
                             tooltipMaker.addPara(Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
                         }
-                        int mp = (int) ShipMastery.getMasteryPoints(spec);
+                        int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
                         if (mp > 0) {
                             tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, 0f).setAlignment(Alignment.LMID);
                         }
@@ -472,7 +471,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
             }
             else {
                 rootSpec = Utils.getRestoredHullSpec(rootShip.getHullSpec());
-                activeMasteries = ShipMastery.getActiveMasteriesCopy(rootSpec);
+                activeMasteries = ShipMastery.getPlayerActiveMasteriesCopy(rootSpec);
             }
             moduleVariant = moduleShip == null ? null : moduleShip.getVariant();
         }

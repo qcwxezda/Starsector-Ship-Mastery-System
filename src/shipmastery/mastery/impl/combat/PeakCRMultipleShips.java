@@ -1,6 +1,8 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -23,7 +25,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
                 Strings.Descriptions.PeakCRMultipleShipsNeg,
                 true,
                 false,
-                getIncreaseFor(getHullSpec().getHullSize()),
+                getIncreaseFor(Global.getSector().getPlayerPerson(), getHullSpec().getHullSize()),
                 getHullSpec().getHullName());
     }
 
@@ -42,7 +44,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
         }
 
         if (count > 0) {
-            stats.getPeakCRDuration().modifyMult(id, 1f + Math.min(MAX_INCREASE, getIncreaseFor(hullSize) * count));
+            stats.getPeakCRDuration().modifyMult(id, 1f + Math.min(MAX_INCREASE, getIncreaseFor(stats, hullSize) * count));
         }
     }
 
@@ -53,8 +55,12 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
                         Utils.absValueAsPercent(MAX_INCREASE));
     }
 
-    public float getIncreaseFor(ShipAPI.HullSize hullSize) {
-        float increase = getStrength();
+    public float getIncreaseFor(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize) {
+        return getIncreaseFor(Utils.getCommanderForFleetMember(stats.getFleetMember()), hullSize);
+    }
+
+    public float getIncreaseFor(PersonAPI commander, ShipAPI.HullSize hullSize) {
+        float increase = getStrength(commander);
         switch (hullSize) {
             case FRIGATE: increase *= 0.25f; break;
             case DESTROYER: increase *= 0.5f; break;

@@ -204,7 +204,7 @@ public class MasteryPanel {
         creditsLabel.setHighlight("" + creditsAmtFmt);
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
-        int masteryPointsAmt = (int) ShipMastery.getMasteryPoints(root.getHullSpec());
+        int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
         String masteryPointsString = Strings.MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
         float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
@@ -340,8 +340,8 @@ public class MasteryPanel {
 
     UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation) {
         final ShipHullSpecAPI baseHullSpec = Utils.getRestoredHullSpec(root.getHullSpec());
-        currentMastery = ShipMastery.getMasteryLevel(baseHullSpec);
-        maxMastery = ShipMastery.getMaxMastery(baseHullSpec);
+        currentMastery = ShipMastery.getPlayerMasteryLevel(baseHullSpec);
+        maxMastery = ShipMastery.getPlayerMaxMastery(baseHullSpec);
 
         CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
         float shipDisplaySize = 250f;
@@ -485,7 +485,7 @@ public class MasteryPanel {
         }
 
         int credits = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
-        int mp = (int) ShipMastery.getMasteryPoints(root.getHullSpec());
+        int mp = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
 
         String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;
         String notEnoughMasteryPoints = Strings.MASTERY_POINTS_SHORTFALL_STR;

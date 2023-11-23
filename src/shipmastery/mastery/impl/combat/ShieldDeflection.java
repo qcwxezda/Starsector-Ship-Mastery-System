@@ -41,7 +41,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                 && ship.getShield() != null
                 && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
                 && ship.getShield().getType() != ShieldAPI.ShieldType.NONE) {
-            ship.addListener(new ShieldDeflectionScript(ship, getMaxTime()));
+            ship.addListener(new ShieldDeflectionScript(ship, getMaxTime(ship)));
         }
     }
     @Override
@@ -54,7 +54,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                numberFormat.format(getMaxTime()),
+                numberFormat.format(getPlayerMaxTime()),
                 Utils.absValueAsPercent(upkeepMult - 1f),
                 Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
                         Misc.getHighlightColor(),
@@ -62,8 +62,10 @@ public class ShieldDeflection extends BaseMasteryEffect {
                         Misc.getNegativeHighlightColor());
     }
 
-    float getMaxTime() {
-        return getStrength();
+    float getPlayerMaxTime() {return getStrengthForPlayer();}
+
+    float getMaxTime(ShipAPI ship) {
+        return getStrength(ship);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     }
 
     public static class ShieldDeflectionScript implements AdvanceableListener {
-        float activatedTime = 99999f;
+        float activatedTime;
         final float maxTime;
         final ShieldDeflectionEmitter emitter;
         final ShipAPI ship;
@@ -82,6 +84,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
         ShieldDeflectionScript(ShipAPI ship, float maxTime) {
             this.ship = ship;
             this.maxTime = maxTime;
+            activatedTime = maxTime;
             this.emitter = new ShieldDeflectionEmitter(ship);
             emitter.enableDynamicAnchoring();
         }
@@ -95,7 +98,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                 activatedTime = 0f;
                 return;
             }
-            if (activatedTime > maxTime) {
+            if (activatedTime >= maxTime) {
                 return;
             }
             activatedTime += amount;

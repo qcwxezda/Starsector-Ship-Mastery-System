@@ -124,21 +124,12 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         return new Pair<>(rootHullSpec, isModule);
     }
 
-    private PersonAPI getCommanderForFleetMember(FleetMemberAPI fm) {
-        if (fm == null) return null;
-        // First, check if it has a fleet commander for stats. This won't work in the refit screen, so
-        if (fm.getFleetCommanderForStats() != null) return fm.getFleetCommanderForStats();
-        // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
-        if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
-        return null;
-    }
-
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats,
                                                final String id) {
         if (stats == null || stats.getVariant() == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(stats.getVariant());
-        final PersonAPI commander = getCommanderForFleetMember(stats.getFleetMember());
+        final PersonAPI commander = Utils.getCommanderForFleetMember(stats.getFleetMember());
         MasteryUtils.applyAllActiveMasteryEffects(
                 commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {
@@ -163,7 +154,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         // ship.getFleetCommander() doesn't work for merged fleets with multiple commanders
         // ship.getMutableStats().getFleetMember().getFleetCommanderForStats() actually differentiates between commanders in merged fleets
         // However, it's null for player ships...
-        final PersonAPI commander = getCommanderForFleetMember(ship.getMutableStats().getFleetMember());
+        final PersonAPI commander = Utils.getCommanderForFleetMember(ship.getMutableStats().getFleetMember());
         MasteryUtils.applyAllActiveMasteryEffects(
                 commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {

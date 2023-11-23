@@ -63,10 +63,10 @@ public interface MasteryEffect {
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
-    float getStrength();
-    void modifyStrengthMultiplicative(float fraction);
-    void modifyStrengthAdditive(float fraction);
-    void unmodifyStrength();
+    float getStrength(PersonAPI commander);
+    void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId);
+    void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId);
+    void unmodifyStrength(PersonAPI commander, String sourceId);
 
     /** Called whenever a ship or module is selected in the refit screen and that ship/module's root ship shares
      *  this mastery's hull spec.
@@ -78,11 +78,12 @@ public interface MasteryEffect {
      *  Effects are reverted in descending order of mastery level. */
     void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule);
 
-    /** Called whenever the mastery is activated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onActivate();
+    /** Called whenever the mastery is activated by the player. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    void onActivate(PersonAPI commander);
 
-    /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
-    void onDeactivate();
+    /** Called whenever the mastery is deactivated by the player. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    void onDeactivate(PersonAPI commander);
+
     /** If {@code ship} is null, the game is not actually in combat and {@code stats} should be modified for display purposes only.
      *  The equivalent flagshipStatusLost call does not happen for calls with null {@code ship}.
      *  Note: There may be more than 2 possible values for {@code commander} due to the ability for fleets to merge prior to combat. */

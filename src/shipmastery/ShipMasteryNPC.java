@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
 import java.util.*;
@@ -41,10 +42,10 @@ public class ShipMasteryNPC extends BaseCampaignEventListener {
     }
 
     /** Can be called for player commander. In that case it's the same as calling {@code ShipMastery.getActiveMasteriesCopy}. */
-    public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(PersonAPI commander,
+    public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(final PersonAPI commander,
                                                                                 ShipHullSpecAPI spec) {
         if (commander == null) return new TreeMap<>();
-        if (commander.isPlayer()) return ShipMastery.getActiveMasteriesCopy(spec);
+        if (commander.isPlayer()) return ShipMastery.getPlayerActiveMasteriesCopy(spec);
 
         if (commander.getStats().getLevel() < MIN_COMMANDER_LEVEL) return new TreeMap<>();
         spec = Utils.getRestoredHullSpec(spec);
@@ -61,19 +62,10 @@ public class ShipMasteryNPC extends BaseCampaignEventListener {
         }
 
         // Not cached, need to regenerate
-        if (!ShipMastery.hasMasteryData(spec)) {
-            try {
-                ShipMastery.generateMasteries(spec);
-            } catch (Exception e) {
-                throw new RuntimeException(
-                        "Failed to generate mastery effects from assignments for " + spec.getHullName() + "!",
-                        e);
-            }
-        }
         int masteryLevel = Math.min(randIntUpToCommanderLevel(spec, commander, 0),
                                     randIntUpToCommanderLevel(spec, commander, 1));
         masteryLevel = Math.min(masteryLevel, randIntUpToCommanderLevel(spec, commander, 2));
-        masteryLevel = Math.min(masteryLevel, ShipMastery.getMaxMastery(spec));
+        masteryLevel = Math.min(masteryLevel, ShipMastery.getPlayerMaxMastery(spec));
         NavigableMap<Integer, Boolean> levelsMap = new TreeMap<>();
         for (int i = 1; i <= masteryLevel; i++) {
             List<MasteryEffect> effectsOption2 = ShipMastery.getMasteryEffects(spec, i, true);
@@ -84,6 +76,15 @@ public class ShipMasteryNPC extends BaseCampaignEventListener {
             }
         }
         subMap.put(specId, levelsMap);
+
+        // Once NPC mastery levels have been generated for the first time, activate the corresponding masteries
+        MasteryUtils.applyAllActiveMasteryEffects(commander, spec, new MasteryUtils.MasteryAction() {
+            @Override
+            public void perform(MasteryEffect effect) {
+                effect.onActivate(commander);
+            }
+        });
+
         return levelsMap;
     }
 

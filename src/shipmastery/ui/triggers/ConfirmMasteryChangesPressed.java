@@ -21,7 +21,7 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
-        Map<Integer, Boolean> activeSet = ShipMastery.getActiveMasteriesCopy(spec);
+        Map<Integer, Boolean> activeSet = ShipMastery.getPlayerActiveMasteriesCopy(spec);
         Map<Integer, Boolean> newSet = masteryPanel.getSelectedMasteryButtons();
         NavigableMap<Integer, Boolean> toActivate = new TreeMap<>();
         NavigableMap<Integer, Boolean> toDeactivate = new TreeMap<>();
@@ -43,10 +43,10 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
         }
 
         for (Map.Entry<Integer, Boolean> entry : toDeactivate.descendingMap().entrySet()) {
-            ShipMastery.deactivateMastery(spec, entry.getKey(), entry.getValue());
+            ShipMastery.deactivatePlayerMastery(spec, entry.getKey(), entry.getValue());
         }
         for (Map.Entry<Integer, Boolean> entry : toActivate.entrySet()) {
-            ShipMastery.activateMastery(spec, entry.getKey(), entry.getValue());
+            ShipMastery.activatePlayerMastery(spec, entry.getKey(), entry.getValue());
         }
 
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);

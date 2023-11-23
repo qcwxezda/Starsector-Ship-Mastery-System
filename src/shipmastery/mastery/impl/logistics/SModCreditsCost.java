@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.logistics;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -14,12 +15,12 @@ public class SModCreditsCost extends MultiplicativeMasteryEffect {
         return makeGenericDescription(
                 Strings.Descriptions.SModCreditsCost,
                 Strings.Descriptions.SModCreditsCostNeg,
-                true, true, getIncrease());
+                true, true, getIncreasePlayer());
     }
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        modifyDefault(TransientSettings.SMOD_CREDITS_COST_MULT, id);
+        modify(TransientSettings.SMOD_CREDITS_COST_MULT, id, getMultPlayer());
     }
 
     @Override

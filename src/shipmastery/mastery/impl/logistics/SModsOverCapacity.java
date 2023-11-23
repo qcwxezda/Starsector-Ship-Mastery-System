@@ -19,14 +19,15 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        int increase = getIncreasePlayer();
         return MasteryDescription.initDefaultHighlight(
-                                         getIncrease() == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
-                                 .params(getIncrease());
+                                         increase == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
+                                 .params(increase);
     }
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getIncrease());
+        TransientSettings.OVER_LIMIT_SMOD_COUNT.modifyFlat(id, getIncreasePlayer());
     }
 
     @Override

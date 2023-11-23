@@ -25,7 +25,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
                 null,
                 true,
                 false,
-                getIncrease(),
+                getIncreasePlayer(),
                 0.01f,
                 HULL_LOSS_PER_PERCENT_OP);
         description.colors[1] = Misc.getNegativeHighlightColor();
@@ -50,7 +50,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        Global.getSector().getPlayerStats().getShipOrdnancePointBonus().modifyMult(id, getMult());
+        Global.getSector().getPlayerStats().getShipOrdnancePointBonus().modifyMult(id, getMultPlayer());
     }
 
     @Override
