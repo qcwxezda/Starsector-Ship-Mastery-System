@@ -54,18 +54,16 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                Strings.FLAGSHIP_ONLY,
                 numberFormat.format(getMaxTime()),
                 Utils.absValueAsPercent(upkeepMult - 1f),
                 Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
-                        Misc.getBasePlayerColor(),
                         Misc.getHighlightColor(),
                         Misc.getNegativeHighlightColor(),
                         Misc.getNegativeHighlightColor());
     }
 
     float getMaxTime() {
-        return 6f * getStrength();
+        return getStrength();
     }
 
     @Override

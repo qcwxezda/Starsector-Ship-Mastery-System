@@ -49,7 +49,13 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         if (fleet == null) {
             return;
         }
-        // Make sure every ship in the player's fleet has this hullmod installed
+        // Ignore NPC fleets that aren't interacting with the player
+        if (!fleet.isPlayerFleet()) {
+            if (fleet.getBattle() == null || !fleet.getBattle().isPlayerInvolved()) {
+                return;
+            }
+        }
+        // Make sure every ship in the fleet has this hullmod installed
         // Do it outside this call stack as changing the ship immediately actually causes some unexpected changes
         // i.e. the "you just purchased a ship" screen no longer appears as the purchased ship is
         // no longer the same as the one in the player's fleet

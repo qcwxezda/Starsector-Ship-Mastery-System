@@ -404,7 +404,7 @@ public abstract class ShipMastery {
             // Neither the assignments nor the preset have data for this level, so need to randomly generate it
             if (masteryOptions == null) {
                 masteryOptions = new Pair<List<String>, List<String>>(new ArrayList<String>(), new ArrayList<String>());
-                masteryOptions.one.add("ModifyStatsMult 10000 FluxCapacity");
+                masteryOptions.one.add("ModifyStatsMult 1 FluxCapacity");
             }
             List<String> one = masteryOptions.one;
             for (int j = 0; j < one.size(); j++) {

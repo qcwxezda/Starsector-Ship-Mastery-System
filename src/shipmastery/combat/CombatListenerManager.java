@@ -1,9 +1,12 @@
 package shipmastery.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.state.AppDriver;
+import shipmastery.campaign.StateTracker;
 
 import java.util.List;
 
@@ -17,10 +20,13 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
     @Override
     public void init(CombatEngineAPI engine) {
         this.engine = engine;
+        engine.getListenerManager().addListener(flagshipTracker);
     }
 
     @Override
     public void advance(float amount, List<InputEventAPI> events) {
+        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
+
         if (engine == null || engine.isPaused()) return;
 
         List<ShipAPI> ships = engine.getShips();

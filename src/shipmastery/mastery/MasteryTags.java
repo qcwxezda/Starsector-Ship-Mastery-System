@@ -38,4 +38,7 @@ public interface MasteryTags {
 
     /** Effects with this tag will propagate to modules */
     String DOESNT_AFFECT_MODULES = "doesnt_affect_modules";
+
+    /** Appends "Flagship only: " to the start of the effect description. Actually making the effect flagship only is implementation-dependent. */
+    String PREFIX_FLAGSHIP_ONLY = "prefix_flagship_only";
 }

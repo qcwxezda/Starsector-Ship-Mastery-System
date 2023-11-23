@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -15,6 +16,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
+import com.fs.state.AppDriver;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -57,6 +59,8 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
 
     @Override
     public void advance(float v) {
+        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
+
         if (isFirstFrame) {
             // Since the coreUI's "screenPanel" isn't created on the first frame, trying to do anything with the UI
             // on the first frame will cause an NPE. Therefore, we will initialize the screenPanel before trying

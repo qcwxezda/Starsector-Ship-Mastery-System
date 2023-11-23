@@ -40,6 +40,7 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+        Global.getSector().addTransientListener(new ShipMasteryNPC(false));
         ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
 
 //        List<CampaignEngine> remove = new ArrayList<>();

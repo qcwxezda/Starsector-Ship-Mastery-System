@@ -1,5 +1,7 @@
 package shipmastery;
 
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.MasteryEffect;
@@ -7,12 +9,12 @@ import shipmastery.util.Utils;
 
 import java.util.*;
 
-public abstract class ShipMasteryNPC {
+public class ShipMasteryNPC extends BaseCampaignEventListener {
 
     /**
      * NPC fleets with commanders below this level won't generate masteries
      */
-    public static final int MIN_COMMANDER_LEVEL = 4;
+    public static final int MIN_COMMANDER_LEVEL = 5;
 
     /**
      * Fleet commander id > ship hull spec id -> mastery level -> is option 2?
@@ -27,6 +29,16 @@ public abstract class ShipMasteryNPC {
                     return size() > MAX_ENTRIES;
                 }
             };
+
+    public ShipMasteryNPC(boolean permaRegister) {
+        super(permaRegister);
+    }
+
+    @Override
+    public void reportFleetDespawned(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
+        if (fleet.getCommander() == null) return;
+        CACHED_NPC_FLEET_MASTERIES.remove(fleet.getCommander().getId());
+    }
 
     /** Can be called for player commander. In that case it's the same as calling {@code ShipMastery.getActiveMasteriesCopy}. */
     public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(PersonAPI commander,

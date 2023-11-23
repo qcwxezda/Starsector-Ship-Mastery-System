@@ -48,6 +48,7 @@ public interface Strings {
     String DOESNT_AFFECT_MODULES = Utils.getString("sms_misc", "doesntAffectModules");
     String FAILED_TO_GENERATE_MASTERIES = Utils.getString("sms_misc", "failedToGenerateMasteries");
     String FLAGSHIP_ONLY = Utils.getString("sms_misc", "flagshipOnly");
+
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
         String SModCreditsCost = Utils.getString("sms_descriptions", "SModCreditsCost");
@@ -83,5 +84,9 @@ public interface Strings {
         String PeakCRMultipleShipsPost = Utils.getString("sms_descriptions", "PeakCRMultipleShipsPost");
         String ShieldDeflection = Utils.getString("sms_descriptions", "ShieldDeflection");
         String ShieldDeflectionPost = Utils.getString("sms_descriptions", "ShieldDeflectionPost");
+        String HighFrequencyMotes = Utils.getString("sms_descriptions", "HighFrequencyMotes");
+        String HighFrequencyMotesPost = Utils.getString("sms_descriptions", "HighFrequencyMotesPost");
+
+        String HighFrequencyMotesName = Utils.getString("sms_descriptions", "HighFrequencyMotesName");
     }
 }

@@ -28,7 +28,7 @@
     "limitReached": "Build-in limit reached",
     "notEnoughCredits": "Insufficient credits",
     "notEnoughMasteryPoints": "Insufficient mastery points",
-    "levelUpMastery": "Upgrade",
+    "levelUpMastery": "Advance",
     "upgradeConfirm": "Advanced mastery to level ",
     "unknownMastery": "Unlock previous tier to reveal",
     "changesPending": "Changes pending",
@@ -76,15 +76,17 @@
     "PeakCRMultipleShips": "Increases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %s for each additional %s-class ship in your fleet.",
     "PeakCRMultipleShipsPost": "Effect stacks up to %s times and has a hard cap of %s increase to peak CR.",
-    "ShieldDeflection": "%s: shield deflects all incoming projectiles for %s seconds when activated. Increases shield upkeep by %s and decreases shield unfolding rate by %s.",
+    "ShieldDeflection": "Shield deflects all incoming projectiles for %s seconds when activated. Increases shield upkeep by %s and decreases shield unfolding rate by %s.",
     "ShieldDeflectionPost": "Shields take %s damage from deflected projectiles.",
-    "HighFrequencyMotes": "%s: "
+    "HighFrequencyMotes": "Unlocks the %s, which upgrades the ship system's motes to deal additional energy damage through shields.",
+    "HighFrequencyMotesPost": "Reduces the range to which motes can be launched by %s and reduces the maximum number of motes that can be simultaneously active by %s.",
+    "HighFrequencyMotesName": "High Frequency Attractor"
   },
 
   "sms_misc": {
     "failedToGenerateMasteries": "Failed to generate mastery effects! Check stack trace for details",
     "doesntAffectModules": "This effect doesn't apply to modules.",
-    "flagshipOnly": "Flagship only",
+    "flagshipOnly": "Flagship only: ",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",

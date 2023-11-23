@@ -1,5 +1,6 @@
 package shipmastery.util;
 
+import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 
 public abstract class MathUtils {
@@ -20,5 +21,13 @@ public abstract class MathUtils {
 
     public static Vector2f inDirectionWithLength(Vector2f dir, float length) {
         return (Vector2f) safeNormalize(new Vector2f(dir)).scale(length);
+    }
+
+    public static Vector2f lerp(Vector2f a, Vector2f b, float t) {
+        return new Vector2f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+    }
+
+    public static float randBetween(float a, float b) {
+        return a + (b-a) * Misc.random.nextFloat();
     }
 }

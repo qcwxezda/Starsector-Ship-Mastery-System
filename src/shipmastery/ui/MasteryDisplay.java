@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.deferred.Action;
+import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.ui.triggers.MasteryEffectButtonPressed;
@@ -134,7 +135,13 @@ public class MasteryDisplay implements CustomUIElement {
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
             tooltip.setParaFont(Fonts.INSIGNIA_LARGE);
-            effect.getDescription(selectedModule, rootFleetMember).addLabel(tooltip);
+            MasteryDescription effectDescription = effect.getDescription(selectedModule, rootFleetMember);
+            if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
+                effectDescription.addLabelWithPrefix(tooltip, Strings.FLAGSHIP_ONLY, Misc.getBasePlayerColor());
+            }
+            else {
+                effectDescription.addLabel(tooltip);
+            }
             tooltip.setParaFontDefault();
             effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
             if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(

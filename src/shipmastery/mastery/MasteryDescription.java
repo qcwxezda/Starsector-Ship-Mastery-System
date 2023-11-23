@@ -1,11 +1,15 @@
 package shipmastery.mastery;
 
 import com.fs.starfarer.api.ui.Alignment;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /** Description for a mastery effect. The actual displayed text will be {@code String.format(text, params)}.
  *  If {@code colors} is specified, {@code params} will be highlighted in the text.
@@ -59,29 +63,53 @@ public class MasteryDescription {
     }
 
     public void addLabel(TooltipMakerAPI tooltip) {
+        addLabelWithPrefix(tooltip, null, null);
+    }
+
+    public void addLabelWithPrefix(TooltipMakerAPI tooltip, @Nullable String prefix, @Nullable Color prefixColor) {
         Color textColor = Misc.getTextColor();
-        LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
+        String formatString = (prefix == null ? "" : "%s") + text;
+        List<Color> newColors = new ArrayList<>();
+        List<String> newParams = new ArrayList<>();
+        if (prefix != null) {
+            newParams.add(prefix);
+            newColors.add(prefixColor == null ? textColor : prefixColor);
+        }
         if (colors != null && params != null) {
-            // Replace null colors with default text color
-            for (int i = 0; i < colors.length; i++) {
-                if (colors[i] == null) {
-                    colors[i] = textColor;
-                }
+            for (Color color : colors) {
+                newColors.add(color == null ? textColor : color);
             }
-            String[] strings = new String[params.length];
-            for (int i = 0; i < params.length; i++) {
-                strings[i] = params[i].toString();
+            for (Object param : params) {
+                newParams.add(param.toString());
             }
-            label.setHighlight(strings);
-            if (colors.length == 1) {
-                label.setHighlightColor(colors[0]);
-            }
-            else {
-                label.setHighlightColors(colors);
+            for (int i = newColors.size(); i < newParams.size(); i++) {
+                newColors.add(colors.length == 0 ? textColor : colors[0]);
             }
         }
-        label.setAlignment(Alignment.LMID);
+        tooltip.addPara(formatString, 0f, newColors.toArray(new Color[0]), newParams.toArray(new String[0])).setAlignment(Alignment.LMID);
+//        LabelAPI label = tooltip.addPara(toString(), textColor, 0f);
+//        if (colors != null && params != null) {
+//            // Replace null colors with default text color
+//            for (int i = 0; i < colors.length; i++) {
+//                if (colors[i] == null) {
+//                    colors[i] = textColor;
+//                }
+//            }
+//            String[] strings = new String[params.length];
+//            for (int i = 0; i < params.length; i++) {
+//                strings[i] = params[i].toString();
+//            }
+//            label.setHighlight(strings);
+//            if (colors.length == 1) {
+//                label.setHighlightColor(colors[0]);
+//            }
+//            else {
+//                label.setHighlightColors(colors);
+//            }
+//        }
+//        label.setAlignment(Alignment.LMID);
     }
+
 
     @Override
     public String toString(){

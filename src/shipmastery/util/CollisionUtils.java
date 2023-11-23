@@ -1,8 +1,11 @@
 package shipmastery.util;
 
+import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.sun.istack.internal.NotNull;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -80,5 +83,23 @@ public abstract class CollisionUtils {
         }
 
         return closestPt;
+    }
+
+    public static List<Vector2f> randomPointsOnBounds(ShipAPI ship, int count) {
+        BoundsAPI bounds = ship.getExactBounds();
+        if (bounds == null) return null;
+        bounds.update(ship.getLocation(), ship.getFacing());
+        List<BoundsAPI.SegmentAPI> segments = bounds.getSegments();
+        WeightedRandomPicker<BoundsAPI.SegmentAPI> picker = new WeightedRandomPicker<>();
+        for (BoundsAPI.SegmentAPI segment : segments) {
+            picker.add(segment, MathUtils.dist(segment.getP1(), segment.getP2()));
+        }
+        List<Vector2f> points = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            BoundsAPI.SegmentAPI chosenSegment = picker.pick();
+            Vector2f pt = MathUtils.lerp(chosenSegment.getP1(), chosenSegment.getP2(), Misc.random.nextFloat());
+            points.add(pt);
+        }
+        return points;
     }
 }

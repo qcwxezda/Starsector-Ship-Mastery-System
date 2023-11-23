@@ -6,5 +6,14 @@
         "B": ["FluxByShieldUpkeep"]
       }
     }
+  },
+
+  "ziggurat": {
+    "levels": {
+      "9": {
+        "A": "HighFrequencyMotes",
+        "B": "TimeMultUnphasing"
+      }
+    }
   }
 }

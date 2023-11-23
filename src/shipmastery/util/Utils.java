@@ -5,12 +5,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public abstract class Utils {
+    public static DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
@@ -137,7 +138,7 @@ public abstract class Utils {
         return asPercent(Math.abs(num));
     }
 
-    public static String asPercent(float num) {return (int) (num * 100f) + "%";}
+    public static String asPercent(float num) {return percentFormat.format(num);}
 
     public static String joinStringList(List<String> strings) {
         switch (strings.size()) {
@@ -157,10 +158,6 @@ public abstract class Utils {
                 }
                 return join.toString();
         }
-    }
-
-    public static float randBetween(float a, float b) {
-        return a + (b-a) * Misc.random.nextFloat();
     }
 
     public static boolean hasShield(ShipHullSpecAPI spec) {

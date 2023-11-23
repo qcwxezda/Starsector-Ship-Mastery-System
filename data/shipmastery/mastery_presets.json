@@ -7,6 +7,7 @@
       "2": "SModCapacity",
       "4": "SModRemoval",
       "6": "SModCapacity",
+      "1": "TimeMultUnphasing",
       "8": {
         "A": "SModsOverCapacity",
         "B": "ScaleOtherMasteries"
