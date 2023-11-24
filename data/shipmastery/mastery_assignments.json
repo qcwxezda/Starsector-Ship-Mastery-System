@@ -12,7 +12,16 @@
     "levels": {
       "9": {
         "A": "HighFrequencyMotes",
-        "B": "TimeMultUnphasing"
+        "B": "PhaseCloakResidue"
+      }
+    }
+  },
+
+  "doom": {
+    "levels": {
+      "9": {
+        "A": "EnergyMineConversion",
+        "B": "IgnoreNoBuildIn 1 phase_anchor"
       }
     }
   }

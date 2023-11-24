@@ -85,10 +85,10 @@ public abstract class CollisionUtils {
         return closestPt;
     }
 
-    public static List<Vector2f> randomPointsOnBounds(ShipAPI ship, int count) {
+    public static List<Vector2f> randomPointsOnBounds(ShipAPI ship, int count, boolean rotateBounds) {
         BoundsAPI bounds = ship.getExactBounds();
         if (bounds == null) return null;
-        bounds.update(ship.getLocation(), ship.getFacing());
+        bounds.update(ship.getLocation(), rotateBounds ? ship.getFacing() : 0f);
         List<BoundsAPI.SegmentAPI> segments = bounds.getSegments();
         WeightedRandomPicker<BoundsAPI.SegmentAPI> picker = new WeightedRandomPicker<>();
         for (BoundsAPI.SegmentAPI segment : segments) {

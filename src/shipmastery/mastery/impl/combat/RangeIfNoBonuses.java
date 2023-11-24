@@ -57,11 +57,11 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.RangeIfNoBonusesPost, 5f);
+        tooltip.addPara(Strings.Descriptions.RangeIfNoBonusesPost, 0f);
     }
 
     public float getIncreaseFor(ShipAPI ship, ShipHullSpecAPI spec) {
-        return getIncreaseFor(Utils.getCommanderForFleetMember(ship.getFleetMember()), spec);
+        return getIncreaseFor(Utils.getCommanderForFleetMember(ship.getMutableStats().getFleetMember()), spec);
     }
 
     public float getIncreaseFor(PersonAPI commander, ShipHullSpecAPI spec) {

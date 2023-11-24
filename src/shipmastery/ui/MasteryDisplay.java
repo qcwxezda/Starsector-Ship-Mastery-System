@@ -143,12 +143,13 @@ public class MasteryDisplay implements CustomUIElement {
                 effectDescription.addLabel(tooltip);
             }
             tooltip.setParaFontDefault();
+            tooltip.addSpacer(5f);
             effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
             if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
                     MasteryTags.DOESNT_AFFECT_MODULES)) {
                 tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
             }
-            tooltip.addSpacer(i == effects.size() - 1 ? 20f : 10f);
+            tooltip.addSpacer(i == effects.size() - 1 ? 15f : 5f);
         }
     }
 

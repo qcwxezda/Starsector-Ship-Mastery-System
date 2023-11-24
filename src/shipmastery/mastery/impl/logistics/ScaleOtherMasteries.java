@@ -27,7 +27,7 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
             for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(getHullSpec(), i)) {
                 if (effect instanceof ScaleOtherMasteries) continue;
                 if (mult > 1) {
-                    effect.modifyStrengthAdditive(Global.getSector().getPlayerPerson(), mult, id);
+                    effect.modifyStrengthAdditive(commander, mult, id);
                 }
                 else {
                     effect.modifyStrengthMultiplicative(commander, mult, id);
@@ -48,6 +48,6 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.ScaleOtherMasteriesPost, 5f);
+        tooltip.addPara(Strings.Descriptions.ScaleOtherMasteriesPost, 0f);
     }
 }

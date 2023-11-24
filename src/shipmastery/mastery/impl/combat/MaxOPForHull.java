@@ -61,7 +61,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 5f, Misc.getNegativeHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 0f, Misc.getNegativeHighlightColor(),
                         Utils.absValueAsPercent(1f - MAX_HULL_MODIFIER),
                         Utils.absValueAsPercent(1f - MIN_HULL_MODIFIER));
     }

@@ -1,4 +1,4 @@
-package shipmastery.graphics;
+package shipmastery.fx;
 
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -55,8 +55,8 @@ public class ShieldDeflectionEmitter extends BaseIEmitter {
         data.facing(theta * Misc.DEG_PER_RAD);
         Color shieldColor = shield.getInnerColor();
         data.color(shieldColor.getRed() / (float) 255, shieldColor.getGreen() / (float) 255, shieldColor.getBlue() / (float) 255, 0.75f);
-        float velocityScale = MathUtils.randBetween(-0.03f, 0.03f);
-        data.velocity(new Vector2f(velocityScale * offset.x , velocityScale * offset.y));
+        //float velocityScale = MathUtils.randBetween(-0.03f, 0.03f);
+        //data.velocity(new Vector2f(velocityScale * offset.x , velocityScale * offset.y));
         data.growthRate(-0.25f * size / life, -0.25f * size / life);
         data.fadeTime(0f, life);
         return data;

@@ -7,6 +7,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.config.Settings;
+import shipmastery.util.SizeLimitedMap;
 import shipmastery.util.Utils;
 
 import java.util.*;
@@ -14,7 +16,7 @@ import java.util.*;
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
     /** Commander id -> strength modifier for that commander */
-    private Map<String, MutableStat> strengthModifierMap = new HashMap<>();
+    private final Map<String, MutableStat> strengthModifierMap = new SizeLimitedMap<>(Settings.MAX_CACHED_COMMANDERS);
     private float baseStrength = 1f;
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
@@ -161,7 +163,8 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     public final float getStrength(ShipAPI ship) {
-        return getStrength(ship.getFleetMember());
+        // ship.getFleetMember() may be null (for temporary ships, etc.) but stats.getFleetMember() isn't
+        return getStrength(ship.getMutableStats().getFleetMember());
     }
 
     public final float getStrength(MutableShipStatsAPI stats) {

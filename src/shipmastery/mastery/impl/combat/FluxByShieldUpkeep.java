@@ -14,7 +14,7 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.FluxByShieldUpkeepPost, 5f);
+        tooltip.addPara(Strings.Descriptions.FluxByShieldUpkeepPost, 0f);
     }
 
     @Override

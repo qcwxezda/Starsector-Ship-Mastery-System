@@ -51,7 +51,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 5f, Misc.getHighlightColor(), "" + MAX_STACKS,
+        tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 0f, Misc.getHighlightColor(), "" + MAX_STACKS,
                         Utils.absValueAsPercent(MAX_INCREASE));
     }
 

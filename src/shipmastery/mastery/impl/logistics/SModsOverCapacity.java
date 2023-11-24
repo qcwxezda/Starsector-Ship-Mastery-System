@@ -52,6 +52,6 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 5f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
+        tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 0f, Misc.getNegativeHighlightColor(), "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
     }
 }

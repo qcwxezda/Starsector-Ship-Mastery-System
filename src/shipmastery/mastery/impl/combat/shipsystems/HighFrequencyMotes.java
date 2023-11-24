@@ -31,7 +31,7 @@ public class HighFrequencyMotes extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.HighFrequencyMotesPost, 5f, Misc.getNegativeHighlightColor(), Utils.asPercent(RANGE_REDUCTION), Utils.asPercent(MAX_MOTES_REDUCTION));
+        tooltip.addPara(Strings.Descriptions.HighFrequencyMotesPost, 0f, Misc.getNegativeHighlightColor(), Utils.asPercent(RANGE_REDUCTION), Utils.asPercent(MAX_MOTES_REDUCTION));
     }
 
     @Override

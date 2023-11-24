@@ -29,6 +29,7 @@ MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
 DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
 PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,6,shipmastery.mastery.impl.combat.ShieldDeflection
+PhaseCloakResidue,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
-TimeMultUnphasing,9,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.TimeMultUnphasing
+EnergyMineConversion,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion

@@ -1,7 +1,6 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -14,6 +13,8 @@ import java.util.*;
 
 public abstract class Utils {
     public static DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
+    public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
+
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {

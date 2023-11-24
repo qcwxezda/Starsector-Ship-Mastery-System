@@ -27,6 +27,12 @@ public abstract class MathUtils {
         return new Vector2f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
     }
 
+    public static Vector2f randomPointInCircle(Vector2f center, float radius) {
+        float theta = Misc.random.nextFloat() * 2f * (float) Math.PI;
+        float r = radius * (float) Math.sqrt(Misc.random.nextFloat());
+        return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
+    }
+
     public static float randBetween(float a, float b) {
         return a + (b-a) * Misc.random.nextFloat();
     }

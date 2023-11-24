@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
-import shipmastery.graphics.ShieldDeflectionEmitter;
+import shipmastery.fx.ShieldDeflectionEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
@@ -23,12 +23,9 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.Iterator;
 
 public class ShieldDeflection extends BaseMasteryEffect {
-
-    static final DecimalFormat numberFormat = new DecimalFormat("0.#");
     static final float damageTakenMult = 0.5f;
     static final float upkeepMult = 1.5f;
     static final float unfoldRateMult = 0.5f;
@@ -54,7 +51,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                numberFormat.format(getPlayerMaxTime()),
+                Utils.oneDecimalPlaceFormat.format(getPlayerMaxTime()),
                 Utils.absValueAsPercent(upkeepMult - 1f),
                 Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
                         Misc.getHighlightColor(),
@@ -71,7 +68,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 5f, Misc.getHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 0f, Misc.getHighlightColor(),
                         Utils.absValueAsPercent(damageTakenMult));
     }
 
@@ -101,8 +98,16 @@ public class ShieldDeflection extends BaseMasteryEffect {
             if (activatedTime >= maxTime) {
                 return;
             }
+
+            Global.getCombatEngine().maintainStatusForPlayerShip(
+                    this,
+                    "graphics/icons/hullsys/fortress_shield.png",
+                    Strings.Descriptions.ShieldDeflectionStatusTitle,
+                    String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercent(1f - damageTakenMult)),
+                    false);
+
             activatedTime += amount;
-            Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 5f));
+            Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 2f));
             float gridSize = 2f*ship.getShieldRadiusEvenIfNoShield() + 100f;
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
             while (itr.hasNext()) {

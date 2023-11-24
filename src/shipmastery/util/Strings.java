@@ -84,9 +84,16 @@ public interface Strings {
         String PeakCRMultipleShipsPost = Utils.getString("sms_descriptions", "PeakCRMultipleShipsPost");
         String ShieldDeflection = Utils.getString("sms_descriptions", "ShieldDeflection");
         String ShieldDeflectionPost = Utils.getString("sms_descriptions", "ShieldDeflectionPost");
+        String ShieldDeflectionStatusTitle = Utils.getString("sms_descriptions", "ShieldDeflectionStatusTitle");
+        String ShieldDeflectionStatusDesc = Utils.getString("sms_descriptions", "ShieldDeflectionStatusDesc");
         String HighFrequencyMotes = Utils.getString("sms_descriptions", "HighFrequencyMotes");
         String HighFrequencyMotesPost = Utils.getString("sms_descriptions", "HighFrequencyMotesPost");
 
         String HighFrequencyMotesName = Utils.getString("sms_descriptions", "HighFrequencyMotesName");
+        String PhaseCloakResidue = Utils.getString("sms_descriptions", "PhaseCloakResidue");
+        String PhaseCloakResiduePost = Utils.getString("sms_descriptions", "PhaseCloakResiduePost");
+        String PhaseCloakResidueStatusTitle = Utils.getString("sms_descriptions", "PhaseCloakResidueStatusTitle");
+        String PhaseCloakResidueStatusDesc1 = Utils.getString("sms_descriptions", "PhaseCloakResidueStatusDesc1");
+        String PhaseCloakResidueStatusDesc2 = Utils.getString("sms_descriptions", "PhaseCloakResidueStatusDesc2");
     }
 }

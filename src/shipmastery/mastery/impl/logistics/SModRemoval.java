@@ -28,6 +28,6 @@ public class SModRemoval extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.SModRemovalPost, 5f);
+        tooltip.addPara(Strings.Descriptions.SModRemovalPost, 0f);
     }
 }

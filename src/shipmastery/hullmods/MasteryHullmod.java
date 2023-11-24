@@ -15,8 +15,10 @@ import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
+import java.util.HashSet;
 import java.util.NavigableMap;
 import java.util.Objects;
+import java.util.Set;
 
 public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
 

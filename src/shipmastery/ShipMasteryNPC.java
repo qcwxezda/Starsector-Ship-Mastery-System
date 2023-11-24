@@ -4,8 +4,10 @@ import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.SizeLimitedMap;
 import shipmastery.util.Utils;
 
 import java.util.*;
@@ -21,15 +23,8 @@ public class ShipMasteryNPC extends BaseCampaignEventListener {
      * Fleet commander id > ship hull spec id -> mastery level -> is option 2?
      * /* No point caching multiple fleet ids as they change every time the dialog is closed and reopened
      */
-    public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> CACHED_NPC_FLEET_MASTERIES =
-            new LinkedHashMap<String, Map<String, NavigableMap<Integer, Boolean>>>() {
-                private static final int MAX_ENTRIES = 20;
-                @Override
-                protected boolean removeEldestEntry(
-                        Map.Entry<String, Map<String, NavigableMap<Integer, Boolean>>> eldest) {
-                    return size() > MAX_ENTRIES;
-                }
-            };
+    public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> CACHED_NPC_FLEET_MASTERIES = new SizeLimitedMap<>(
+            Settings.MAX_CACHED_COMMANDERS);
 
     public ShipMasteryNPC(boolean permaRegister) {
         super(permaRegister);
