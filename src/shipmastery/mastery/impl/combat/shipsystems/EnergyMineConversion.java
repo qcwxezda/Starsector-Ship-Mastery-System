@@ -2,28 +2,36 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.DamagingExplosionSpec;
-import com.fs.starfarer.api.loading.MissileSpecAPI;
-import com.fs.starfarer.api.loading.ProjectileSpecAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import org.lwjgl.util.vector.Vector2f;
-import shipmastery.combat.ai.EnergyMineAI;
-import shipmastery.combat.listeners.ShipSystemListener;
+import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
+import particleengine.Particles;
+import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.fx.JitterEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.util.CollisionUtils;
+import shipmastery.util.MathUtils;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 public class EnergyMineConversion extends BaseMasteryEffect {
+
+    static final float EFFECT_RADIUS = 400f;
+    static final int NUM_ARCS = 10;
+    static final float DAMAGE_FRAC = 0.5f;
+    static final float ARC_DAMAGE = 100f;
+    static final float ARC_EMP_DAMAGE = 500f;
+
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.init("placeholder text...");
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(Strings.Descriptions.EnergyMineConversionMineStrike);
     }
 
     @Override
@@ -31,34 +39,30 @@ public class EnergyMineConversion extends BaseMasteryEffect {
         if (ship.getSystem() == null || !"mine_strike".equals(ship.getSystem().getId())) {
             return;
         }
-        ship.addListener(new EnergyMineConversionScript(ship, id));
+        if (!ship.hasListenerOfClass(EnergyMineConversionScript.class)) {
+            ship.addListener(new EnergyMineConversionScript(ship, id));
+        }
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-
+        tooltip.addPara(
+                Strings.Descriptions.EnergyMineConversionPost,
+                0f, new Color[] {Misc.getNegativeHighlightColor(), Misc.getHighlightColor(), Misc.getHighlightColor(), Misc.getHighlightColor()},
+                "" + Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, "" + (int) ARC_DAMAGE, "" + (int) ARC_EMP_DAMAGE);
     }
 
-    public static class EnergyMineConversionScript implements ShipSystemListener, AdvanceableListener {
+    public static class EnergyMineConversionScript extends BaseShipSystemListener {
         final ShipAPI ship;
         final String id;
         final CombatEngineAPI engine;
-        final Set<MissileAPI> trackedMines = new HashSet<>();
 
         EnergyMineConversionScript(ShipAPI ship, String id) {
             this.ship = ship;
             this.id = id;
             engine = Global.getCombatEngine();
         }
-
-        @Override
-        public void onActivate(ShipAPI ship) {
-
-        }
-
-        @Override
-        public void onDeactivate(ShipAPI ship) {}
 
         @Override
         public void onFullyActivate(ShipAPI ship) {
@@ -75,43 +79,88 @@ public class EnergyMineConversion extends BaseMasteryEffect {
                             proj.getLocation(),
                             proj.getFacing(),
                             null);
-                    mine.setMissileAI(new EnergyMineAI(mine));
+                    mine.setDamageAmount(proj.getBaseDamageAmount() * DAMAGE_FRAC);
+                    int numParticles = 20;
+                    float duration = 0.25f;
+                    JitterEmitter jitter = new JitterEmitter(mine, mine.getSpriteAPI(), Color.CYAN, 0f, 10f, 0.25f, true, 0.5f, numParticles);
+                    jitter.enableDynamicAnchoring();
+                    Particles.stream(jitter, 1, numParticles / duration, duration);
+                    ((MissileAPI) proj).setArmingTime(10f);
+                    Global.getCombatEngine().removeEntity(proj);
                     // Copied from MineStrikeStats
                     Global.getCombatEngine().applyDamageModifiersToSpawnedProjectileWithNullWeapon(ship, WeaponAPI.WeaponType.MISSILE, false, mine.getDamage());
                     float fadeInTime = 0.5F;
                     mine.fadeOutThenIn(fadeInTime);
                     float liveTime = 5.0F;
                     mine.setFlightTime(mine.getMaxFlightTime() - liveTime);
-                    Global.getCombatEngine().removeEntity(proj);
-                    trackedMines.add(mine);
                     break;
                 }
             }
         }
+    }
 
+    @SuppressWarnings("unused")
+    public static class EnergyMineExplosionScript implements ProximityExplosionEffect {
         @Override
-        public void onFullyDeactivate(ShipAPI ship) {}
-
-        @Override
-        public void onGainedAmmo(ShipAPI ship) {}
-
-        @Override
-        public void onFullyCharged(ShipAPI ship) {}
-
-        @Override
-        public void advanceWhileOn(ShipAPI ship, float amount) {
-
-        }
-
-        @Override
-        public void advance(float amount) {
-            for (Iterator<MissileAPI> iterator = trackedMines.iterator(); iterator.hasNext(); ) {
-                MissileAPI mine = iterator.next();
-                if (!engine.isEntityInPlay(mine)) {
-                    iterator.remove();
-                    if (mine.getHitpoints() > 0f) {
-
+        public void onExplosion(DamagingProjectileAPI explosion, DamagingProjectileAPI mine) {
+            CombatEngineAPI engine = Global.getCombatEngine();
+            Iterator<Object> grid = engine.getShipGrid().getCheckIterator(mine.getLocation(), 2f* EFFECT_RADIUS, 2f*
+                    EFFECT_RADIUS);
+            WeightedRandomPicker<CombatEntityAPI> picker = new WeightedRandomPicker<>();
+            while (grid.hasNext()) {
+                Object o = grid.next();
+                if (CollisionUtils.canCollide(o, null, mine.getSource(), false)) {
+                    CombatEntityAPI target = (CombatEntityAPI) o;
+                    if (MathUtils.dist(target.getLocation(), mine.getLocation()) > EFFECT_RADIUS + target.getCollisionRadius()) {
+                        continue;
                     }
+                    if (target.getHitpoints() <= 0f) {
+                        continue;
+                    }
+                    picker.add(target, target.getCollisionRadius());
+                }
+            }
+            if (picker.isEmpty()) return;
+            for (int i = 0; i < NUM_ARCS; i++) {
+                CombatEntityAPI target = picker.pick();
+                boolean pierced = false;
+                if (target instanceof ShipAPI) {
+                    ShipAPI ship = ((ShipAPI) target);
+                    float pierceChance = ship.getHardFluxLevel() - 0.1f;
+                    pierceChance *= ship.getMutableStats().getDynamic().getValue(Stats.SHIELD_PIERCED_MULT);
+                    if (Math.random() < pierceChance) {
+                        pierced = true;
+                    }
+                }
+                if (!pierced) {
+                    engine.spawnEmpArc(
+                            mine.getSource(),
+                            mine.getLocation(),
+                            mine,
+                            target,
+                            DamageType.ENERGY,
+                            ARC_DAMAGE,
+                            ARC_EMP_DAMAGE,
+                            1000000f,
+                            "tachyon_lance_emp_impact",
+                            40f,
+                            new Color(0, 180, 255, 255),
+                            new Color(180, 200, 255, 255));
+                }
+                else {
+                    engine.spawnEmpArcPierceShields(
+                            mine.getSource(),
+                            mine.getLocation(),
+                            null,
+                            target,
+                            DamageType.ENERGY,
+                            150f,
+                            1000f,
+                            1000000f,
+                            "tachyon_lance_emp_impact",
+                            40f,
+                            new Color(0, 180, 255, 255),
+                            new Color(180, 200, 255, 255));
                 }
             }
         }

@@ -1,7 +1,7 @@
 {
   "paragon": {
     "levels": {
-      "9": {
+      "10": {
         "A": "ShieldDeflection",
         "B": ["FluxByShieldUpkeep"]
       }
@@ -10,7 +10,7 @@
 
   "ziggurat": {
     "levels": {
-      "9": {
+      "10": {
         "A": "HighFrequencyMotes",
         "B": "PhaseCloakResidue"
       }
@@ -19,9 +19,18 @@
 
   "doom": {
     "levels": {
-      "9": {
+      "10": {
         "A": "EnergyMineConversion",
         "B": "IgnoreNoBuildIn 1 phase_anchor"
+      }
+    }
+  },
+
+  "astral": {
+    "levels": {
+      "10": {
+        "A": "RecallDeviceDestruction",
+        "B": "RecallDeviceRegeneration"
       }
     }
   }

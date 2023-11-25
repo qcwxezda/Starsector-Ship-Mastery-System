@@ -1,14 +1,13 @@
 package shipmastery.mastery;
 
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 /** Description for a mastery effect. The actual displayed text will be {@code String.format(text, params)}.
@@ -68,25 +67,27 @@ public class MasteryDescription {
 
     public void addLabelWithPrefix(TooltipMakerAPI tooltip, @Nullable String prefix, @Nullable Color prefixColor) {
         Color textColor = Misc.getTextColor();
-        String formatString = (prefix == null ? "" : "%s") + text;
+        if (prefix != null) {
+            tooltip.setParaFont(Fonts.ORBITRON_20AA);
+            tooltip.addPara(prefix, prefixColor == null ? textColor : prefixColor, 0f);
+        }
+        tooltip.setParaFont(Fonts.INSIGNIA_LARGE);
         List<Color> newColors = new ArrayList<>();
         List<String> newParams = new ArrayList<>();
-        if (prefix != null) {
-            newParams.add(prefix);
-            newColors.add(prefixColor == null ? textColor : prefixColor);
-        }
-        if (colors != null && params != null) {
+        if (colors != null) {
             for (Color color : colors) {
                 newColors.add(color == null ? textColor : color);
             }
-            for (Object param : params) {
-                newParams.add(param.toString());
+            if (params != null) {
+                for (Object param : params) {
+                    newParams.add(param.toString());
+                }
             }
             for (int i = newColors.size(); i < newParams.size(); i++) {
                 newColors.add(colors.length == 0 ? textColor : colors[0]);
             }
         }
-        tooltip.addPara(formatString, 0f, newColors.toArray(new Color[0]), newParams.toArray(new String[0])).setAlignment(Alignment.LMID);
+        tooltip.addPara(text, 0f, newColors.toArray(new Color[0]), newParams.toArray(new String[0])).setAlignment(Alignment.LMID);
     }
 
 

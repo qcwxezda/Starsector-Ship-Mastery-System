@@ -8,19 +8,19 @@
 	"size":[96,96],
 	"center":[48,48],
 	"collisionRadius":20,
-	#"armingTime":1,
 	"collisionClass":"MISSILE_NO_FF",
-	"flameoutTime":0.1, # total time from flameout to full fadeout
-	"fadeTime":0.1, # fadeout duration
-	"noEngineGlowTime":0.05, # time spent without the engine glow being rendered
-	"explosionColor":[0,180,240,255],  # purely visual, will get a white additively blended core on top of this color
-	"explosionRadius":500, # purely visual
+	"flameoutTime":0.1,
+	"fadeTime":0.1,
+	"noEngineGlowTime":0.05,
+	"explosionColor":[0,180,240,255],
+	"explosionRadius":350,
 	"engineSpec":{"turnAcc":500,
 				  "turnRate":150,
 				  "acc":500,
 				  "dec":500},
 	"behaviorSpec":{"behavior":"PROXIMITY_FUSE",
-					"range":250,
+					"onExplosionEffect":"shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion$EnergyMineExplosionScript",
+					"range":175,
 					"slowToMaxSpeed":true,
 					"delay":3,
 					"pingSound":"mine_ping",
@@ -29,11 +29,11 @@
 					"pingDuration":0.25,
 					"windupSound":"mine_windup_heavy",
 					"windupDelay":1,
-					"explosionSpec":{"duration":0.1f,
-									 "radius":350,
-									 "coreRadius":250, # full damage within core radius
-									 "collisionClass":MISSILE_FF,
-									 "collisionClassByFighter":MISSILE_FF,
+					"explosionSpec":{"duration":0.1,
+									 "radius":250,
+									 "coreRadius":200,
+									 "collisionClass":"MISSILE_FF",
+									 "collisionClassByFighter":"MISSILE_FF",
 									 "particleSizeMin":3.0,
 									 "particleSizeRange":3.0,
 									 "particleDuration":1,

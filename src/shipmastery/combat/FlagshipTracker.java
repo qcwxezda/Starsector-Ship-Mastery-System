@@ -4,9 +4,11 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import shipmastery.combat.listeners.EndOfCombatListener;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class FlagshipTracker implements EndOfCombatListener {
         if (effects != null) {
             for (int i = effects.size() - 1; i >= 0; i--) {
                 EffectActivationRecord record = effects.get(i);
-                record.effect.onFlagshipStatusLost(commander, record.ship.getMutableStats(), record.ship);
+                applyFlagshipStatusChange(record.effect, commander, record.ship.getMutableStats(), record.ship, false);
             }
         }
         activationRecordMap.remove(commander);
@@ -59,11 +61,25 @@ public class FlagshipTracker implements EndOfCombatListener {
                 newFlagship.getHullSpec(), new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {
-                        effect.onFlagshipStatusGained(commander, newFlagship.getMutableStats(), newFlagship);
+                        applyFlagshipStatusChange(effect, commander, newFlagship.getMutableStats(), newFlagship, true);
                         newEffects.add(new EffectActivationRecord(effect, newFlagship));
                     }
                 });
         activationRecordMap.put(commander, newEffects);
+    }
+
+    void applyFlagshipStatusChange(MasteryEffect effect, PersonAPI commander, MutableShipStatsAPI stats, ShipAPI ship, boolean isGained) {
+        if (isGained) {
+            effect.onFlagshipStatusGained(commander, stats, ship);
+        }
+        else {
+            effect.onFlagshipStatusLost(commander, stats, ship);
+        }
+        if (!effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+            for (ShipAPI module : ship.getChildModulesCopy()) {
+                applyFlagshipStatusChange(effect, commander, module.getMutableStats(), module, isGained);
+            }
+        }
     }
 
     @Override

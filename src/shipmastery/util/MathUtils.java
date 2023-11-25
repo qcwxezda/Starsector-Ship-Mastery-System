@@ -33,6 +33,10 @@ public abstract class MathUtils {
         return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
     }
 
+    public static float clamp(float x, float min, float max) {
+        return Math.min(max, Math.max(min, x));
+    }
+
     public static float randBetween(float a, float b) {
         return a + (b-a) * Misc.random.nextFloat();
     }

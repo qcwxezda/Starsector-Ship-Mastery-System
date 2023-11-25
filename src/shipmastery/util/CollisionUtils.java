@@ -1,8 +1,6 @@
 package shipmastery.util;
 
-import com.fs.starfarer.api.combat.BoundsAPI;
-import com.fs.starfarer.api.combat.ShieldAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
@@ -10,6 +8,7 @@ import com.sun.istack.internal.NotNull;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class CollisionUtils {
@@ -83,6 +82,32 @@ public abstract class CollisionUtils {
         }
 
         return closestPt;
+    }
+
+    @SuppressWarnings({"RedundantIfStatement", "BooleanMethodIsAlwaysInverted"})
+    public static boolean canCollide(Object o, Collection<? extends CombatEntityAPI> ignoreList, ShipAPI source, boolean friendlyFire) {
+        int owner = source == null ? 100 : source.getOwner();
+        // Ignore things that aren't combat entities
+        if (!(o instanceof CombatEntityAPI)) return false;
+        // Ignore non-missile projectiles
+        if ((o instanceof DamagingProjectileAPI) && !(o instanceof MissileAPI)) return false;
+        // Ignore explicitly added items to ignore list
+        if (ignoreList != null && ignoreList.contains(o)) return false;
+
+        CombatEntityAPI entity = (CombatEntityAPI) o;
+
+        // Ignore objects with NONE collision class
+        if (CollisionClass.NONE.equals(entity.getCollisionClass())) return false;
+        // Ignore phased ships
+        if (entity instanceof ShipAPI && ((ShipAPI) entity).isPhased()) return false;
+        // Always ignore source and source modules
+        if (entity instanceof ShipAPI && EngineUtils.getBaseShip((ShipAPI) entity).equals(EngineUtils.getBaseShip(source))) return false;
+        // Always ignore friendly fighters and missiles
+        if (entity.getOwner() == owner && (o instanceof MissileAPI || EngineUtils.isFighter(entity))) return false;
+        // Ignore all friendlies if friendly fire is off
+        if (!friendlyFire && entity.getOwner() == owner) return false;
+
+        return true;
     }
 
     public static List<Vector2f> randomPointsOnBounds(ShipAPI ship, int count, boolean rotateBounds) {

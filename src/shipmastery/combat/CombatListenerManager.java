@@ -1,21 +1,29 @@
 package shipmastery.combat;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.mission.FleetSide;
+import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.state.AppDriver;
 import shipmastery.campaign.StateTracker;
+import shipmastery.util.EngineUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     private CombatEngineAPI engine;
+    private final Set<String> playerShips = new HashSet<>();
+    private final Set<String> enemyShips = new HashSet<>();
     private final ShipSystemTracker shipSystemTracker = new ShipSystemTracker();
     private final FlagshipTracker flagshipTracker = new FlagshipTracker();
+    private final IntervalUtil updateInterval = new IntervalUtil(2f, 3f);
 
     @Override
     public void init(CombatEngineAPI engine) {
@@ -34,5 +42,31 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         shipSystemTracker.advance(ships, amount);
         // Flagship trackers stored in engine
         flagshipTracker.advance(engine);
+
+        updateInterval.advance(amount);
+        if (updateInterval.intervalElapsed()) {
+            updateShipList(FleetSide.PLAYER);
+            updateShipList(FleetSide.ENEMY);
+        }
+    }
+
+    private void updateShipList(FleetSide side) {
+        Set<String> list = side == FleetSide.PLAYER ? playerShips : enemyShips;
+        for (DeployedFleetMemberAPI dfm : engine.getFleetManager(side).getDeployedCopyDFM()) {
+            // We don't care about damage that fighters take
+            if (dfm.isFighterWing() || dfm.getShip() == null) {
+                continue;
+            }
+            ShipAPI ship = dfm.getShip();
+            String shipId = ship.getId();
+            if (!list.contains(shipId)) {
+                list.add(shipId);
+                ShipAPI baseShip = EngineUtils.getBaseShip(ship);
+                // Note: DamageListener listens for damage taken only
+                if (!ship.hasListenerOfClass(ShipDamageTracker.class)) {
+                    ship.addListener(new ShipDamageTracker());
+                }
+            }
+        }
     }
 }

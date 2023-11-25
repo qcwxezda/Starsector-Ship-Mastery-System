@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Pair;
 
 import java.text.DecimalFormat;
@@ -14,6 +15,18 @@ import java.util.*;
 public abstract class Utils {
     public static DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
+
+    public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
+
+    static {
+        for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {
+            wingVariantToIdMap.put(spec.getVariantId(), spec.getId());
+        }
+    }
+
+    public static String getFighterWingId(String variantId) {
+        return wingVariantToIdMap.get(variantId);
+    }
 
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();

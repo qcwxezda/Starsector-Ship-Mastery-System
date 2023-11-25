@@ -57,7 +57,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     }
 
     @Override
-    public void advance(float v) {
+    public void advance(float amount) {
         StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
 
         if (isFirstFrame) {

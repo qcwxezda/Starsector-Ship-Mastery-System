@@ -134,7 +134,6 @@ public class MasteryDisplay implements CustomUIElement {
     void addMasteryDescriptions(List<MasteryEffect> effects, TooltipMakerAPI tooltip) {
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            tooltip.setParaFont(Fonts.INSIGNIA_LARGE);
             MasteryDescription effectDescription = effect.getDescription(selectedModule, rootFleetMember);
             if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
                 effectDescription.addLabelWithPrefix(tooltip, Strings.FLAGSHIP_ONLY, Misc.getBasePlayerColor());
@@ -149,7 +148,7 @@ public class MasteryDisplay implements CustomUIElement {
                     MasteryTags.DOESNT_AFFECT_MODULES)) {
                 tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
             }
-            tooltip.addSpacer(i == effects.size() - 1 ? 15f : 5f);
+            tooltip.addSpacer(i == effects.size() - 1 ? 20f : 5f);
         }
     }
 

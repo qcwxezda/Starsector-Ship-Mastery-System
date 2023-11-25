@@ -54,7 +54,9 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        ship.addListener(new TimeMultUnphasingScript(ship, getStrength(ship), id));
+        if (!ship.hasListenerOfClass(TimeMultUnphasingScript.class)) {
+            ship.addListener(new TimeMultUnphasingScript(ship, getStrength(ship), id));
+        }
     }
 
     public static class TimeMultUnphasingScript implements AdvanceableListener {
@@ -76,7 +78,16 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             this.id = id;
             maxTimeMult = PhaseCloakStats.getMaxTimeMult(ship.getMutableStats());
             particleCount = (int) (maxTime * particlesPerSecond);
-            emitter = new JitterEmitter(ship, true, particleCount);
+            emitter = new JitterEmitter(
+                    ship,
+                    ship.getSpriteAPI(),
+                    ship.getSpriteAPI().getAverageColor(),
+                    100f,
+                    40f,
+                    0.8f,
+                    true,
+                    0.2f,
+                    particleCount);
             emitter.enableDynamicAnchoring();
         }
 
@@ -85,7 +96,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             boolean isUnphasing = ((Ship) ship).isUnphasing();
             if (isUnphasing && !isAcceleratedUnphased) {
                 isAcceleratedUnphased = true;
-                Particles.stream(emitter, 2, particlesPerSecond, maxTime, new Particles.StreamAction<JitterEmitter>() {
+                Particles.stream(emitter, 1, particlesPerSecond, maxTime, new Particles.StreamAction<JitterEmitter>() {
                     @Override
                     public boolean apply(JitterEmitter emitter) {
                         return isAcceleratedUnphased;

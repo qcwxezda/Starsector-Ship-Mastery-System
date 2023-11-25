@@ -2,10 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShieldAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -14,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
-import shipmastery.fx.ShieldDeflectionEmitter;
+import shipmastery.fx.ShieldOutlineEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
@@ -37,7 +34,8 @@ public class ShieldDeflection extends BaseMasteryEffect {
         if (ship != null
                 && ship.getShield() != null
                 && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
-                && ship.getShield().getType() != ShieldAPI.ShieldType.NONE) {
+                && ship.getShield().getType() != ShieldAPI.ShieldType.NONE
+                && !ship.hasListenerOfClass(ShieldDeflectionScript.class)) {
             ship.addListener(new ShieldDeflectionScript(ship, getMaxTime(ship)));
         }
     }
@@ -75,14 +73,14 @@ public class ShieldDeflection extends BaseMasteryEffect {
     public static class ShieldDeflectionScript implements AdvanceableListener {
         float activatedTime;
         final float maxTime;
-        final ShieldDeflectionEmitter emitter;
+        ShieldOutlineEmitter emitter;
         final ShipAPI ship;
 
         ShieldDeflectionScript(ShipAPI ship, float maxTime) {
             this.ship = ship;
             this.maxTime = maxTime;
             activatedTime = maxTime;
-            this.emitter = new ShieldDeflectionEmitter(ship);
+            emitter = new ShieldOutlineEmitter(ship);
             emitter.enableDynamicAnchoring();
         }
 
@@ -93,6 +91,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
             }
             if (ship.getShield().isOff()) {
                 activatedTime = 0f;
+                emitter = null;
                 return;
             }
             if (activatedTime >= maxTime) {
@@ -105,9 +104,12 @@ public class ShieldDeflection extends BaseMasteryEffect {
                     Strings.Descriptions.ShieldDeflectionStatusTitle,
                     String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercent(1f - damageTakenMult)),
                     false);
-
             activatedTime += amount;
-            Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 2f));
+            if (emitter == null) {
+                emitter = new ShieldOutlineEmitter(ship);
+                emitter.enableDynamicAnchoring();
+            }
+            Particles.burst(emitter, (int) (2 + ship.getShield().getActiveArc() * amount * 2.5f));
             float gridSize = 2f*ship.getShieldRadiusEvenIfNoShield() + 100f;
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
             while (itr.hasNext()) {

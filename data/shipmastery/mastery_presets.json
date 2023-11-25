@@ -2,12 +2,9 @@
   "none": {},
 
   "default": {
-    "maxLevel": 9,
+    "maxLevel": 10,
     "levels": {
-      "1": "ModifyStatsMult 1 FluxCapacity 1",
-      "2": "ScaleOtherMasteries 10",
-      "3": "ScaleOtherMasteries 100",
-      #"2": "SModCapacity",
+      "2": "SModCapacity",
       "4": "SModRemoval",
       "6": "SModCapacity",
       "8": {
