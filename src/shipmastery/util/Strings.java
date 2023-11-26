@@ -98,6 +98,23 @@ public interface Strings {
         String EnergyMineConversionMineStrike = Utils.getString("sms_descriptions", "EnergyMineConversionMineStrike");
         String EnergyMineConversionPost = Utils.getString("sms_descriptions", "EnergyMineConversionPost");
         String RecallDeviceRegeneration = Utils.getString("sms_descriptions", "RecallDeviceRegeneration");
-        String RecallDeviceRegenerationName = Utils.getString("sms_descriptions", "RecallDeviceRegenerationName");
+        String RecallDeviceName = Utils.getString("sms_descriptions", "RecallDeviceName");
+        String RecallDeviceDestruction = Utils.getString("sms_descriptions", "RecallDeviceDestruction");
+        String RecallDeviceDestructionPost = Utils.getString( "sms_descriptions", "RecallDeviceDestructionPost");
+        String BallisticFireRateHullLevel = Utils.getString("sms_descriptions", "BallisticFireRateHullLevel");
+        String BallisticFireRateHullLevelPost = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelPost");
+        String BallisticFireRateHullLevelTitle = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelTitle");
+        String BallisticFireRateHullLevelDesc1 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc1");
+        String BallisticFireRateHullLevelDesc2 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc2");
+        String AAFRangeDamage = Utils.getString("sms_descriptions", "AAFRangeDamage");
+        String AAFRangeDamagePost = Utils.getString("sms_descriptions", "AAFRangeDamagePost");
+        String AAFRangeDamageTitle = Utils.getString("sms_descriptions", "AAFRangeDamageTitle");
+        String AAFRangeDamageDesc1 = Utils.getString("sms_descriptions", "AAFRangeDamageDesc1");
+        String AAFName = Utils.getString("sms_descriptions", "AAFName");
+        String ManeuveringJetsMobility = Utils.getString("sms_descriptions", "ManeuveringJetsMobility");
+        String ManeuveringJetsName = Utils.getString("sms_descriptions", "ManeuveringJetsName");
+        String ManeuveringJetsMobilityPost = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityPost");
+        String ManeuveringJetsMobilityTitle = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityTitle");
+        String ManeuveringJetsMobilityDesc1 = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityDesc1");
     }
 }

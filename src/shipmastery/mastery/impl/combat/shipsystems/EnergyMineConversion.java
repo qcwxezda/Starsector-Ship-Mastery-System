@@ -65,7 +65,7 @@ public class EnergyMineConversion extends BaseMasteryEffect {
         }
 
         @Override
-        public void onFullyActivate(ShipAPI ship) {
+        public void onFullyActivate() {
             // Start from the end of the projectile list -- the newly made mine is very likely to be at the
             // end of this list, so this for loop is actually O(1)-ish
             ArrayList<DamagingProjectileAPI> projectiles = (ArrayList<DamagingProjectileAPI>) engine.getProjectiles();

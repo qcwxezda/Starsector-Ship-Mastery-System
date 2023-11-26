@@ -9,8 +9,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Pair;
 
+import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 public abstract class Utils {
     public static DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
@@ -187,5 +190,17 @@ public abstract class Utils {
         // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
         if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
         return null;
+    }
+
+    public static Color mixColor(Color a, Color b, float t) {
+        float[] colorA = new float[4];
+        float[] colorB = new float[4];
+        float[] newColor = new float[4];
+        a.getComponents(colorA);
+        b.getComponents(colorB);
+        for (int i = 0; i < 4; i++) {
+            newColor[i] = (1f - t) * colorA[i] + t * colorB[i];
+        }
+        return new Color(newColor[0], newColor[1], newColor[2], newColor[3]);
     }
 }

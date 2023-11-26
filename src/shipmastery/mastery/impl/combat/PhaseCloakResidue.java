@@ -82,12 +82,13 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                     ship,
                     ship.getSpriteAPI(),
                     ship.getSpriteAPI().getAverageColor(),
-                    100f,
+                    150f,
                     40f,
                     0.8f,
                     true,
                     0.2f,
                     particleCount);
+            emitter.setSaturationShift(1.5f);
             emitter.enableDynamicAnchoring();
         }
 

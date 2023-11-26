@@ -1,21 +1,19 @@
 package shipmastery.combat.listeners;
 
-
-import com.fs.starfarer.api.combat.ShipAPI;
-
-/** onActivate (effect level 0) -> onFullyActivate (effect level 1) -> onDeactivate (effect level 1) -> onFullyDeactivate (effect level 0) */
+/** onActivate (effect level 0) -> onFullyActivate (effect level 1) -> onDeactivate (effect level 1) -> onFullyDeactivate (effect level 0)
+ *  Listener is ship specific -- attached to a ship */
 public interface ShipSystemListener {
-    void onActivate(ShipAPI ship);
+    void onActivate();
 
-    void onDeactivate(ShipAPI ship);
+    void onDeactivate();
 
-    void onFullyActivate(ShipAPI ship);
+    void onFullyActivate();
 
-    void onFullyDeactivate(ShipAPI ship);
+    void onFullyDeactivate();
 
-    void onGainedAmmo(ShipAPI ship);
+    void onGainedAmmo();
 
-    void onFullyCharged(ShipAPI ship);
+    void onFullyCharged();
 
-    void advanceWhileOn(ShipAPI ship, float amount);
+    void advanceWhileOn(float amount);
 }

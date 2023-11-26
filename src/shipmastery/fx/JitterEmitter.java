@@ -25,6 +25,7 @@ public class JitterEmitter extends BaseIEmitter {
     final float hueShiftDegrees;
     final float particleLife;
     float baseIntensity = 0.45f;
+    float saturationShift = 0f;
 
     /** Peak fraction: after this fraction of particles is emitted is when the jitter offset and alpha are strongest. */
     public JitterEmitter(CombatEntityAPI target, SpriteAPI sprite, Color color, float hueShiftDegrees, float maxRadius, float particleLife, boolean renderAbove, float peakFraction, int totalParticleCount) {
@@ -75,6 +76,8 @@ public class JitterEmitter extends BaseIEmitter {
         baseIntensity = intensity;
     }
 
+    public void setSaturationShift(float amount) {saturationShift = amount;}
+
     @Override
     protected ParticleData initParticle(int i) {
         ParticleData data = new ParticleData();
@@ -83,7 +86,7 @@ public class JitterEmitter extends BaseIEmitter {
         data.offset(MathUtils.randomPointInCircle(new Vector2f(), radius));
         data.color(colorRGB[0], colorRGB[1], colorRGB[2], baseIntensity * alphaMult);
         data.size(width, height);
-        data.saturationShift(1f);
+        data.saturationShift(saturationShift);
         data.hueShift(MathUtils.randBetween(-hueShiftDegrees, hueShiftDegrees));
         return data;
     }

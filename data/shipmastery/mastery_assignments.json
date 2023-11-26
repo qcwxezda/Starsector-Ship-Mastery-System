@@ -33,5 +33,23 @@
         "B": "RecallDeviceRegeneration"
       }
     }
+  },
+
+  "atlas2": {
+    "levels": {
+      "10": {
+        "A": "AAFRangeDamage",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "conquest": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsMobility",
+        "B": "ModifyStatsMult 1 FluxCapacity 0.3 FluxDissipation 0.1 ShieldDamage 0.2"
+      }
+    }
   }
 }

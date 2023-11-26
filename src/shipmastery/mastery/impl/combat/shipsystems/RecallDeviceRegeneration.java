@@ -13,38 +13,46 @@ import java.util.List;
 
 public class RecallDeviceRegeneration extends BaseMasteryEffect {
 
-    static final float REPLACEMENT_RATE_INCREASE = 0.1f;
-    static final float REGENERATION_CHANCE = 0.3f;
-
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceRegeneration)
                                  .params(
-                                         Strings.Descriptions.RecallDeviceRegenerationName,
-                                         Utils.asPercent(REPLACEMENT_RATE_INCREASE),
-                                         Utils.asPercent(REGENERATION_CHANCE));
+                                         Strings.Descriptions.RecallDeviceName,
+                                         Utils.asPercent(getStrengthForPlayer() / 3f),
+                                         Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship.getSystem() == null || !"recalldevice".equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(RecallDeviceRegenerationScript.class)) {
-            ship.addListener(new RecallDeviceRegenerationScript());
+            ship.addListener(new RecallDeviceRegenerationScript(ship, getStrength(ship) / 3f, getStrength(ship)));
         }
     }
 
     public static class RecallDeviceRegenerationScript extends BaseShipSystemListener {
+
+        final ShipAPI ship;
+        final float replacementRateBoost;
+        final float regenerationChance;
+
+        RecallDeviceRegenerationScript(ShipAPI ship, float replacementRateBoost, float regenerationChance) {
+            this.ship = ship;
+            this.regenerationChance = regenerationChance;
+            this.replacementRateBoost = replacementRateBoost;
+        }
+
         @Override
-        public void onFullyActivate(ShipAPI ship) {
+        public void onFullyActivate() {
             List<FighterLaunchBayAPI> bays = ship.getLaunchBaysCopy();
             if (bays == null || bays.isEmpty()) return;
             for (FighterLaunchBayAPI bay : bays) {
-                bay.setCurrRate(Math.min(1f, bay.getCurrRate() + REPLACEMENT_RATE_INCREASE));
+                bay.setCurrRate(Math.min(1f, bay.getCurrRate() + replacementRateBoost));
                 int regen = 0;
                 // Fighter wings are capped at 6, so this is always faster than trying to
                 // write a binomial pdf function
                 for (int i = 0; i < bay.getNumLost(); i++) {
-                    if (Math.random() <= REGENERATION_CHANCE) {
+                    if (Math.random() <= regenerationChance) {
                         regen++;
                     }
                 }

@@ -28,30 +28,29 @@ public class ShipSystemTracker {
 
             for (ShipSystemListener listener : listeners) {
                 if (system.isActive()) {
-                    listener.advanceWhileOn(ship, amount);
-
                     if (!wasActive) {
-                        listener.onActivate(ship);
+                        listener.onActivate();
                     }
+                    listener.advanceWhileOn(amount);
                 }
 
                 if (!system.isChargeup() && wasChargeUp) {
-                    listener.onFullyActivate(ship);
+                    listener.onFullyActivate();
                 }
 
                 if (!system.isOn() && wasOn) {
-                    listener.onDeactivate(ship);
+                    listener.onDeactivate();
                 }
 
                 if (!system.isActive() && wasActive) {
-                    listener.onFullyDeactivate(ship);
+                    listener.onFullyDeactivate();
                 }
 
                 if (prevAmmo < system.getAmmo()) {
-                    listener.onGainedAmmo(ship);
+                    listener.onGainedAmmo();
 
                     if (system.getAmmo() == system.getMaxAmmo()) {
-                        listener.onFullyCharged(ship);
+                        listener.onFullyCharged();
                     }
                 }
             }

@@ -6,7 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Utils;
 
-public class ShieldEfficiency extends ShipStat {
+public class ShieldDamage extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
         return stats.getShieldDamageTakenMult();
