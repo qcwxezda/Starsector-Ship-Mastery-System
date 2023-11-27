@@ -5,9 +5,11 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Pair;
 import shipmastery.ShipMasteryNPC;
+import shipmastery.campaign.RefitHandler;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
@@ -95,6 +97,7 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         variant.getHullMods().remove("sms_masteryHandler");
         variant.getHullMods().add("sms_masteryHandler");
         variant.getPermaMods().add("sms_masteryHandler");
+        variant.getStatsForOpCosts();
         // Add the tracker to any modules as well
         for (String id : variant.getModuleSlots()) {
             ShipVariantAPI moduleVariant = variant.getModuleVariant(id);
@@ -103,6 +106,11 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
             moduleVariant.setHullVariantId(moduleVariant.getHullVariantId());
             addHandlerMod(variant.getModuleVariant(id), rootSpecId);
         }
+    }
+
+    @Override
+    public boolean affectsOPCosts() {
+        return true;
     }
 
     /**
@@ -132,6 +140,16 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         if (stats == null || stats.getVariant() == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(stats.getVariant());
         final PersonAPI commander = Utils.getCommanderForFleetMember(stats.getFleetMember());
+
+        if (commander == null) {
+            System.out.println("Null commander...");
+            stats.getDynamic().getMod(Stats.ALL_FIGHTER_COST_MOD).modifyFlat("test", 100);
+            stats.getDynamic().getMod(Stats.BOMBER_COST_MOD).modifyFlat("test", 100);
+            stats.getDynamic().getMod(Stats.FIGHTER_COST_MOD).modifyFlat("test", 100);
+            stats.getDynamic().getMod(Stats.INTERCEPTOR_COST_MOD).modifyFlat("test", 100);
+            stats.getDynamic().getMod(Stats.SUPPORT_COST_MOD).modifyFlat("test", 100);
+        }
+
         MasteryUtils.applyAllActiveMasteryEffects(
                 commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {
@@ -178,8 +196,9 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
     public void applyEffectsToFighterSpawnedByShip(final ShipAPI fighter, final ShipAPI ship, final String id) {
         if (ship == null) return;
         final Pair<ShipHullSpecAPI, Boolean> rootHullData = getRootHullSpec(ship.getVariant());
+        final PersonAPI commander = Utils.getCommanderForFleetMember(ship.getMutableStats().getFleetMember());
         MasteryUtils.applyAllActiveMasteryEffects(
-                ship.getFleetMember() == null ? null : ship.getFleetMember().getFleetCommanderForStats(),
+                commander,
                 rootHullData.one, new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {

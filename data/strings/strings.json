@@ -119,7 +119,21 @@
     "HEFExplosionPost": "The explosion deals %1$s of the projectile's damage as additional high-explosive damage. If the projectile deals fragmentation damage, the explosion's damage is reduced by %2$s.",
     "HEFExplosionPost2": "No effect on beams or any other non-projectile weapons. No effect on energy weapons mounted on non-energy mounts.",
     "HEFExplosionTitle": "enhanced high energy focus",
-    "HEFExplosionDesc1": "explosive rounds"
+    "HEFExplosionDesc1": "explosive rounds",
+    "ConvertedHangarBays": "If %1$s is installed, the number of fighter bays it generates is increased by %2$s.",
+    "ConvertedHangarName": "Converted Hangar",
+    "LidarArrayRange": "Improves the passive range bonus of %1$s by an additional %2$s of base weapon range.",
+    "LidarArrayName": "Lidar Array",
+    "LidarArrayRangeTitle": "improved lidar array",
+    "LidarArrayRangeDesc1": "weapon range +%1$s",
+    "LidarArrayFlux": "While %1$s is active, the flux cost of ballistic weapons is reduced by %2$s.",
+    "LidarArrayFluxTitle": "improved lidar array",
+    "LidarArrayFluxDesc1": "ballistic weapons -%1$s flux",
+    "BurnDriveDR": "While %1$s is active, all damage taken is reduced by %2$s.",
+    "BurnDriveName": "Burn Drive",
+    "BurnDriveDRPost": "The damage reduction also applies to any fighters that were launched by this ship.",
+    "BurnDriveDRTitle": "enhanced burn drive",
+    "BurnDriveDRDesc1": "-%1$s damage taken"
   },
 
   "sms_misc": {

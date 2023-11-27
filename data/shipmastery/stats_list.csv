@@ -45,7 +45,9 @@ FighterRefitTime,refit time of fighters,3,-0.2,,shipmastery.stats.combat.Fighter
 FighterCrewLoss,crew loss due to fighters,,-0.3,,shipmastery.stats.combat.FighterCrewLoss
 ReplacementRateDecay,the rate at which fighter replacement rate decays,,-0.2,,shipmastery.stats.combat.ReplacementRateDecay
 ReplacementRateRegen,the rate at which fighter replacement rate replenishes,,0.2,,shipmastery.stats.combat.ReplacementRateRegen
+NumFighterBays,fighter bay count,8,1,modify_flat require_integer,shipmastery.stats.combat.NumFighterBays
+FighterCost,the OP cost of all fighters,7,-2,modify_flat require_integer,shipmastery.stats.combat.FighterCost
 PhaseCloakCooldown,phase cloak cooldown time,3,-0.25,,shipmastery.stats.combat.PhaseCloakCooldown
 PhaseSpeedAcceleration,top speed and acceleration when phased,,25,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
 PhaseCloakCost,phase cloak activation and upkeep costs,,-0.2,,shipmastery.stats.combat.PhaseCloakCost
-PhaseTimeMult,the local-to-global timeflow ratio when phased,5,0.5,,shipmastery.stats.combat.PhaseTimeMult
+PhaseTimeMult,local timeflow when phased,5,0.5,,shipmastery.stats.combat.PhaseTimeMult

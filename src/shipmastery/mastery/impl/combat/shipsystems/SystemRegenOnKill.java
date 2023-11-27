@@ -78,7 +78,8 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
                 if (activated) {
                     Color color = ship.getSpriteAPI().getAverageColor();
                     Color newColor = new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 0.6f);
-                    OverlayEmitter emitter = new OverlayEmitter(ship, ship.getSpriteAPI(), newColor, 1f);
+                    OverlayEmitter emitter = new OverlayEmitter(ship, ship.getSpriteAPI(), 1f);
+                    emitter.color = newColor;
                     emitter.enableDynamicAnchoring();
                     Particles.burst(emitter, 1);
                 }

@@ -417,7 +417,7 @@ public class MasteryPanel {
         String modularString = modular ? Strings.YES_STR : Strings.NO_STR;
         Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
-        String cantBuildInReason = getCantBuildInReason(spec, mpCost, creditsCost);
+        String cantBuildInReason = getCantBuildInReason(spec, modular, mpCost, creditsCost);
 
         if (cantBuildInReason != null) {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
@@ -475,12 +475,12 @@ public class MasteryPanel {
     /**
      * Gives reason the mod can't be built in; returns null if hullmod can be built in
      */
-    @Nullable String getCantBuildInReason(HullModSpecAPI spec, int mpCost, int creditsCost) {
+    @Nullable String getCantBuildInReason(HullModSpecAPI spec, boolean modular, int mpCost, int creditsCost) {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
             return spec.getDisplayName() + Strings.CANT_BUILD_IN_STR;
         }
         if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
-                + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt()) {
+                + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() && modular) {
             return Strings.LIMIT_REACHED_STR;
         }
 

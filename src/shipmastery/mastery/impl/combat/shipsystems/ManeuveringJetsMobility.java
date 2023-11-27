@@ -1,11 +1,15 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -30,13 +34,21 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"maneuveringjets".equals(ship.getSystem().getId())) {
+    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
+        if (ship == null || ship.getSystem() == null || !"maneuveringjets".equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(ManeuveringJetsMobilityScript.class)) {
             ship.addListener(new ManeuveringJetsMobilityScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
+        for (ManeuveringJetsMobilityScript listener : ship.getListeners(ManeuveringJetsMobilityScript.class)) {
+            listener.onFullyDeactivate();
+        }
+        ship.removeListenerOfClass(ManeuveringJetsMobilityScript.class);
     }
 
     public static class ManeuveringJetsMobilityScript extends BaseShipSystemListener {
@@ -50,14 +62,8 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
             this.ship = ship;
             this.mult = mult;
             this.id = id;
-        }
-
-        @Override
-        public void onActivate() {
-            if (originalColors.size() < ship.getEngineController().getShipEngines().size()) {
-                for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
-                    originalColors.put(engine, engine.getEngineColor());
-                }
+            for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
+                originalColors.put(engine, engine.getEngineColor());
             }
         }
 
@@ -67,6 +73,8 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
             ship.getMutableStats().getAcceleration().unmodify(id);
             ship.getMutableStats().getTurnAcceleration().unmodify(id);
             for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
+                // shouldn't happen, but just in case
+                if (!originalColors.containsKey(engine)) continue;
                 engine.getEngineSlot().setColor(originalColors.get(engine));
             }
         }
@@ -80,6 +88,8 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
             ship.getMutableStats().getTurnAcceleration().modifyMult(id, effectAmount);
 
             for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
+                // shouldn't happen, but just in case
+                if (!originalColors.containsKey(engine)) continue;
                 engine.getEngineSlot().setColor(Utils.mixColor(originalColors.get(engine), new Color(185, 255, 75), effectLevel));
             }
 

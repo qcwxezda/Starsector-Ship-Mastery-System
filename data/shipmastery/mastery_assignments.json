@@ -3,7 +3,7 @@
     "levels": {
       "10": {
         "A": "ShieldDeflection",
-        "B": ["FluxByShieldUpkeep"]
+        "B": "FluxByShieldUpkeep"
       }
     }
   },
@@ -48,7 +48,7 @@
     "levels": {
       "9": {
         "A": "ManeuveringJetsMobility",
-        "B": "ModifyStatsMult 1 FluxCapacity 0.3 FluxDissipation 0.1 ShieldDamage 0.2"
+        "B": "ModifyStatsMult 1 FluxCapacity 0.2 FluxDissipation 0.1 ShieldDamage 0.15"
       }
     }
   },
@@ -56,8 +56,26 @@
   "executor": {
     "levels": {
       "9": {
-        "A": "SystemRegenOnKill",
-        "B": "HEFExplosion"
+        "A": "HEFExplosion",
+        "B": "SystemRegenOnKill"
+      }
+    }
+  },
+
+  "invictus": {
+    "levels": {
+      "9": {
+        "A": "LidarArrayRange",
+        "B": "LidarArrayFlux"
+      }
+    }
+  },
+
+  "legion": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveDR",
+        "B": "ModifyStatsFlat 1 FighterCost 100"
       }
     }
   }

@@ -1,5 +1,6 @@
 package shipmastery.fx;
 
+import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import org.lwjgl.util.vector.Vector2f;
@@ -12,13 +13,13 @@ public class OverlayEmitter extends BaseIEmitter {
 
     final CombatEntityAPI anchor;
     final SpriteAPI sprite;
-    final Color color;
     final float life;
+    public Color color = Color.WHITE;
+    public CombatEngineLayers layer = CombatEngineLayers.ABOVE_PARTICLES_LOWER;
 
-    public OverlayEmitter(CombatEntityAPI anchor, SpriteAPI sprite, Color color, float life) {
+    public OverlayEmitter(CombatEntityAPI anchor, SpriteAPI sprite, float life) {
         this.anchor = anchor;
         this.sprite = sprite;
-        this.color = color;
         this.life = life;
     }
 
@@ -35,6 +36,11 @@ public class OverlayEmitter extends BaseIEmitter {
     @Override
     public float getXDir() {
         return anchor.getFacing() - 90f;
+    }
+
+    @Override
+    public CombatEngineLayers getLayer() {
+        return layer;
     }
 
     @Override

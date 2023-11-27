@@ -126,6 +126,19 @@ public interface Strings {
         String HEFExplosionPost2 = Utils.getString("sms_descriptions", "HEFExplosionPost2");
         String HEFExplosionDesc1 = Utils.getString("sms_descriptions", "HEFExplosionDesc1");
         String HEFExplosionTitle = Utils.getString("sms_descriptions", "HEFExplosionTitle");
-
+        String ConvertedHangarBays = Utils.getString("sms_descriptions", "ConvertedHangarBays");
+        String ConvertedHangarName = Utils.getString("sms_descriptions", "ConvertedHangarName");
+        String LidarArrayRange = Utils.getString("sms_descriptions", "LidarArrayRange");
+        String LidarArrayName = Utils.getString("sms_descriptions", "LidarArrayName");
+        String LidarArrayRangeTitle = Utils.getString("sms_descriptions", "LidarArrayRangeTitle");
+        String LidarArrayRangeDesc1 = Utils.getString("sms_descriptions", "LidarArrayRangeDesc1");
+        String LidarArrayFlux = Utils.getString("sms_descriptions", "LidarArrayFlux");
+        String LidarArrayFluxTitle = Utils.getString("sms_descriptions", "LidarArrayFluxTitle");
+        String LidarArrayFluxDesc1 = Utils.getString("sms_descriptions", "LidarArrayFluxDesc1");
+        String BurnDriveDR = Utils.getString("sms_descriptions", "BurnDriveDR");
+        String BurnDriveName = Utils.getString("sms_descriptions", "BurnDriveName");
+        String BurnDriveDRPost = Utils.getString("sms_descriptions", "BurnDriveDRPost");
+        String BurnDriveDRTitle = Utils.getString("sms_descriptions", "BurnDriveDRTitle");
+        String BurnDriveDRDesc1 = Utils.getString("sms_descriptions", "BurnDriveDRDesc1");
     }
 }

@@ -1,12 +1,15 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -41,13 +44,18 @@ public class HEFExplosion extends BaseMasteryEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) {
+    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
+        if (ship == null || ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(HEFExplosionScript.class)) {
             ship.addListener(new HEFExplosionScript(ship, id, getStrength(ship)));
         }
+    }
+
+    @Override
+    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
+        ship.removeListenerOfClass(HEFExplosionScript.class);
     }
 
     static class HEFExplosionScript extends BaseShipSystemListener implements DamageDealtModifier {

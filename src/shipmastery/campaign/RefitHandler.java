@@ -136,8 +136,8 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
             // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().one);
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
-            ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
 
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
 
             if (saveVariant) {
                 // save the variant so can't undo s-mods
@@ -407,12 +407,24 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                             (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
             onRefitScreenShipChanged(newShipInfo);
             currentShipInfo = newShipInfo;
+            shouldSync = true;
         }
         if (shouldSync) {
             skipRefresh = true;
-            syncRefitScreenWithVariant(false);
+            // Inside the (obfuscated) refit panel code, the fleet member's variant is temporarily set to the panel's variant
+            // before refreshCharacterStatEffects is called, and then immediately set back to the correct variant.
+            // We need to perform this sync only *after* the fleet member's variant is set back to the correct value.
+            // Otherwise, funky things happen, like the CR display not showing the space refit penalty properly, since
+            // it computes the difference based on the fleet member's variant (which would be the panel's variant if
+            // we performed the sync immediately).
+            DeferredActionPlugin.performLater(new Action() {
+                @Override
+                public void perform() {
+                    syncRefitScreenWithVariant(false);
+                    skipRefresh = false;
+                }
+            }, 0f);
         }
-        skipRefresh = false;
     }
 
     List<EffectActivationRecord> effectsToDeactivate = new ArrayList<>();

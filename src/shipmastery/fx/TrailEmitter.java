@@ -47,8 +47,7 @@ public class TrailEmitter extends BaseIEmitter {
                 length * MathUtils.randBetween(1f - sizeJitter, 1f + sizeJitter));
         data.life(life * MathUtils.randBetween(1f - lifeJitter, 1f + lifeJitter));
         data.fadeTime(0f, fadeOut);
-        float r = color.getRed() / 255f, g = color.getGreen() / 255f, b = color.getBlue() / 255f;
-        data.color(r, g, b, color.getAlpha() / 255f * proj.getBrightness());
+        data.color(color);
         return data;
     }
 }
