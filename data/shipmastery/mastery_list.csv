@@ -30,11 +30,13 @@ DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,ship
 PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,6,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
-BallisticFireRateHullLevel,9,combat unique,,0.25,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
+BallisticFireRateHullLevel,9,combat unique,,0.2,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
 RecallDeviceRegeneration,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
 RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
-AAFRangeDamage,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
+AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
+SystemRegenOnKill,9,combat unique,,6,shipmastery.mastery.impl.combat.shipsystems.SystemRegenOnKill
+HEFExplosion,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion

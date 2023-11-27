@@ -2,15 +2,14 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.ShieldAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Pair;
+import com.fs.starfarer.combat.entities.Missile;
+import com.fs.starfarer.combat.entities.PlasmaShot;
 
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -126,6 +125,14 @@ public abstract class Utils {
         }
     }
 
+    public static String getLastHullModId(ShipVariantAPI variant) {
+        String last = null;
+        for (String str : variant.getHullMods()) {
+            last = str;
+        }
+        return last;
+    }
+
     public static Object[] interleaveArrays(Object[] arr1, Object[] arr2) {
         Object[] arr3 = new Object[arr1.length + arr2.length];
         int i = 0, j = 0;
@@ -190,6 +197,18 @@ public abstract class Utils {
         // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
         if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
         return null;
+    }
+
+    public static boolean wasProjectileRemoved(DamagingProjectileAPI proj) {
+        if (proj instanceof Missile) {
+            return ((Missile) proj).wasRemoved();
+        }
+        else if (proj instanceof PlasmaShot){
+            return proj.getBrightness() <= 0f;
+        }
+        else {
+            return proj.didDamage() || !Global.getCombatEngine().isEntityInPlay(proj);
+        }
     }
 
     public static Color mixColor(Color a, Color b, float t) {

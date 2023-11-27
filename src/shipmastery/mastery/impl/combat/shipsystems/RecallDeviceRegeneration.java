@@ -18,7 +18,7 @@ public class RecallDeviceRegeneration extends BaseMasteryEffect {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceRegeneration)
                                  .params(
                                          Strings.Descriptions.RecallDeviceName,
-                                         Utils.asPercent(getStrengthForPlayer() / 3f),
+                                         Utils.asPercent(getStrengthForPlayer() / 6f),
                                          Utils.asPercent(getStrengthForPlayer()));
     }
 
@@ -26,7 +26,7 @@ public class RecallDeviceRegeneration extends BaseMasteryEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship.getSystem() == null || !"recalldevice".equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(RecallDeviceRegenerationScript.class)) {
-            ship.addListener(new RecallDeviceRegenerationScript(ship, getStrength(ship) / 3f, getStrength(ship)));
+            ship.addListener(new RecallDeviceRegenerationScript(ship, getStrength(ship) / 6f, getStrength(ship)));
         }
     }
 

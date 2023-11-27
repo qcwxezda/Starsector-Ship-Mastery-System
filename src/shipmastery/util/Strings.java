@@ -116,5 +116,16 @@ public interface Strings {
         String ManeuveringJetsMobilityPost = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityPost");
         String ManeuveringJetsMobilityTitle = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityTitle");
         String ManeuveringJetsMobilityDesc1 = Utils.getString("sms_descriptions", "ManeuveringJetsMobilityDesc1");
+        String SystemRegenOnKill = Utils.getString("sms_descriptions", "SystemRegenOnKill");
+        String SystemRegenOnKillPost = Utils.getString("sms_descriptions", "SystemRegenOnKillPost");
+        String SystemRegenOnKillPost2 = Utils.getString("sms_descriptions", "SystemRegenOnKillPost2");
+        String SystemRegenOnKillPost3 = Utils.getString("sms_descriptions", "SystemRegenOnKillPost3");
+        String HEFExplosion = Utils.getString("sms_descriptions", "HEFExplosion");
+        String HEFExplosionPost = Utils.getString("sms_descriptions", "HEFExplosionPost");
+        String HEFName = Utils.getString("sms_descriptions", "HEFName");
+        String HEFExplosionPost2 = Utils.getString("sms_descriptions", "HEFExplosionPost2");
+        String HEFExplosionDesc1 = Utils.getString("sms_descriptions", "HEFExplosionDesc1");
+        String HEFExplosionTitle = Utils.getString("sms_descriptions", "HEFExplosionTitle");
+
     }
 }

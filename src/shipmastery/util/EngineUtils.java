@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipwideAIFlags;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -48,26 +49,46 @@ public abstract class EngineUtils {
     }
 
     /** If the argument is a ship, returns that ship.
+     *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */
-    public static ShipAPI getBaseShip(ShipAPI shipOrModule) {
-        if (shipOrModule == null) {
+    public static ShipAPI getBaseShip(ShipAPI shipWingOrModule) {
+        if (shipWingOrModule == null) {
             return null;
         }
-        if (shipOrModule.isStationModule()) {
+        // The "ship" in question is a drone
+        if (shipWingOrModule.getAIFlags().hasFlag(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP)) {
+            return getBaseShip((ShipAPI) shipWingOrModule.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP));
+        }
+        if (shipWingOrModule.isFighter()) {
             ShipAPI base = null;
-            if (shipOrModule.getParentStation() == null) {
-                // If the module has no parent station but has a fleet member,
-                // just return the module itself
-                if (shipOrModule.getFleetMember() != null) {
-                    base = shipOrModule;
+            if (shipWingOrModule.getWing() == null ||
+                    shipWingOrModule.getWing().getSourceShip() == null) {
+                // If the fighter has no source ship but has a fleet member,
+                // just return the fighter itself
+                if (shipWingOrModule.getFleetMember() != null) {
+                    base = shipWingOrModule;
                 }
             }
             else {
-                base = getBaseShip(shipOrModule.getParentStation());
+                base = getBaseShip(shipWingOrModule.getWing().getSourceShip());
             }
             return base;
         }
-        return shipOrModule;
+        if (shipWingOrModule.isStationModule()) {
+            ShipAPI base = null;
+            if (shipWingOrModule.getParentStation() == null) {
+                // If the module has no parent station but has a fleet member,
+                // just return the module itself
+                if (shipWingOrModule.getFleetMember() != null) {
+                    base = shipWingOrModule;
+                }
+            }
+            else {
+                base = getBaseShip(shipWingOrModule.getParentStation());
+            }
+            return base;
+        }
+        return shipWingOrModule;
     }
 
     public static boolean isFighter(CombatEntityAPI entity) {

@@ -51,5 +51,14 @@
         "B": "ModifyStatsMult 1 FluxCapacity 0.3 FluxDissipation 0.1 ShieldDamage 0.2"
       }
     }
+  },
+
+  "executor": {
+    "levels": {
+      "9": {
+        "A": "SystemRegenOnKill",
+        "B": "HEFExplosion"
+      }
+    }
   }
 }
