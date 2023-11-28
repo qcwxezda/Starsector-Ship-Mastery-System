@@ -1,11 +1,15 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
+import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.api.util.Pair;
+import com.fs.starfarer.campaign.fleet.FleetData;
+import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
 
@@ -188,6 +192,24 @@ public abstract class Utils {
 
     public static boolean hasShield(ShipHullSpecAPI spec) {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
+    }
+
+    public static void fixVariantInconsistencies(ShipVariantAPI variant) {
+        if (variant.getStatsForOpCosts() == null) return;
+        List<String> wingIds = variant.getWings();
+        if (wingIds != null && !wingIds.isEmpty()) {
+            for (int i = variant.getStatsForOpCosts().getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
+                variant.setWingId(i, null);
+            }
+        }
+    }
+
+    public static MutableValue getPlayerCredits() {
+        return ((FleetData) Global.getSector().getPlayerFleet().getFleetData()).getCargoNoSync().getCredits();
+    }
+
+    public static List<FleetMember> getMembersNoSync(CampaignFleetAPI fleet) {
+        return ((FleetData) fleet.getFleetData()).getMembersNoSync();
     }
 
     public static PersonAPI getCommanderForFleetMember(FleetMemberAPI fm) {

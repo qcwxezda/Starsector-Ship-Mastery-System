@@ -191,7 +191,7 @@ public class MasteryPanel {
     UIPanelAPI makeCurrencyLabels(float width) {
         CustomPanelAPI labelsPanel = Global.getSettings().createCustom(width, 50f, null);
 
-        int creditsAmt = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
+        int creditsAmt = (int) Utils.getPlayerCredits().get();
         String creditsAmtFmt = Misc.getFormat().format(creditsAmt);
         String creditsString = Strings.CREDITS_DISPLAY_STR + creditsAmtFmt;
         float creditsStringWidth =
@@ -484,7 +484,7 @@ public class MasteryPanel {
             return Strings.LIMIT_REACHED_STR;
         }
 
-        int credits = (int) Global.getSector().getPlayerFleet().getCargo().getCredits().get();
+        int credits = (int) Utils.getPlayerCredits().get();
         int mp = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
 
         String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;

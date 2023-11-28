@@ -11,10 +11,7 @@ import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.ClassRefs;
-import shipmastery.util.ReflectionUtils;
-import shipmastery.util.SModUtils;
-import shipmastery.util.Strings;
+import shipmastery.util.*;
 
 import java.util.List;
 
@@ -75,7 +72,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 
                     ShipMastery.spendPlayerMasteryPoints(variant.getHullSpec(), rowData.mpCost);
-                    Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(rowData.creditsCost);
+                    Utils.getPlayerCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true, true);
                 }
                 button.unhighlight();

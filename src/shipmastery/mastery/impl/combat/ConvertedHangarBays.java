@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
     @Override
     public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         // Remove fighter wings that are no longer allowed due to decreased limit
-        for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
             if (!getHullSpec().equals(fm.getHullSpec())) continue;
             ShipVariantAPI variant = fm.getVariant();
             List<String> wingIds = variant.getWings();

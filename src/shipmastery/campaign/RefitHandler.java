@@ -391,13 +391,16 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         boolean shouldSync = false;
         if (module != null && !skipRefresh) {
             // bypass the arbitrary checks in removeMod since we're adding it back anyway
-            // this check is necessary because syncing removes the "-x% cr from space refit" tooltip
-            String lastHullmodId = Utils.getLastHullModId(module.getVariant());
-            if (!"sms_masteryHandler".equals(lastHullmodId)) {
+            //String lastHullmodId = Utils.getLastHullModId(module.getVariant());
+            //if (!"sms_masteryHandler".equals(lastHullmodId)) {
                 module.getVariant().getHullMods().remove("sms_masteryHandler");
                 module.getVariant().getHullMods().add("sms_masteryHandler");
-                shouldSync = true;
-            }
+                //shouldSync = true;
+            //}
+            // This call does nothing except set variant.hasOpAffectingMods = null, which
+            // triggers the variant to refresh its statsForOpCosts
+            module.getVariant().addPermaMod("sms_masteryHandler");
+            Utils.fixVariantInconsistencies(module.getVariant());
         }
 
         if (!Objects.equals(currentShipInfo, newShipInfo)) {

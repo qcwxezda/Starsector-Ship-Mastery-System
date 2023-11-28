@@ -1,9 +1,6 @@
 package shipmastery.mastery.impl.stats;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.stats.ShipStat;
 import shipmastery.stats.StatTags;

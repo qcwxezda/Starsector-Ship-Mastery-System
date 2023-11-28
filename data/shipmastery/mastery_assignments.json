@@ -75,7 +75,7 @@
     "levels": {
       "9": {
         "A": "BurnDriveDR",
-        "B": "ModifyStatsFlat 1 FighterCost 100"
+        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost -3"
       }
     }
   }

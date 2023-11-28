@@ -37,6 +37,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             }
             Float existing = amounts.get(stat);
             amounts.put(stat, existing == null ? amount : existing + amount);
+            addTags(stat.tags.toArray(new String[0]));
         }
     }
 

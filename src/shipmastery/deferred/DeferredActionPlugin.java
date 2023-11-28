@@ -20,7 +20,7 @@ public class DeferredActionPlugin implements EveryFrameScript {
     }
 
     public static DeferredActionPlugin getInstance() {
-        return (DeferredActionPlugin) Global.getSector().getMemory().get(INSTANCE_KEY);
+        return (DeferredActionPlugin) Global.getSector().getMemoryWithoutUpdate().get(INSTANCE_KEY);
     }
 
     @Override

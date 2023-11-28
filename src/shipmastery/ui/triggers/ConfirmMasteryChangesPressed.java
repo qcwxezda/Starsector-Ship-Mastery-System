@@ -2,8 +2,10 @@ package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ui.MasteryPanel;
+import shipmastery.util.Utils;
 
 import java.util.Map;
 import java.util.NavigableMap;
