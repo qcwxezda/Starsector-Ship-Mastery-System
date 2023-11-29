@@ -46,7 +46,7 @@ public class ClearSModsPressed extends ActionListener {
 
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CLEAR_CONFIRMED_STR, Misc.getStoryBrightColor());
             Global.getSoundPlayer().playUISound("sms_clear_smods", 1f, 1f);
-            masteryPanel.forceRefresh(true, true);
+            masteryPanel.forceRefresh(true, true, true);
 
             // Some non-s-modded hullmods may no longer be applicable; remove these also
             // Do-while loop must terminate; variant's hullmod count is decrementing
@@ -61,7 +61,7 @@ public class ClearSModsPressed extends ActionListener {
                     }
                 }
                 if (changed) {
-                    masteryPanel.forceRefresh(true, true);
+                    masteryPanel.forceRefresh(true, true, true);
                 }
             } while (changed);
         }

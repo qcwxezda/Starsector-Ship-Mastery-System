@@ -133,7 +133,10 @@
     "BurnDriveName": "Burn Drive",
     "BurnDriveDRPost": "The damage reduction also applies to any fighters that were launched by this ship.",
     "BurnDriveDRTitle": "enhanced burn drive",
-    "BurnDriveDRDesc1": "-%1$s damage taken"
+    "BurnDriveDRDesc1": "-%1$s damage taken",
+    "WhileActiveMissileBoost": "While %1$s is active, missiles gain a %2$s increase to top speed, acceleration, and durability.",
+    "WhileActiveMissileBoostTitle": "enhanced system",
+    "WhileActiveMissileBoostDesc1": "+%1$s missile speed and health"
   },
 
   "sms_misc": {
@@ -143,6 +146,7 @@
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",
-    "and": "and "
+    "and": "and ",
+    "bestOfTheBestDesc": "Increases the strength of all ship mastery effects by %1$s."
   }
 }

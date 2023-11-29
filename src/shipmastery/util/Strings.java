@@ -48,6 +48,7 @@ public interface Strings {
     String DOESNT_AFFECT_MODULES = Utils.getString("sms_misc", "doesntAffectModules");
     String FAILED_TO_GENERATE_MASTERIES = Utils.getString("sms_misc", "failedToGenerateMasteries");
     String FLAGSHIP_ONLY = Utils.getString("sms_misc", "flagshipOnly");
+    String BEST_OF_THE_BEST_DESC = Utils.getString("sms_misc", "bestOfTheBestDesc");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
@@ -140,5 +141,8 @@ public interface Strings {
         String BurnDriveDRPost = Utils.getString("sms_descriptions", "BurnDriveDRPost");
         String BurnDriveDRTitle = Utils.getString("sms_descriptions", "BurnDriveDRTitle");
         String BurnDriveDRDesc1 = Utils.getString("sms_descriptions", "BurnDriveDRDesc1");
+        String WhileActiveMissileBoost = Utils.getString("sms_descriptions", "WhileActiveMissileBoost");
+        String WhileActiveMissileBoostTitle = Utils.getString("sms_descriptions", "WhileActiveMissileBoostTitle");
+        String WhileActiveMissileBoostDesc1 = Utils.getString("sms_descriptions", "WhileActiveMissileBoostDesc1");
     }
 }

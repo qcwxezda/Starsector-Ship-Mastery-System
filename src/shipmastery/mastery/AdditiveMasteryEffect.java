@@ -10,13 +10,18 @@ import shipmastery.util.Utils;
 public abstract class AdditiveMasteryEffect extends BaseMasteryEffect {
     public final int getIncrease(PersonAPI commander) {
         float f = getStrength(commander);
-        if (f > 0 && f < 1) return 1;
-        if (f < 0 && f > -1) return -1;
-        return (int) f;
+        return truncateExceptNearZero(f);
     }
 
     public final int getIncrease(MutableShipStatsAPI stats) {
-        return getIncrease(Utils.getCommanderForFleetMember(stats.getFleetMember()));
+        float f = getStrength(stats);
+        return truncateExceptNearZero(f);
+    }
+
+    public final int truncateExceptNearZero(float f) {
+        if (f > 0 && f < 1) return 1;
+        if (f < 0 && f > -1) return -1;
+        return (int) f;
     }
 
     public final int getIncreasePlayer() {

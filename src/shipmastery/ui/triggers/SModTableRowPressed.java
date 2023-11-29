@@ -42,7 +42,8 @@ public class SModTableRowPressed extends TriggerableProxy {
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
-                if (module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats())) {
+
+                if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats())) {
                     Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_OVER_MAX_WARNING, Misc.getNegativeHighlightColor());
                 }
 
@@ -73,7 +74,7 @@ public class SModTableRowPressed extends TriggerableProxy {
 
                     ShipMastery.spendPlayerMasteryPoints(variant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);
-                    masteryPanel.forceRefresh(true, true);
+                    masteryPanel.forceRefresh(true, true, true);
                 }
                 button.unhighlight();
             }

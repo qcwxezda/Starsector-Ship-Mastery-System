@@ -78,5 +78,23 @@
         "B": "ModifyStatsFlat 1 NumFighterBays FighterCost -3"
       }
     }
+  },
+
+  "legion_xiv": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveDR",
+        "B": "WhileActiveMissileBoost"
+      }
+    }
+  },
+
+  "odyssey": {
+    "levels": {
+      "9": {
+        "A": "PlasmaBurnCollision",
+        "B": "WhileActiveMissileBoost"
+      }
+    }
   }
 }

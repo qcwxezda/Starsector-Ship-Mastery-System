@@ -8,7 +8,7 @@ import shipmastery.ShipMastery;
 import shipmastery.ShipMasteryNPC;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.util.CommanderLookup;
+import shipmastery.util.VariantLookup;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -45,7 +45,11 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
-        Global.getSector().getMemoryWithoutUpdate().set(CommanderLookup.INSTANCE_KEY, new CommanderLookup());
+
+        VariantLookup variantLookup = new VariantLookup(false);
+        Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
+        Global.getSector().addTransientListener(variantLookup);
+
         Global.getSector().addTransientListener(new ShipMasteryNPC(false));
         ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
     }

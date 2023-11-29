@@ -137,7 +137,9 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
             Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
 
-            ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant");
+            Boolean isEditedSinceSave = (Boolean) ReflectionUtils.invokeMethodNoCatch(refitPanel, "isEditedSinceSave");
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant", true);
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", isEditedSinceSave);
 
             if (saveVariant) {
                 // save the variant so can't undo s-mods
@@ -213,9 +215,9 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                                 DeferredActionPlugin.performLater(new Action() {
                                     @Override
                                     public void perform() {
-                                        injectRefitScreen(false, button == addButton);
+                                        injectRefitScreen(false, false, button == addButton);
                                     }
-                                }, epsilonTime);
+                                }, 0f);
                                 ReflectionUtils.invokeMethodExtWithClasses(origListener, "actionPerformed", false,
                                                                            new Class[]{Object.class, Object.class},
                                                                            args);
@@ -311,13 +313,15 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();
                         int currentMastery = ShipMastery.getPlayerMasteryLevel(spec);
-                        int maxMastery = ShipMastery.getPlayerMaxMastery(spec);
+                        int maxMastery = ShipMastery.getMaxMasteryLevel(spec);
+                        boolean padded = false;
                         if (currentMastery < maxMastery) {
                             tooltipMaker.addPara(Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
+                            padded = true;
                         }
                         int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
                         if (mp > 0) {
-                            tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, 0f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, padded ? 0f : 10f).setAlignment(Alignment.LMID);
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;
@@ -336,18 +340,25 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }
     }
 
-    public void injectRefitScreen(boolean variantChanged) {
-        injectRefitScreen(variantChanged, false);
+    public void injectRefitScreen(boolean shouldSync) {
+        injectRefitScreen(shouldSync, false);
     }
 
-    public void injectRefitScreen(boolean variantChanged, boolean hideMasteryButton) {
+    public void injectRefitScreen(boolean shouldSync, boolean shouldSaveIfSyncing) {
+        injectRefitScreen(shouldSync, shouldSaveIfSyncing, false);
+    }
+
+    public void injectRefitScreen(boolean shouldSync, final boolean shouldSaveIfSyncing, boolean hideMasteryButton) {
         coreUI = new WeakReference<>((CoreUIAPI) ReflectionUtils.getCoreUI());
 
         modifyBuildInButton();
         updateMasteryButton(hideMasteryButton);
         addMPDisplay();
 
-        syncRefitScreenWithVariant(variantChanged);
+        if (shouldSync) {
+            checkIfRefitShipChanged();
+            syncRefitScreenWithVariant(shouldSaveIfSyncing);
+        }
     }
 
     @Override
@@ -359,7 +370,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                     injectRefitScreen(false);
                     checkIfRefitShipChanged();
                 }
-            }, epsilonTime);
+            }, 0f);
             insideRefitPanel = true;
         }
     }
@@ -368,15 +379,13 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     @Override
     public void reportAboutToRefreshCharacterStatEffects() {}
 
-
-    boolean skipRefresh = false;
     /** This is called every time the active ship in the refit screen changes. */
     @Override
     public void reportRefreshedCharacterStatEffects() {
         // checkIfRefitShipChanged will call syncRefitScreenWithVariant,
         // which internally refreshes the character stats, so use a flag
         // to prevent recursion.
-        if (insideRefitPanel && !skipRefresh) {
+        if (insideRefitPanel) {
             checkIfRefitShipChanged();
         }
     }
@@ -388,8 +397,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         ShipAPI root = moduleAndRoot.two;
         ShipInfo newShipInfo = new ShipInfo(module, root);
 
-        boolean shouldSync = false;
-        if (module != null && !skipRefresh) {
+        if (module != null) {
             // bypass the arbitrary checks in removeMod since we're adding it back anyway
             //String lastHullmodId = Utils.getLastHullModId(module.getVariant());
             //if (!"sms_masteryHandler".equals(lastHullmodId)) {
@@ -410,23 +418,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                             (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
             onRefitScreenShipChanged(newShipInfo);
             currentShipInfo = newShipInfo;
-            shouldSync = true;
-        }
-        if (shouldSync) {
-            skipRefresh = true;
-            // Inside the (obfuscated) refit panel code, the fleet member's variant is temporarily set to the panel's variant
-            // before refreshCharacterStatEffects is called, and then immediately set back to the correct variant.
-            // We need to perform this sync only *after* the fleet member's variant is set back to the correct value.
-            // Otherwise, funky things happen, like the CR display not showing the space refit penalty properly, since
-            // it computes the difference based on the fleet member's variant (which would be the panel's variant if
-            // we performed the sync immediately).
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    syncRefitScreenWithVariant(false);
-                    skipRefresh = false;
-                }
-            }, 0f);
         }
     }
 

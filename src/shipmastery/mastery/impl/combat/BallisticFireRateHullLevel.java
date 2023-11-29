@@ -83,8 +83,8 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
                         Strings.Descriptions.BallisticFireRateHullLevelTitle,
                         String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc2, Utils.asPercent(effectLevel)),
                         false);
-                outlineEmitter.setAlphaMult(effectMult * 0.4f);
-                outlineEmitter.setWidthGrowth(effectMult * 20f);
+                outlineEmitter.alphaMult = effectMult * 0.4f;
+                outlineEmitter.widthGrowth = effectMult * 20f;
                 outlineInterval.advance(amount);
                 if (outlineInterval.intervalElapsed()) {
                     Particles.burst(outlineEmitter, 4);

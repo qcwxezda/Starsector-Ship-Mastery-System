@@ -60,7 +60,7 @@ public class ShipMasteryNPC extends BaseCampaignEventListener {
         int masteryLevel = Math.min(randIntUpToCommanderLevel(spec, commander, 0),
                                     randIntUpToCommanderLevel(spec, commander, 1));
         masteryLevel = Math.min(masteryLevel, randIntUpToCommanderLevel(spec, commander, 2));
-        masteryLevel = Math.min(masteryLevel, ShipMastery.getPlayerMaxMastery(spec));
+        masteryLevel = Math.min(masteryLevel, ShipMastery.getMaxMasteryLevel(spec));
         NavigableMap<Integer, Boolean> levelsMap = new TreeMap<>();
         for (int i = 1; i <= masteryLevel; i++) {
             List<MasteryEffect> effectsOption2 = ShipMastery.getMasteryEffects(spec, i, true);

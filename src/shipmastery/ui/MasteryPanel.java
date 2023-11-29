@@ -70,19 +70,15 @@ public class MasteryPanel {
         generateDialog(rootPanel, false, false);
     }
 
-    public void forceRefresh(boolean variantChanged, boolean useSavedScrollerLocation) {
+    public void forceRefresh(boolean shouldSync, boolean shouldSaveIfSynced, boolean useSavedScrollerLocation) {
         if (rootPanel == null) return;
 
-        handler.injectRefitScreen(variantChanged);
+        handler.injectRefitScreen(shouldSync, shouldSaveIfSynced);
         if (useSavedScrollerLocation) {
             savedMasteryDisplay.saveScrollerHeight();
         }
 
         generateDialog(rootPanel, true, useSavedScrollerLocation);
-    }
-
-    public void forceRefresh(boolean variantChanged) {
-        forceRefresh(variantChanged, false);
     }
 
     public void togglePanelVisibility(ButtonAPI button) {
@@ -341,7 +337,7 @@ public class MasteryPanel {
     UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation) {
         final ShipHullSpecAPI baseHullSpec = Utils.getRestoredHullSpec(root.getHullSpec());
         currentMastery = ShipMastery.getPlayerMasteryLevel(baseHullSpec);
-        maxMastery = ShipMastery.getPlayerMaxMastery(baseHullSpec);
+        maxMastery = ShipMastery.getMaxMasteryLevel(baseHullSpec);
 
         CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
         float shipDisplaySize = 250f;
@@ -465,7 +461,7 @@ public class MasteryPanel {
             }
         }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
 
-        TableRowData rowData = new TableRowData(spec.getId(), mpCost, creditsCost, cantBuildInReason);
+        TableRowData rowData = new TableRowData(spec.getId(), mpCost, creditsCost, cantBuildInReason, modular);
         List<?> rows = (List<?>) ReflectionUtils.invokeMethod(table, "getRows");
         Object lastRow = rows.get(rows.size() - 1);
         ReflectionUtils.invokeMethodExtWithClasses(
@@ -500,13 +496,15 @@ public class MasteryPanel {
         public int mpCost;
         public int creditsCost;
         public String cantBuildInReason;
+        public boolean isModular;
 
         // Can be built in <==> cantBuildInReason == null
-        public TableRowData(String id, int mp, int credits, @Nullable String cantBuildInReason) {
+        public TableRowData(String id, int mp, int credits, @Nullable String cantBuildInReason, boolean isModular) {
             hullModSpecId = id;
             mpCost = mp;
             creditsCost = credits;
             this.cantBuildInReason = cantBuildInReason;
+            this.isModular = isModular;
         }
     }
 
@@ -573,6 +571,6 @@ public class MasteryPanel {
             comparator = makeComparator(columnName);
         }
         currentColumnName = columnName;
-        forceRefresh(false);
+        forceRefresh(false, false, true);
     }
 }

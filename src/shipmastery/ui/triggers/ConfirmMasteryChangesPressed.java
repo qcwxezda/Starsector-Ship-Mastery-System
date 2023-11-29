@@ -52,6 +52,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
         }
 
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);
-        masteryPanel.forceRefresh(false, true);
+        masteryPanel.forceRefresh(true, false, true);
     }
 }

@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ModifyStatsFlat extends ModifyStatsEffect {
-    @Override
-    public void init(String... args) {
-        super.init(args);
-    }
 
     @Override
     float getModifiedAmount(ShipStat stat, float amount) {

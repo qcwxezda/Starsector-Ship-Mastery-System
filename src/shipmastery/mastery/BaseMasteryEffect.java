@@ -10,13 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import shipmastery.config.Settings;
 import shipmastery.util.SizeLimitedMap;
 import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 import java.util.*;
 
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
     /** Commander id -> strength modifier for that commander */
-    private final Map<String, MutableStat> strengthModifierMap = new SizeLimitedMap<>(Settings.MAX_CACHED_COMMANDERS);
+//    private final Map<String, MutableStat> strengthModifierMap = new SizeLimitedMap<>(Settings.MAX_CACHED_COMMANDERS);
     private float baseStrength = 1f;
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
@@ -59,7 +60,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship) {}
 
     @Override
-    public Float getSelectionWeight() {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 1f;
     }
 
@@ -109,38 +110,38 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         this.priority = priority;
     }
 
-    @Override
-    public final void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId) {
-        if (commander == null) return;
-        String id = commander.getId();
-        MutableStat modifier = strengthModifierMap.get(id);
-        if (modifier == null) {
-            modifier = new MutableStat(1f);
-            strengthModifierMap.put(id, modifier);
-        }
-        modifier.modifyMult(sourceId, fraction);
-    }
-
-    @Override
-    public final void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId) {
-        if (commander == null) return;
-        String id = commander.getId();
-        MutableStat modifier = strengthModifierMap.get(id);
-        if (modifier == null) {
-            modifier = new MutableStat(1f);
-            strengthModifierMap.put(id, modifier);
-        }
-        modifier.modifyPercent(sourceId, 100f*(fraction - 1f));
-    }
-
-    @Override
-    public final void unmodifyStrength(PersonAPI commander, String sourceId) {
-        if (commander == null) return;
-        String id = commander.getId();
-        MutableStat modifier = strengthModifierMap.get(id);
-        if (modifier == null) return;
-        modifier.unmodify(sourceId);
-    }
+//    @Override
+//    public final void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId) {
+//        if (commander == null) return;
+//        String id = commander.getId();
+//        MutableStat modifier = strengthModifierMap.get(id);
+//        if (modifier == null) {
+//            modifier = new MutableStat(1f);
+//            strengthModifierMap.put(id, modifier);
+//        }
+//        modifier.modifyMult(sourceId, fraction);
+//    }
+//
+//    @Override
+//    public final void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId) {
+//        if (commander == null) return;
+//        String id = commander.getId();
+//        MutableStat modifier = strengthModifierMap.get(id);
+//        if (modifier == null) {
+//            modifier = new MutableStat(1f);
+//            strengthModifierMap.put(id, modifier);
+//        }
+//        modifier.modifyPercent(sourceId, 100f*(fraction - 1f));
+//    }
+//
+//    @Override
+//    public final void unmodifyStrength(PersonAPI commander, String sourceId) {
+//        if (commander == null) return;
+//        String id = commander.getId();
+//        MutableStat modifier = strengthModifierMap.get(id);
+//        if (modifier == null) return;
+//        modifier.unmodify(sourceId);
+//    }
 
 
     @Override
@@ -151,11 +152,17 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     @Override
     public final float getStrength(PersonAPI commander) {
-        if (commander == null) return baseStrength;
-        String id = commander.getId();
+        float strength = baseStrength;
+        if (commander == null) return strength;
+        // local mod can be multiplicative (if negative) or additive (if positive)
+        strength = commander.getStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + getHullSpec().getHullId()).computeEffective(strength);
+        // global mod is always additive
+        strength += commander.getStats().getDynamic().getMod(GLOBAL_MASTERY_STRENGTH_MOD).computeEffective(baseStrength) - baseStrength;
+        return strength;
+/*        String id = commander.getId();
         MutableStat modifier = strengthModifierMap.get(id);
         if (modifier == null) return baseStrength;
-        return baseStrength * modifier.getModifiedValue();
+        return baseStrength * modifier.getModifiedValue();*/
     }
 
     public final float getStrengthForPlayer() {
@@ -164,15 +171,20 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     public final float getStrength(ShipAPI ship) {
         // ship.getFleetMember() may be null (for temporary ships, etc.) but stats.getFleetMember() isn't
-        return getStrength(ship.getMutableStats().getFleetMember());
+        return getStrength(ship.getVariant());
+    }
+
+    public final float getStrength(ShipVariantAPI variant) {
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
+        return info == null ? baseStrength : getStrength(info.commander);
     }
 
     public final float getStrength(MutableShipStatsAPI stats) {
-        return getStrength(stats.getFleetMember());
+        return getStrength(stats.getVariant());
     }
 
     public final float getStrength(FleetMemberAPI fm) {
-        return getStrength(Utils.getCommanderForFleetMember(fm));
+        return getStrength(fm.getVariant());
     }
 
     @Override

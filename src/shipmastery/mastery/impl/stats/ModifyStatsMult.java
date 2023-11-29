@@ -13,11 +13,6 @@ import java.util.Map;
 
 public class ModifyStatsMult extends ModifyStatsEffect {
     @Override
-    public void init(String... args) {
-        super.init(args);
-    }
-
-    @Override
     float getModifiedAmount(ShipStat stat, float amount) {
         return amount;
     }

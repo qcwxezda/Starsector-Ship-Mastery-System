@@ -42,6 +42,8 @@ AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.shipsystems.SystemRegenOnKill
 HEFExplosion,9,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
-LidarArrayRange,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
+LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
 LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
 BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
+WhileActiveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.WhileActiveMissileBoost
+PlasmaBurnCollision,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnCollision

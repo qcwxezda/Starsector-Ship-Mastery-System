@@ -32,7 +32,7 @@ public class UpgradeButtonPressed extends ActionListener {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                     Strings.UPGRADE_CONFIRMED_STR + ShipMastery.getPlayerMasteryLevel(spec), Misc.getStoryBrightColor());
             Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
-            masteryPanel.forceRefresh(true);
+            masteryPanel.forceRefresh(true, false, false);
         }
         else {
             beginConfirm(button);

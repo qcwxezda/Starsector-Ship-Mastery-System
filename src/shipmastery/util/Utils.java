@@ -6,6 +6,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
+import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetData;
@@ -170,6 +171,109 @@ public abstract class Utils {
 
     public static String asPercent(float num) {return percentFormat.format(num);}
 
+
+    public static class WeaponSlotCount {
+
+        public int sb,mb,lb,se,me,le,sm,mm,lm;
+
+        public WeaponSlotCount(int sb, int mb, int lb, int se, int me, int le, int sm, int mm, int lm) {
+            this.sb = sb;
+            this.mb = mb;
+            this.lb = lb;
+            this.se = se;
+            this.me = me;
+            this.le = le;
+            this.sm = sm;
+            this.mm = mm;
+            this.lm = lm;
+        }
+    }
+
+    /** Sum will be greater than total number of weapon slots since i.e. synergy counts as 1 energy and 1 missile */
+    public static WeaponSlotCount countWeaponSlots(ShipHullSpecAPI spec) {
+        int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
+        for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
+            switch (slot.getSlotSize()) {
+                case SMALL:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            sb++;
+                            break;
+                        case ENERGY:
+                            se++;
+                            break;
+                        case MISSILE:
+                            sm++;
+                            break;
+                        case UNIVERSAL:
+                            sb++;se++;sm++;
+                            break;
+                        case HYBRID:
+                            sb++;se++;
+                            break;
+                        case SYNERGY:
+                            se++;sm++;
+                            break;
+                        case COMPOSITE:
+                            sb++;sm++;
+                            break;
+                    }
+                    break;
+                case MEDIUM:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            mb++;
+                            break;
+                        case ENERGY:
+                            me++;
+                            break;
+                        case MISSILE:
+                            mm++;
+                            break;
+                        case UNIVERSAL:
+                            mb++;me++;mm++;
+                            break;
+                        case HYBRID:
+                            mb++;me++;
+                            break;
+                        case SYNERGY:
+                            me++;mm++;
+                            break;
+                        case COMPOSITE:
+                            mb++;mm++;
+                            break;
+                    }
+                    break;
+                case LARGE:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            lb++;
+                            break;
+                        case ENERGY:
+                            le++;
+                            break;
+                        case MISSILE:
+                            lm++;
+                            break;
+                        case UNIVERSAL:
+                            lb++;le++;lm++;
+                            break;
+                        case HYBRID:
+                            lb++;le++;
+                            break;
+                        case SYNERGY:
+                            le++;lm++;
+                            break;
+                        case COMPOSITE:
+                            lb++;lm++;
+                            break;
+                    }
+                    break;
+            }
+        }
+        return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
+    }
+
     public static String joinStringList(List<String> strings) {
         switch (strings.size()) {
             case 0: return "";
@@ -209,16 +313,9 @@ public abstract class Utils {
     }
 
     public static List<FleetMember> getMembersNoSync(CampaignFleetAPI fleet) {
+        FleetData data = (FleetData) fleet.getFleetData();
+        if (data == null) return new ArrayList<>();
         return ((FleetData) fleet.getFleetData()).getMembersNoSync();
-    }
-
-    public static PersonAPI getCommanderForFleetMember(FleetMemberAPI fm) {
-        if (fm == null) return null;
-        // First, check if it has a fleet commander for stats. This won't work in the refit screen, so
-        if (fm.getFleetCommanderForStats() != null) return fm.getFleetCommanderForStats();
-        // if no fleet commander for stats and on player side, assume it's a player ship in the refit screen
-        if (fm.getOwner() == 0) return Global.getSector().getPlayerPerson();
-        return null;
     }
 
     public static boolean wasProjectileRemoved(DamagingProjectileAPI proj) {

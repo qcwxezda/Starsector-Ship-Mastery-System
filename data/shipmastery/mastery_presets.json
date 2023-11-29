@@ -5,7 +5,7 @@
     "maxLevel": 10,
     "levels": {
       "2": "SModCapacity",
-      "4": "SModRemoval",
+      "4": "RestorationCost -0.5",
       "6": "SModCapacity",
       "8": {
         "A": "SModsOverCapacity",

@@ -54,7 +54,7 @@ public abstract class ShipMastery {
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
 
 
-    public static int getPlayerMaxMastery(ShipHullSpecAPI spec) {
+    public static int getMaxMasteryLevel(ShipHullSpecAPI spec) {
         String id = Utils.getRestoredHullSpecId(spec);
         HullMasteryData data = masteryMap.get(id);
         return data == null ? 0 : data.getMaxLevel();
@@ -449,7 +449,7 @@ public abstract class ShipMastery {
         if (data == null) return;
         Iterator<Map.Entry<Integer, Boolean>> itr = data.activeLevels.entrySet().iterator();
         while (itr.hasNext()) {
-            if (itr.next().getKey() > getPlayerMaxMastery(spec)) {
+            if (itr.next().getKey() > getMaxMasteryLevel(spec)) {
                 itr.remove();
             }
         }

@@ -61,16 +61,19 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
     }
 
     public float getIncreaseFor(ShipAPI ship, ShipHullSpecAPI spec) {
-        return getIncreaseFor(Utils.getCommanderForFleetMember(ship.getMutableStats().getFleetMember()), spec);
+        return adjustForHullSize(getStrength(ship), spec.getHullSize());
     }
 
     public float getIncreaseFor(PersonAPI commander, ShipHullSpecAPI spec) {
-        float increase = getStrength(commander);
-        switch (spec.getHullSize()) {
-            case FRIGATE: increase /= 6f; break;
-            case DESTROYER: increase /= 3f; break;
-            case CRUISER: increase *= 2f / 3f; break;
+        return adjustForHullSize(getStrength(commander), spec.getHullSize());
+    }
+
+    public float adjustForHullSize(float amount, ShipAPI.HullSize hullSize) {
+        switch (hullSize) {
+            case FRIGATE: amount /= 6f; break;
+            case DESTROYER: amount /= 3f; break;
+            case CRUISER: amount *= 2f / 3f; break;
         }
-        return Math.max(increase, -1f);
+        return Math.max(amount, -1f);
     }
 }

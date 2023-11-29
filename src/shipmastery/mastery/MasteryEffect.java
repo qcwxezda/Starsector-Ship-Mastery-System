@@ -15,6 +15,10 @@ import org.jetbrains.annotations.Nullable;
  *  {@code advanceInCombat} not supported, add an {@link com.fs.starfarer.api.combat.listeners.AdvanceableListener} instead.
  *  */
 public interface MasteryEffect {
+
+    String GLOBAL_MASTERY_STRENGTH_MOD = "sms_global_mastery_strength_mod";
+    String MASTERY_STRENGTH_MOD_FOR = "sms_mastery_strength_mod_";
+
     /** Applied immediately after constructor call.
      *  Effects are constructed once per session, in {@code onApplicationLoad}.
      *  One effect is constructed per hull type per tier, so if two hulls share a mastery effect, they *don't*
@@ -51,8 +55,9 @@ public interface MasteryEffect {
      * Return 0 (or less) to indicate that this mastery should not be normally selected.
      * Return {@code null} to indicate that this mastery is not applicable at all and should not be selected
      * even in randomizer mode.
+     * This is called before the effect is initialized -- therefore, before the effect's hull spec is set.
      */
-    Float getSelectionWeight();
+    Float getSelectionWeight(ShipHullSpecAPI spec);
 
     /** Will be displayed in the mastery panel. */
     void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
@@ -64,10 +69,7 @@ public interface MasteryEffect {
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */
     float getStrength(PersonAPI commander);
-    void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId);
-    void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId);
-    void unmodifyStrength(PersonAPI commander, String sourceId);
-
+    
     /** Called whenever a ship or module is selected in the refit screen and that ship/module's root ship shares
      *  this mastery's hull spec.
      *  Any global changes made should be reverted in {@link MasteryEffect#onEndRefit(ShipVariantAPI, boolean)}. */

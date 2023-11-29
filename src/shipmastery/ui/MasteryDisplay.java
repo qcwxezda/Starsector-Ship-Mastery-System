@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
@@ -111,7 +110,7 @@ public class MasteryDisplay implements CustomUIElement {
 
     @Override
     public void create(TooltipMakerAPI tooltip) {
-        int maxMastery = ShipMastery.getPlayerMaxMastery(rootSpec);
+        int maxMastery = ShipMastery.getMaxMasteryLevel(rootSpec);
 
         for (int i = 1; i <= maxMastery; i++) {
             CustomPanelAPI descriptionPanel1 = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);

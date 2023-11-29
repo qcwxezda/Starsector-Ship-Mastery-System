@@ -57,16 +57,20 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     }
 
     public float getIncreaseFor(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize) {
-        return getIncreaseFor(Utils.getCommanderForFleetMember(stats.getFleetMember()), hullSize);
+        return adjustForHullSize(getStrength(stats), hullSize);
     }
 
     public float getIncreaseFor(PersonAPI commander, ShipAPI.HullSize hullSize) {
-        float increase = getStrength(commander);
+        return adjustForHullSize(getStrength(commander), hullSize);
+
+    }
+
+    public float adjustForHullSize(float value, ShipAPI.HullSize hullSize) {
         switch (hullSize) {
-            case FRIGATE: increase *= 0.25f; break;
-            case DESTROYER: increase *= 0.5f; break;
-            case CRUISER: increase *= 0.75f; break;
+            case FRIGATE: value *= 0.25f; break;
+            case DESTROYER: value *= 0.5f; break;
+            case CRUISER: value *= 0.75f; break;
         }
-        return increase;
+        return value;
     }
 }

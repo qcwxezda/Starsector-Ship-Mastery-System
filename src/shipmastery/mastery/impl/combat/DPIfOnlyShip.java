@@ -44,16 +44,20 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     }
 
     public float getIncreaseFor(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize) {
-        return getIncreaseFor(Utils.getCommanderForFleetMember(stats.getFleetMember()), hullSize);
+        return adjustForHullSize(getStrength(stats), hullSize);
     }
 
     public float getIncreaseFor(PersonAPI commander, ShipAPI.HullSize hullSize) {
-        float increase = getStrength(commander);
-        switch (Utils.hullSizeToInt(hullSize)) {
-            case 1: increase *= 0.75f; break;
-            case 2: increase *= 0.5f; break;
-            case 3: increase *= 0.25f; break;
-        }
-        return Math.max(increase, -1f);
+        return adjustForHullSize(getStrength(commander), hullSize);
     }
+
+    public float adjustForHullSize(float amount, ShipAPI.HullSize hullSize) {
+        switch (Utils.hullSizeToInt(hullSize)) {
+            case 1: amount *= 0.75f; break;
+            case 2: amount *= 0.5f; break;
+            case 3: amount *= 0.25f; break;
+        }
+        return Math.max(amount, -1f);
+    }
+
 }
