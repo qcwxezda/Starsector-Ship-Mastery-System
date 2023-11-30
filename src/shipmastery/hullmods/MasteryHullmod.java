@@ -1,11 +1,13 @@
 package shipmastery.hullmods;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import shipmastery.ShipMasteryNPC;
+import shipmastery.campaign.FleetHandler;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
@@ -40,17 +42,16 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         return true;
     }
 
+
+    public static boolean fixPlayerVariantsNextSync = false;
+
     @Override
     public void onFleetSync(final CampaignFleetAPI fleet) {
         if (noSync || fleet == null) {
             return;
         }
-        // Ignore NPC fleets that aren't interacting with the player
-        if (!fleet.isPlayerFleet()) {
-            if (fleet.getBattle() == null || !fleet.getBattle().isPlayerInvolved()) {
-                return;
-            }
-        }
+        if (!fleet.isPlayerFleet()) return;
+
         // Make sure every ship in the fleet has this hullmod installed
         // Do it outside this call stack as changing the ship immediately actually causes some unexpected changes
         // i.e. the "you just purchased a ship" screen no longer appears as the purchased ship is
@@ -58,56 +59,50 @@ public class MasteryHullmod extends BaseHullMod implements HullModFleetEffect {
         DeferredActionPlugin.performLater(new Action() {
             @Override
             public void perform() {
-                // Guaranteed not null
-                PersonAPI commander = fleet.getCommander();
                 for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
-                    ShipVariantAPI variant = fm.getVariant();
-                    fm.setVariant(addHandlerMod(variant, variant, commander), false, false);
-                    // Add mastery indicator hullmods to NPC fleets
-                    if (!fleet.isPlayerFleet()) {
-                        NavigableMap<Integer, Boolean>
-                                levels = ShipMasteryNPC.getActiveMasteriesForCommander(commander, fm.getHullSpec());
-                        if (!levels.isEmpty()) {
-                            int maxLevel = levels.lastEntry().getKey();
-                            if (maxLevel >= 1) {
-                                maxLevel = Math.min(maxLevel, 9);
-                                fm.getVariant().addMod("sms_npcIndicator" + maxLevel);
-                            }
-                        }
-                    }
-                }
-
-                if (fleet.isPlayerFleet()) {
-                    for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
+                    if (fixPlayerVariantsNextSync) {
+                        // This just sets hasOpAffectingMods to null, forcing the variant to
+                        // recompute its statsForOpCosts (e.g. number of hangar bays)
+                        // (Normally this is naturally set when a hullmod is manually added or removed)
+                        fm.getVariant().addPermaMod( "sms_masteryHandler");
                         Utils.fixVariantInconsistencies(fm.getVariant());
                     }
+                    ShipVariantAPI variant = fm.getVariant();
+                    if (!variant.hasHullMod("sms_masteryHandler") || VariantLookup.getVariantInfo(variant) == null) {
+                        fm.setVariant(FleetHandler.addHandlerMod(variant, variant, Global.getSector().getPlayerPerson()), false, false);
+                    }
                 }
+                fixPlayerVariantsNextSync = false;
             }
         }, 0f);
-    }
 
-    /** Modifies and returns the given variant if it's not a stock, goal, or empty variant
-     *  (those can be duplicated across multiple ships).
-     *  Otherwise, returns a modified copy of that variant. */
-    ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, PersonAPI commander) {
-        if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
-            variant = variant.clone();
-            variant.setSource(VariantSource.REFIT);
-        }
-        VariantLookup.addVariantInfo(variant, root, commander);
-        // Bypass the arbitrary checks in removeMod since we're adding it back anyway
-        // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
-        variant.getHullMods().remove("sms_masteryHandler");
-        variant.getHullMods().add("sms_masteryHandler");
-        // This also sets hasOpAffectingMods to null, forcing variants to
-        // recompute their statsForOpCosts
-        // (Normally this is naturally set when a hullmod is manually added or removed)
-        variant.addPermaMod("sms_masteryHandler");
-        // Add the tracker to any modules as well
-        for (String id : variant.getModuleSlots()) {
-            variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, commander));
-        }
-        return variant;
+
+
+        // Ignore NPC fleets that aren't interacting with the player
+//        if (!fleet.isPlayerFleet()) {
+//            if (fleet.getBattle() == null || !fleet.getBattle().isPlayerInvolved()) {
+//                return;
+//            }
+//        }
+
+//        DeferredActionPlugin.performLater(new Action() {
+//            @Override
+//            public void perform() {
+//                // Guaranteed not null
+//                PersonAPI commander = fleet.getCommander();
+//                for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
+//                    ShipVariantAPI variant = fm.getVariant();
+//
+//                }
+//
+//                if (fleet.isPlayerFleet() && fixPlayerVariantsNextSync) {
+//                    for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
+//                        Utils.fixVariantInconsistencies(fm.getVariant());
+//                    }
+//                    fixPlayerVariantsNextSync = false;
+//                }
+//            }
+//        }, 0f);
     }
 
     @Override

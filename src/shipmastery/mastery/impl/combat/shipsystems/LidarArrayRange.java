@@ -9,10 +9,10 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class LidarArrayRange extends BaseMasteryEffect {
+public class LidarArrayRange extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LidarArrayRange).params(Strings.Descriptions.LidarArrayName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LidarArrayRange).params(systemName, Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override

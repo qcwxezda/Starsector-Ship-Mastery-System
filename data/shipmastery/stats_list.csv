@@ -51,3 +51,4 @@ PhaseCloakCooldown,phase cloak cooldown time,3,-0.25,,shipmastery.stats.combat.P
 PhaseSpeedAcceleration,top speed and acceleration when phased,,25,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
 PhaseCloakCost,phase cloak activation and upkeep costs,,-0.2,,shipmastery.stats.combat.PhaseCloakCost
 PhaseTimeMult,local timeflow when phased,5,0.5,,shipmastery.stats.combat.PhaseTimeMult
+ZeroFluxSpeedBoost,the zero-flux speed boost,3,0.2,,shipmastery.stats.combat.ZeroFluxSpeedBoost

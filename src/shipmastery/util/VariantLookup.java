@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.Misc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,9 +15,7 @@ public class VariantLookup extends BaseCampaignEventListener {
     private final Map<String, VariantInfo> variantInfoMap = new HashMap<>();
     public static final String UID_TAG = "shipmastery_uid_";
     public static final String UID_INDICATOR_TAG = "shipmastery_has_uid";
-    public static final String INSTANCE_KEY = "$shipmastery_CommanderLookup";
-
-    private int nextId = 0;
+    public static final String INSTANCE_KEY = "$shipmastery_VariantLookup";
 
     public VariantLookup(boolean permaRegister) {
         super(permaRegister);
@@ -62,7 +61,7 @@ public class VariantLookup extends BaseCampaignEventListener {
 
     private String generateUID(ShipVariantAPI variant) {
         variant.addTag(UID_INDICATOR_TAG);
-        String id = UID_TAG + nextId++;
+        String id = UID_TAG + Misc.genUID();
         variant.addTag(id);
         return id;
     }

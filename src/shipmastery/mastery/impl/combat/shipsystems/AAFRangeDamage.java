@@ -11,11 +11,11 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class AAFRangeDamage extends BaseMasteryEffect {
+public class AAFRangeDamage extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {100f, 200f, 300f, 400f};
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.AAFRangeDamage).params(Strings.Descriptions.AAFName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.AAFRangeDamage).params(systemName, Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override

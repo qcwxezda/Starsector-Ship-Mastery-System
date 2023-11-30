@@ -11,13 +11,13 @@ import shipmastery.util.Utils;
 
 import java.util.List;
 
-public class RecallDeviceRegeneration extends BaseMasteryEffect {
+public class RecallDeviceRegeneration extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceRegeneration)
                                  .params(
-                                         Strings.Descriptions.RecallDeviceName,
+                                         systemName,
                                          Utils.asPercent(getStrengthForPlayer() / 6f),
                                          Utils.asPercent(getStrengthForPlayer()));
     }

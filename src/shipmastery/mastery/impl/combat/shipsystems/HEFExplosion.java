@@ -27,13 +27,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class HEFExplosion extends BaseMasteryEffect {
+public class HEFExplosion extends ShipSystemEffect {
 
     static final Color trailColor = new Color(1f, 0.7f, 0.7f, 1f);
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFExplosion).params(Strings.Descriptions.HEFName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFExplosion).params(systemName);
     }
 
     @Override

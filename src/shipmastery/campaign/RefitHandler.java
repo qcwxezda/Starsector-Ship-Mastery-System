@@ -1,21 +1,20 @@
 package shipmastery.campaign;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import com.fs.starfarer.api.campaign.CoreUIAPI;
-import com.fs.starfarer.api.campaign.CoreUITabId;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
+import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
+import com.fs.starfarer.api.campaign.listeners.FleetSpawnListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
-import com.fs.state.AppDriver;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -28,14 +27,11 @@ import shipmastery.ui.triggers.MasteryButtonPressed;
 import shipmastery.util.*;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
-public class RefitHandler implements CoreUITabListener, EveryFrameScript, CharacterStatsRefreshListener {
-    boolean isFirstFrame = true;
+public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshListener {
     WeakReference<CoreUIAPI> coreUI = new WeakReference<>(null);
-    float epsilonTime = 0.00001f;
     boolean insideRefitPanel = false;
     static final String MASTERY_BUTTON_TAG = "sms_mastery_button_tag";
 
@@ -45,66 +41,6 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
     // Keep track of the current ship's hull spec and active mastery set in the refit panel
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
     ShipInfo currentShipInfo = new ShipInfo(null, null);
-
-    @Override
-    public boolean isDone() {
-        return false;
-    }
-
-    @Override
-    public boolean runWhilePaused() {
-        return true;
-    }
-
-    @Override
-    public void advance(float amount) {
-        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
-
-        if (isFirstFrame) {
-            // Since the coreUI's "screenPanel" isn't created on the first frame, trying to do anything with the UI
-            // on the first frame will cause an NPE. Therefore, we will initialize the screenPanel before trying
-            // to call findAllClasses, if it hasn't been initialized already.
-            try {
-                CampaignUIAPI campaignUI = Global.getSector().getCampaignUI();
-                Field field = campaignUI.getClass().getDeclaredField("screenPanel");
-                field.setAccessible(true);
-                if (field.get(campaignUI) == null) {
-                    field.set(campaignUI, field.getType().getConstructor(float.class, float.class)
-                                               .newInstance(
-                                                       Global.getSettings().getScreenWidth(),
-                                                       Global.getSettings().getScreenHeight()));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            isFirstFrame = false;
-        }
-
-        if (!ClassRefs.foundAllClasses()) {
-            Global.getSector().getCampaignUI().setDisallowPlayerInteractionsForOneFrame();
-            ClassRefs.findAllClasses();
-        }
-
-        if (!insideRefitPanel || Global.getSector() == null || Global.getSector().getCampaignUI() == null) return;
-
-        CampaignUIAPI ui = Global.getSector().getCampaignUI();
-        if (!CoreUITabId.REFIT.equals(ui.getCurrentCoreTab())) {
-            insideRefitPanel = false;
-        }
-
-        // Due to a bug, if the player ESCs out of the refit screen in a market, the core tab is still shown as REFIT
-        // even though it's been closed. To combat this, check if the savedOptionList is empty. If it is, we're still
-        // in the refit screen; otherwise, we've ESCed out of the refit screen.
-        else if (ui.getCurrentInteractionDialog() != null
-                && ui.getCurrentInteractionDialog().getOptionPanel() != null
-                && !ui.getCurrentInteractionDialog().getOptionPanel().getSavedOptionList().isEmpty()) {
-            insideRefitPanel = false;
-        }
-
-        if (!insideRefitPanel) {
-            checkIfRefitShipChanged();
-        }
-    }
 
     private ShipAPI lastSelectedRealShip;
     /** (Currently selected module, last selected ship with a fleet member attached)
@@ -361,6 +297,7 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
         }
     }
 
+    interface CoreInteractionListenerExt extends CoreInteractionListener {}
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
         if (CoreUITabId.REFIT.equals(id)) {
@@ -369,11 +306,35 @@ public class RefitHandler implements CoreUITabListener, EveryFrameScript, Charac
                 public void perform() {
                     injectRefitScreen(false);
                     checkIfRefitShipChanged();
+                    UIPanelAPI core = ReflectionUtils.getCoreUI();
+                    final CoreInteractionListener origListener = (CoreInteractionListener) ReflectionUtils.invokeMethod(core, "getListener");
+                    if (!(origListener instanceof CoreInteractionListenerExt)) {
+                        ReflectionUtils.invokeMethodExtWithClasses(
+                                core,
+                                "setListener",
+                                false,
+                                new Class<?>[]{CoreInteractionListener.class},
+                                new CoreInteractionListenerExt() {
+                                    @Override
+                                    public void coreUIDismissed() {
+                                        if (origListener != null) {
+                                            origListener.coreUIDismissed();
+                                        }
+                                        insideRefitPanel = false;
+                                        checkIfRefitShipChanged();
+                                    }
+                                });
+                    }
                 }
             }, 0f);
             insideRefitPanel = true;
         }
+        else {
+            insideRefitPanel = false;
+            checkIfRefitShipChanged();
+        }
     }
+
 
     /** This is called every time the active ship in the refit screen changes. */
     @Override

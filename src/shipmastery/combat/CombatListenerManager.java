@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.listeners.FleetMemberDeploymentListener;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -27,6 +28,8 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     @Override
     public void init(CombatEngineAPI engine) {
+        // Could use a FleetMemberDeployedListener, but it doesn't track refit simulation ship or stations
+        // (possibly all ships with modules?)
         this.engine = engine;
         engine.getListenerManager().addListener(flagshipTracker);
     }

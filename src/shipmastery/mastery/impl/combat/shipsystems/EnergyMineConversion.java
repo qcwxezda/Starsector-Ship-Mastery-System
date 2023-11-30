@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class EnergyMineConversion extends BaseMasteryEffect {
+public class EnergyMineConversion extends ShipSystemEffect {
 
     static final float EFFECT_RADIUS = 400f;
     static final int NUM_ARCS = 10;
@@ -31,7 +31,7 @@ public class EnergyMineConversion extends BaseMasteryEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(Strings.Descriptions.EnergyMineConversionMineStrike);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(systemName);
     }
 
     @Override

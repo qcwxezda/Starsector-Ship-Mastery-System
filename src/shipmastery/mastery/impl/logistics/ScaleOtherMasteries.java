@@ -19,7 +19,7 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
 
     @Override
     public void onActivate(PersonAPI commander) {
-        float mult = getMult(null); // Always use base strength, this effect cannot be scaled
+        float mult = getMult((PersonAPI) null); // Always use base strength, this effect cannot be scaled
         if (mult >= 1f) {
             commander.getStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + getHullSpec().getHullId()).modifyPercent(id, 100f * (mult - 1f));
         }

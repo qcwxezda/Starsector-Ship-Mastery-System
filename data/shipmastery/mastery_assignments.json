@@ -92,8 +92,17 @@
   "odyssey": {
     "levels": {
       "9": {
-        "A": "PlasmaBurnCollision",
-        "B": "WhileActiveMissileBoost"
+        "A": "PlasmaBurnEngineRepair",
+        "B": ["ZeroFluxResidue", "ModifyStatsMult 1 ZeroFluxSpeedBoost"]
+      }
+    }
+  },
+
+  "onslaught": {
+    "levels": {
+      "9": {
+        "A": "HitAngleDR",
+        "B": "TPCUpgrade"
       }
     }
   }

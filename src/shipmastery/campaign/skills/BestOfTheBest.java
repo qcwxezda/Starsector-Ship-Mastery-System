@@ -30,29 +30,11 @@ public class BestOfTheBest {
         @Override
         public void apply(MutableCharacterStatsAPI stats, String id, float level) {
             stats.getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(id, 100f * INCREASE_AMOUNT);
-//            if (stats.getFleet() == null) return;
-//            for (FleetMemberAPI fm : Utils.getMembersNoSync(stats.getFleet())) {
-//                ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
-//                for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-//                    for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(spec, i)) {
-//                        effect.modifyStrengthAdditive(fm.getFleetCommander(), INCREASE_AMOUNT + 1f, id);
-//                    }
-//                }
-//            }
         }
 
         @Override
         public void unapply(MutableCharacterStatsAPI stats, String id) {
             stats.getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).unmodify(id);
-//            if (stats.getFleet() == null) return;
-//            for (FleetMemberAPI fm : Utils.getMembersNoSync(stats.getFleet())) {
-//                ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
-//                for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-//                    for (MasteryEffect effect : ShipMastery.getMasteryEffectsBothOptions(spec, i)) {
-//                        effect.unmodifyStrength(fm.getFleetCommander(), id);
-//                    }
-//                }
-//            }
         }
     }
 }

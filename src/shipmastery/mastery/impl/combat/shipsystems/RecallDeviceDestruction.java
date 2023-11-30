@@ -11,7 +11,6 @@ import particleengine.Emitter;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.fx.JitterEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
@@ -20,14 +19,16 @@ import shipmastery.util.Utils;
 import java.awt.*;
 import java.util.Iterator;
 
-public class RecallDeviceDestruction extends BaseMasteryEffect {
-
-    static final float[] EFFECT_RADIUS = new float[] {400f, 500f, 600f, 700f};
+public class RecallDeviceDestruction extends ShipSystemEffect {
+    public float getEffectRadius(PersonAPI commander, ShipAPI.HullSize hullSize) {
+        float strength = getStrength(commander);
+        return strength + Utils.hullSizeToInt(hullSize) * strength/4f;
+    }
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float radius = selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(EFFECT_RADIUS[Utils.hullSizeToInt(selectedModule.getHullSize())]);
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceDestruction).params(Strings.Descriptions.RecallDeviceName, (int) radius);
+        float radius = getEffectRadius(Global.getSector().getPlayerPerson(), selectedModule.getHullSize());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceDestruction).params(systemName, (int) radius);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class RecallDeviceDestruction extends BaseMasteryEffect {
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
         if (ship == null || ship.getSystem() == null || !"recalldevice".equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(RecallDeviceDestructionScript.class)) {
-            ship.addListener(new RecallDeviceDestructionScript(ship));
+            ship.addListener(new RecallDeviceDestructionScript(ship, getEffectRadius(commander, ship.getHullSize())));
         }
     }
 
@@ -53,9 +54,9 @@ public class RecallDeviceDestruction extends BaseMasteryEffect {
         final ShipAPI ship;
         final float effectRadius;
 
-        RecallDeviceDestructionScript(ShipAPI ship) {
+        RecallDeviceDestructionScript(ShipAPI ship, float effectRadius) {
             this.ship = ship;
-            effectRadius = ship.getMutableStats().getSystemRangeBonus().computeEffective(EFFECT_RADIUS[Utils.hullSizeToInt(ship.getHullSize())]);
+            this.effectRadius = effectRadius;
         }
 
         @Override

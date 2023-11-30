@@ -6,6 +6,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ShipMasteryNPC;
+import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.VariantLookup;
@@ -32,14 +33,21 @@ public class ModPlugin extends BaseModPlugin {
         }
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
+        ClassLoader classLoader = makeClassLoader();
         try {
-            EveryFrameScript refitModifier = (EveryFrameScript) getClassLoader().loadClass("shipmastery.campaign.RefitHandler").newInstance();
-            Global.getSector().addTransientScript(refitModifier);
+            Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
             if (!listeners.hasListenerOfClass(RefitHandler.class)) {
                 listeners.addListener(refitModifier, true);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to add refit tab modifier", e);
+        }
+
+        try {
+            EveryFrameScript initializer = (EveryFrameScript) classLoader.loadClass("shipmastery.campaign.Initializer").newInstance();
+            Global.getSector().addTransientScript(initializer);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add initializer", e);
         }
 
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
@@ -50,19 +58,21 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
 
+        listeners.addListener(new FleetHandler(), true);
         Global.getSector().addTransientListener(new ShipMasteryNPC(false));
         ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
     }
 
     private static final String[] reflectionWhitelist = new String[] {
             "shipmastery.campaign.RefitHandler",
+            "shipmastery.campaign.Initializer",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",
             "shipmastery.stats.logistics"
     };
 
-    private static ReflectionEnabledClassLoader getClassLoader() {
+    private static ReflectionEnabledClassLoader makeClassLoader() {
         URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
         return new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
     }

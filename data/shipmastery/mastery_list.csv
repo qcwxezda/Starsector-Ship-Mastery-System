@@ -7,7 +7,7 @@ SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.im
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
 SModRemoval,4,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
-SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,2,shipmastery.mastery.impl.logistics.SModsOverCapacity
+SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1.75,shipmastery.mastery.impl.logistics.SModsOverCapacity
 ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
@@ -30,14 +30,17 @@ DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,ship
 PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,6,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
+ZeroFluxResidue,7,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
 BallisticFireRateHullLevel,9,combat unique,,0.2,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
+HitAngleDR,7,combat negative_strength_allowed,,-0.25,shipmastery.mastery.impl.combat.HitAngleDR
+TPCUpgrade,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.TPCUpgrade
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
 RecallDeviceRegeneration,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
-RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
+RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,400,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
 AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.shipsystems.SystemRegenOnKill
@@ -46,4 +49,4 @@ LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystem
 LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
 BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
 WhileActiveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.WhileActiveMissileBoost
-PlasmaBurnCollision,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnCollision
+PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair

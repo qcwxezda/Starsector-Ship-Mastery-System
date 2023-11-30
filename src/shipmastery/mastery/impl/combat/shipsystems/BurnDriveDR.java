@@ -20,10 +20,10 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class BurnDriveDR extends BaseMasteryEffect {
+public class BurnDriveDR extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveDR).params(Strings.Descriptions.BurnDriveName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveDR).params(systemName, Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override

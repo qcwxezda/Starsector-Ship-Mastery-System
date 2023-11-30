@@ -2,9 +2,7 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.MutableValue;
@@ -294,6 +292,7 @@ public abstract class Utils {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasShield(ShipHullSpecAPI spec) {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
@@ -318,6 +317,7 @@ public abstract class Utils {
         return ((FleetData) fleet.getFleetData()).getMembersNoSync();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean wasProjectileRemoved(DamagingProjectileAPI proj) {
         if (proj instanceof Missile) {
             return ((Missile) proj).wasRemoved();

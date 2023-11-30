@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -126,5 +127,34 @@ public abstract class CollisionUtils {
             points.add(pt);
         }
         return points;
+    }
+
+    public static BoundsAPI.SegmentAPI getSegmentForHitPoint(ShipAPI ship, Vector2f pt, @Nullable BoundsAPI.SegmentAPI checkFirst) {
+
+        // Easy optimization, for beams etc. the segment hit tends to stay the same
+        if (checkFirst != null && isPointOnSegment(pt, checkFirst)) {
+            return checkFirst;
+        }
+
+        BoundsAPI bounds = ship.getExactBounds();
+        if (bounds == null) return null;
+
+        bounds.update(ship.getLocation(), ship.getFacing());
+
+        for (BoundsAPI.SegmentAPI segment : bounds.getSegments()) {
+            if (segment == checkFirst) continue;
+            if (isPointOnSegment(pt, segment)) {
+                return segment;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPointOnSegment(Vector2f pt, BoundsAPI.SegmentAPI segment) {
+        Vector2f a = segment.getP1();
+        Vector2f b = segment.getP2();
+        float length = MathUtils.dist(a, b);
+        float x = MathUtils.dist(a, pt), y = MathUtils.dist(pt, b);
+        return Math.abs(length - x - y) < 0.01f;
     }
 }

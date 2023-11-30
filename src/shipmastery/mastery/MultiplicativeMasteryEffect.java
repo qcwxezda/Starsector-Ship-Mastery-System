@@ -3,6 +3,7 @@ package shipmastery.mastery;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,10 @@ public abstract class MultiplicativeMasteryEffect extends BaseMasteryEffect {
     }
 
     public final float getIncrease(PersonAPI commander) {return Math.max(getStrength(commander), -1f);}
+
+    public final float getMult(ShipAPI ship) {
+        return Math.max(1f + getStrength(ship), 0f);
+    }
 
     public final float getMultPlayer() {return getMult(Global.getSector().getPlayerPerson());}
 

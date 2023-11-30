@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.ShipMasteryNPC;
+import shipmastery.campaign.FleetHandler;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 
@@ -113,7 +114,7 @@ public abstract class MasteryUtils {
 
     public static void applyAllActiveMasteryEffects(PersonAPI commander, ShipHullSpecAPI spec, MasteryAction action) {
         if (commander == null) return;
-        Map<Integer, Boolean> levelsToApply = ShipMasteryNPC.getActiveMasteriesForCommander(commander, spec);
+        Map<Integer, Boolean> levelsToApply = FleetHandler.getActiveMasteriesForCommander(commander, spec);
         applyMasteryEffects(spec, levelsToApply, false, action);
     }
 

@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -25,7 +26,7 @@ public class HighFrequencyMotes extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HighFrequencyMotes)
-                                 .params(Strings.Descriptions.HighFrequencyMotesName);
+                                 .params(Global.getSettings().getHullModSpec(HullMods.HIGH_FREQUENCY_ATTRACTOR).getDisplayName());
     }
 
     @Override

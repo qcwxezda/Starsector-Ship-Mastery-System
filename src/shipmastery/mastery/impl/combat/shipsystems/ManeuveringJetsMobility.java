@@ -20,10 +20,10 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManeuveringJetsMobility extends BaseMasteryEffect {
+public class ManeuveringJetsMobility extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsMobility).params(Strings.Descriptions.ManeuveringJetsName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsMobility).params(systemName);
     }
 
     @Override
@@ -56,15 +56,12 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
         final ShipAPI ship;
         final float mult;
         final String id;
-        final Map<ShipEngineControllerAPI.ShipEngineAPI, Color> originalColors = new HashMap<>();
+        static final Color color = new Color(185, 255, 75);
 
         public ManeuveringJetsMobilityScript(ShipAPI ship, float mult, String id) {
             this.ship = ship;
             this.mult = mult;
             this.id = id;
-            for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
-                originalColors.put(engine, engine.getEngineColor());
-            }
         }
 
         @Override
@@ -72,11 +69,6 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
             ship.getMutableStats().getDeceleration().unmodify(id);
             ship.getMutableStats().getAcceleration().unmodify(id);
             ship.getMutableStats().getTurnAcceleration().unmodify(id);
-            for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
-                // shouldn't happen, but just in case
-                if (!originalColors.containsKey(engine)) continue;
-                engine.getEngineSlot().setColor(originalColors.get(engine));
-            }
         }
 
         @Override
@@ -86,12 +78,7 @@ public class ManeuveringJetsMobility extends BaseMasteryEffect {
             ship.getMutableStats().getDeceleration().modifyMult(id, 2f*effectAmount);
             ship.getMutableStats().getAcceleration().modifyMult(id, effectAmount);
             ship.getMutableStats().getTurnAcceleration().modifyMult(id, effectAmount);
-
-            for (ShipEngineControllerAPI.ShipEngineAPI engine : ship.getEngineController().getShipEngines()) {
-                // shouldn't happen, but just in case
-                if (!originalColors.containsKey(engine)) continue;
-                engine.getEngineSlot().setColor(Utils.mixColor(originalColors.get(engine), new Color(185, 255, 75), effectLevel));
-            }
+            ship.getEngineController().fadeToOtherColor(id, color, null, effectLevel, 1f);
 
             Global.getCombatEngine().maintainStatusForPlayerShip(
                     id,

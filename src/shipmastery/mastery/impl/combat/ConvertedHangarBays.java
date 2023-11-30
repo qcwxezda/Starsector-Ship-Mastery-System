@@ -39,6 +39,6 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ConvertedHangarBays).params(Strings.Descriptions.ConvertedHangarName, getIncreasePlayer());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ConvertedHangarBays).params(Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName(), getIncreasePlayer());
     }
 }
