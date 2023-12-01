@@ -29,7 +29,9 @@ public class BurnDriveDR extends ShipSystemEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.BurnDriveDRPost, 0f);
+        if (selectedModule.getNumFighterBays() > 0) {
+            tooltip.addPara(Strings.Descriptions.BurnDriveDRPost, 0f);
+        }
     }
 
     @Override

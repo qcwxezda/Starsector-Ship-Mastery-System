@@ -1,11 +1,11 @@
 {
     "masterVersionFile":"https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/master/shipmastery.version",
-    "modName":"ShipMasterySystem",
+    "modName":"Ship Mastery System",
     "modThreadId":-1,
     "modVersion":
     {
         "major":0,
-        "minor":2,
+        "minor":3,
         "patch":0,
     },
     "directDownloadURL":"https://github.com/qcwxezda/Starsector-Ship-Mastery-System/releases/latest/download/ShipMasterySystem.zip",

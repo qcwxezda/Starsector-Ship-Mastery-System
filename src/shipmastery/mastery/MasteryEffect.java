@@ -93,6 +93,9 @@ public interface MasteryEffect {
     /** Note: There may be more than 2 possible values for {@code commander} due to the ability for fleets to merge prior to combat. */
     void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship);
 
+    /** Whether this effect modifies the variant in such a way that it becomes suboptimal or illegal without an additional autofit round.
+     *  E.g. if it adds hangar bays or modifies OP costs. */
+    boolean triggersAutofit();
 
     /** Affects order of operations when applying multiple mastery effects simultaneously. Default priority is 0. */
     int getPriority();

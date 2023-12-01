@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.MutableValue;
@@ -11,6 +12,7 @@ import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
+import shipmastery.campaign.PlayerFleetHandler;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -304,6 +306,16 @@ public abstract class Utils {
             for (int i = variant.getStatsForOpCosts().getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
                 variant.setWingId(i, null);
             }
+        }
+    }
+
+    public static void fixPlayerFleetInconsistencies() {
+        for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
+            // This just sets hasOpAffectingMods to null, forcing the variant to
+            // recompute its statsForOpCosts (e.g. number of hangar bays)
+            // (Normally this is naturally set when a hullmod is manually added or removed)
+            fm.getVariant().addPermaMod("sms_masteryHandler");
+            Utils.fixVariantInconsistencies(fm.getVariant());
         }
     }
 

@@ -2,7 +2,7 @@
     "id": "shipmasterysystem",
     "name": "Ship Mastery System",
     "author": "qcwxezda",
-    "version": {"major":0, "minor":2, "patch":0},
+    "version": {"major":0, "minor":3, "patch":0},
     "dependencies": [],
     "description": "Gain mastery in ship hulls to unlock s-mod slots and additional bonuses. Start with 0 s-mod slots and a minor debuff.",
     "gameVersion": "0.96a-RC10",

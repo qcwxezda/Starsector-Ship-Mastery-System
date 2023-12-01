@@ -15,4 +15,9 @@ public class NumFighterBays extends ShipStat {
         if (spec.isCivilianNonCarrier()) return 0f;
         return spec.getFighterBays();
     }
+
+    @Override
+    public boolean triggersAutofit() {
+        return true;
+    }
 }

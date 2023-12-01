@@ -1,0 +1,10 @@
+# If LunaLib is enabled, LunaLib settings will override the settings here
+{
+  "doubleClickInterval": 0.75,
+  "showMpAndLevelInRefit": true,
+  "npcMasteryDensity": 0.5,
+  "npcMasteryQuality": 0.5,
+  "npcMasteryMaxLevelModifier": -3,
+  "npcMasteryFlagshipBonus": 2,
+  "npcSmodQualityMod": -0.7
+}

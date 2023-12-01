@@ -4,10 +4,12 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import lunalib.lunaSettings.LunaSettings;
 import shipmastery.ShipMastery;
-import shipmastery.ShipMasteryNPC;
 import shipmastery.campaign.FleetHandler;
+import shipmastery.campaign.PlayerFleetHandler;
 import shipmastery.campaign.RefitHandler;
+import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.VariantLookup;
 
@@ -20,6 +22,15 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() throws Exception {
         ShipMastery.loadMasteryData();
+
+        if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
+            Settings.SettingsListener settingsListener = new Settings.SettingsListener();
+            LunaSettings.addSettingsListener(settingsListener);
+            settingsListener.settingsChanged("shipmasterysystem");
+        }
+        else {
+            Settings.loadSettingsFromJson();
+        }
     }
 
     @Override
@@ -58,9 +69,15 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
 
-        listeners.addListener(new FleetHandler(), true);
-        Global.getSector().addTransientListener(new ShipMasteryNPC(false));
-        ShipMasteryNPC.CACHED_NPC_FLEET_MASTERIES.clear();
+        FleetHandler fleetHandler = new FleetHandler(false);
+        listeners.addListener(fleetHandler, true);
+        Global.getSector().addTransientListener(fleetHandler);
+        listeners.addListener(new PlayerFleetHandler(), true);
+
+        // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
+        // for some reason, which is too late as the UID tags aren't in the clones,
+        // so we need to add the mastery handler when the game loads as well
+        PlayerFleetHandler.addMasteryHandlerToPlayerFleet();
     }
 
     private static final String[] reflectionWhitelist = new String[] {

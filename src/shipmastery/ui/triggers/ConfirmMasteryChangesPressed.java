@@ -59,6 +59,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
         // bay on ships that filled it
-        MasteryHullmod.fixPlayerVariantsNextSync = true;
+        Utils.fixPlayerFleetInconsistencies();
     }
 }

@@ -4,12 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
-import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
-import com.fs.starfarer.api.campaign.listeners.FleetSpawnListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
@@ -289,7 +286,10 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         modifyBuildInButton();
         updateMasteryButton(hideMasteryButton);
-        addMPDisplay();
+
+        if (Settings.SHOW_MP_AND_LEVEL_IN_REFIT) {
+            addMPDisplay();
+        }
 
         if (shouldSync) {
             checkIfRefitShipChanged();

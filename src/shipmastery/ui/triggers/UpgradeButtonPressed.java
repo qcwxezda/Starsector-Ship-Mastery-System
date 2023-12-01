@@ -11,6 +11,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class UpgradeButtonPressed extends ActionListener {
     MasteryPanel masteryPanel;
@@ -33,6 +34,8 @@ public class UpgradeButtonPressed extends ActionListener {
                     Strings.UPGRADE_CONFIRMED_STR + ShipMastery.getPlayerMasteryLevel(spec), Misc.getStoryBrightColor());
             Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
             masteryPanel.forceRefresh(true, false, false);
+
+            Utils.fixPlayerFleetInconsistencies();
         }
         else {
             beginConfirm(button);

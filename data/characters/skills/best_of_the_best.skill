@@ -11,6 +11,7 @@
 			"effects":[
 				{"type":"CHARACTER_STATS", "script":"shipmastery.campaign.skills.BestOfTheBest$Level1"},
 				{"type":"CHARACTER_STATS", "script":"com.fs.starfarer.api.impl.campaign.skills.BestOfTheBest$Level2"},
+                {"type":"ALL_SHIPS_IN_FLEET", "script":"shipmastery.campaign.skills.BestOfTheBest$Level3"}
 			]
 		},
 	],

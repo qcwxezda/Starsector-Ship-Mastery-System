@@ -1,5 +1,6 @@
 package shipmastery.campaign;
 
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
@@ -11,23 +12,28 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
+import com.fs.starfarer.api.plugins.AutofitPlugin;
+import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.util.MasteryUtils;
-import shipmastery.util.SizeLimitedMap;
-import shipmastery.util.Utils;
-import shipmastery.util.VariantLookup;
+import shipmastery.util.*;
 
 import java.util.*;
 
-public class FleetHandler implements FleetInflationListener {
+public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener {
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
-    public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(Settings.MAX_CACHED_COMMANDERS);
+    public static final int MAX_CACHED_COMMANDERS = 100;
+    public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
+
+    public FleetHandler(boolean permaRegister) {
+        super(permaRegister);
+    }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, Boolean> levels) {
         Map<String, NavigableMap<Integer, Boolean>> subMap = NPC_MASTERY_CACHE.get(commander.getId());
@@ -68,49 +74,91 @@ public class FleetHandler implements FleetInflationListener {
         return variant;
     }
 
+
+    public static final float EXISTING_HULLMOD_WEIGHT = 3f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
     @Override
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
+        PersonAPI commander = fleet.getCommander();
+        CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
+        Random random = new Random(fleet.getId().hashCode());
+        auto.setRandom(random);
+
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
+            if (fm.isStation()) continue;
+
             final ShipVariantAPI variant = fm.getVariant();
             ShipHullSpecAPI spec = variant.getHullSpec();
             variant.addPermaMod("sms_masteryHandler", false);
-            MutableShipStatsAPI stats = variant.getStatsForOpCosts();
-            PersonAPI commander = fleet.getCommander();
+            MutableShipStatsAPI stats = fm.getStats();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
             fm.setVariant(addHandlerMod(variant, variant, commander), false, false);
+
+            boolean repeatAutofit = false;
             for (Map.Entry<Integer, Boolean> entry : masteries.entrySet()) {
                 for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, entry.getKey(), entry.getValue())) {
                     effect.applyEffectsBeforeShipCreation(variant.getHullSize(), stats);
+                    repeatAutofit |= effect.triggersAutofit();
                 }
             }
-            float sMods = stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).computeEffective(0f) - variant.getSMods().size();
 
-            if (sMods > 0) {
-                WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
-                picker.addAll(variant.getNonBuiltInHullmods());
+            if (inflater instanceof AutofitPlugin.AutofitPluginDelegate && !isNoAutofit(fleet, fm)) {
+                AutofitPlugin.AutofitPluginDelegate delegate = (AutofitPlugin.AutofitPluginDelegate) inflater;
+                boolean canAutofit = delegate.getAvailableFighters() != null && delegate.getAvailableWeapons() != null;
 
-                // Add a bunch of different always-applicable hull mods for variety
-                FactionAPI faction = fleet.getFaction();
-                addIfApplicable(HullMods.TURRETGYROS, picker, variant, faction);
-                addIfApplicable(HullMods.ARMOREDWEAPONS, picker, variant, faction);
-                addIfApplicable(HullMods.AUTOREPAIR, picker, variant, faction);
-                addIfApplicable(HullMods.AUXILIARY_THRUSTERS, picker, variant, faction);
-                addIfApplicable(HullMods.BLAST_DOORS, picker, variant, faction);
-                addIfApplicable(HullMods.ECCM, picker, variant, faction);
-                addIfApplicable(HullMods.MAGAZINES, picker, variant, faction);
-                addIfApplicable(HullMods.MISSLERACKS, picker, variant, faction);
-                addIfApplicable(HullMods.FLUXBREAKERS, picker, variant, faction);
-                addIfApplicable(HullMods.FLUX_COIL, picker, variant, faction);
-                addIfApplicable(HullMods.FLUX_DISTRIBUTOR, picker, variant, faction);
-                addIfApplicable(HullMods.HEAVYARMOR, picker, variant, faction);
-                addIfApplicable(HullMods.INSULATEDENGINE, picker, variant, faction);
-                addIfApplicable(HullMods.POINTDEFENSEAI, picker, variant, faction);
-                addIfApplicable(HullMods.SOLAR_SHIELDING, picker, variant, faction);
-                addIfApplicable(HullMods.UNSTABLE_INJECTOR, picker, variant, faction);
+                auto.setChecked(CoreAutofitPlugin.STRIP, false);
+                auto.setChecked(CoreAutofitPlugin.UPGRADE, random.nextFloat() < Math.min(0.1f + inflater.getQuality()*0.5f, 0.5f));
+                auto.setChecked(CoreAutofitPlugin.RANDOMIZE, true);
 
-                for (int i = (int) sMods; i >= 0; i--) {
-                    if (picker.isEmpty()) break;
-                    variant.addPermaMod(picker.pickAndRemove(), true);
+                if (repeatAutofit && canAutofit) {
+                    auto.doFit(variant, variant.clone(), 0, delegate);
+                }
+
+                float sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
+                if (sModsToAdd > 0) {
+                    WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
+
+                    for (String hullmod : variant.getNonBuiltInHullmods()) {
+                        picker.add(hullmod, EXISTING_HULLMOD_WEIGHT);
+                    }
+
+                    // Add a bunch of different always-applicable hull mods for variety
+                    FactionAPI faction = fleet.getFaction();
+                    addIfApplicable(HullMods.TURRETGYROS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.ARMOREDWEAPONS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.AUTOREPAIR, false, picker, variant, faction);
+                    addIfApplicable(HullMods.AUXILIARY_THRUSTERS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.BLAST_DOORS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.ECCM, false, picker, variant, faction);
+                    addIfApplicable(HullMods.MAGAZINES, false, picker, variant, faction);
+                    addIfApplicable(HullMods.MISSLERACKS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.FLUXBREAKERS, false, picker, variant, faction);
+                    addIfApplicable(HullMods.FLUX_COIL, false, picker, variant, faction);
+                    addIfApplicable(HullMods.FLUX_DISTRIBUTOR, false, picker, variant, faction);
+                    addIfApplicable(HullMods.HEAVYARMOR, false, picker, variant, faction);
+                    addIfApplicable(HullMods.INSULATEDENGINE, false, picker, variant, faction);
+                    addIfApplicable(HullMods.POINTDEFENSEAI, false, picker, variant, faction);
+                    addIfApplicable(HullMods.SOLAR_SHIELDING, false, picker, variant, faction);
+                    addIfApplicable(HullMods.UNSTABLE_INJECTOR, false, picker, variant, faction);
+
+                    addIfApplicable(HullMods.AUGMENTEDENGINES, true, picker, variant, faction);
+                    addIfApplicable(HullMods.INSULATEDENGINE, true, picker, variant, faction);
+                    addIfApplicable(HullMods.SURVEYING_EQUIPMENT, true, picker, variant, faction);
+                    addIfApplicable(HullMods.ADDITIONAL_BERTHING, true, picker, variant, faction);
+                    addIfApplicable(HullMods.AUXILIARY_FUEL_TANKS, true, picker, variant, faction);
+                    addIfApplicable(HullMods.EFFICIENCY_OVERHAUL, true, picker, variant, faction);
+                    addIfApplicable(HullMods.EXPANDED_CARGO_HOLDS, true, picker, variant, faction);
+                    addIfApplicable(HullMods.SOLAR_SHIELDING, true, picker, variant, faction);
+
+                    for (int i = 0; i < sModsToAdd; i++) {
+                        if (picker.isEmpty()) break;
+                        if (random.nextFloat() > Settings.NPC_SMOD_QUALITY_MOD + inflater.getQuality()) continue;
+                        variant.addPermaMod(picker.pickAndRemove(), true);
+                    }
+                }
+
+                // If s-modding granted additional OP, do another fit
+                if (variant.getUnusedOP(commander == null ? null : commander.getStats()) > 0f && canAutofit) {
+                    auto.doFit(variant, variant.clone(), 0, (AutofitPlugin.AutofitPluginDelegate) inflater);
                 }
             }
 
@@ -124,9 +172,33 @@ public class FleetHandler implements FleetInflationListener {
         }
     }
 
-    private void addIfApplicable(String hullmod, WeightedRandomPicker<String> addTo, ShipVariantAPI check, FactionAPI faction) {
+    public boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+        boolean forceAutofit = fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_FORCE_AUTOFIT_ON_NO_AUTOFIT_SHIPS);
+        // From DefaultFleetInflater.java
+        if (!forceAutofit && fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT)) {
+            return true;
+        }
+        if (!forceAutofit && fm.getVariant() != null && fm.getVariant().hasTag(Tags.TAG_NO_AUTOFIT)) {
+            return true;
+        }
+
+        if (fleet.getFaction() == null || !fleet.getFaction().isPlayerFaction()) {
+            if (!forceAutofit && fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER)) {
+                return true;
+            }
+            //noinspection RedundantIfStatement
+            if (!forceAutofit && fm.getVariant() != null && fm.getVariant().hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addIfApplicable(String hullmod, boolean civilian, WeightedRandomPicker<String> addTo, ShipVariantAPI check, FactionAPI faction) {
         if (!check.getPermaMods().contains(hullmod) && faction.knowsHullMod(hullmod)) {
-            addTo.add(hullmod, faction.isHullModPriority(hullmod) ? 2f : 1f);
+            if (civilian == check.isCivilian()) {
+                addTo.add(hullmod, faction.isHullModPriority(hullmod) ? PRIORITY_HULLMOD_WEIGHT : STANDARD_HULLMOD_WEIGHT);
+            }
         }
     }
 
@@ -143,7 +215,7 @@ public class FleetHandler implements FleetInflationListener {
     }
 
     public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec, FleetMemberAPI flagship) {
-        if (commander == null) return new TreeMap<>();
+        if (commander == null || commander.isDefault()) return new TreeMap<>();
         if (commander.isPlayer()) return ShipMastery.getPlayerActiveMasteriesCopy(spec);
 
         NavigableMap<Integer, Boolean> cachedMasteries = getCachedNPCMasteries(commander, spec);

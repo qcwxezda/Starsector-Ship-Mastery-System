@@ -139,7 +139,12 @@
     "HitAngleDR": "Increases hull and armor damage taken from beams and projectiles by up to %1$s depending on the angle of attack.",
     "HitAngleDRNeg": "Decreases hull and armor damage taken from beams and projectiles by up to %1$s depending on the angle of attack.",
     "HitAngleDRPost": "Effect is negated when the attack angle is perpendicular to the struck plate and maximized when the attack angle is parallel to the struck plate.",
-    "HitAngleDRPost2": "No effect on missiles."
+    "HitAngleDRPost2": "No effect on missiles.",
+    "TPCUpgrade": "Upgrades the ship's %1$s, giving each shot a %2$s chance to deal %3$s additional damage.",
+    "TPCName": "Thermal Pulse Cannons",
+    "TPCUpgradePost": "Whenever this effect triggers, the weapon that fired the shot gains %1$s ammo.",
+    "TPCChaining": "Upgrades the ship's %1$s, increasing damage and allowing projectiles to arc to nearby enemies on contact.",
+    "TPCChainingPost": "Thermal pulse cannon damage is increased by %1$s. On contact, chains to up to %2$s enemy ships or missiles within %3$s su, dealing 50%% of the original projectile's damage."
   },
 
   "sms_misc": {
@@ -150,6 +155,9 @@
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",
     "and": "and ",
-    "bestOfTheBestDesc": "Increases the strength of all ship mastery effects by %1$s."
+    "bestOfTheBestDesc": "Increases the strength of all ship mastery effects by %1$s",
+    "bestOfTheBestScope": "Affects: %1$s",
+    "bestOfTheBestScope2": "all capital ships with officers, including flagship",
+    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, hull integrity, and flux capacity"
   }
 }

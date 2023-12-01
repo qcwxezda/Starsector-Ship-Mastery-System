@@ -105,5 +105,14 @@
         "B": "TPCUpgrade"
       }
     }
+  },
+
+  "onslaught_xiv": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveDR",
+        "B": "TPCChaining"
+      }
+    }
   }
 }

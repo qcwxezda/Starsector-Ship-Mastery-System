@@ -4,7 +4,6 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
-import shipmastery.ShipMasteryNPC;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;

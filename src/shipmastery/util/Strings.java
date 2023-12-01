@@ -49,6 +49,9 @@ public interface Strings {
     String FAILED_TO_GENERATE_MASTERIES = Utils.getString("sms_misc", "failedToGenerateMasteries");
     String FLAGSHIP_ONLY = Utils.getString("sms_misc", "flagshipOnly");
     String BEST_OF_THE_BEST_DESC = Utils.getString("sms_misc", "bestOfTheBestDesc");
+    String BEST_OF_THE_BEST_DESC2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
+    String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
+    String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
@@ -147,5 +150,10 @@ public interface Strings {
         String HitAngleDRNeg = Utils.getString( "sms_descriptions", "HitAngleDRNeg");
         String HitAngleDRPost = Utils.getString( "sms_descriptions", "HitAngleDRPost");
         String HitAngleDRPost2 = Utils.getString( "sms_descriptions", "HitAngleDRPost2");
+        String TPCUpgrade = Utils.getString( "sms_descriptions", "TPCUpgrade");
+        String TPCName = Utils.getString( "sms_descriptions", "TPCName");
+        String TPCUpgradePost = Utils.getString( "sms_descriptions", "TPCUpgradePost");
+        String TPCChaining = Utils.getString( "sms_descriptions", "TPCChaining");
+        String TPCChainingPost = Utils.getString( "sms_descriptions", "TPCChainingPost");
     }
 }
