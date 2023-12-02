@@ -1,22 +1,4 @@
 {
-  "paragon": {
-    "levels": {
-      "10": {
-        "A": "ShieldDeflection",
-        "B": "FluxByShieldUpkeep"
-      }
-    }
-  },
-
-  "ziggurat": {
-    "levels": {
-      "10": {
-        "A": "HighFrequencyMotes",
-        "B": "PhaseCloakResidue"
-      }
-    }
-  },
-
   "doom": {
     "levels": {
       "10": {
@@ -75,7 +57,7 @@
     "levels": {
       "9": {
         "A": "BurnDriveDR",
-        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost -3"
+        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost"
       }
     }
   },
@@ -112,6 +94,42 @@
       "9": {
         "A": "BurnDriveDR",
         "B": "TPCChaining"
+      }
+    }
+  },
+
+  "paragon": {
+    "levels": {
+      "10": {
+        "A": "ShieldDeflection",
+        "B": "FluxByShieldUpkeep"
+      }
+    }
+  },
+
+  "pegasus": {
+    "levels": {
+      "9": {
+        "A": "TorpedoTracking",
+        "B": "FMRRegen"
+      }
+    }
+  },
+
+  "prometheus2": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveImpulse",
+        "B": "ModifyStatsFlat 1 NumFighterBays BomberCost"
+      }
+    }
+  },
+
+  "ziggurat": {
+    "levels": {
+      "10": {
+        "A": "HighFrequencyMotes",
+        "B": "PhaseCloakResidue"
       }
     }
   }

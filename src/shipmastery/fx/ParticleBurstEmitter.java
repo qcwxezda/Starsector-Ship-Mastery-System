@@ -15,6 +15,7 @@ public class ParticleBurstEmitter extends BaseIEmitter {
     public float life = 1f, lifeJitter = 0f;
     public float size = 10f, sizeJitter = 0f;
     public float alpha = 1f, alphaJitter = 0f;
+    public float lengthMultiplierOverTime = 1f;
     public Color color = Color.WHITE;
 
     @Override
@@ -36,7 +37,9 @@ public class ParticleBurstEmitter extends BaseIEmitter {
         velocity.scale(radius / newLife * velocityScale);
         data.life(newLife);
         float newSize = size * MathUtils.randBetween(1f - sizeJitter, 1f + sizeJitter);
+        float length = newSize * (1f + velocityScale);
         data.size(newSize * (1f + velocityScale), newSize);
+        data.growthRate(length * (lengthMultiplierOverTime - 1f) / newLife, 0f);
         data.velocity(velocity);
         Color newColor = new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, alpha * MathUtils.randBetween(1f - alphaJitter, 1f + alphaJitter));
         data.color(newColor);

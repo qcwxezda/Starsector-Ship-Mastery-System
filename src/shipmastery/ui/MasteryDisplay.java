@@ -134,11 +134,12 @@ public class MasteryDisplay implements CustomUIElement {
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
             MasteryDescription effectDescription = effect.getDescription(selectedModule, rootFleetMember);
-            if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
-                effectDescription.addLabelWithPrefix(tooltip, Strings.FLAGSHIP_ONLY, Misc.getBasePlayerColor());
-            }
-            else {
-                effectDescription.addLabel(tooltip);
+            if (effectDescription != null) {
+                if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
+                    effectDescription.addLabelWithPrefix(tooltip, Strings.FLAGSHIP_ONLY, Misc.getBasePlayerColor());
+                } else {
+                    effectDescription.addLabel(tooltip);
+                }
             }
             tooltip.setParaFontDefault();
             tooltip.addSpacer(5f);

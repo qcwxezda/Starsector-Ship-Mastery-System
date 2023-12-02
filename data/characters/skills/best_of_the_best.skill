@@ -5,6 +5,12 @@
 	"scope":CUSTOM,
 	"scopeStr":"fleet",
 	"effectGroups":[
+        {
+            "requiredSkillLevel":0,
+            "effects":[
+                {"type":"DESCRIPTION", "script":"shipmastery.campaign.skills.BestOfTheBest$Level0"},
+            ]
+        },
 		{
 			"requiredSkillLevel":1,
 			"effectBasedOnLevel":false,

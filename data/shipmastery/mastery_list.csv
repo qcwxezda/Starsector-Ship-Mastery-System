@@ -35,6 +35,7 @@ BallisticFireRateHullLevel,9,combat unique,,0.2,shipmastery.mastery.impl.combat.
 HitAngleDR,7,combat negative_strength_allowed,,-0.25,shipmastery.mastery.impl.combat.HitAngleDR
 TPCUpgrade,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
+TorpedoTracking,9,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
 #### SHIP SYSTEM ENHANCEMENTS ####
@@ -50,4 +51,6 @@ LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystem
 LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
 BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
 WhileActiveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.WhileActiveMissileBoost
+BurnDriveImpulse,9,combat unique doesnt_affect_modules,,500,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
 PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
+FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen

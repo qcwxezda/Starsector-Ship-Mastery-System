@@ -342,6 +342,27 @@ public abstract class Utils {
         }
     }
 
+    public static void toHSVA(float[] rgba, float[] dest) {
+        float r = rgba[0], g = rgba[1], b = rgba[2];
+        float CMax = Math.max(r, Math.max(g, b));
+        float CMin = Math.min(r, Math.min(g, b));
+        float delta = CMax - CMin;
+
+        if (delta == 0f) {
+            dest[0] = 0f;
+        } else if (CMax == r) {
+            dest[0] = 60f*(((g-b)/delta) % 6f);
+        } else if (CMax == g) {
+            dest[0] = 60f*((b-r)/delta + 2);
+        } else {
+            dest[0] = 60f*((r-g)/delta + 4);
+        }
+
+        dest[1] = CMax == 0f ? 0f : delta / CMax;
+        dest[2] = CMax;
+        dest[3] = rgba[3];
+    }
+
     public static Color mixColor(Color a, Color b, float t) {
         float[] colorA = new float[4];
         float[] colorB = new float[4];

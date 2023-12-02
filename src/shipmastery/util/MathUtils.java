@@ -33,6 +33,15 @@ public abstract class MathUtils {
         return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
     }
 
+    /** Misc.getAngleDiff is unsigned; this is signed */
+    public static float angleDiff(float a, float b) {
+        return ((a - b) % 360 + 540) % 360 - 180;
+    }
+
+    public static boolean isClockwise(Vector2f v1, Vector2f v2) {
+        return v1.y * v2.x > v1.x * v2.y;
+    }
+
     public static float clamp(float x, float min, float max) {
         return Math.min(max, Math.max(min, x));
     }

@@ -50,6 +50,7 @@ public interface Strings {
     String FLAGSHIP_ONLY = Utils.getString("sms_misc", "flagshipOnly");
     String BEST_OF_THE_BEST_DESC = Utils.getString("sms_misc", "bestOfTheBestDesc");
     String BEST_OF_THE_BEST_DESC2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
+    String BEST_OF_THE_BEST_DESC3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
     String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
     String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
 
@@ -155,5 +156,9 @@ public interface Strings {
         String TPCUpgradePost = Utils.getString( "sms_descriptions", "TPCUpgradePost");
         String TPCChaining = Utils.getString( "sms_descriptions", "TPCChaining");
         String TPCChainingPost = Utils.getString( "sms_descriptions", "TPCChainingPost");
+        String TorpedoTracking = Utils.getString( "sms_descriptions", "TorpedoTracking");
+        String TorpedoTrackingPost = Utils.getString( "sms_descriptions", "TorpedoTrackingPost");
+        String FMRRegen = Utils.getString( "sms_descriptions", "FMRRegen");
+        String FMRRegenPost = Utils.getString( "sms_descriptions", "FMRRegenPost");
     }
 }

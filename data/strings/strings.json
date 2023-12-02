@@ -144,7 +144,11 @@
     "TPCName": "Thermal Pulse Cannons",
     "TPCUpgradePost": "Whenever this effect triggers, the weapon that fired the shot gains %1$s ammo.",
     "TPCChaining": "Upgrades the ship's %1$s, increasing damage and allowing projectiles to arc to nearby enemies on contact.",
-    "TPCChainingPost": "Thermal pulse cannon damage is increased by %1$s. On contact, chains to up to %2$s enemy ships or missiles within %3$s su, dealing 50%% of the original projectile's damage."
+    "TPCChainingPost": "Thermal pulse cannon damage is increased by %1$s. On contact, chains to up to %2$s enemy ships or missiles within %3$s su, dealing 50%% of the original projectile's damage.",
+    "TorpedoTracking": "All reaper and hammer torpedoes gain very poor tracking and %1$s hull integrity, while losing %2$s maximum speed.",
+    "TorpedoTrackingPost": "Tracking rate is limited to %1$s degrees/second. The torpedoes cannot decelerate.",
+    "FMRRegen": "Whenever %1$s is activated, all missile weapons regenerate %2$s of their base ammo capacity.",
+    "FMRRegenPost": "Fractional amounts are converted into chance to regenerate one missile. Reduces maximum ship system charges to %1$s."
   },
 
   "sms_misc": {
@@ -158,6 +162,7 @@
     "bestOfTheBestDesc": "Increases the strength of all ship mastery effects by %1$s",
     "bestOfTheBestScope": "Affects: %1$s",
     "bestOfTheBestScope2": "all capital ships with officers, including flagship",
-    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, hull integrity, and flux capacity"
+    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, hull integrity*, and flux capacity*",
+    "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors."
   }
 }

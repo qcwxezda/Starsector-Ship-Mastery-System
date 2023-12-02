@@ -78,16 +78,17 @@ public class TPCUpgrade extends BaseMasteryEffect {
                 }
 
                 ParticleBurstEmitter burst = new ParticleBurstEmitter(pt);
-                burst.size = 4f;
+                burst.size = 6f;
                 burst.sizeJitter = 0.1f;
                 burst.lifeJitter = 0.1f;
-                burst.radiusJitter = 0.25f;
-                burst.radius = 60f;
+                burst.radiusJitter = 0.5f;
+                burst.radius = 75f;
+                burst.lengthMultiplierOverTime = 3f;
                 burst.alpha = 0.6f;
                 burst.alphaJitter = 0.4f;
                 burst.color = color;
-                burst.life = 0.5f;
-                Particles.burst(burst, 50);
+                burst.life = 0.6f;
+                Particles.burst(burst, 100);
             }
             return null;
         }

@@ -111,6 +111,30 @@ public abstract class EngineUtils {
         return kNearest;
     }
 
+    /** The Misc version requires a ShipAPI as the anchor location, this can take an arbitrary anchor point */
+    public static ShipAPI getClosestEntity(
+            Vector2f location,
+            ShipAPI.HullSize smallestToNote,
+            float maxRange,
+            boolean considerShipRadius,
+            TargetChecker checker) {
+        ShipAPI closest = null;
+        float closestDist = Float.MAX_VALUE;
+        for (ShipAPI ship : Global.getCombatEngine().getShips()) {
+            if (!checker.check(ship) || (smallestToNote != null && ship.getHullSize().compareTo(smallestToNote) < 0)) {
+                continue;
+            }
+
+            float dist = Misc.getDistance(location, ship.getLocation());
+            if (dist <= maxRange + (ship.getCollisionRadius() * (considerShipRadius ? 1f : 0f))
+                    && dist < closestDist) {
+                closest = ship;
+                closestDist = dist;
+            }
+        }
+        return closest;
+    }
+
     /** Can be negative for points inside the entity */
     public static float getDistWithEntity(Vector2f location, CombatEntityAPI entity, boolean considerRadius) {
         return Misc.getDistance(location, entity.getLocation()) - (considerRadius ? entity.getCollisionRadius() : 0f);
