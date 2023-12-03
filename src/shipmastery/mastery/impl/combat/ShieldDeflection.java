@@ -159,7 +159,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                     proj.setSource(ship);
 
                     Global.getCombatEngine().applyDamage(
-                            ship,
+                            proj,
                             ship,
                             pt,
                             proj.getDamageAmount() * damageTakenMult,

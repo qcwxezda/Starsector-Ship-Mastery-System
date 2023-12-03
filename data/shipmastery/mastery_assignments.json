@@ -57,7 +57,7 @@
     "levels": {
       "9": {
         "A": "BurnDriveDR",
-        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost"
+        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost AllWeaponOPCost 1"
       }
     }
   },
@@ -120,7 +120,16 @@
     "levels": {
       "9": {
         "A": "BurnDriveImpulse",
-        "B": "ModifyStatsFlat 1 NumFighterBays BomberCost"
+        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost 3.5 BomberCost -7"
+      }
+    }
+  },
+
+  "retribution": {
+    "levels": {
+      "9": {
+        "A": "OrionDeviceDamage",
+        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost 3.5 BomberCost -7"
       }
     }
   },

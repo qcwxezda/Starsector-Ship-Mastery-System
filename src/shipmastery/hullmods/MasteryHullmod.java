@@ -1,5 +1,6 @@
 package shipmastery.hullmods;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -64,16 +65,25 @@ public class MasteryHullmod extends BaseHullMod {
         });
     }
 
-    // Needed because getting masteries calls getFlagship, which updates stats, which calls applyEffectsBeforeShipCreation, etc.
+    // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.
     boolean noRecurse = false;
     private void applyEffects(final ShipVariantAPI variant, final HullmodAction action) {
-        if (variant == null || noRecurse) return;
+        if (variant == null || noRecurse) {
+            return;
+        }
 
         final VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
         final ShipHullSpecAPI rootSpec = info == null ? variant.getHullSpec() : info.root.getHullSpec();
         final boolean isModule = info != null && !Objects.equals(info.uid, info.rootUid);
         final PersonAPI commander = info == null ? null : info.commander;
+        CampaignFleetAPI fleet = info == null ? null : info.fleet;
         noRecurse = true;
+        // Needed because getting masteries calls getFlagship, which updates stats, which calls applyEffectsBeforeShipCreation, etc.
+        boolean wasNoSync = false;
+        if (fleet != null) {
+            wasNoSync = fleet.getFleetData().isForceNoSync();
+            fleet.getFleetData().setForceNoSync(true);
+        }
         MasteryUtils.applyAllActiveMasteryEffects(
                 commander, rootSpec, new MasteryUtils.MasteryAction() {
                     @Override
@@ -81,8 +91,10 @@ public class MasteryHullmod extends BaseHullMod {
                         action.perform(effect, commander, isModule);
                     }
                 });
+        if (fleet != null) {
+            fleet.getFleetData().setForceNoSync(wasNoSync);
+        }
         noRecurse = false;
-
     }
 
     private interface HullmodAction {

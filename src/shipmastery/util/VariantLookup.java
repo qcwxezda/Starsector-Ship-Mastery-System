@@ -70,10 +70,10 @@ public class VariantLookup extends BaseCampaignEventListener {
         return (VariantLookup) Global.getSector().getMemoryWithoutUpdate().get(INSTANCE_KEY);
     }
 
-    public static void addVariantInfo(ShipVariantAPI variant, ShipVariantAPI root, PersonAPI commander) {
+    public static void addVariantInfo(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
         VariantLookup instance = getInstance();
         if (instance == null) return;
-        instance.variantInfoMap.put(instance.getUIDGenerateIfNull(variant), new VariantInfo(instance, variant, root, commander));
+        instance.variantInfoMap.put(instance.getUIDGenerateIfNull(variant), new VariantInfo(instance, variant, root, fleet));
     }
 
     public static VariantInfo getVariantInfo(ShipVariantAPI variant) {
@@ -91,13 +91,15 @@ public class VariantLookup extends BaseCampaignEventListener {
         public final String rootUid;
 
         public final PersonAPI commander;
+        public final CampaignFleetAPI fleet;
 
-        private VariantInfo(VariantLookup lookup, ShipVariantAPI variant, ShipVariantAPI root, PersonAPI commander) {
+        private VariantInfo(VariantLookup lookup, ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
             this.variant = variant;
             uid = lookup.getUID(variant);
             this.root = root;
             rootUid = lookup.getUID(root);
-            this.commander = commander;
+            this.commander = fleet.getCommander();
+            this.fleet = fleet;
         }
     }
 }

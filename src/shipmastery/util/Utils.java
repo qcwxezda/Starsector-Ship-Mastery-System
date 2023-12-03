@@ -2,10 +2,15 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetData;
@@ -307,6 +312,10 @@ public abstract class Utils {
                 variant.setWingId(i, null);
             }
         }
+        if (clampOP(variant, Global.getSector().getPlayerStats())) {
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.EXCESS_OP_WARNING,
+                                                                              Misc.getNegativeHighlightColor());
+        }
     }
 
     public static void fixPlayerFleetInconsistencies() {
@@ -373,5 +382,35 @@ public abstract class Utils {
             newColor[i] = (1f - t) * colorA[i] + t * colorB[i];
         }
         return new Color(newColor[0], newColor[1], newColor[2], newColor[3]);
+    }
+
+    /** Adapted from SkillsChangeRemoveExcessOPEffect */
+    public static boolean clampOP(ShipVariantAPI variant, MutableCharacterStatsAPI stats) {
+        int maxOP = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), stats);
+        int op = variant .computeOPCost(stats);
+        int remove = op - maxOP;
+        if (remove > 0) {
+            int caps = variant.getNumFluxCapacitors();
+            int curr = Math.min(caps, remove);
+            variant.setNumFluxCapacitors(caps - curr);
+            remove -= curr;
+            if (remove > 0) {
+                int vents = variant.getNumFluxVents();
+                curr = Math.min(vents, remove);
+                variant.setNumFluxVents(vents - curr);
+                remove -= curr;
+            }
+            if (remove > 0) {
+                for (String modId : variant.getNonBuiltInHullmods()) {
+                    HullModSpecAPI mod = Global.getSettings().getHullModSpec(modId);
+                    curr = mod.getCostFor(variant.getHullSpec().getHullSize());
+                    variant.removeMod(modId);
+                    remove -= curr;
+                    if (remove <= 0) break;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

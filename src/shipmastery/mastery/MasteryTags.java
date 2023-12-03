@@ -41,4 +41,7 @@ public interface MasteryTags {
 
     /** Appends "Flagship only: " to the start of the effect description. Actually making the effect flagship only is implementation-dependent. */
     String PREFIX_FLAGSHIP_ONLY = "prefix_flagship_only";
+
+    /** If NPCs with this mastery need to be re-inflated due to increase hangar bays, changed OP costs, etc. */
+    String TRIGGERS_AUTOFIT = "triggers_autofit";
 }

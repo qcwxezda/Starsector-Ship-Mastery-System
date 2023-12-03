@@ -1,6 +1,7 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import org.lwjgl.util.vector.Vector2f;
 
 public abstract class MathUtils {
@@ -31,6 +32,16 @@ public abstract class MathUtils {
         float theta = Misc.random.nextFloat() * 2f * (float) Math.PI;
         float r = radius * (float) Math.sqrt(Misc.random.nextFloat());
         return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
+    }
+
+    /** Assumes that the quadratic is concave.
+     *  Input the value of the quadratic at T = 0 (start), T = maxTime (end), and the quadratic's peak.
+     *  Returns the linear and quadratic coefficients. */
+    public static Pair<Float, Float> getRateAndAcceleration(float start, float end, float peak, float maxTime) {
+        float sqrtTerm = (float) Math.sqrt((peak - end) * (peak - start));
+        float a = 2f * (-2f*sqrtTerm + end - 2f*peak + start) / (maxTime*maxTime);
+        float r = 2f * (sqrtTerm + peak - start) / maxTime;
+        return new Pair<>(r, a);
     }
 
     /** Misc.getAngleDiff is unsigned; this is signed */

@@ -179,11 +179,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         return info == null ? baseStrength : getStrength(info.commander);
     }
 
-    @Override
-    public boolean triggersAutofit() {
-        return false;
-    }
-
     public final float getStrength(MutableShipStatsAPI stats) {
         return getStrength(stats.getVariant());
     }

@@ -21,6 +21,7 @@ import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.MasteryTags;
 import shipmastery.util.*;
 
 import java.util.*;
@@ -53,12 +54,12 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     /** Modifies and returns the given variant if it's not a stock, goal, or empty variant
      *  (those can be duplicated across multiple ships).
      *  Otherwise, returns a modified copy of that variant. */
-    public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, PersonAPI commander) {
+    public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
         if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
             variant = variant.clone();
             variant.setSource(VariantSource.REFIT);
         }
-        VariantLookup.addVariantInfo(variant, root, commander);
+        VariantLookup.addVariantInfo(variant, root, fleet);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway
         // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
         variant.getHullMods().remove("sms_masteryHandler");
@@ -69,7 +70,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         variant.addPermaMod("sms_masteryHandler");
         // Add the tracker to any modules as well
         for (String id : variant.getModuleSlots()) {
-            variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, commander));
+            variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, fleet));
         }
         return variant;
     }
@@ -91,13 +92,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             variant.addPermaMod("sms_masteryHandler", false);
             MutableShipStatsAPI stats = fm.getStats();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
-            fm.setVariant(addHandlerMod(variant, variant, commander), false, false);
+            fm.setVariant(addHandlerMod(variant, variant, fleet), false, false);
 
             boolean repeatAutofit = false;
             for (Map.Entry<Integer, Boolean> entry : masteries.entrySet()) {
                 for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, entry.getKey(), entry.getValue())) {
                     effect.applyEffectsBeforeShipCreation(variant.getHullSize(), stats);
-                    repeatAutofit |= effect.triggersAutofit();
+                    repeatAutofit |= effect.hasTag(MasteryTags.TRIGGERS_AUTOFIT);
                 }
             }
 
@@ -204,6 +205,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static FleetMemberAPI getFlagship(PersonAPI commander) {
         MutableCharacterStatsAPI stats = commander.getStats();
+        // commander.getFleet() can be null, so have to use stats.getFleet
         if (stats == null) return null;
         CampaignFleetAPI fleet = stats.getFleet();
         if (fleet == null) return null;

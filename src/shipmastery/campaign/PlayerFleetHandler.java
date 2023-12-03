@@ -56,7 +56,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
         for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
             ShipVariantAPI variant = fm.getVariant();
             if (!variant.hasHullMod("sms_masteryHandler") || VariantLookup.getVariantInfo(variant) == null) {
-                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, Global.getSector().getPlayerPerson()), false, false);
+                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, Global.getSector().getPlayerFleet()), false, false);
             }
         }
     }

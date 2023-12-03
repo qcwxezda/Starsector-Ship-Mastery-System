@@ -17,9 +17,4 @@ public class BomberCost extends ShipStat {
         if (spec.getFighterBays() <= 0) return 0f;
         return 1f;
     }
-
-    @Override
-    public boolean triggersAutofit() {
-        return true;
-    }
 }

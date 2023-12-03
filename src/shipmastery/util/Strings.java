@@ -53,6 +53,7 @@ public interface Strings {
     String BEST_OF_THE_BEST_DESC3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
     String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
     String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
+    String EXCESS_OP_WARNING = Utils.getString("sms_misc", "excessOPWarning");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
@@ -160,5 +161,9 @@ public interface Strings {
         String TorpedoTrackingPost = Utils.getString( "sms_descriptions", "TorpedoTrackingPost");
         String FMRRegen = Utils.getString( "sms_descriptions", "FMRRegen");
         String FMRRegenPost = Utils.getString( "sms_descriptions", "FMRRegenPost");
+        String BurnDriveImpulse = Utils.getString( "sms_descriptions", "BurnDriveImpulse");
+        String BurnDriveImpulsePost = Utils.getString( "sms_descriptions", "BurnDriveImpulsePost");
+        String OrionDeviceDamage = Utils.getString( "sms_descriptions", "OrionDeviceDamage");
+        String OrionDeviceDamagePost = Utils.getString( "sms_descriptions", "OrionDeviceDamagePost");
     }
 }

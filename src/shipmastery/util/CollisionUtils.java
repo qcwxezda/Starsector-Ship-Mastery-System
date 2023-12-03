@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class CollisionUtils {
@@ -109,6 +110,210 @@ public abstract class CollisionUtils {
         if (!friendlyFire && entity.getOwner() == owner) return false;
 
         return true;
+    }
+
+    /** Considers both the entity's shield and bounds. Second return value is whether the hit was a shield hit. */
+    public static Pair<Vector2f, Boolean> rayCollisionCheckEntity(Vector2f a, Vector2f b, CombatEntityAPI entity) {
+
+        // If [a] and [b] are both outside of the collision radius, and the a-b segment doesn't intersect
+        // the collision circle, then there cannot be any collisions, so exit early.
+        if (Misc.getDistance(a, entity.getLocation()) > entity.getCollisionRadius()
+                && Misc.getDistance(b, entity.getLocation()) > entity.getCollisionRadius()
+                && Misc.intersectSegmentAndCircle(a, b, entity.getLocation(), entity.getCollisionRadius()) == null) {
+            return new Pair<>(null, false);
+        }
+
+        ShieldAPI thisShield = entity.getShield();
+        Vector2f bestShieldHitPt = null;
+        float bestShieldHitDist = Float.MAX_VALUE;
+
+        // Find the closest collision point with this entity's shield, or any of its child modules' shields,
+        // or its parent module's shields, or any of its parent's children's shields.
+
+        List<ShieldAPI> allShields = new ArrayList<>();
+        if (thisShield != null) {
+            allShields.add(thisShield);
+        }
+        if (entity instanceof ShipAPI) {
+            ShipAPI ship = (ShipAPI) entity;
+            // [entity] is itself a parent module
+            for (ShipAPI child : ship.getChildModulesCopy()) {
+                if (child.getShield() != null) {
+                    allShields.add(child.getShield());
+                }
+            }
+            // [entity] is a child module
+            if (ship.getParentStation() != null) {
+                ShipAPI parent = ship.getParentStation();
+                // Check if parent has covering shields
+                if (parent.getShield() != null) {
+                    allShields.add(parent.getShield());
+                }
+                else {
+                    // Check if any of parent's children have covering shields
+                    for (ShipAPI child : parent.getChildModulesCopy()) {
+                        if (child.getShield() != null) {
+                            allShields.add(child.getShield());
+                        }
+                    }
+                }
+            }
+        }
+
+        for (ShieldAPI shield : allShields) {
+            Vector2f hitLoc = rayCollisionCheckShield(a, b, shield);
+            if (hitLoc != null) {
+                float dist = Misc.getDistance(a, hitLoc);
+                if (dist < bestShieldHitDist) {
+                    bestShieldHitDist = dist;
+                    bestShieldHitPt = hitLoc;
+                }
+            }
+        }
+
+        Vector2f boundsHitLoc = rayCollisionCheckBounds(a, b, entity);
+
+        if (bestShieldHitPt == null) return new Pair<>(boundsHitLoc, false);
+        if (boundsHitLoc == null) return new Pair<>(bestShieldHitPt, true);
+
+        float boundsHitDist = Misc.getDistance(a, boundsHitLoc);
+
+        return bestShieldHitDist < boundsHitDist ? new Pair<>(bestShieldHitPt, true) : new Pair<>(boundsHitLoc, false);
+    }
+
+    private static Vector2f rayCollisionCheckBoundsNoEarlyExit(Vector2f a, Vector2f b, CombatEntityAPI entity) {
+        BoundsAPI bounds = entity.getExactBounds();
+
+        // If the object has no bounds or is a projectile, then use the collision radius
+        if (bounds == null || entity instanceof DamagingProjectileAPI) {
+            // [a] is inside the collision radius
+            if (Misc.getDistance(a, entity.getLocation()) <= entity.getCollisionRadius()) {
+                return a;
+            }
+            return Misc.intersectSegmentAndCircle(a, b, entity.getLocation(), entity.getCollisionRadius());
+        }
+
+        // Check exact bounds
+        bounds.update(entity.getLocation(), entity.getFacing());
+        List<BoundsAPI.SegmentAPI> segments = bounds.getSegments();
+
+        // Check if [a] is inside bounds
+        List<Vector2f> boundVerts = new ArrayList<>();
+        boundVerts.add(segments.get(0).getP1());
+        for (BoundsAPI.SegmentAPI segment : segments) {
+            boundVerts.add(segment.getP2());
+        }
+        if (Misc.isPointInBounds(a, boundVerts)) {
+            return a;
+        }
+
+        // Find the closest collision with a segment of the bounds
+        Vector2f closestPoint = null;
+        float closestDist = Float.MAX_VALUE;
+        for (BoundsAPI.SegmentAPI segment : segments) {
+            Vector2f collisionPoint =
+                    Misc.intersectSegments(segment.getP1(), segment.getP2(), a, b);
+            if (collisionPoint != null) {
+                float dist = Misc.getDistance(a, collisionPoint);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestPoint = collisionPoint;
+                }
+            }
+        }
+
+        return closestPoint;
+    }
+
+    /** Returns the point closest to {@code a} that intersects with {@code entity}'s bounds, or {@code null} if no such
+     *  point exists. */
+    public static Vector2f rayCollisionCheckBounds(Vector2f a, Vector2f b, CombatEntityAPI entity) {
+        // If [a] and [b] are both outside of the collision radius, and the a-b segment doesn't intersect
+        // the collision circle, then there cannot be any collisions, so exit early.
+        if (Misc.getDistance(a, entity.getLocation()) > entity.getCollisionRadius()
+                && Misc.getDistance(b, entity.getLocation()) > entity.getCollisionRadius()
+                && Misc.intersectSegmentAndCircle(a, b, entity.getLocation(), entity.getCollisionRadius()) == null) {
+            return null;
+        }
+
+        return rayCollisionCheckBoundsNoEarlyExit(a, b, entity);
+    }
+
+    /**
+     * Checks if the segment from a to b collides with an entity and returns the collision point closest to a.
+     * Returns null if there was no collision.
+     */
+    public static ClosestCollisionData rayCollisionCheck(
+            Vector2f a,
+            Vector2f b,
+            Collection<? extends CombatEntityAPI> ignoreList,
+            ShipAPI source,
+            boolean friendlyFire,
+            CombatEngineAPI engine) {
+        float length = Misc.getDistance(a, b);
+        return rayCollisionCheck(a, b, ignoreList, source, friendlyFire, engine.getAllObjectGrid().getCheckIterator(a, length, length));
+    }
+
+    /** Helper method to avoid repeating engine.getAllObjectGrid().getCheckIterator calls */
+    private static ClosestCollisionData rayCollisionCheck(
+            Vector2f a,
+            Vector2f b,
+            Collection<? extends CombatEntityAPI> ignoreList,
+            ShipAPI source,
+            boolean friendlyFire,
+            Iterator<Object> itr) {
+
+        // Keep track of the closest collision point as that is the one that we will end up using
+        // Distance to previous location is tracked
+        ClosestCollisionData closest = new ClosestCollisionData();
+
+        while (itr.hasNext()) {
+            Object obj = itr.next();
+            if (!canCollide(obj, ignoreList, source, friendlyFire)) continue;
+
+            CombatEntityAPI o = (CombatEntityAPI) obj;
+            Pair<Vector2f, Boolean> pair = rayCollisionCheckEntity(a, b, o);
+            Vector2f closestPoint = pair.one;
+            if (closestPoint != null) {
+                float dist = Misc.getDistance(a, closestPoint);
+                closest.updateClosest(closestPoint, o, dist, pair.two);
+                // If the point is just [a], then nothing can be closer, so break early.
+                if (dist <= 0.001f) {
+                    break;
+                }
+            }
+        }
+
+        if (closest.isEmpty) {
+            return null;
+        }
+
+        return closest;
+    }
+
+    public static class ClosestCollisionData {
+        public float distance;
+        public Vector2f point;
+        public CombatEntityAPI entity;
+        public boolean shieldHit;
+        private boolean isEmpty = true;
+
+        private ClosestCollisionData() {
+            distance = Float.POSITIVE_INFINITY;
+            point = null;
+            entity = null;
+            shieldHit = false;
+        }
+
+        private void updateClosest(Vector2f newPt, CombatEntityAPI newEntity, float newDist, boolean shieldHit) {
+            if (newDist < distance) {
+                distance = newDist;
+                entity = newEntity;
+                point = newPt;
+                isEmpty = false;
+                this.shieldHit = shieldHit;
+            }
+        }
     }
 
     public static List<Vector2f> randomPointsOnBounds(ShipAPI ship, int count, boolean rotateBounds) {

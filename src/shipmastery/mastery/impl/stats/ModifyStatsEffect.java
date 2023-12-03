@@ -19,8 +19,6 @@ import java.util.Map;
 
 public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     Map<ShipStat, Float> amounts = new LinkedHashMap<>();
-    boolean triggersAutofit = false;
-
     @Override
     public void init(String... args) {
         super.init(args);
@@ -40,13 +38,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             Float existing = amounts.get(stat);
             amounts.put(stat, existing == null ? amount : existing + amount);
             addTags(stat.tags.toArray(new String[0]));
-            triggersAutofit |= stat.triggersAutofit();
         }
-    }
-
-    @Override
-    public boolean triggersAutofit() {
-        return triggersAutofit;
     }
 
     @Override

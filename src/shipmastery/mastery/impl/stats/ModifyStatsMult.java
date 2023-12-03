@@ -27,7 +27,7 @@ public class ModifyStatsMult extends ModifyStatsEffect {
         for (Map.Entry<ShipStat, Float> entry : amounts.entrySet()) {
             ShipStat stat = entry.getKey();
             float amount = getStrength(stats) * entry.getValue();
-            modify(stat.get(stats), id, amount);
+            modify(stat.get(stats), id + "_" + stat.getClass().getSimpleName(), amount);
         }
     }
     

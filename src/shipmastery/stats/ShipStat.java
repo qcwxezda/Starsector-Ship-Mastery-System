@@ -14,11 +14,6 @@ public abstract class ShipStat {
     /** Type: StatBonus | MutableStat | List<StatBonus | MutableStat>. */
     public abstract Object get(MutableShipStatsAPI stats);
 
-    /** True if it modifies OP costs, hangar space, anything that requires the variant to be refitted */
-    public boolean triggersAutofit() {
-        return false;
-    }
-
     /** Selection weight for each stat will be normalized across all hull specs. */
     public float getSelectionWeight(ShipHullSpecAPI spec) {
         return 1f;
