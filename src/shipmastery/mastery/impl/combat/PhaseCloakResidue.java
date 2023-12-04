@@ -123,7 +123,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                 timeMult.modifyMult(id, ratio);
                 timeAcceleratedUnphased += amount / timeMult.getModifiedValue();
                 Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PhaseCloakResidueStatusTitle,
@@ -133,7 +133,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                 stats.getHullDamageTakenMult().modifyMult(id, damageMult);
                 stats.getArmorDamageTakenMult().modifyMult(id, damageMult);
                 stats.getEmpDamageTakenMult().modifyMult(id, damageMult);
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PhaseCloakResidueStatusTitle,

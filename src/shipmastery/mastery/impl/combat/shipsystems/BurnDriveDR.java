@@ -60,7 +60,7 @@ public class BurnDriveDR extends ShipSystemEffect {
         public void advanceWhileOn(float amount) {
             reduction = maxReduction * ship.getSystem().getEffectLevel();
             if (reduction > 0f) {
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id,
                         "graphics/icons/hullsys/burn_drive.png",
                         Strings.Descriptions.BurnDriveDRTitle,

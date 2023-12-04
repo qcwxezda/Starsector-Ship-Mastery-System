@@ -108,7 +108,7 @@ public class HEFExplosion extends ShipSystemEffect {
                 }
             }
 
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     id,
                     "graphics/icons/hullsys/high_energy_focus.png",
                     Strings.Descriptions.HEFExplosionTitle,

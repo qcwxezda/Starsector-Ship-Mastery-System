@@ -52,7 +52,7 @@ public class ZeroFluxResidue extends BaseMasteryEffect {
                 float boost = zeroFluxSpeed * (1f - duration / maxDuration);
                 ship.getMutableStats().getMaxSpeed().modifyFlat(id, boost);
                 ship.getMutableStats().getMaxTurnRate().modifyFlat(id, 10f * (1f - duration / maxDuration));
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id,
                         "graphics/icons/tactical/engine_boost2.png",
                         Strings.Descriptions.ZeroFluxResidueTitle,

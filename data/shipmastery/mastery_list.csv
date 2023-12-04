@@ -7,7 +7,7 @@ SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.im
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
 SModRemoval,4,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
-SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1.75,shipmastery.mastery.impl.logistics.SModsOverCapacity
+SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
 ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
@@ -36,6 +36,8 @@ HitAngleDR,7,combat negative_strength_allowed,,-0.25,shipmastery.mastery.impl.co
 TPCUpgrade,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,9,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
+ArmorRepair,9,combat unique,,0.025,shipmastery.mastery.impl.combat.ArmorRepair
+HullThresholdDR,9,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
 #### SHIP SYSTEM ENHANCEMENTS ####
@@ -55,3 +57,6 @@ BurnDriveImpulse,9,combat unique doesnt_affect_modules,,650,shipmastery.mastery.
 PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
 FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
 OrionDeviceDamage,9,combat unique doesnt_affect_modules prefix_flagship_only,,1500,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
+NovaBurstDamage,9,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
+FastSkimmer,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
+SkimmerDR,9,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR

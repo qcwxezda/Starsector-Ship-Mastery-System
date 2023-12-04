@@ -80,7 +80,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
             ship.getMutableStats().getTurnAcceleration().modifyMult(id, effectAmount);
             ship.getEngineController().fadeToOtherColor(id, color, null, effectLevel, 1f);
 
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     id,
                     "graphics/icons/hullsys/maneuvering_jets.png",
                     Strings.Descriptions.ManeuveringJetsMobilityTitle,

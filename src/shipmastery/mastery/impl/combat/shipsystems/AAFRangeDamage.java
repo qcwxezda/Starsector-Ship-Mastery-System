@@ -56,7 +56,7 @@ public class AAFRangeDamage extends ShipSystemEffect {
             float effectLevel = ship.getSystem().getEffectLevel() * mult;
             ship.getMutableStats().getBallisticWeaponRangeBonus().modifyPercent(id, effectLevel * 100f);
             ship.getMutableStats().getBallisticWeaponDamageMult().modifyPercent(id, effectLevel * 100f);
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     id,
                     "graphics/icons/hullsys/ammo_feeder.png",
                     Strings.Descriptions.AAFRangeDamageTitle,

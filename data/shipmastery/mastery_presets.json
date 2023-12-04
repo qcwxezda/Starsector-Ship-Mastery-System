@@ -1,14 +1,34 @@
 {
   "none": {},
 
-  "default": {
-    "maxLevel": 10,
+  "_DEFAULT_": {
+    "maxLevel": 9,
     "levels": {
       "2": "SModCapacity",
-      "4": "SModRemoval",
-      "6": "SModCapacity",
+      "4": "SModCapacity",
+      "7": ["SModCapacity","SModRemoval"],
       "8": {
         "A": "SModsOverCapacity",
+        "B": "ScaleOtherMasteries"
+      }
+    }
+  },
+
+  "automated": {
+    "preset": "_DEFAULT_",
+    "levels": {
+      "8": {
+        "A": "IgnoreNoBuildIn 1 neural_integrator",
+        "B": "ScaleOtherMasteries"
+      }
+    }
+  },
+
+  "phase": {
+    "preset": "_DEFAULT_",
+    "levels": {
+      "8": {
+        "A": "IgnoreNoBuildIn 1 phase_anchor",
         "B": "ScaleOtherMasteries"
       }
     }

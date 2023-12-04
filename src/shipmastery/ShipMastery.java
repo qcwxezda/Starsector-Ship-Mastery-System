@@ -14,7 +14,6 @@ import shipmastery.mastery.MasteryEffect;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -26,7 +25,7 @@ public abstract class ShipMastery {
     public static class SaveDataTable extends HashMap<String, SaveData> {}
 
     public static final String MASTERY_KEY = "shipmastery_Mastery";
-    public static final String DEFAULT_PRESET_NAME = "default";
+    public static final String DEFAULT_PRESET_NAME = "_DEFAULT_";
     private static SaveDataTable SAVE_DATA_TABLE;
 
     /**
@@ -44,6 +43,8 @@ public abstract class ShipMastery {
     private static final Map<String, Integer> maxLevelMap = new HashMap<>();
     /** For each hull type, keep track of the preset that should be used if a level isn't specified. */
     private static final Map<String, String> assignmentsToPresetsMap = new HashMap<>();
+    /** Presets can also have fallback presets */
+    private static final Map<String, String> presetToPresetMap = new HashMap<>();
     private static final Utils.ListPairMapMap<String, Integer, String> presetsMap = new Utils.ListPairMapMap<>();
     private static final Map<String, Integer> presetsMaxLevelMap = new HashMap<>();
 
@@ -264,15 +265,44 @@ public abstract class ShipMastery {
         while (presetsIterator.hasNext()) {
             String presetName = presetsIterator.next();
             JSONObject preset = masteryPresets.getJSONObject(presetName);
-            int maxLevel = preset.optInt("maxLevel", 0);
-            ShipMastery.presetsMaxLevelMap.put(presetName, maxLevel);
+            int maxLevel;
+            if (preset.has("maxLevel")) {
+                maxLevel = preset.getInt("maxLevel");
+            }
+            else {
+                Integer max = null;
+                String parentPresetName = presetName;
+                Set<String> seenNames = new LinkedHashSet<>();
+                do {
+                    if (parentPresetName == null) {
+                        max = 0;
+                    }
+                    else {
+                        JSONObject object = masteryPresets.getJSONObject(parentPresetName);
+                        if (object.has("maxLevel")) {
+                            max = object.getInt("maxLevel");
+                        }
+                        if (seenNames.contains(parentPresetName)) {
+                            throw new RuntimeException("Circular preset dependency: " + seenNames);
+                        }
+                        seenNames.add(parentPresetName);
+                        parentPresetName = object.optString("preset", null);
+                    }
+                } while (max == null);
+                maxLevel = max;
+            }
+            presetsMaxLevelMap.put(presetName, maxLevel);
+            String copyPresetName = preset.optString("preset");
+            if (copyPresetName != null) {
+                presetToPresetMap.put(presetName, copyPresetName);
+            }
             JSONObject levelsJson = preset.optJSONObject("levels");
             if (levelsJson != null) {
                 //noinspection unchecked
                 Iterator<String> levelsItr = levelsJson.keys();
                 while (levelsItr.hasNext()) {
-                    parseLevelItemOrOption(presetName, levelsItr.next(), levelsJson, ShipMastery.presetsMap,
-                                           ShipMastery.presetsMaxLevelMap);
+                    parseLevelItemOrOption(presetName, levelsItr.next(), levelsJson, presetsMap,
+                                           presetsMaxLevelMap);
                 }
             }
         }
@@ -296,11 +326,23 @@ public abstract class ShipMastery {
             if (assignment.has("maxLevel")) {
                 maxLevel = assignment.getInt("maxLevel");
             }
-            else if (presetName != null && presetsMaxLevelMap.containsKey(presetName)) {
-                maxLevel = presetsMaxLevelMap.get(presetName);
-            }
             else {
-                maxLevel = presetsMaxLevelMap.get(DEFAULT_PRESET_NAME);
+                Integer max;
+                Set<String> seenNames = new LinkedHashSet<>();
+                do {
+                    if (presetName == null) {
+                        max = presetsMaxLevelMap.get(DEFAULT_PRESET_NAME);
+                    }
+                    else {
+                        max = presetsMaxLevelMap.get(presetName);
+                        if (seenNames.contains(presetName)) {
+                            throw new RuntimeException("Circular preset dependency: " + seenNames);
+                        }
+                        seenNames.add(presetName);
+                        presetName = presetToPresetMap.get(presetName);
+                    }
+                } while (max == null);
+                maxLevel = max;
             }
             maxLevelMap.put(hullId, maxLevel);
             JSONObject levelsJson = assignment.getJSONObject("levels");
@@ -395,7 +437,19 @@ public abstract class ShipMastery {
             // Mastery assignments doesn't contain the entry, but the preset does, so use that
             // as a fallback
             else if (assignmentsToPresetsMap.containsKey(restoredSpecId)) {
-                masteryOptions = presetsMap.get(assignmentsToPresetsMap.get(restoredSpecId)).get(i);
+                String presetName = assignmentsToPresetsMap.get(restoredSpecId);
+                Set<String> seenPresets = new LinkedHashSet<>();
+                do {
+                    if (presetsMap.containsKey(presetName)) {
+                        masteryOptions = presetsMap.get(presetName).get(i);
+                    }
+                    if (seenPresets.contains(presetName)) {
+                        throw new RuntimeException("Circular preset dependency: " + seenPresets);
+                    }
+                    seenPresets.add(presetName);
+                    presetName = presetToPresetMap.get(presetName);
+                }
+                while (presetName != null && masteryOptions == null);
             }
             // Neither the assignments nor the preset have data for this level, so need to randomly generate it
             if (masteryOptions == null) {
@@ -472,6 +526,4 @@ public abstract class ShipMastery {
     public static ShipStat getStatParams(String id) {
         return statSingletonMap.get(id);
     }
-
-
 }

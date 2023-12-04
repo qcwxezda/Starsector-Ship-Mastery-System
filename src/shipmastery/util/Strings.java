@@ -165,5 +165,19 @@ public interface Strings {
         String BurnDriveImpulsePost = Utils.getString( "sms_descriptions", "BurnDriveImpulsePost");
         String OrionDeviceDamage = Utils.getString( "sms_descriptions", "OrionDeviceDamage");
         String OrionDeviceDamagePost = Utils.getString( "sms_descriptions", "OrionDeviceDamagePost");
+        String ArmorRepair = Utils.getString( "sms_descriptions", "ArmorRepair");
+        String ArmorRepairPost = Utils.getString( "sms_descriptions", "ArmorRepairPost");
+        String NovaBurstDamage = Utils.getString( "sms_descriptions", "NovaBurstDamage");
+        String NovaBurstDamagePost = Utils.getString( "sms_descriptions", "NovaBurstDamagePost");
+        String HullThresholdDR = Utils.getString( "sms_descriptions", "HullThresholdDR");
+        String HullThresholdDRPost = Utils.getString( "sms_descriptions", "HullThresholdDRPost");
+        String HullThresholdDRTitle = Utils.getString( "sms_descriptions", "HullThresholdDRTitle");
+        String HullThresholdDRDesc1 = Utils.getString( "sms_descriptions", "HullThresholdDRDesc1");
+        String FastSkimmer = Utils.getString( "sms_descriptions", "FastSkimmer");
+        String FastSkimmerPost = Utils.getString( "sms_descriptions", "FastSkimmerPost");
+        String SkimmerDR = Utils.getString( "sms_descriptions", "SkimmerDR");
+        String SkimmerDRPost = Utils.getString( "sms_descriptions", "SkimmerDRPost");
+        String SkimmerDRTitle = Utils.getString( "sms_descriptions", "SkimmerDRTitle");
+        String SkimmerDRDesc1 = Utils.getString( "sms_descriptions", "SkimmerDRDesc1");
     }
 }

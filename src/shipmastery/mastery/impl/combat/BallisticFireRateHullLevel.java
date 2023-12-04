@@ -71,13 +71,13 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
             }
 
             if (effectLevel > 0f) {
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         "graphics/icons/hullsys/ammo_feeder.png",
                         Strings.Descriptions.BallisticFireRateHullLevelTitle,
                         String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc1, Utils.asPercent(effectLevel), Utils.asPercent(2f*effectLevel)),
                         false);
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
                         "graphics/icons/hullsys/ammo_feeder.png",
                         Strings.Descriptions.BallisticFireRateHullLevelTitle,

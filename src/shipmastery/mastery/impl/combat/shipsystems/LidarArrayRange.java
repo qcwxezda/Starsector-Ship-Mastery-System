@@ -40,7 +40,7 @@ public class LidarArrayRange extends ShipSystemEffect {
         @Override
         public void advance(float amount) {
             if (!ship.getSystem().isActive()) {
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id,
                         "graphics/icons/hullsys/lidar_barrage.png",
                         Strings.Descriptions.LidarArrayRangeTitle,

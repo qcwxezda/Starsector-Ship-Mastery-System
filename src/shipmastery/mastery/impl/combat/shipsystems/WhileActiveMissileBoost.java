@@ -85,7 +85,7 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
             ship.getMutableStats().getMissileMaxSpeedBonus().modifyPercent(id, 100f * modifiedMult);
             ship.getMutableStats().getMissileAccelerationBonus().modifyPercent(id, 100f * modifiedMult);
             ship.getMutableStats().getMissileHealthBonus().modifyPercent(id, 100f * modifiedMult);
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     id,
                     ship.getSystem().getSpecAPI().getIconSpriteName(),
                     Strings.Descriptions.WhileActiveMissileBoostTitle,

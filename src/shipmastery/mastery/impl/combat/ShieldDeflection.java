@@ -98,7 +98,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                 return;
             }
 
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     this,
                     "graphics/icons/hullsys/fortress_shield.png",
                     Strings.Descriptions.ShieldDeflectionStatusTitle,

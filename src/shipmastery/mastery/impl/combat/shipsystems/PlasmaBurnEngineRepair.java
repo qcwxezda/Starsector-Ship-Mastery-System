@@ -78,7 +78,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
         @Override
         public void advanceWhileOn(float amount) {
             ship.getMutableStats().getCombatEngineRepairTimeMult().modifyMult(id, 1f / repairSpeedMult);
-            Global.getCombatEngine().maintainStatusForPlayerShip(
+            Utils.maintainStatusForPlayerShip(ship,
                     id,
                     ship.getSystem().getSpecAPI().getIconSpriteName(),
                     Strings.Descriptions.PlasmaBurnEngineRepairTitle,
@@ -92,13 +92,13 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
                 ship.getMutableStats().getMaxTurnRate().modifyPercent(id, 100f * turnRateMult * postEffectLevel);
                 ship.getMutableStats().getTurnAcceleration().modifyPercent(id, 100f * turnRateMult * postEffectLevel);
                 ship.getMutableStats().getCombatEngineRepairTimeMult().modifyMult(id, 1f / repairSpeedMult);
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id,
                         ship.getSystem().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,
                         String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.oneDecimalPlaceFormat.format(repairSpeedMult)),
                         false);
-                Global.getCombatEngine().maintainStatusForPlayerShip(
+                Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
                         ship.getSystem().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,

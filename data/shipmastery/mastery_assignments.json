@@ -1,7 +1,8 @@
 {
   "doom": {
+    "preset": "phase",
     "levels": {
-      "10": {
+      "9": {
         "A": "EnergyMineConversion",
         "B": "IgnoreNoBuildIn 1 phase_anchor"
       }
@@ -10,7 +11,7 @@
 
   "astral": {
     "levels": {
-      "10": {
+      "9": {
         "A": "RecallDeviceDestruction",
         "B": "RecallDeviceRegeneration"
       }
@@ -19,7 +20,7 @@
 
   "atlas2": {
     "levels": {
-      "10": {
+      "9": {
         "A": "AAFRangeDamage",
         "B": "BallisticFireRateHullLevel"
       }
@@ -71,6 +72,16 @@
     }
   },
 
+  "nova": {
+    "preset": "automated",
+    "levels": {
+      "9": {
+        "A": "NovaBurstDamage",
+        "B": "HullThresholdDR"
+      }
+    }
+  },
+
   "odyssey": {
     "levels": {
       "9": {
@@ -100,7 +111,7 @@
 
   "paragon": {
     "levels": {
-      "10": {
+      "9": {
         "A": "ShieldDeflection",
         "B": "FluxByShieldUpkeep"
       }
@@ -125,18 +136,29 @@
     }
   },
 
+  "radiant": {
+    "preset": "automated",
+    "levels": {
+      "9": {
+        "A": "FastSkimmer",
+        "B": "SkimmerDR"
+      }
+    }
+  },
+
   "retribution": {
     "levels": {
       "9": {
         "A": "OrionDeviceDamage",
-        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost 3.5 BomberCost -7"
+        "B": "ArmorRepair"
       }
     }
   },
 
   "ziggurat": {
+    "preset": "phase",
     "levels": {
-      "10": {
+      "9": {
         "A": "HighFrequencyMotes",
         "B": "PhaseCloakResidue"
       }

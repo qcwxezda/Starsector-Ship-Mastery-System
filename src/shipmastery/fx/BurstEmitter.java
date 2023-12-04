@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.BaseIEmitter;
 import particleengine.ParticleData;
+import shipmastery.util.MathUtils;
 
 import java.awt.Color;
 
@@ -35,13 +36,7 @@ public class BurstEmitter extends BaseIEmitter {
 
     @Override
     public Vector2f getLocation() {
-        if (jitterRadius <= 0f) {
-            return location;
-        }
-        Vector2f loc = Misc.getUnitVectorAtDegreeAngle(Misc.random.nextFloat() * 360f);
-        loc.scale(Misc.random.nextFloat() * jitterRadius);
-        Vector2f.add(loc, location, loc);
-        return loc;
+        return location;
     }
 
     @Override
@@ -69,13 +64,17 @@ public class BurstEmitter extends BaseIEmitter {
         data.size(sprite.getWidth(), sprite.getHeight());
         float theta = (Misc.random.nextFloat() + i) * 360f / numDirections;
         Vector2f offset = Misc.getUnitVectorAtDegreeAngle(theta);
-        Vector2f velocity = new Vector2f(offset);
         offset.scale(width);
+        Vector2f jitter = Misc.getUnitVectorAtDegreeAngle(Misc.random.nextFloat() * 360f);
+        jitter.scale(Misc.random.nextFloat() * jitterRadius);
+        Vector2f.add(jitter, offset, offset);
+        Vector2f velocity = new Vector2f(offset);
+        MathUtils.safeNormalize(velocity);
         velocity.scale(widthGrowth / duration);
         data.offset(offset);
         data.velocity(velocity);
         data.life(duration);
-        data.fadeTime(duration / 4f, duration / 4f);
+        data.fadeTime(duration / 20f, duration / 4f);
         data.color(new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f * alphaMult));
         return data;
     }

@@ -413,4 +413,17 @@ public abstract class Utils {
         }
         return false;
     }
+
+    public static void maintainStatusForPlayerShip(ShipAPI ship, Object id, String spriteName, String title, String desc, boolean isDebuff) {
+        if (ship != Global.getCombatEngine().getPlayerShip()) return;
+        Global.getCombatEngine().maintainStatusForPlayerShip(id, spriteName, title, desc, isDebuff);
+    }
+
+    public static float[][] clone2DArray(float[][] arr) {
+        float[][] res = new float[arr.length][];
+        for (int i = 0; i < arr.length; i++) {
+            res[i] = arr[i].clone();
+        }
+        return res;
+    }
 }
