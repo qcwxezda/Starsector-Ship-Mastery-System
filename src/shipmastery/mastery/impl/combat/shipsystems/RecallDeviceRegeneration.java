@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;

@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
@@ -17,15 +16,14 @@ import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
-import shipmastery.campaign.PlayerFleetHandler;
 
-import java.awt.*;
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 
 public abstract class Utils {
-    public static DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
+    public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
+    public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
@@ -176,6 +174,8 @@ public abstract class Utils {
 
     public static String asPercent(float num) {return percentFormat.format(num);}
 
+    public static String asPercentNoDecimal(float num) {return percentFormatNoDecimal.format(num);}
+
 
     public static class WeaponSlotCount {
 
@@ -304,11 +304,11 @@ public abstract class Utils {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 
-    public static void fixVariantInconsistencies(ShipVariantAPI variant) {
-        if (variant.getStatsForOpCosts() == null) return;
+    public static void fixVariantInconsistencies(MutableShipStatsAPI stats) {
+        ShipVariantAPI variant = stats.getVariant();
         List<String> wingIds = variant.getWings();
         if (wingIds != null && !wingIds.isEmpty()) {
-            for (int i = variant.getStatsForOpCosts().getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
+            for (int i = stats.getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
                 variant.setWingId(i, null);
             }
         }
@@ -324,7 +324,7 @@ public abstract class Utils {
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
             fm.getVariant().addPermaMod("sms_masteryHandler");
-            Utils.fixVariantInconsistencies(fm.getVariant());
+            Utils.fixVariantInconsistencies(fm.getStats());
         }
     }
 

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
 import shipmastery.combat.listeners.ShipDestroyedListener;
+import shipmastery.config.Settings;
 import shipmastery.fx.OverlayEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -33,7 +34,7 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
         String destroyerTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[1] * strength);
         String cruiserTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[2] * strength);
         String capitalTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[3] * strength);
-        tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost, 0f, Misc.getHighlightColor(), frigateTime, destroyerTime, cruiserTime, capitalTime);
+        tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, frigateTime, destroyerTime, cruiserTime, capitalTime);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost2, 0f);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost3, 0f);
     }

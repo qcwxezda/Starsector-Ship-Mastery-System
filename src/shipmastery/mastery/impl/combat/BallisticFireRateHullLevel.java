@@ -8,13 +8,14 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
+import shipmastery.config.Settings;
 import shipmastery.fx.EntityBurstEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class BallisticFireRateHullLevel extends BaseMasteryEffect {
 
@@ -29,7 +30,7 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.BallisticFireRateHullLevelPost, 0f, Misc.getNegativeHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.BallisticFireRateHullLevelPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.asPercent(MIN_HULL_LEVEL));
     }
 
@@ -75,13 +76,13 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
                         id + "1",
                         "graphics/icons/hullsys/ammo_feeder.png",
                         Strings.Descriptions.BallisticFireRateHullLevelTitle,
-                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc1, Utils.asPercent(effectLevel), Utils.asPercent(2f*effectLevel)),
+                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc1, Utils.asPercentNoDecimal(effectLevel), Utils.asPercentNoDecimal(2f*effectLevel)),
                         false);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
                         "graphics/icons/hullsys/ammo_feeder.png",
                         Strings.Descriptions.BallisticFireRateHullLevelTitle,
-                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc2, Utils.asPercent(effectLevel)),
+                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc2, Utils.asPercentNoDecimal(effectLevel)),
                         false);
                 outlineEmitter.alphaMult = effectMult * 0.4f;
                 outlineEmitter.widthGrowth = effectMult * 20f;

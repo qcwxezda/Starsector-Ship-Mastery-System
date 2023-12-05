@@ -5,9 +5,10 @@ import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.config.Settings;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Description for a mastery effect. The actual displayed text will be {@code String.format(text, params)}.
@@ -47,7 +48,7 @@ public class MasteryDescription {
     }
 
     public static MasteryDescription initDefaultHighlight(String formatText) {
-        return init(formatText).colors(Misc.getHighlightColor());
+        return init(formatText).colors(Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     public MasteryDescription params(Object... params) {

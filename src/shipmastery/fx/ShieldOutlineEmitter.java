@@ -9,7 +9,7 @@ import particleengine.BaseIEmitter;
 import particleengine.ParticleData;
 import shipmastery.util.MathUtils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ShieldOutlineEmitter extends BaseIEmitter {
 

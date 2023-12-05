@@ -1,7 +1,5 @@
 package shipmastery.combat.listeners;
 
-import com.fs.starfarer.api.combat.ShipAPI;
-
 public abstract class BaseShipSystemListener implements ShipSystemListener {
     @Override
     public void onActivate() {}

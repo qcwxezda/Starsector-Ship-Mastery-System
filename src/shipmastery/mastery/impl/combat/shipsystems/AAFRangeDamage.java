@@ -1,12 +1,11 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -21,7 +20,7 @@ public class AAFRangeDamage extends ShipSystemEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.AAFRangeDamagePost, 0f, Misc.getNegativeHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.AAFRangeDamagePost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         "" + (int) FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]);
     }
 
@@ -60,7 +59,7 @@ public class AAFRangeDamage extends ShipSystemEffect {
                     id,
                     "graphics/icons/hullsys/ammo_feeder.png",
                     Strings.Descriptions.AAFRangeDamageTitle,
-                    String.format(Strings.Descriptions.AAFRangeDamageDesc1, Utils.asPercent(effectLevel)),
+                    String.format(Strings.Descriptions.AAFRangeDamageDesc1, Utils.asPercentNoDecimal(effectLevel)),
                     false);
         }
     }

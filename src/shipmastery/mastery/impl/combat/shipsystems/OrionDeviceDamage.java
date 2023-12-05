@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
@@ -23,14 +23,14 @@ import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
-public class OrionDeviceDamage extends BaseMasteryEffect {
+public class OrionDeviceDamage extends ShipSystemEffect {
 
     public static final float RANGE = 750f;
     public static final float ARC_DEGREES = 75f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.OrionDeviceDamage).params(selectedModule.getSystem().getDisplayName());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.OrionDeviceDamage).params(systemName);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class OrionDeviceDamage extends BaseMasteryEffect {
         tooltip.addPara(
                 Strings.Descriptions.OrionDeviceDamagePost,
                 0f,
-                new Color[] {Misc.getHighlightColor(), Misc.getHighlightColor(), Misc.getTextColor(), Misc.getTextColor()},
+                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Misc.getTextColor()},
                 "" + (int) getStrengthForPlayer(),
                 DamageType.HIGH_EXPLOSIVE.getDisplayName(),
                 "" + (int) ARC_DEGREES,

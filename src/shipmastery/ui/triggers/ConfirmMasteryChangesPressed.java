@@ -2,11 +2,7 @@ package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.ShipMastery;
-import shipmastery.deferred.Action;
-import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.hullmods.MasteryHullmod;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.Utils;
 
@@ -55,10 +51,11 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
         }
 
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);
-        masteryPanel.forceRefresh(true, false, true);
 
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
         // bay on ships that filled it
         Utils.fixPlayerFleetInconsistencies();
+
+        masteryPanel.forceRefresh(true, false, true);
     }
 }

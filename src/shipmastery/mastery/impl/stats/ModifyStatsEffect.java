@@ -5,13 +5,14 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import shipmastery.ShipMastery;
+import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,7 +68,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
-            colors.add(!(item.one.defaultAmount < 0)? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
+            colors.add(!(item.one.defaultAmount < 0)? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
         }
 
         for (Pair<ShipStat, Float> item : negativeAmounts) {
@@ -75,7 +76,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             params.add(item.one.name);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
-            colors.add(item.one.defaultAmount < 0? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
+            colors.add(item.one.defaultAmount < 0? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
         }
 
         StringBuilder sb = new StringBuilder();

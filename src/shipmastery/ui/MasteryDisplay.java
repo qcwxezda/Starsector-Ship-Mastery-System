@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
@@ -146,7 +147,7 @@ public class MasteryDisplay implements CustomUIElement {
             effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
             if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
                     MasteryTags.DOESNT_AFFECT_MODULES)) {
-                tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Misc.getNegativeHighlightColor(), 5f);
+                tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Settings.NEGATIVE_HIGHLIGHT_COLOR, 5f);
             }
             tooltip.addSpacer(i == effects.size() - 1 ? 20f : 5f);
         }

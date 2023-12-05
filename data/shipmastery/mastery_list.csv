@@ -11,6 +11,9 @@ SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_mo
 ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+EfficiencyOverhaulBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
+ExpandedCargoBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
+ExpandedFuelBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
 #### STATS ####
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
@@ -38,6 +41,10 @@ TPCChaining,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.c
 TorpedoTracking,9,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 ArmorRepair,9,combat unique,,0.025,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,9,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
+BackArmorBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.BackArmorBoost
+ShieldEfficiencyNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
+VentingSpeedBoost,9,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingSpeedBoost
+RangeNotMoving,9,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
 #### SHIP SYSTEM ENHANCEMENTS ####
@@ -49,14 +56,20 @@ AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.shipsystems.SystemRegenOnKill
 HEFExplosion,9,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
+HEFRangeRoF,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFRangeRoF
 LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
 LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
 BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
 WhileActiveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.WhileActiveMissileBoost
 BurnDriveImpulse,9,combat unique doesnt_affect_modules,,650,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
 PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
+PlasmaBurnEnergyRoF,9,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
 FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
 OrionDeviceDamage,9,combat unique doesnt_affect_modules prefix_flagship_only,,1500,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
 NovaBurstDamage,9,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
 FastSkimmer,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
 SkimmerDR,9,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR
+DroneStrikeBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeBoost
+DroneStrikeRegen,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeRegen
+FlareLauncherWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FlareLauncherWhileVenting
+PlasmaJetsGrazeChance,9,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsGrazeChance

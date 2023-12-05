@@ -14,17 +14,16 @@ import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.fx.GlowEmitter;
 import shipmastery.fx.ShapedChargeEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 
 import java.awt.Color;
 
-public class BurnDriveImpulse extends BaseMasteryEffect {
+public class BurnDriveImpulse extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveImpulse).params(selectedModule.getSystem().getDisplayName());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveImpulse).params(systemName);
     }
 
     @Override

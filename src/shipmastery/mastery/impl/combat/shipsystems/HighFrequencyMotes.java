@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -32,7 +33,7 @@ public class HighFrequencyMotes extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.HighFrequencyMotesPost, 0f, Misc.getNegativeHighlightColor(), Utils.asPercent(RANGE_REDUCTION), Utils.asPercent(MAX_MOTES_REDUCTION));
+        tooltip.addPara(Strings.Descriptions.HighFrequencyMotesPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(RANGE_REDUCTION), Utils.asPercent(MAX_MOTES_REDUCTION));
     }
 
     @Override

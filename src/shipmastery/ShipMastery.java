@@ -14,6 +14,7 @@ import shipmastery.mastery.MasteryEffect;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -26,6 +27,7 @@ public abstract class ShipMastery {
 
     public static final String MASTERY_KEY = "shipmastery_Mastery";
     public static final String DEFAULT_PRESET_NAME = "_DEFAULT_";
+    public static final String DEFAULT_CIVILIAN_PRESET_NAME = "_DEFAULT_CIVILIAN_";
     private static SaveDataTable SAVE_DATA_TABLE;
 
     /**
@@ -308,6 +310,10 @@ public abstract class ShipMastery {
         }
     }
 
+    static String getDefaultPresetFor(String hullId) {
+        return Global.getSettings().getHullSpec(hullId).isCivilianNonCarrier() ? DEFAULT_CIVILIAN_PRESET_NAME : DEFAULT_PRESET_NAME;
+    }
+
     static void loadAssignments() throws JSONException, IOException {
         JSONObject masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
         //noinspection unchecked
@@ -321,7 +327,7 @@ public abstract class ShipMastery {
                 assignmentsToPresetsMap.put(hullId, presetName);
             }
             else {
-                assignmentsToPresetsMap.put(hullId, DEFAULT_PRESET_NAME);
+                assignmentsToPresetsMap.put(hullId, getDefaultPresetFor(hullId));
             }
             if (assignment.has("maxLevel")) {
                 maxLevel = assignment.getInt("maxLevel");
@@ -331,7 +337,7 @@ public abstract class ShipMastery {
                 Set<String> seenNames = new LinkedHashSet<>();
                 do {
                     if (presetName == null) {
-                        max = presetsMaxLevelMap.get(DEFAULT_PRESET_NAME);
+                        max = presetsMaxLevelMap.get(getDefaultPresetFor(hullId));
                     }
                     else {
                         max = presetsMaxLevelMap.get(presetName);
@@ -345,11 +351,14 @@ public abstract class ShipMastery {
                 maxLevel = max;
             }
             maxLevelMap.put(hullId, maxLevel);
-            JSONObject levelsJson = assignment.getJSONObject("levels");
-            //noinspection unchecked
-            Iterator<String> levelsItr = levelsJson.keys();
-            while (levelsItr.hasNext()) {
-                parseLevelItemOrOption(hullId, levelsItr.next(), levelsJson, assignmentsMap, maxLevelMap);
+            assignmentsMap.put(hullId, new TreeMap<Integer, Pair<List<String>, List<String>>>());
+            if (assignment.has("levels")) {
+                JSONObject levelsJson = assignment.getJSONObject("levels");
+                //noinspection unchecked
+                Iterator<String> levelsItr = levelsJson.keys();
+                while (levelsItr.hasNext()) {
+                    parseLevelItemOrOption(hullId, levelsItr.next(), levelsJson, assignmentsMap, maxLevelMap);
+                }
             }
         }
     }
@@ -419,8 +428,8 @@ public abstract class ShipMastery {
         SortedMap<Integer, Pair<List<String>, List<String>>> masteries;
         // Hull not tracked, so use the default preset
         if (maxLevel == null) {
-            maxLevel = presetsMaxLevelMap.get(DEFAULT_PRESET_NAME);
-            masteries = presetsMap.get(DEFAULT_PRESET_NAME);
+            maxLevel = presetsMaxLevelMap.get(getDefaultPresetFor(restoredSpecId));
+            masteries = presetsMap.get(getDefaultPresetFor(restoredSpecId));
         }
         else {
             masteries = assignmentsMap.get(restoredSpecId);

@@ -11,7 +11,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
-import shipmastery.util.Utils;
 
 import java.util.Collection;
 

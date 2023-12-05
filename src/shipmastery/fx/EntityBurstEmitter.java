@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class EntityBurstEmitter extends BurstEmitter {
     final CombatEntityAPI entity;

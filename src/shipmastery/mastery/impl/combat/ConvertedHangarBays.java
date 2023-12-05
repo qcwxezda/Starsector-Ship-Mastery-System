@@ -3,38 +3,36 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
-import shipmastery.util.Utils;
 
-import java.util.List;
-
-/** Known issue: extra bay(s) don't show up in the fleet screen */
 public class ConvertedHangarBays extends AdditiveMasteryEffect {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         if (stats.getVariant().hasHullMod(HullMods.CONVERTED_HANGAR)) {
             stats.getNumFighterBays().modifyFlat(id, getIncrease(stats));
+            if (stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_NO_DP_INCREASE).computeEffective(0f) <= 0f) {
+                // This doesn't actually do anything because it occurs after converted hangar has already applied the DP increase,
+                // but it does enable the green "negated DP increase" text on the hullmod's tooltip
+                stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_NO_DP_INCREASE).modifyFlat(id, 1);
+                // To actually negate the DP increase, we just remove the modifier with the id converted_hangar
+                stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).unmodify(HullMods.CONVERTED_HANGAR);
+                stats.getCRPerDeploymentPercent().unmodify(HullMods.CONVERTED_HANGAR);
+                stats.getSuppliesToRecover().unmodify(HullMods.CONVERTED_HANGAR);
+            }
         }
     }
 
     @Override
-    public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        // Remove fighter wings that are no longer allowed due to decreased limit
-        for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
-            if (!getHullSpec().equals(fm.getHullSpec())) continue;
-            ShipVariantAPI variant = fm.getVariant();
-            List<String> wingIds = variant.getWings();
-            if (wingIds != null && !wingIds.isEmpty()) {
-                for (int i = fm.getStats().getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
-                    variant.setWingId(i, null);
-                }
-            }
-        }
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+                                          FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(Strings.Descriptions.ConvertedHangarBaysPost, 0f, Misc.getTextColor(), Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName());
     }
 
     @Override

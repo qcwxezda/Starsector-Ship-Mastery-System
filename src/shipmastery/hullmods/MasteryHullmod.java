@@ -6,8 +6,9 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
-import shipmastery.util.VariantLookup;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.VariantLookup;
+
 import java.util.Objects;
 
 public class MasteryHullmod extends BaseHullMod {

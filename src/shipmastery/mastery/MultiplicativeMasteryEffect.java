@@ -7,9 +7,10 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.config.Settings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public abstract class MultiplicativeMasteryEffect extends BaseMasteryEffect {
     public final float getMult(PersonAPI commander) {
@@ -61,7 +62,7 @@ public abstract class MultiplicativeMasteryEffect extends BaseMasteryEffect {
                 else {
                     newParams[i] = showAsPercent ? Utils.asPercent(f) : f;
                 }
-                colors[i] = invertColors != f > 0f ? Misc.getHighlightColor() : Misc.getNegativeHighlightColor();
+                colors[i] = invertColors != f > 0f ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR;
             }
             else {
                 newParams[i] = params[i];

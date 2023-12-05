@@ -11,13 +11,14 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.combat.entities.Ship;
 import particleengine.Particles;
+import shipmastery.config.Settings;
 import shipmastery.fx.JitterEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class PhaseCloakResidue extends BaseMasteryEffect {
 
@@ -31,7 +32,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
         tooltip.addPara(
                 Strings.Descriptions.PhaseCloakResiduePost,
                 0f,
-                new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor()},
+                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(MAX_DAMAGE_REDUCTION),
                 Utils.oneDecimalPlaceFormat.format(CLOAK_COST_MULT),
                 Utils.oneDecimalPlaceFormat.format(CLOAK_COOLDOWN_MULT));
@@ -127,7 +128,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                         id + "1",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PhaseCloakResidueStatusTitle,
-                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc1, Utils.asPercent(timeMult.getModifiedValue())),
+                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc1, Utils.asPercentNoDecimal(timeMult.getModifiedValue())),
                         false);
                 float damageMult = 1f - ((timeMult.getModifiedValue() - 1f) / (maxTimeMult - 1f)) * MAX_DAMAGE_REDUCTION;
                 stats.getHullDamageTakenMult().modifyMult(id, damageMult);
@@ -137,7 +138,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                         id + "2",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PhaseCloakResidueStatusTitle,
-                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc2, Utils.asPercent(1f - damageMult)),
+                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc2, Utils.asPercentNoDecimal(1f - damageMult)),
                         false);
                 if (timeAcceleratedUnphased >= maxTime) {
                     resetTimeMults();

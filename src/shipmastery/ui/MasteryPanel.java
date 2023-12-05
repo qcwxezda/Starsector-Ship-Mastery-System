@@ -21,8 +21,7 @@ import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.*;
 import shipmastery.util.*;
 
-import java.awt.*;
-import java.util.List;
+import java.awt.Color;
 import java.util.*;
 
 public class MasteryPanel {
@@ -60,7 +59,7 @@ public class MasteryPanel {
         ReflectionUtils.GenericDialogData dialogData =
                 ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 1000f, 600f);
         if (dialogData == null) {
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CANT_OPEN_PANEL, Misc.getNegativeHighlightColor());
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CANT_OPEN_PANEL, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
         }
 

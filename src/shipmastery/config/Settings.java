@@ -1,6 +1,7 @@
 package shipmastery.config;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.util.Misc;
 import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettingsListener;
 import org.jetbrains.annotations.NotNull;
@@ -8,11 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.campaign.FleetHandler;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 
 public class Settings {
     public static Color MASTERY_COLOR = new Color(96, 192, 255);
+    public static Color POSITIVE_HIGHLIGHT_COLOR = Misc.getHighlightColor();
+    public static Color NEGATIVE_HIGHLIGHT_COLOR = Misc.getNegativeHighlightColor();
     public static Float DOUBLE_CLICK_INTERVAL;
 
     /** From 0-1, roughly the percentage of ships in NPC fleets that will have masteries */
@@ -48,6 +51,8 @@ public class Settings {
             if (!"shipmasterysystem".equals(modId)) return;
 
             MASTERY_COLOR = LunaSettings.getColor("shipmasterysystem", "general_MasteryColor");
+            POSITIVE_HIGHLIGHT_COLOR = LunaSettings.getColor("shipmasterysystem", "general_PositiveHighlightColor");
+            NEGATIVE_HIGHLIGHT_COLOR = LunaSettings.getColor("shipmasterysystem", "general_NegativeHighlightColor");
             DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat("shipmasterysystem", "general_DoubleClickInterval");
             SHOW_MP_AND_LEVEL_IN_REFIT = LunaSettings.getBoolean("shipmasterysystem", "general_RefitScreenDisplay");
 

@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -9,20 +8,19 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.fx.EntityBurstEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class SkimmerDR extends BaseMasteryEffect {
+public class SkimmerDR extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerDR).params(
-                selectedModule.getSystem().getDisplayName(),
+                systemName,
                 Utils.asPercent(strength),
                 Utils.oneDecimalPlaceFormat.format(10f * strength));
     }

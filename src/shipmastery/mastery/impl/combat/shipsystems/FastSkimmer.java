@@ -5,20 +5,20 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class FastSkimmer extends BaseMasteryEffect {
+public class FastSkimmer extends ShipSystemEffect {
 
     public static final float RANGE_MULT = 0.4f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FastSkimmer).params(selectedModule.getSystem().getDisplayName());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FastSkimmer).params(systemName);
     }
 
     @Override
@@ -29,10 +29,10 @@ public class FastSkimmer extends BaseMasteryEffect {
                 Strings.Descriptions.FastSkimmerPost,
                 0f,
                 new Color[] {
-                        Misc.getHighlightColor(),
-                        Misc.getNegativeHighlightColor(),
-                        Misc.getHighlightColor(),
-                        Misc.getHighlightColor()},
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.NEGATIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(Math.min(1f, strength/2f)),
                 Utils.asPercent(1f-RANGE_MULT),
                 Utils.asPercent(strength),

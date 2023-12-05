@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -32,7 +33,7 @@ public class ArmorRepair extends BaseMasteryEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ArmorRepairPost, 0f, new Color[] {
-                Misc.getHighlightColor(), Misc.getHighlightColor(), Misc.getNegativeHighlightColor()},
+                Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                         Utils.asPercent(getStrength(selectedModule)),
                         Utils.oneDecimalPlaceFormat.format(getFlatMax(selectedModule)),
                         Utils.asPercent(1f - MIN_ARMOR_FRAC));

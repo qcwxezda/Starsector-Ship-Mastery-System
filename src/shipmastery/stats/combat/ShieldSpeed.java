@@ -6,13 +6,10 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class ShieldSpeed extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(Arrays.asList(stats.getShieldTurnRateMult(), stats.getShieldUnfoldRateMult()));
+        return new Object[] {stats.getShieldTurnRateMult(), stats.getShieldUnfoldRateMult()};
     }
 
     @Override

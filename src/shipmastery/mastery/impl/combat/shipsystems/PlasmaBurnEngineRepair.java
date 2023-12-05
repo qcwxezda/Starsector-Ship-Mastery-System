@@ -1,8 +1,8 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.config.Settings;
 import shipmastery.fx.EntityBurstEmitter;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -31,7 +32,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.PlasmaBurnEngineRepairPost, 0f, Misc.getHighlightColor(), Utils.oneDecimalPlaceFormat.format(strength), Utils.asPercent(strength));
+        tooltip.addPara(Strings.Descriptions.PlasmaBurnEngineRepairPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.oneDecimalPlaceFormat.format(strength), Utils.asPercent(strength));
     }
 
     @Override
@@ -66,6 +67,8 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
             this.id = id;
             emitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), color, 4, 10f, 1f);
             emitter.alphaMult = 0.5f;
+            emitter.fadeInFrac = 0.5f;
+            emitter.fadeOutFrac = 0.5f;
             emitter.widthGrowth = -10f;
             emitter.enableDynamicAnchoring();
         }
@@ -102,7 +105,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
                         id + "2",
                         ship.getSystem().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,
-                        String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc2, Utils.asPercent(turnRateMult * postEffectLevel)),
+                        String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc2, Utils.asPercentNoDecimal(turnRateMult * postEffectLevel)),
                         false);
                 postEffectLevel -= amount / turnRateTime;
             } else {

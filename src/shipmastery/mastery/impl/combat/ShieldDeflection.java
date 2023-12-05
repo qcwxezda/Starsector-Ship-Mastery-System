@@ -2,7 +2,10 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -11,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
+import shipmastery.config.Settings;
 import shipmastery.fx.ShieldOutlineEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -19,7 +23,7 @@ import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Iterator;
 
 public class ShieldDeflection extends BaseMasteryEffect {
@@ -52,9 +56,9 @@ public class ShieldDeflection extends BaseMasteryEffect {
                 Utils.oneDecimalPlaceFormat.format(getPlayerMaxTime()),
                 Utils.absValueAsPercent(upkeepMult - 1f),
                 Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
-                        Misc.getHighlightColor(),
-                        Misc.getNegativeHighlightColor(),
-                        Misc.getNegativeHighlightColor());
+                Settings.POSITIVE_HIGHLIGHT_COLOR,
+                Settings.NEGATIVE_HIGHLIGHT_COLOR,
+                Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
     float getPlayerMaxTime() {return getStrengthForPlayer();}
@@ -66,7 +70,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 0f, Misc.getHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Utils.absValueAsPercent(damageTakenMult));
     }
 
@@ -102,7 +106,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                     this,
                     "graphics/icons/hullsys/fortress_shield.png",
                     Strings.Descriptions.ShieldDeflectionStatusTitle,
-                    String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercent(1f - damageTakenMult)),
+                    String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercentNoDecimal(1f - damageTakenMult)),
                     false);
             activatedTime += amount;
             if (emitter == null) {

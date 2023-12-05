@@ -13,16 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.ParticleBurstEmitter;
 import shipmastery.fx.TrailEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class HEFExplosion extends ShipSystemEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.HEFExplosionPost, 0f, new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor()}, Utils.asPercent(getStrengthForPlayer()), Utils.asPercent(0.75f));
+        tooltip.addPara(Strings.Descriptions.HEFExplosionPost, 0f, new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR}, Utils.asPercent(getStrengthForPlayer()), Utils.asPercent(0.75f));
         tooltip.addPara(Strings.Descriptions.HEFExplosionPost2, 0f);
     }
 

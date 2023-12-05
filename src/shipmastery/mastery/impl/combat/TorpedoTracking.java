@@ -1,7 +1,9 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.MissileAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
@@ -9,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
 import shipmastery.combat.ai.LOSMissileAI;
+import shipmastery.config.Settings;
 import shipmastery.fx.TrailEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -28,13 +31,13 @@ public class TorpedoTracking extends BaseMasteryEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.TorpedoTracking)
                                  .params(Utils.asPercent(getStrengthForPlayer() / 16f), Utils.asPercent(1f - SPEED_MULT))
-                                 .colors(Misc.getHighlightColor(), Misc.getNegativeHighlightColor());
+                                 .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.TorpedoTrackingPost, 0f, Misc.getHighlightColor(), Utils.oneDecimalPlaceFormat.format(getStrengthForPlayer()));
+        tooltip.addPara(Strings.Descriptions.TorpedoTrackingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.oneDecimalPlaceFormat.format(getStrengthForPlayer()));
     }
 
     @Override

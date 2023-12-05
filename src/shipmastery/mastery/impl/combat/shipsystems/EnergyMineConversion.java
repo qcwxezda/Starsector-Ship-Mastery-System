@@ -9,15 +9,15 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.config.Settings;
 import shipmastery.fx.JitterEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -49,7 +49,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.EnergyMineConversionPost,
-                0f, new Color[] {Misc.getNegativeHighlightColor(), Misc.getHighlightColor(), Misc.getHighlightColor(), Misc.getHighlightColor()},
+                0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
                 "" + Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, "" + (int) ARC_DAMAGE, "" + (int) ARC_EMP_DAMAGE);
     }
 

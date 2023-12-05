@@ -6,7 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -14,10 +14,10 @@ import shipmastery.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FMRRegen extends BaseMasteryEffect {
+public class FMRRegen extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRRegen).params(selectedModule.getSystem().getDisplayName(),
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRRegen).params(systemName,
                                                                                              Utils.asPercent(getStrengthForPlayer()));
     }
 
@@ -34,7 +34,7 @@ public class FMRRegen extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.FMRRegenPost, 0f, Misc.getNegativeHighlightColor(), "" + 1);
+        tooltip.addPara(Strings.Descriptions.FMRRegenPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, "" + 1);
     }
 
     static class FMRRegenScript extends BaseShipSystemListener {

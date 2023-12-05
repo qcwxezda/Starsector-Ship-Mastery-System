@@ -10,7 +10,7 @@ import com.fs.starfarer.api.util.Pair;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ui.triggers.ActionListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

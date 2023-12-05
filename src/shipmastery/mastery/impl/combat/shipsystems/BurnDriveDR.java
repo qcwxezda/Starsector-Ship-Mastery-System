@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -13,7 +12,6 @@ import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.fx.OverlayEmitter;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -64,7 +62,7 @@ public class BurnDriveDR extends ShipSystemEffect {
                         id,
                         "graphics/icons/hullsys/burn_drive.png",
                         Strings.Descriptions.BurnDriveDRTitle,
-                        String.format(Strings.Descriptions.BurnDriveDRDesc1, Utils.asPercent(reduction)),
+                        String.format(Strings.Descriptions.BurnDriveDRDesc1, Utils.asPercentNoDecimal(reduction)),
                         false);
             }
         }

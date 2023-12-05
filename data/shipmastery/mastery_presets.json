@@ -14,6 +14,19 @@
     }
   },
 
+  "_DEFAULT_CIVILIAN_": {
+    "maxLevel": 9,
+    "levels": {
+      "2": "SModCapacity",
+      "4": "SModCapacity",
+      "7": ["SModCapacity","SModRemoval"],
+      "8": {
+        "A": "SModsOverCapacity",
+        "B": "ScaleOtherMasteries"
+      }
+    }
+  },
+
   "automated": {
     "preset": "_DEFAULT_",
     "levels": {
@@ -30,6 +43,26 @@
       "8": {
         "A": "IgnoreNoBuildIn 1 phase_anchor",
         "B": "ScaleOtherMasteries"
+      }
+    }
+  },
+
+  "logistic_cargo": {
+    "preset": "_DEFAULT_CIVILIAN_",
+    "levels": {
+      "9": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedCargoBoost"
+      }
+    }
+  },
+
+  "logistic_fuel": {
+    "preset": "_DEFAULT_CIVILIAN_",
+    "levels": {
+      "9": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedFuelBoost"
       }
     }
   }

@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -89,7 +88,7 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
                     id,
                     ship.getSystem().getSpecAPI().getIconSpriteName(),
                     Strings.Descriptions.WhileActiveMissileBoostTitle,
-                    String.format(Strings.Descriptions.WhileActiveMissileBoostDesc1, Utils.asPercent(modifiedMult)),
+                    String.format(Strings.Descriptions.WhileActiveMissileBoostDesc1, Utils.asPercentNoDecimal(modifiedMult)),
                     false);
         }
 

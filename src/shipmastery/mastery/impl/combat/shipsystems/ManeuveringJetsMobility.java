@@ -1,24 +1,20 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.Color;
 
 public class ManeuveringJetsMobility extends ShipSystemEffect {
     @Override
@@ -30,7 +26,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.ManeuveringJetsMobilityPost, 0f, Misc.getHighlightColor(), Utils.oneDecimalPlaceFormat.format(strength), Utils.oneDecimalPlaceFormat.format(2f*strength));
+        tooltip.addPara(Strings.Descriptions.ManeuveringJetsMobilityPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.oneDecimalPlaceFormat.format(strength), Utils.oneDecimalPlaceFormat.format(2f*strength));
     }
 
     @Override

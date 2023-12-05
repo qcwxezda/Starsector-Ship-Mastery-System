@@ -11,7 +11,7 @@ public abstract class ShipStat {
     public int tier = 1;
     public float defaultAmount = 1f;
     public Set<String> tags = new HashSet<>();
-    /** Type: StatBonus | MutableStat | List<StatBonus | MutableStat>. */
+    /** StatBonus, MutableStat, or an array of StatBonuses or MutableStats */
     public abstract Object get(MutableShipStatsAPI stats);
 
     /** Selection weight for each stat will be normalized across all hull specs. */

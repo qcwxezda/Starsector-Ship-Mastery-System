@@ -1,4 +1,52 @@
 {
+  "apex": {
+    "preset": "automated",
+    "levels": {
+      "9": {
+        "A": "DroneStrikeRegen",
+        "B": "BackArmorBoost"
+      }
+    }
+  },
+
+  "apogee": {
+    "levels": {
+      "9": {
+        "A": "FlareLauncherWhileVenting",
+        "B": "ShieldEfficiencyNearbyEnemies"
+      }
+    }
+  },
+
+  "aurora": {
+    "levels": {
+      "9": {
+        "A": "VentingSpeedBoost",
+        "B": "PlasmaJetsGrazeChance"
+      }
+    }
+  },
+
+  "brilliant": {
+    "preset": "automated",
+    "levels": {
+      "9": {
+        "A": "PlasmaBurnEnergyRoF",
+        "B": "ConvertedHangarBays"
+      }
+    }
+  },
+
+  "champion": {
+    "levels": {
+      "9": {
+        "A": "HEFRangeRoF",
+        "B": "RangeNotMoving"
+      }
+    }
+  },
+
+
   "doom": {
     "preset": "phase",
     "levels": {
@@ -9,6 +57,11 @@
     }
   },
 
+
+
+
+
+
   "astral": {
     "levels": {
       "9": {
@@ -16,6 +69,10 @@
         "B": "RecallDeviceRegeneration"
       }
     }
+  },
+
+  "atlas": {
+    "preset": "logistic_cargo"
   },
 
   "atlas2": {
@@ -113,7 +170,7 @@
     "levels": {
       "9": {
         "A": "ShieldDeflection",
-        "B": "FluxByShieldUpkeep"
+        "B": "ShieldEfficiencyNearbyEnemies"
       }
     }
   },
@@ -125,6 +182,10 @@
         "B": "FMRRegen"
       }
     }
+  },
+
+  "prometheus": {
+    "preset": "logistic_fuel"
   },
 
   "prometheus2": {

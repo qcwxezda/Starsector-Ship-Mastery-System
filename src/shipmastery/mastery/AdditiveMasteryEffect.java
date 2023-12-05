@@ -5,7 +5,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
-import shipmastery.util.Utils;
+import shipmastery.config.Settings;
 
 public abstract class AdditiveMasteryEffect extends BaseMasteryEffect {
     public final int getIncrease(PersonAPI commander) {
@@ -37,6 +37,6 @@ public abstract class AdditiveMasteryEffect extends BaseMasteryEffect {
         }
         return MasteryDescription.init(increase >= 0f || negativeText == null ? positiveText: negativeText)
                                  .params(newParams)
-                                 .colors(invertColors != increase >= 0f ? Misc.getHighlightColor() : Misc.getNegativeHighlightColor());
+                                 .colors(invertColors != increase >= 0f ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 }

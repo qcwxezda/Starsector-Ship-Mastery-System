@@ -1,7 +1,9 @@
 package shipmastery.campaign;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.CoreInteractionListener;
+import com.fs.starfarer.api.campaign.CoreUIAPI;
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -21,7 +23,10 @@ import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.ui.triggers.ActionListener;
 import shipmastery.ui.triggers.MasteryButtonPressed;
-import shipmastery.util.*;
+import shipmastery.util.MasteryUtils;
+import shipmastery.util.ReflectionUtils;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Proxy;
@@ -72,6 +77,11 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
             Boolean isEditedSinceSave = (Boolean) ReflectionUtils.invokeMethodNoCatch(refitPanel, "isEditedSinceSave");
             ReflectionUtils.invokeMethodNoCatch(refitPanel, "syncWithCurrentVariant", true);
+            Object opDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getOpDisplay");
+            Object shipDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getShipDisplay");
+            Object currentVariant = ReflectionUtils.invokeMethodNoCatch(shipDisplay, "getCurrentVariant");
+            ReflectionUtils.invokeMethodNoCatch(opDisplay, "syncWithVariant", currentVariant);
+
             ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", isEditedSinceSave);
 
             if (saveVariant) {
@@ -354,7 +364,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
     void checkIfRefitShipChanged() {
         coreUI = new WeakReference<>((CoreUIAPI) ReflectionUtils.getCoreUI());
         Pair<ShipAPI, ShipAPI> moduleAndRoot = getSelectedShip();
-        ShipAPI module = moduleAndRoot.one;
+        final ShipAPI module = moduleAndRoot.one;
         ShipAPI root = moduleAndRoot.two;
         ShipInfo newShipInfo = new ShipInfo(module, root);
 
@@ -369,7 +379,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             // This call does nothing except set variant.hasOpAffectingMods = null, which
             // triggers the variant to refresh its statsForOpCosts
             module.getVariant().addPermaMod("sms_masteryHandler");
-            Utils.fixVariantInconsistencies(module.getVariant());
+            Utils.fixVariantInconsistencies(module.getMutableStats());
         }
 
         if (!Objects.equals(currentShipInfo, newShipInfo)) {

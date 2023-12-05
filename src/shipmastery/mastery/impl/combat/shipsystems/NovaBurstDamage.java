@@ -1,15 +1,18 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
@@ -18,14 +21,14 @@ import shipmastery.util.Strings;
 import java.awt.Color;
 import java.util.Iterator;
 
-public class NovaBurstDamage extends BaseMasteryEffect {
+public class NovaBurstDamage extends ShipSystemEffect {
 
     public static final float RANGE = 1000f;
     public static final float ARC_DEGREES = 60f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(selectedModule.getSystem().getDisplayName());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(systemName);
     }
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
@@ -43,7 +46,7 @@ public class NovaBurstDamage extends BaseMasteryEffect {
         tooltip.addPara(
                 Strings.Descriptions.NovaBurstDamagePost,
                 0f,
-                new Color[] {Misc.getHighlightColor(), Misc.getHighlightColor(), Misc.getTextColor(), Misc.getTextColor()},
+                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Misc.getTextColor()},
                 "" + (int) getStrengthForPlayer(),
                 DamageType.ENERGY.getDisplayName(),
                 "" + (int) ARC_DEGREES,
@@ -94,7 +97,7 @@ public class NovaBurstDamage extends BaseMasteryEffect {
                                 "tachyon_lance_emp_impact",
                                 80f,
                                 new Color(100,165,255,255),
-                                Color.WHITE);
+                                Color.WHITE).setCoreWidthOverride(40f);
                     }
                 }
             }, 0.5f);

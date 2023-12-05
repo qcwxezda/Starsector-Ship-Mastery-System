@@ -5,13 +5,10 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class DamageToFightersMissiles extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(Arrays.asList(stats.getDamageToFighters(), stats.getDamageToMissiles()));
+        return new Object[] {stats.getDamageToFighters(), stats.getDamageToMissiles()};
     }
 
     @Override

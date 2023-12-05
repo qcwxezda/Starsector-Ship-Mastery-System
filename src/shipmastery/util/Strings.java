@@ -127,6 +127,7 @@ public interface Strings {
         String HEFExplosionDesc1 = Utils.getString("sms_descriptions", "HEFExplosionDesc1");
         String HEFExplosionTitle = Utils.getString("sms_descriptions", "HEFExplosionTitle");
         String ConvertedHangarBays = Utils.getString("sms_descriptions", "ConvertedHangarBays");
+        String ConvertedHangarBaysPost = Utils.getString("sms_descriptions", "ConvertedHangarBaysPost");
         String LidarArrayRange = Utils.getString("sms_descriptions", "LidarArrayRange");
         String LidarArrayRangeTitle = Utils.getString("sms_descriptions", "LidarArrayRangeTitle");
         String LidarArrayRangeDesc1 = Utils.getString("sms_descriptions", "LidarArrayRangeDesc1");
@@ -179,5 +180,38 @@ public interface Strings {
         String SkimmerDRPost = Utils.getString( "sms_descriptions", "SkimmerDRPost");
         String SkimmerDRTitle = Utils.getString( "sms_descriptions", "SkimmerDRTitle");
         String SkimmerDRDesc1 = Utils.getString( "sms_descriptions", "SkimmerDRDesc1");
+        String EfficiencyOverhaulBoost = Utils.getString( "sms_descriptions", "EfficiencyOverhaulBoost");
+        String ExpandedCargoBoost = Utils.getString( "sms_descriptions", "ExpandedCargoBoost");
+        String ExpandedFuelBoost = Utils.getString( "sms_descriptions", "ExpandedFuelBoost");
+        String DroneStrikeBoost = Utils.getString( "sms_descriptions", "DroneStrikeBoost");
+        String DroneStrikeRegen = Utils.getString( "sms_descriptions", "DroneStrikeRegen");
+        String DroneStrikeRegenPost = Utils.getString( "sms_descriptions", "DroneStrikeRegenPost");
+        String BackArmorBoost = Utils.getString( "sms_descriptions", "BackArmorBoost");
+        String BackArmorBoostPost = Utils.getString( "sms_descriptions", "BackArmorBoostPost");
+        String FlareLauncherWhileVenting = Utils.getString( "sms_descriptions", "FlareLauncherWhileVenting");
+        String FlareLauncherWhileVentingPost = Utils.getString( "sms_descriptions", "FlareLauncherWhileVentingPost");
+        String ShieldEfficiencyNearbyEnemies = Utils.getString( "sms_descriptions", "ShieldEfficiencyNearbyEnemies");
+        String ShieldEfficiencyNearbyEnemiesPost = Utils.getString( "sms_descriptions", "ShieldEfficiencyNearbyEnemiesPost");
+        String ShieldEfficiencyNearbyEnemiesTitle = Utils.getString( "sms_descriptions", "ShieldEfficiencyNearbyEnemiesTitle");
+        String ShieldEfficiencyNearbyEnemiesDesc1 = Utils.getString( "sms_descriptions", "ShieldEfficiencyNearbyEnemiesDesc1");
+        String VentingSpeedBoost = Utils.getString( "sms_descriptions", "VentingSpeedBoost");
+        String VentingSpeedBoostTitle = Utils.getString( "sms_descriptions", "VentingSpeedBoostTitle");
+        String VentingSpeedBoostDesc1 = Utils.getString( "sms_descriptions", "VentingSpeedBoostDesc1");
+        String PlasmaJetsGrazeChance = Utils.getString( "sms_descriptions", "PlasmaJetsGrazeChance");
+        String PlasmaJetsGrazeChancePost = Utils.getString( "sms_descriptions", "PlasmaJetsGrazeChancePost");
+        String PlasmaJetsGrazeChanceTitle = Utils.getString( "sms_descriptions", "PlasmaJetsGrazeChanceTitle");
+        String PlasmaJetsGrazeChanceDesc1 = Utils.getString( "sms_descriptions", "PlasmaJetsGrazeChanceDesc1");
+        String PlasmaBurnEnergyRoF = Utils.getString( "sms_descriptions", "PlasmaBurnEnergyRoF");
+        String PlasmaBurnEnergyRoFPost = Utils.getString( "sms_descriptions", "PlasmaBurnEnergyRoFPost");
+        String PlasmaBurnEnergyRoFTitle = Utils.getString( "sms_descriptions", "PlasmaBurnEnergyRoFTitle");
+        String PlasmaBurnEnergyRoFDesc1 = Utils.getString( "sms_descriptions", "PlasmaBurnEnergyRoFDesc1");
+        String HEFRangeRoF = Utils.getString( "sms_descriptions", "HEFRangeRoF");
+        String HEFRangeRoFPost = Utils.getString( "sms_descriptions", "HEFRangeRoFPost");
+        String HEFRangeRoFTitle = Utils.getString( "sms_descriptions", "HEFRangeRoFTitle");
+        String HEFRangeRoFDesc1 = Utils.getString( "sms_descriptions", "HEFRangeRoFDesc1");
+        String RangeNotMoving = Utils.getString( "sms_descriptions", "RangeNotMoving");
+        String RangeNotMovingPost = Utils.getString( "sms_descriptions", "RangeNotMovingPost");
+        String RangeNotMovingTitle = Utils.getString( "sms_descriptions", "RangeNotMovingTitle");
+        String RangeNotMovingDesc1 = Utils.getString( "sms_descriptions", "RangeNotMovingDesc1");
     }
 }

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
@@ -28,8 +29,8 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
                 getIncreasePlayer(),
                 0.01f,
                 HULL_LOSS_PER_PERCENT_OP);
-        description.colors[1] = Misc.getNegativeHighlightColor();
-        description.colors[2] = Misc.getNegativeHighlightColor();
+        description.colors[1] = Settings.NEGATIVE_HIGHLIGHT_COLOR;
+        description.colors[2] = Settings.NEGATIVE_HIGHLIGHT_COLOR;
         return description;
     }
 
@@ -61,7 +62,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 0f, Misc.getNegativeHighlightColor(),
+        tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.absValueAsPercent(1f - MAX_HULL_MODIFIER),
                         Utils.absValueAsPercent(1f - MIN_HULL_MODIFIER));
     }

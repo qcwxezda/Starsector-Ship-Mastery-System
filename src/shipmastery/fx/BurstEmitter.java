@@ -22,6 +22,7 @@ public class BurstEmitter extends BaseIEmitter {
     public float alphaMult = 1f;
     public float jitterRadius = 0f;
     public float widthGrowth = 0f;
+    public float fadeInFrac = 0.05f, fadeOutFrac = 0.25f;
     public int blendDestFactor = GL11.GL_ONE;
 
     public CombatEngineLayers layer = CombatEngineLayers.BELOW_SHIPS_LAYER;
@@ -74,7 +75,7 @@ public class BurstEmitter extends BaseIEmitter {
         data.offset(offset);
         data.velocity(velocity);
         data.life(duration);
-        data.fadeTime(duration / 20f, duration / 4f);
+        data.fadeTime(duration * fadeInFrac, duration * fadeOutFrac);
         data.color(new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f * alphaMult));
         return data;
     }

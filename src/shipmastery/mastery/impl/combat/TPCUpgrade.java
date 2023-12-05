@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
+import shipmastery.config.Settings;
 import shipmastery.fx.ParticleBurstEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -30,7 +31,7 @@ public class TPCUpgrade extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.TPCUpgradePost, 0f, Misc.getHighlightColor(), "" + (int) (getStrengthForPlayer() * 15f));
+        tooltip.addPara(Strings.Descriptions.TPCUpgradePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, "" + (int) (getStrengthForPlayer() * 15f));
     }
 
     @Override

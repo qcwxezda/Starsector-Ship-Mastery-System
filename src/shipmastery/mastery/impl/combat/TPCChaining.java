@@ -10,6 +10,7 @@ import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.EngineUtils;
@@ -32,7 +33,7 @@ public class TPCChaining extends BaseMasteryEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Misc.getHighlightColor(), Utils.asPercent(strength), "" + (int) (strength * 20f), "" + (int) (strength * 2500f));
+        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(strength), "" + (int) (strength * 20f), "" + (int) (strength * 2500f));
     }
 
     @Override
