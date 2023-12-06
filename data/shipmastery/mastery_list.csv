@@ -45,14 +45,26 @@ BackArmorBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.BackArmorBoo
 ShieldEfficiencyNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,9,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingSpeedBoost
 RangeNotMoving,9,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
+SafetyOverridesBoost,9,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
+BuiltInMissileRegen,9,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
+ConvertedCargoBayNoPenalty,5,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
+ExtraFighterPerWing,7,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
+DamageTakenNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
+LargeBallisticFragDamage,9,combat unique prefix_flagship_only,,80,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
+PhasedCRDegradation,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.PhasedCRDegradation
+RangeNoNearbyEnemies,9,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
+EnergyProjectileRange,9,combat unique,,100,shipmastery.mastery.impl.combat.EnergyProjectileRange
+RandomBeamIntensity,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.RandomBeamIntensity
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
-EnergyMineConversion,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
+EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
 RecallDeviceRegeneration,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
 RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,400,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
 AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
+ManeuveringJetsBoost,9,combat unique doesnt_affect_modules,,20,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
+ManeuveringJetsDR,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.shipsystems.SystemRegenOnKill
 HEFExplosion,9,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
@@ -60,8 +72,9 @@ HEFRangeRoF,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HE
 LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
 LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
 BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
-WhileActiveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.WhileActiveMissileBoost
+BurnDriveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveMissileBoost
 BurnDriveImpulse,9,combat unique doesnt_affect_modules,,650,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
+BurnDriveCooldown,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.BurnDriveCooldown
 PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
 PlasmaBurnEnergyRoF,9,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
 FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen

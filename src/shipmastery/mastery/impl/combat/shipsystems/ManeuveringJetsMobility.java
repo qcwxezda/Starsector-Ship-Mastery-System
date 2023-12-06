@@ -26,7 +26,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.ManeuveringJetsMobilityPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.oneDecimalPlaceFormat.format(strength), Utils.oneDecimalPlaceFormat.format(2f*strength));
+        tooltip.addPara(Strings.Descriptions.ManeuveringJetsMobilityPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(strength), Utils.asFloatOneDecimal(2f*strength));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
                     id,
                     "graphics/icons/hullsys/maneuvering_jets.png",
                     Strings.Descriptions.ManeuveringJetsMobilityTitle,
-                    String.format(Strings.Descriptions.ManeuveringJetsMobilityDesc1, Utils.oneDecimalPlaceFormat.format(effectAmount)),
+                    String.format(Strings.Descriptions.ManeuveringJetsMobilityDesc1, Utils.asFloatOneDecimal(effectAmount)),
                     false);
         }
     }

@@ -35,7 +35,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
                 Strings.Descriptions.PlasmaBurnEnergyRoFPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.oneDecimalPlaceFormat.format(getStrength(selectedModule) * 20f),
+                Utils.asFloatOneDecimal(getStrength(selectedModule) * 20f),
                 systemName);
     }
 

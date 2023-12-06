@@ -42,7 +42,7 @@ public class HullThresholdDR extends BaseMasteryEffect {
                 .initDefaultHighlight(Strings.Descriptions.HullThresholdDR)
                 .params(
                         Utils.asPercent(1f - DAMAGE_MULT),
-                        Utils.oneDecimalPlaceFormat.format(getStrength(selectedModule)));
+                        Utils.asFloatOneDecimal(getStrength(selectedModule)));
     }
 
     @Override

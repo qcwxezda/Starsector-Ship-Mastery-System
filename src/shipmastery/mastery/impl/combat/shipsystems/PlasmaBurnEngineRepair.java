@@ -25,14 +25,14 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaBurnEngineRepair).params(systemName,
-                                                                                                           Utils.oneDecimalPlaceFormat.format(5f * getStrengthForPlayer()));
+                                                                                                           Utils.asFloatOneDecimal(5f * getStrengthForPlayer()));
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.PlasmaBurnEngineRepairPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.oneDecimalPlaceFormat.format(strength), Utils.asPercent(strength));
+        tooltip.addPara(Strings.Descriptions.PlasmaBurnEngineRepairPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(strength), Utils.asPercent(strength));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
                     id,
                     ship.getSystem().getSpecAPI().getIconSpriteName(),
                     Strings.Descriptions.PlasmaBurnEngineRepairTitle,
-                    String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.oneDecimalPlaceFormat.format(repairSpeedMult)),
+                    String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.asFloatOneDecimal(repairSpeedMult)),
                     false);
         }
 
@@ -99,7 +99,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
                         id,
                         ship.getSystem().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,
-                        String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.oneDecimalPlaceFormat.format(repairSpeedMult)),
+                        String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.asFloatOneDecimal(repairSpeedMult)),
                         false);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "2",

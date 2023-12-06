@@ -60,6 +60,7 @@ public class DroneStrikeRegen extends ShipSystemEffect {
                     if (bay.getWing() == null || !"terminator_wing".equals(bay.getWing().getSpec().getId())) continue;
                     if (getNumLost(bay) > bay.getFastReplacements()) {
                         if (Math.random() <= replaceChance) {
+                            bay.makeCurrentIntervalFast();
                             bay.setFastReplacements(bay.getFastReplacements() + 1);
                         }
                         break;

@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.AdditiveMasteryEffect;
@@ -14,6 +13,7 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class SModsOverCapacity extends AdditiveMasteryEffect {
     static float DP_PENALTY_PER_SMOD = 0.05f;
@@ -53,6 +53,6 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, "" + (int) (100f * DP_PENALTY_PER_SMOD) + "%");
+        tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asInt((100f * DP_PENALTY_PER_SMOD)) + "%");
     }
 }

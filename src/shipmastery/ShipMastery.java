@@ -424,15 +424,23 @@ public abstract class ShipMastery {
     public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
         ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
         String restoredSpecId = restoredSpec.getHullId();
+        String restoredSpecIdNoBase = restoredSpecId;
         Integer maxLevel = maxLevelMap.get(restoredSpecId);
-        SortedMap<Integer, Pair<List<String>, List<String>>> masteries;
-        // Hull not tracked, so use the default preset
+        SortedMap<Integer, Pair<List<String>, List<String>>> masteries = assignmentsMap.get(restoredSpecId);
+        // Hull not tracked
+        if (maxLevel == null && masteries == null) {
+            // Try the base hull id
+            if (restoredSpec.getBaseHull() != null) {
+                restoredSpec = restoredSpec.getBaseHull();
+                restoredSpecId = restoredSpec.getHullId();
+            }
+            maxLevel = maxLevelMap.get(restoredSpecId);
+            masteries = assignmentsMap.get(restoredSpecId);
+        }
+        // Still null, use default level
         if (maxLevel == null) {
             maxLevel = presetsMaxLevelMap.get(getDefaultPresetFor(restoredSpecId));
             masteries = presetsMap.get(getDefaultPresetFor(restoredSpecId));
-        }
-        else {
-            masteries = assignmentsMap.get(restoredSpecId);
         }
 
         HullMasteryData masteryData = new HullMasteryData(restoredSpec);
@@ -477,7 +485,7 @@ public abstract class ShipMastery {
             }
             masteryData.addLevelData(levelData);
         }
-        masteryMap.put(restoredSpecId, masteryData);
+        masteryMap.put(restoredSpecIdNoBase, masteryData);
     }
 
     public static void loadMasteryData()

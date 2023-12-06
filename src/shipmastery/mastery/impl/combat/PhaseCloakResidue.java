@@ -34,13 +34,13 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(MAX_DAMAGE_REDUCTION),
-                Utils.oneDecimalPlaceFormat.format(CLOAK_COST_MULT),
-                Utils.oneDecimalPlaceFormat.format(CLOAK_COOLDOWN_MULT));
+                Utils.asFloatOneDecimal(CLOAK_COST_MULT),
+                Utils.asFloatOneDecimal(CLOAK_COOLDOWN_MULT));
     }
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseCloakResidue).params(Utils.oneDecimalPlaceFormat.format(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseCloakResidue).params(Utils.asFloatOneDecimal(getStrengthForPlayer()));
     }
 
     @Override

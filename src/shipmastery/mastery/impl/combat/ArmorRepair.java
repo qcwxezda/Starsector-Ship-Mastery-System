@@ -35,7 +35,7 @@ public class ArmorRepair extends BaseMasteryEffect {
         tooltip.addPara(Strings.Descriptions.ArmorRepairPost, 0f, new Color[] {
                 Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                         Utils.asPercent(getStrength(selectedModule)),
-                        Utils.oneDecimalPlaceFormat.format(getFlatMax(selectedModule)),
+                        Utils.asFloatOneDecimal(getFlatMax(selectedModule)),
                         Utils.asPercent(1f - MIN_ARMOR_FRAC));
     }
 

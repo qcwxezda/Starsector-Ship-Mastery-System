@@ -30,10 +30,10 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        String frigateTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[0] * strength);
-        String destroyerTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[1] * strength);
-        String cruiserTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[2] * strength);
-        String capitalTime = Utils.oneDecimalPlaceFormat.format(SECONDS_PER_KILL_MULTIPLIER[3] * strength);
+        String frigateTime = Utils.asFloatOneDecimal(SECONDS_PER_KILL_MULTIPLIER[0] * strength);
+        String destroyerTime = Utils.asFloatOneDecimal(SECONDS_PER_KILL_MULTIPLIER[1] * strength);
+        String cruiserTime = Utils.asFloatOneDecimal(SECONDS_PER_KILL_MULTIPLIER[2] * strength);
+        String capitalTime = Utils.asFloatOneDecimal(SECONDS_PER_KILL_MULTIPLIER[3] * strength);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, frigateTime, destroyerTime, cruiserTime, capitalTime);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost2, 0f);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost3, 0f);

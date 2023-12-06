@@ -37,7 +37,7 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
             return Utils.absValueAsPercent(modifiedAmount / 100f);
         }
         if (stat.tags.contains(StatTags.TAG_REQUIRE_INTEGER)) {
-            return "" + (int) Math.abs(modifiedAmount);
+            return Utils.asInt(Math.abs(modifiedAmount));
         }
         return Misc.getFormat().format(Math.abs(modifiedAmount));
     }

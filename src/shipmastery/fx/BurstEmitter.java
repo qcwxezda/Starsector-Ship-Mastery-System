@@ -65,7 +65,7 @@ public class BurstEmitter extends BaseIEmitter {
         data.size(sprite.getWidth(), sprite.getHeight());
         float theta = (Misc.random.nextFloat() + i) * 360f / numDirections;
         Vector2f offset = Misc.getUnitVectorAtDegreeAngle(theta);
-        offset.scale(width);
+        offset.scale(width + 0.0001f);
         Vector2f jitter = Misc.getUnitVectorAtDegreeAngle(Misc.random.nextFloat() * 360f);
         jitter.scale(Misc.random.nextFloat() * jitterRadius);
         Vector2f.add(jitter, offset, offset);

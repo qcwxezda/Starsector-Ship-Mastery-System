@@ -46,17 +46,82 @@
     }
   },
 
+  "colossus": {
+    "preset": "logistic_cargo"
+  },
+
+  "colossus2": {
+    "levels": {
+      "9": {
+        "A": "SafetyOverridesBoost",
+        "B": "BuiltInMissileRegen"
+      }
+    }
+  },
+
+  "colossus3": {
+    "levels": {
+      "9": {
+        "A": "ConvertedCargoBayNoPenalty",
+        "B": "ExtraFighterPerWing"
+      }
+    }
+  },
+
+  "dominator": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveCooldown",
+        "B": "DamageTakenNearbyEnemies"
+      }
+    }
+  },
+
+  "dominator_xiv": {
+    "levels": {
+      "9": {
+        "A": "LargeBallisticFragDamage",
+        "B": "BurnDriveDR"
+      }
+    }
+  },
 
   "doom": {
     "preset": "phase",
     "levels": {
       "9": {
         "A": "EnergyMineConversion",
-        "B": "IgnoreNoBuildIn 1 phase_anchor"
+        "B": "PhasedCRDegradation"
       }
     }
   },
 
+  "eagle": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "RangeNoNearbyEnemies"
+      }
+    }
+  },
+
+  "eagle_xiv": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsDR",
+        "B": "RangeNoNearbyEnemies"
+      }
+    }
+  },
+
+  "eagle_LG": {
+    "levels": {
+      "9": {
+        "A": "RandomBeamIntensity",
+        "B": "EnergyProjectileRange"
+      }
+    }
+  },
 
 
 
@@ -124,7 +189,7 @@
     "levels": {
       "9": {
         "A": "BurnDriveDR",
-        "B": "WhileActiveMissileBoost"
+        "B": "BurnDriveMissileBoost"
       }
     }
   },

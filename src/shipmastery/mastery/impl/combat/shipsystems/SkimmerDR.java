@@ -22,7 +22,7 @@ public class SkimmerDR extends ShipSystemEffect {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerDR).params(
                 systemName,
                 Utils.asPercent(strength),
-                Utils.oneDecimalPlaceFormat.format(10f * strength));
+                Utils.asFloatOneDecimal(10f * strength));
     }
 
     @Override

@@ -20,14 +20,15 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 public class EnergyMineConversion extends ShipSystemEffect {
 
     static final float EFFECT_RADIUS = 400f;
     static final int NUM_ARCS = 10;
     static final float DAMAGE_FRAC = 0.5f;
-    static final float ARC_DAMAGE = 100f;
-    static final float ARC_EMP_DAMAGE = 500f;
+    public static final String PROJ_DAMAGE_KEY = "sms_EnergyMineArcDamage";
+    public static final String PROJ_EMP_DAMAGE_KEY = "sms_EnergyMineArcEmp";
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -40,7 +41,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(EnergyMineConversionScript.class)) {
-            ship.addListener(new EnergyMineConversionScript(ship, id));
+            ship.addListener(new EnergyMineConversionScript(ship, getStrength(ship), 5f * getStrength(ship), id));
         }
     }
 
@@ -49,18 +50,22 @@ public class EnergyMineConversion extends ShipSystemEffect {
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.EnergyMineConversionPost,
-                0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
-                "" + Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, "" + (int) ARC_DAMAGE, "" + (int) ARC_EMP_DAMAGE);
+                0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
+                "" + Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedModule)), Utils.asInt(5f * getStrength(selectedModule)));
     }
 
     public static class EnergyMineConversionScript extends BaseShipSystemListener {
         final ShipAPI ship;
         final String id;
+        final float damage;
+        final float empDamage;
         final CombatEngineAPI engine;
 
-        EnergyMineConversionScript(ShipAPI ship, String id) {
+        EnergyMineConversionScript(ShipAPI ship, float damage, float empDamage, String id) {
             this.ship = ship;
             this.id = id;
+            this.damage = damage;
+            this.empDamage = empDamage;
             engine = Global.getCombatEngine();
         }
 
@@ -80,6 +85,9 @@ public class EnergyMineConversion extends ShipSystemEffect {
                             proj.getFacing(),
                             null);
                     mine.setDamageAmount(proj.getBaseDamageAmount() * DAMAGE_FRAC);
+                    mine.setCustomData(PROJ_DAMAGE_KEY, damage);
+                    mine.setCustomData(PROJ_EMP_DAMAGE_KEY, empDamage);
+                    mine.setMineExplosionRange(EFFECT_RADIUS);
                     int numParticles = 20;
                     float duration = 0.25f;
                     JitterEmitter jitter = new JitterEmitter(mine, mine.getSpriteAPI(), Color.CYAN, 0f, 10f, 0.25f, true, 0.5f, numParticles);
@@ -121,6 +129,13 @@ public class EnergyMineConversion extends ShipSystemEffect {
                 }
             }
             if (picker.isEmpty()) return;
+
+            Map<String, Object> customData = mine.getCustomData();
+            float damage = 0f, empDamage = 0f;
+            if (customData != null) {
+                damage = (float) customData.get(PROJ_DAMAGE_KEY);
+                empDamage = (float) customData.get(PROJ_EMP_DAMAGE_KEY);
+            }
             for (int i = 0; i < NUM_ARCS; i++) {
                 CombatEntityAPI target = picker.pick();
                 boolean pierced = false;
@@ -139,8 +154,8 @@ public class EnergyMineConversion extends ShipSystemEffect {
                             mine,
                             target,
                             DamageType.ENERGY,
-                            ARC_DAMAGE,
-                            ARC_EMP_DAMAGE,
+                            damage,
+                            empDamage,
                             1000000f,
                             "tachyon_lance_emp_impact",
                             40f,

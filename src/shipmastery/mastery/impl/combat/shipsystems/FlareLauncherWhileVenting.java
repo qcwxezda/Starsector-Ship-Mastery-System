@@ -19,7 +19,7 @@ public class FlareLauncherWhileVenting extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FlareLauncherWhileVenting).params(
-                Utils.oneDecimalPlaceFormat.format(getStrength(selectedModule)));
+                Utils.asFloatOneDecimal(getStrength(selectedModule)));
     }
 
     @Override

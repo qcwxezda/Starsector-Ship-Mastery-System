@@ -14,7 +14,7 @@ import java.awt.Color;
 
 public class RangeNotMoving extends BaseMasteryEffect {
 
-    public static final float INCREASE_SPEED_LIMIT = 1f, DECAY_SPEED_LIMIT = 10f;
+    public static final float INCREASE_SPEED_LIMIT = 5f, DECAY_SPEED_LIMIT = 10f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -31,17 +31,17 @@ public class RangeNotMoving extends BaseMasteryEffect {
                 Strings.Descriptions.RangeNotMovingPost,
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asPercent(strength / 10f),
-                "" + (int) INCREASE_SPEED_LIMIT,
                 Utils.asPercent(strength / 5f),
-                "" + (int) DECAY_SPEED_LIMIT);
+                Utils.asInt(INCREASE_SPEED_LIMIT),
+                Utils.asPercent(strength / 5f),
+                Utils.asInt(DECAY_SPEED_LIMIT));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(RangeNotMovingScript.class)) {
             float strength = getStrength(ship);
-            ship.addListener(new RangeNotMovingScript(ship, strength, strength / 10f, strength / 5f, id));
+            ship.addListener(new RangeNotMovingScript(ship, strength, strength / 5f, strength / 5f, id));
         }
     }
 

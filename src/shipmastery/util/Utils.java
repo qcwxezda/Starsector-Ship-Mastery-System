@@ -25,6 +25,7 @@ public abstract class Utils {
     public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
     public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
+    public static final DecimalFormat integerFormat = new DecimalFormat("0");
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
 
@@ -175,6 +176,10 @@ public abstract class Utils {
     public static String asPercent(float num) {return percentFormat.format(num);}
 
     public static String asPercentNoDecimal(float num) {return percentFormatNoDecimal.format(num);}
+
+    public static String asFloatOneDecimal(float num) {return oneDecimalPlaceFormat.format(num);}
+
+    public static String asInt(float num) {return integerFormat.format(num);}
 
 
     public static class WeaponSlotCount {

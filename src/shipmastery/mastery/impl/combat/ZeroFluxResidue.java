@@ -11,7 +11,7 @@ import shipmastery.util.Utils;
 public class ZeroFluxResidue extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ZeroFluxResidue).params(Utils.oneDecimalPlaceFormat.format(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ZeroFluxResidue).params(Utils.asFloatOneDecimal(getStrengthForPlayer()));
     }
 
     @Override

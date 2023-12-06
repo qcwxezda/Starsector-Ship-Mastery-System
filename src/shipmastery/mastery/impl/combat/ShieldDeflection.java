@@ -28,12 +28,10 @@ import java.util.Iterator;
 
 public class ShieldDeflection extends BaseMasteryEffect {
     static final float damageTakenMult = 0.5f;
-    static final float upkeepMult = 1.5f;
     static final float unfoldRateMult = 0.5f;
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        stats.getShieldUpkeepMult().modifyMult(id, upkeepMult);
         stats.getShieldUnfoldRateMult().modifyMult(id, unfoldRateMult);
         if (ship != null
                 && ship.getShield() != null
@@ -53,11 +51,9 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                Utils.oneDecimalPlaceFormat.format(getPlayerMaxTime()),
-                Utils.absValueAsPercent(upkeepMult - 1f),
+                Utils.asFloatOneDecimal(getPlayerMaxTime()),
                 Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Settings.NEGATIVE_HIGHLIGHT_COLOR,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 

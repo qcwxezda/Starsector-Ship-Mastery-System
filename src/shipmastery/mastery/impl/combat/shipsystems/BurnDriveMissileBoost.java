@@ -19,16 +19,15 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WhileActiveMissileBoost extends WhileActiveEffect {
+public class BurnDriveMissileBoost extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.WhileActiveMissileBoost).params(systemSpec.getName(), Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveMissileBoost).params(systemName, Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        Float base = super.getSelectionWeight(spec);
-        if (base == null) return null;
+        if (!"burndrive".equals(spec.getShipSystemId())) return null;
         // Must have at least one missile weapon
         Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
         int weightedCount = count.sm + 2*count.mm + 4*count.lm;
@@ -37,13 +36,13 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null) return;
-        if (!ship.hasListenerOfClass(WhileActiveMissileBoostScript.class)) {
-            ship.addListener(new WhileActiveMissileBoostScript(ship, getStrength(ship), id));
+        if (ship.getSystem() == null || !"burndrive".equals(ship.getSystem().getId())) return;
+        if (!ship.hasListenerOfClass(BurnDriveMissileBoostScript.class)) {
+            ship.addListener(new BurnDriveMissileBoostScript(ship, getStrength(ship), id));
         }
     }
 
-    static class WhileActiveMissileBoostScript extends BaseShipSystemListener implements AdvanceableListener {
+    static class BurnDriveMissileBoostScript extends BaseShipSystemListener implements AdvanceableListener {
 
         final ShipAPI ship;
         final float mult;
@@ -54,7 +53,7 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
         float timeSinceDeactivated = 0f;
         boolean active = false;
 
-        WhileActiveMissileBoostScript(ShipAPI ship, float mult, String id) {
+        BurnDriveMissileBoostScript(ShipAPI ship, float mult, String id) {
             this.ship = ship;
             this.mult = mult;
             this.id = id;
@@ -67,6 +66,8 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
                     emitter.color = new Color(1f, 0.2f, 0f, 1f);
                     emitter.widthGrowth = 15f;
                     emitter.alphaMult = 0.2f;
+                    emitter.fadeInFrac = 0.5f;
+                    emitter.fadeOutFrac = 0.5f;
                     emitter.enableDynamicAnchoring();
                     emitters.put(emitter, weapon);
                 }
@@ -87,8 +88,8 @@ public class WhileActiveMissileBoost extends WhileActiveEffect {
             Utils.maintainStatusForPlayerShip(ship,
                     id,
                     ship.getSystem().getSpecAPI().getIconSpriteName(),
-                    Strings.Descriptions.WhileActiveMissileBoostTitle,
-                    String.format(Strings.Descriptions.WhileActiveMissileBoostDesc1, Utils.asPercentNoDecimal(modifiedMult)),
+                    Strings.Descriptions.BurnDriveMissileBoostTitle,
+                    String.format(Strings.Descriptions.BurnDriveMissileBoostDesc1, Utils.asPercentNoDecimal(modifiedMult)),
                     false);
         }
 

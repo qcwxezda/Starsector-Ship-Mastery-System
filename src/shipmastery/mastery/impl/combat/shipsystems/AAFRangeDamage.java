@@ -3,7 +3,6 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
@@ -21,7 +20,7 @@ public class AAFRangeDamage extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.AAFRangeDamagePost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                        "" + (int) FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]);
+                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]));
     }
 
     @Override

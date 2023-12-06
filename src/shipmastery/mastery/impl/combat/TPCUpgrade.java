@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
@@ -31,7 +30,7 @@ public class TPCUpgrade extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.TPCUpgradePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, "" + (int) (getStrengthForPlayer() * 15f));
+        tooltip.addPara(Strings.Descriptions.TPCUpgradePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asInt((getStrengthForPlayer() * 15f)));
     }
 
     @Override

@@ -1,12 +1,10 @@
 package shipmastery.mastery.impl.combat;
-
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
@@ -33,7 +31,7 @@ public class TPCChaining extends BaseMasteryEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(strength), "" + (int) (strength * 20f), "" + (int) (strength * 2500f));
+        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(strength), Utils.asInt((strength * 20f)), Utils.asInt((strength * 2500f)));
     }
 
     @Override

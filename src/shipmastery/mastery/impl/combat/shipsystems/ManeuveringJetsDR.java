@@ -2,11 +2,10 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import shipmastery.util.Strings;
 
-public class BurnDriveDR extends ShipSystemDR {
-
+public class ManeuveringJetsDR extends ShipSystemDR {
     @Override
     protected String getStatusTitle() {
-        return Strings.Descriptions.BurnDriveDRTitle;
+        return Strings.Descriptions.ManeuveringJetsDRTitle;
     }
 
     @Override
@@ -16,6 +15,6 @@ public class BurnDriveDR extends ShipSystemDR {
 
     @Override
     protected String getSystemId() {
-        return "burndrive";
+        return "maneuveringjets";
     }
 }

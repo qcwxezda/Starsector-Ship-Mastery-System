@@ -16,13 +16,13 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
+public class DamageTakenNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
-                .initDefaultHighlight(Strings.Descriptions.ShieldEfficiencyNearbyEnemies)
+                .initDefaultHighlight(Strings.Descriptions.DamageTakenNearbyEnemies)
                 .params(Utils.asPercent(getStrength(selectedModule)), Utils.asInt(getRange(selectedModule)));
     }
 
@@ -30,7 +30,7 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
-                Strings.Descriptions.ShieldEfficiencyNearbyEnemiesPost,
+                Strings.Descriptions.DamageTakenNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR},
                 "" + MAX_EFFECT_STACKS,
@@ -43,12 +43,12 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(ShieldEfficiencyNearbyEnemiesScript.class)) {
-            ship.addListener(new ShieldEfficiencyNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
+        if (!ship.hasListenerOfClass(DamageTakenNearbyEnemiesScript.class)) {
+            ship.addListener(new DamageTakenNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
         }
     }
 
-    static class ShieldEfficiencyNearbyEnemiesScript implements AdvanceableListener {
+    static class DamageTakenNearbyEnemiesScript implements AdvanceableListener {
 
         final ShipAPI ship;
         final float range;
@@ -57,7 +57,7 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
         final IntervalUtil checkInterval = new IntervalUtil(1f, 1f);
         int curCount = 0;
 
-        ShieldEfficiencyNearbyEnemiesScript(ShipAPI ship, float range, float effectPerShip, String id) {
+        DamageTakenNearbyEnemiesScript(ShipAPI ship, float range, float effectPerShip, String id) {
             this.ship = ship;
             this.range = range;
             this.effectPerShip = effectPerShip;
@@ -72,17 +72,19 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
                 for (ShipAPI otherShip : Global.getCombatEngine().getShips()) {
                     if (otherShip.isFighter()) continue;
                     if (otherShip.getOwner() == ship.getOwner()) continue;
-                    if (otherShip.getHitpoints() <= 0f) continue;
+                    if (otherShip.getHitpoints() <= 0) continue;
                     if (MathUtils.dist(ship.getLocation(), otherShip.getLocation()) > range + ship.getCollisionRadius() + otherShip.getCollisionRadius()) continue;
                     count++;
                     if (count == MAX_EFFECT_STACKS) break;
                 }
 
                 if (count > 0) {
-                    ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - count * effectPerShip);
+                    ship.getMutableStats().getHullDamageTakenMult().modifyMult(id, 1f - count * effectPerShip);
+                    ship.getMutableStats().getArmorDamageTakenMult().modifyMult(id, 1f - count * effectPerShip);
                 }
                 else {
-                    ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
+                    ship.getMutableStats().getHullDamageTakenMult().unmodify(id);
+                    ship.getMutableStats().getArmorDamageTakenMult().unmodify(id);
                 }
                 curCount = count;
             }
@@ -91,9 +93,9 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
                 Utils.maintainStatusForPlayerShip(
                         ship,
                         id,
-                        "graphics/icons/hullsys/fortress_shield.png",
-                        Strings.Descriptions.ShieldEfficiencyNearbyEnemiesTitle,
-                        String.format(Strings.Descriptions.ShieldEfficiencyNearbyEnemiesDesc1, Utils.asPercentNoDecimal(curCount * effectPerShip)),
+                        "graphics/icons/hullsys/damper_field.png",
+                        Strings.Descriptions.DamageTakenNearbyEnemiesTitle,
+                        String.format(Strings.Descriptions.DamageTakenNearbyEnemiesDesc1, Utils.asPercentNoDecimal(curCount * effectPerShip)),
                         false);
             }
         }

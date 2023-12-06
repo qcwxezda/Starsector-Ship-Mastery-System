@@ -18,6 +18,7 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -55,10 +56,10 @@ public class OrionDeviceDamage extends ShipSystemEffect {
                 Strings.Descriptions.OrionDeviceDamagePost,
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Misc.getTextColor()},
-                "" + (int) getStrengthForPlayer(),
+                Utils.asInt(getStrengthForPlayer()),
                 DamageType.HIGH_EXPLOSIVE.getDisplayName(),
-                "" + (int) ARC_DEGREES,
-                "" + (int) RANGE);
+                Utils.asInt(ARC_DEGREES),
+                Utils.asInt(RANGE));
     }
 
     static class OrionDeviceDamageScript extends BaseShipSystemListener {

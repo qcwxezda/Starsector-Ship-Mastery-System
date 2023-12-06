@@ -20,7 +20,7 @@ public class HEFRangeRoF extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.HEFRangeRoFPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                        "" + (int) FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]);
+                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]));
     }
 
     @Override
