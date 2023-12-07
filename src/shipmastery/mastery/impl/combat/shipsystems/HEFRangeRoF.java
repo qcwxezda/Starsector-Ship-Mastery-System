@@ -53,6 +53,7 @@ public class HEFRangeRoF extends ShipSystemEffect {
         public void advanceWhileOn(float amount) {
             float effectLevel = ship.getSystem().getEffectLevel() * mult;
             ship.getMutableStats().getEnergyRoFMult().modifyPercent(id, effectLevel * 100f);
+            ship.getMutableStats().getEnergyWeaponFluxCostMod().modifyMult(id, 1f - effectLevel);
             ship.getMutableStats().getEnergyWeaponRangeBonus().modifyPercent(id, effectLevel * 100f);
             Utils.maintainStatusForPlayerShip(ship,
                     id,

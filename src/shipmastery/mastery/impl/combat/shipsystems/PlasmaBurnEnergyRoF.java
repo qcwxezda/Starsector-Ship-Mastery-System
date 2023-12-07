@@ -68,8 +68,8 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
             this.increase = increase;
             this.increaseTime = increaseTime;
             this.id = id;
-            emitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), color, 4, 0f, 0.75f);
-            emitter.alphaMult = 0.25f;
+            emitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), color, 6, 0f, 0.75f);
+            emitter.alphaMult = 0.2f;
             emitter.widthGrowth = 3f;
             emitter.jitterRadius = 10f;
             emitter.fadeInFrac = 0.25f;
@@ -85,6 +85,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
         @Override
         public void advanceWhileOn(float amount) {
             ship.getMutableStats().getEnergyRoFMult().modifyPercent(id, 100f * increase);
+            ship.getMutableStats().getEnergyWeaponFluxCostMod().modifyMult(id, 1f - increase * postEffectLevel);
             Utils.maintainStatusForPlayerShip(
                     ship,
                     id,
@@ -98,10 +99,11 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
         public void advance(float amount) {
             if (postEffectLevel > 0f && !ship.getSystem().isActive()) {
                 ship.getMutableStats().getEnergyRoFMult().modifyPercent(id, 100f * increase * postEffectLevel);
+                ship.getMutableStats().getEnergyWeaponFluxCostMod().modifyMult(id, 1f - increase * postEffectLevel);
                 postEffectLevel -= amount / increaseTime;
                 if (postEffectLevel <= 0f) {
                     ship.getMutableStats().getEnergyRoFMult().unmodify(id);
-
+                    ship.getMutableStats().getEnergyWeaponFluxCostMod().unmodify(id);
                 }
             }
             if (postEffectLevel > 0f) {
@@ -122,7 +124,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
                 burstInterval.advance(amount);
                 if (burstInterval.intervalElapsed()) {
                     emitter.alphaMult = effectAlpha;
-                    Particles.burst(emitter, 4);
+                    Particles.burst(emitter, 6);
                 }
             }
         }

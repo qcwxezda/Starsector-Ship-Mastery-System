@@ -64,7 +64,7 @@ public class FMRRegen extends ShipSystemEffect {
                 int regenAmount = (int) regen;
                 float chanceRegenAdditional = regen - regenAmount;
 
-                if (Math.random() < chanceRegenAdditional) {
+                if (Math.random() <= chanceRegenAdditional) {
                     regenAmount++;
                 }
 

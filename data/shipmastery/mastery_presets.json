@@ -65,5 +65,15 @@
         "B": "ExpandedFuelBoost"
       }
     }
+  },
+
+  "logistic_crew": {
+    "preset": "_DEFAULT_CIVILIAN_",
+    "levels": {
+      "9": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedCrewBoost"
+      }
+    }
   }
 }

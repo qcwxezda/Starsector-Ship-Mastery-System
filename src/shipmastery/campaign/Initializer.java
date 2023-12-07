@@ -17,7 +17,7 @@ public class Initializer implements EveryFrameScript {
 
     @Override
     public boolean runWhilePaused() {
-        return false;
+        return true;
     }
 
     @Override

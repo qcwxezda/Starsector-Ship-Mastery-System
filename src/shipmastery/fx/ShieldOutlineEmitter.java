@@ -60,7 +60,7 @@ public class ShieldOutlineEmitter extends BaseIEmitter {
         data.size(size, 2.5f*size);
         data.facing(theta * Misc.DEG_PER_RAD);
         Color shieldColor = shield.getInnerColor();
-        data.color(shieldColor.getRed() / (float) 255, shieldColor.getGreen() / (float) 255, shieldColor.getBlue() / (float) 255, 0.25f);
+        data.color(shieldColor.getRed() / (float) 255, shieldColor.getGreen() / (float) 255, shieldColor.getBlue() / (float) 255, 0.5f);
         data.growthRate(-0.25f * size / life, -0.25f * size / life);
         data.fadeTime(0f, life);
         return data;

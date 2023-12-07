@@ -109,6 +109,10 @@ public interface Strings {
         String BallisticFireRateHullLevelTitle = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelTitle");
         String BallisticFireRateHullLevelDesc1 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc1");
         String BallisticFireRateHullLevelDesc2 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc2");
+        String SpeedHullLevel = Utils.getString("sms_descriptions", "SpeedHullLevel");
+        String SpeedHullLevelPost = Utils.getString("sms_descriptions", "SpeedHullLevelPost");
+        String SpeedHullLevelTitle = Utils.getString("sms_descriptions", "SpeedHullLevelTitle");
+        String SpeedHullLevelDesc1 = Utils.getString("sms_descriptions", "SpeedHullLevelDesc1");
         String AAFRangeDamage = Utils.getString("sms_descriptions", "AAFRangeDamage");
         String AAFRangeDamagePost = Utils.getString("sms_descriptions", "AAFRangeDamagePost");
         String AAFRangeDamageTitle = Utils.getString("sms_descriptions", "AAFRangeDamageTitle");
@@ -121,6 +125,8 @@ public interface Strings {
         String SystemRegenOnKillPost = Utils.getString("sms_descriptions", "SystemRegenOnKillPost");
         String SystemRegenOnKillPost2 = Utils.getString("sms_descriptions", "SystemRegenOnKillPost2");
         String SystemRegenOnKillPost3 = Utils.getString("sms_descriptions", "SystemRegenOnKillPost3");
+        String MissileRegenOnKill = Utils.getString("sms_descriptions", "MissileRegenOnKill");
+        String MissileRegenOnKillPost = Utils.getString("sms_descriptions", "MissileRegenOnKillPost");
         String HEFExplosion = Utils.getString("sms_descriptions", "HEFExplosion");
         String HEFExplosionPost = Utils.getString("sms_descriptions", "HEFExplosionPost");
         String HEFExplosionPost2 = Utils.getString("sms_descriptions", "HEFExplosionPost2");
@@ -215,6 +221,7 @@ public interface Strings {
         String RangeNotMovingTitle = Utils.getString( "sms_descriptions", "RangeNotMovingTitle");
         String RangeNotMovingDesc1 = Utils.getString( "sms_descriptions", "RangeNotMovingDesc1");
         String SafetyOverridesBoost = Utils.getString( "sms_descriptions", "SafetyOverridesBoost");
+        String SafetyOverridesPPT = Utils.getString( "sms_descriptions", "SafetyOverridesPPT");
         String BuiltInMissileRegen = Utils.getString( "sms_descriptions", "BuiltInMissileRegen");
         String ConvertedCargoBayNoPenalty = Utils.getString( "sms_descriptions", "ConvertedCargoBayNoPenalty");
         String ExtraFighterPerWing = Utils.getString( "sms_descriptions", "ExtraFighterPerWing");
@@ -236,5 +243,29 @@ public interface Strings {
         String RangeNoNearbyEnemiesTitle = Utils.getString( "sms_descriptions", "RangeNoNearbyEnemiesTitle");
         String RangeNoNearbyEnemiesDesc1 = Utils.getString( "sms_descriptions", "RangeNoNearbyEnemiesDesc1");
         String EnergyProjectileRange = Utils.getString( "sms_descriptions", "EnergyProjectileRange");
+        String RandomBeamIntensity = Utils.getString( "sms_descriptions", "RandomBeamIntensity");
+        String RandomBeamIntensityPost = Utils.getString( "sms_descriptions", "RandomBeamIntensityPost");
+        String RandomBeamIntensityTitle = Utils.getString( "sms_descriptions", "RandomBeamIntensityTitle");
+        String RandomBeamIntensityDesc1 = Utils.getString( "sms_descriptions", "RandomBeamIntensityDesc1");
+        String MissileAutoforgeExtraCharge = Utils.getString( "sms_descriptions", "MissileAutoforgeExtraCharge");
+        String DEMBoost = Utils.getString( "sms_descriptions", "DEMBoost");
+        String DEMBoostPost = Utils.getString( "sms_descriptions", "DEMBoostPost");
+        String TargetingFeedBoost = Utils.getString( "sms_descriptions", "TargetingFeedBoost");
+        String TargetingFeedBoostTitle = Utils.getString( "sms_descriptions", "TargetingFeedBoostTitle");
+        String TargetingFeedBoostDesc1 = Utils.getString( "sms_descriptions", "TargetingFeedBoostDesc1");
+        String TargetingFeedBoostDesc2 = Utils.getString( "sms_descriptions", "TargetingFeedBoostDesc2");
+        String RegroupReplacement = Utils.getString( "sms_descriptions", "RegroupReplacement");
+        String DamageChargesDamperField = Utils.getString( "sms_descriptions", "DamageChargesDamperField");
+        String DamageChargesDamperFieldPost = Utils.getString( "sms_descriptions", "DamageChargesDamperFieldPost");
+        String DamageChargesDamperFieldPost2 = Utils.getString( "sms_descriptions", "DamageChargesDamperFieldPost2");
+        String DamageChargesDamperFieldTitle = Utils.getString( "sms_descriptions", "DamageChargesDamperFieldTitle");
+        String DamageChargesDamperFieldDesc1 = Utils.getString( "sms_descriptions", "DamageChargesDamperFieldDesc1");
+        String DamageChargesDamperFieldDesc2 = Utils.getString( "sms_descriptions", "DamageChargesDamperFieldDesc2");
+        String DamperFieldFighters = Utils.getString( "sms_descriptions", "DamperFieldFighters");
+        String ExpandedCrewBoost = Utils.getString( "sms_descriptions", "ExpandedCrewBoost");
+        String ExtraMiningDrones = Utils.getString( "sms_descriptions", "ExtraMiningDrones");
+        String ExtraMiningDronesPost = Utils.getString( "sms_descriptions", "ExtraMiningDronesPost");
+        String LimitedArmorRegen = Utils.getString( "sms_descriptions", "LimitedArmorRegen");
+        String LimitedArmorRegenPost = Utils.getString( "sms_descriptions", "LimitedArmorRegenPost");
     }
 }

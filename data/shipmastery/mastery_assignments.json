@@ -123,6 +123,136 @@
     }
   },
 
+  "eradicator": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "SpeedHullLevel"
+      }
+    }
+  },
+
+  "eradicator_pirates": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveImpulse",
+        "B": "SafetyOverridesBoost"
+      }
+    }
+  },
+
+  "falcon": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "RangeNoNearbyEnemies"
+      }
+    }
+  },
+
+  "falcon_xiv": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsDR",
+        "B": "RangeNoNearbyEnemies"
+      }
+    }
+  },
+
+  "falcon_LG": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "EnergyProjectileRange"
+      }
+    }
+  },
+
+  "falcon_p": {
+    "levels": {
+      "9": {
+        "A": "ConvertedHangarBays",
+        "B": "MissileRegenOnKill"
+      }
+    }
+  },
+
+  "fury": {
+    "levels": {
+      "9": {
+        "A": "PlasmaBurnEnergyRoF",
+        "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "gryphon": {
+    "levels": {
+      "9": {
+        "A": "MissileAutoforgeExtraCharge",
+        "B": "DEMBoost"
+      }
+    }
+  },
+
+  "heron": {
+    "levels": {
+      "9": {
+        "A": "TargetingFeedBoost",
+        "B": "RegroupReplacement"
+      }
+    }
+  },
+
+  "mora": {
+    "levels": {
+      "9": {
+        "A": "DamageChargesDamperField",
+        "B": "DamperFieldFighters"
+      }
+    }
+  },
+
+  "revenant": {
+    "levels": {
+      "9": {
+        "A": "ExpandedCargoBoost",
+        "B": "ExpandedFuelBoost"
+      }
+    }
+  },
+
+  "starliner": {
+    "preset": "logistic_crew"
+  },
+
+  "venture": {
+    "levels": {
+      "9": {
+        "A": "ExtraMiningDrones",
+        "B": "LimitedArmorRegen"
+      }
+    }
+  },
+
+  "venture_p": {
+    "levels": {
+      "9": {
+        "A": "ExpandedCargoBoost",
+        "B": "LimitedArmorRegen"
+      }
+    }
+  },
+
+  "venture_pather": {
+    "levels": {
+      "9": {
+        "A": "ExpandedCargoBoost",
+        "B": "ExpandedFuelBoost"
+      }
+    }
+  },
+
 
 
 

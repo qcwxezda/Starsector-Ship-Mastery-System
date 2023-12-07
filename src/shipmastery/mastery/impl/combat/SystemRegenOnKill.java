@@ -1,4 +1,4 @@
-package shipmastery.mastery.impl.combat.shipsystems;
+package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;

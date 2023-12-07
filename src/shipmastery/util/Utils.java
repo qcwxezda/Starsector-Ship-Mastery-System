@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public abstract class Utils {
-    public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.#%");
+    public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.##%");
     public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
     public static final DecimalFormat integerFormat = new DecimalFormat("0");
@@ -179,7 +179,11 @@ public abstract class Utils {
 
     public static String asFloatOneDecimal(float num) {return oneDecimalPlaceFormat.format(num);}
 
-    public static String asInt(float num) {return integerFormat.format(num);}
+    public static String asInt(float num) {
+        // Should always round down, except in cases where the number is so close to the next int that it's clear
+        // that it's just floating point rounding issues (e.g. 1000 * 1.6 becoming 1599.9999).
+        return integerFormat.format((int) (num + 0.0001f));
+    }
 
 
     public static class WeaponSlotCount {

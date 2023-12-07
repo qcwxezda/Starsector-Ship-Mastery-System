@@ -70,6 +70,7 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
                                         final Vector2f pt, boolean shieldHit) {
             if (!(param instanceof DamagingProjectileAPI)) return null;
             final DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            if (proj.isFading()) return null;
             if (!largeBallistics.contains(proj.getWeapon())) return null;
             if (DamageType.FRAGMENTATION.equals(damage.getType())) return null;
 
@@ -90,12 +91,12 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
                             false);
                     ParticleBurstEmitter emitter = new ParticleBurstEmitter(pt);
                     emitter.color = burstColor;
-                    emitter.lengthMultiplierOverTime = 3f;
+                    emitter.lengthMultiplierOverTime = 2f;
                     emitter.radiusJitter = 0.8f;
                     emitter.life = 0.35f;
                     emitter.lifeJitter = 0.5f;
-                    emitter.size = 2f;
-                    emitter.radius = 20f;
+                    emitter.size = 4f;
+                    emitter.radius = 30f;
                     Particles.burst(emitter, 30);
                 }
             }, 0f);

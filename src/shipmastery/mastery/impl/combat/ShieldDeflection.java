@@ -80,8 +80,6 @@ public class ShieldDeflection extends BaseMasteryEffect {
             this.ship = ship;
             this.maxTime = maxTime;
             activatedTime = maxTime;
-            emitter = new ShieldOutlineEmitter(ship);
-            emitter.enableDynamicAnchoring();
         }
 
         @Override

@@ -9,7 +9,7 @@ public class StateTracker {
 
     public static void setState(String newState) {
         if (!currentState.equals(newState)) {
-            if (COMBAT_STATE.equals(currentState)) {
+            if (COMBAT_STATE.equals(currentState) && Global.getCombatEngine() != null && Global.getCombatEngine().getListenerManager() != null) {
                 for (EndOfCombatListener listener : Global.getCombatEngine().getListenerManager().getListeners(
                         EndOfCombatListener.class)) {
                     listener.onCombatEnd();

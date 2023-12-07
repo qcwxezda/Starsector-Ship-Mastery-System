@@ -67,7 +67,7 @@ public class BestOfTheBest {
         } else {
             FleetMemberAPI member = stats.getFleetMember();
             if (member == null) return false;
-            if (!member.isCruiser() && !member.isCapital()) return false;
+            if (!member.isCapital()) return false;
             return !member.getCaptain().isDefault();
         }
     }

@@ -20,6 +20,11 @@ public abstract class MathUtils {
         return v;
     }
 
+    public static Vector2f randomPointOnLine(Vector2f a, Vector2f b) {
+        float t = Misc.random.nextFloat();
+        return new Vector2f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+    }
+
     public static Vector2f inDirectionWithLength(Vector2f dir, float length) {
         return (Vector2f) safeNormalize(new Vector2f(dir)).scale(length);
     }
