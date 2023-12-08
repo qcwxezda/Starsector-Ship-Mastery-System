@@ -267,5 +267,12 @@ public interface Strings {
         String ExtraMiningDronesPost = Utils.getString( "sms_descriptions", "ExtraMiningDronesPost");
         String LimitedArmorRegen = Utils.getString( "sms_descriptions", "LimitedArmorRegen");
         String LimitedArmorRegenPost = Utils.getString( "sms_descriptions", "LimitedArmorRegenPost");
+        String FMRNoFlux = Utils.getString( "sms_descriptions", "FMRNoFlux");
+        String HammerLingeringDamage = Utils.getString( "sms_descriptions", "HammerLingeringDamage");
+        String HammerLingeringDamagePost = Utils.getString( "sms_descriptions", "HammerLingeringDamagePost");
+        String FlareRegen = Utils.getString( "sms_descriptions", "FlareRegen");
+        String FlareRegenPost = Utils.getString( "sms_descriptions", "FlareRegenPost");
+        String FMRFastReplacement = Utils.getString( "sms_descriptions", "FMRFastReplacement");
+        String PilumSalamanderBoost = Utils.getString( "sms_descriptions", "PilumSalamanderBoost");
     }
 }

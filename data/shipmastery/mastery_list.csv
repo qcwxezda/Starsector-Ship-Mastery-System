@@ -66,6 +66,8 @@ DEMBoost,9,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
 RegroupReplacement,9,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
 ExtraMiningDrones,9,combat unique,,3,shipmastery.mastery.impl.combat.ExtraMiningDrones
 LimitedArmorRegen,9,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
+HammerLingeringDamage,9,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
+PilumSalamanderBoost,9,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
@@ -85,7 +87,9 @@ BurnDriveImpulse,9,combat unique doesnt_affect_modules,,650,shipmastery.mastery.
 BurnDriveCooldown,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.BurnDriveCooldown
 PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
 PlasmaBurnEnergyRoF,9,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
+FMRFastReplacement,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.FMRFastReplacement
 FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
+FMRNoFlux,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.FMRNoFlux
 OrionDeviceDamage,9,combat unique doesnt_affect_modules prefix_flagship_only,,1500,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
 NovaBurstDamage,9,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
 FastSkimmer,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
@@ -98,3 +102,4 @@ MissileAutoforgeExtraCharge,9,combat unique,,1,shipmastery.mastery.impl.combat.s
 TargetingFeedBoost,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.TargetingFeedBoost
 DamageChargesDamperField,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.DamageChargesDamperField
 DamperFieldFighters,9,combat unique,,0.1,shipmastery.mastery.impl.combat.shipsystems.DamperFieldFighters
+FlareRegen,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.FlareRegen

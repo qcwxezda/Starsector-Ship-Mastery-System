@@ -254,7 +254,14 @@
     "ExtraMiningDrones": "Adds an additional %1$s drones to the built-in mining drone bay.",
     "ExtraMiningDronesPost": "The additional drones are permanent reserve deployments and do not count towards fighter replacement rate degradation.",
     "LimitedArmorRegen": "Whenever an armor plate is fully depleted, it rapidly regains %1$s of its maximum integrity.",
-    "LimitedArmorRegenPost": "This effect is limited to one activation per armor plate per combat."
+    "LimitedArmorRegenPost": "This effect is limited to one activation per armor plate per combat.",
+    "FMRNoFlux": "%1$s no longer generates flux when activated.",
+    "HammerLingeringDamage": "Increases ammo capacity of all hammer-type missile weapons by %1$s. All hammer torpedoes gain additional armor-stripping capabilities:",
+    "HammerLingeringDamagePost": "Hammer torpedoes deal up to %1$s of their damage as additional damage to all armor plates within a %2$s su radius over the course of %3$s seconds. Armor plates farther away from the blast's center take less damage. This damage is not reduced by armor.",
+    "FlareRegen": "Allows %1$s to regenerate charges at the rate of 1 charge per %2$s seconds.",
+    "FlareRegenPost": "Regeneration rate is also modified by the ship's charge regeneration rate multiplier.",
+    "FMRFastReplacement": "Activating %1$s also has a %2$s chance of rapidly replacing a random destroyed fighter.",
+    "PilumSalamanderBoost": "All %1$s and %2$s missiles gain %3$s durability and deal an additional %4$s energy and %5$s EMP damage."
   },
 
   "sms_misc": {

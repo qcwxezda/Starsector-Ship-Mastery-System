@@ -32,11 +32,23 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.ConvertedHangarBaysPost, 0f, Misc.getTextColor(), Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName());
+        if (getIncreasePlayer() > 0) {
+            tooltip.addPara(
+                    Strings.Descriptions.ConvertedHangarBaysPost, 0f, Misc.getTextColor(),
+                    Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName());
+        }
     }
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ConvertedHangarBays).params(Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName(), getIncreasePlayer());
+        if (getIncreasePlayer() > 0) {
+            return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ConvertedHangarBays)
+                                     .params(Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName(), getIncreasePlayer());
+        }
+        else {
+            return MasteryDescription
+                    .initDefaultHighlight(Strings.Descriptions.ConvertedHangarBaysPost)
+                    .params(Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName());
+        }
     }
 }

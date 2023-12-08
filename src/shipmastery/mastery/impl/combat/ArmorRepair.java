@@ -69,6 +69,7 @@ public class ArmorRepair extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive()) return;
             repairInterval.advance(amount);
 
             if (repairInterval.intervalElapsed()) {
@@ -85,6 +86,7 @@ public class ArmorRepair extends BaseMasteryEffect {
                         }
                     }
                 }
+                ship.syncWithArmorGridState();
             }
         }
     }

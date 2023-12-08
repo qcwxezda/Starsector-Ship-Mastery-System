@@ -60,6 +60,8 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive()) return;
+
             armorCheckInterval.advance(amount);
             if (armorCheckInterval.intervalElapsed()) {
                 float[][] grid = ship.getArmorGrid().getGrid();
@@ -73,6 +75,7 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
                 }
             }
 
+            boolean needsSync = false;
             for (Iterator<Map.Entry<Pair<Integer, Integer>, FloatRef>> iterator = activationLevels.entrySet().iterator();
                  iterator.hasNext(); ) {
                 Map.Entry<Pair<Integer, Integer>, FloatRef> entry = iterator.next();
@@ -83,9 +86,13 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
                     level += amount * REGEN_RATE;
                     ref.f = level;
                     ship.getArmorGrid().getGrid()[index.one][index.two] += amount * REGEN_RATE * regenAmount;
+                    needsSync = true;
                 } else {
                     iterator.remove();
                 }
+            }
+            if (needsSync) {
+                ship.syncWithArmorGridState();
             }
         }
     }

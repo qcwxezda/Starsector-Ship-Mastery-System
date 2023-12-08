@@ -1,4 +1,29 @@
 {
+  "buffalo": {
+    "preset": "logistic_cargo"
+  },
+
+  "buffalo2": {
+    "levels": {
+      "9": {
+        "A": "FlareRegen",
+        "B": "ConvertedHangarBays 0"
+      }
+    }
+  },
+
+  "condor": {
+    "levels": {
+      "9": {
+        "A": "FMRFastReplacement",
+        "B": "PilumSalamanderBoost"
+      }
+    }
+  },
+
+
+
+
   "apex": {
     "preset": "automated",
     "levels": {
@@ -238,7 +263,7 @@
   "venture_p": {
     "levels": {
       "9": {
-        "A": "ExpandedCargoBoost",
+        "A": "FMRNoFlux",
         "B": "LimitedArmorRegen"
       }
     }
@@ -247,8 +272,8 @@
   "venture_pather": {
     "levels": {
       "9": {
-        "A": "ExpandedCargoBoost",
-        "B": "ExpandedFuelBoost"
+        "A": "OrionDeviceDamage",
+        "B": "HammerLingeringDamage"
       }
     }
   },
@@ -387,7 +412,7 @@
     "levels": {
       "9": {
         "A": "BurnDriveImpulse",
-        "B": "ModifyStatsFlat 1 NumFighterBays FighterCost 3.5 BomberCost -7"
+        "B": "HammerLingeringDamage"
       }
     }
   },
