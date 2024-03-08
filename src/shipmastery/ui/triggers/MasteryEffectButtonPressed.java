@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.NavigableMap;
 
 public class MasteryEffectButtonPressed extends ActionListener {
-    MasteryDisplay masteryDisplay;
-    ShipHullSpecAPI spec;
-    int level;
-    boolean isOption2;
+    final MasteryDisplay masteryDisplay;
+    final ShipHullSpecAPI spec;
+    final int level;
+    final boolean isOption2;
 
     public MasteryEffectButtonPressed(MasteryDisplay masteryDisplay, ShipHullSpecAPI spec, int level, boolean isOption2) {
         this.masteryDisplay = masteryDisplay;

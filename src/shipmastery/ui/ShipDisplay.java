@@ -9,8 +9,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 
 public class ShipDisplay implements CustomUIElement {
-    ShipHullSpecAPI spec;
-    float size;
+    final ShipHullSpecAPI spec;
+    final float size;
 
     public ShipDisplay(ShipHullSpecAPI spec, float size) {
         this.spec = spec;

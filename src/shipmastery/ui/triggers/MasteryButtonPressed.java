@@ -5,7 +5,7 @@ import shipmastery.ui.MasteryPanel;
 
 public class MasteryButtonPressed extends ActionListener {
 
-    RefitHandler handler;
+    final RefitHandler handler;
     public MasteryButtonPressed(RefitHandler handler) {
         this.handler = handler;
     }

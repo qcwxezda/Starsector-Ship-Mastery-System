@@ -27,8 +27,8 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.PilumSalamanderBoost)
                 .params(
-                        ((MissileSpecAPI) Global.getSettings().getWeaponSpec("pilum").getProjectileSpec()).getHullSpec().getHullName(),
-                        ((MissileSpecAPI) Global.getSettings().getWeaponSpec("heatseeker").getProjectileSpec()).getHullSpec().getHullName(),
+                        Strings.Descriptions.PilumName,
+                        Strings.Descriptions.SalamanderName,
                         Utils.asPercent(strength / 300f),
                         Utils.asInt(strength),
                         Utils.asInt(3f * strength));
@@ -109,16 +109,18 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
             for (int i = 0; i < numArcs; i++) {
                 float theta = MathUtils.randBetween(i * 360f / numArcs, (i+1)*360f / numArcs);
                 Vector2f endpoint = Misc.getUnitVectorAtDegreeAngle(theta);
-                endpoint.scale(MathUtils.randBetween(damageRadius / 3f, damageRadius));
+                float outRadius = damageRadius;
+                float inRadius = damageRadius / 3f;
+                float r = (float) Math.sqrt(Misc.random.nextFloat() * (outRadius*outRadius - inRadius*inRadius) + inRadius*inRadius);
+                endpoint.scale(r);
                 Vector2f.add(endpoint, pt, endpoint);
-
                 Global.getCombatEngine().spawnEmpArcVisual(
                         pt,
                         null,
                         endpoint,
                         null,
-                        10f,
-                        new Color(0, 200, 255, 200),
+                        8f,
+                        new Color(125,125,100,255),
                         new Color(255, 255, 255, 200)).setSingleFlickerMode();
             }
             CombatDeferredActionPlugin.performLater(new Action() {

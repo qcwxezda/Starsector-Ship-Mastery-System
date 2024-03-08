@@ -9,7 +9,7 @@ import shipmastery.util.MathUtils;
 
 public class LOSMissileAI extends BaseGuidedMissileAI {
     private Vector2f targetVelLastFrame = new Vector2f();
-    protected float N = 3f;
+    protected final float N = 3f;
 
     public LOSMissileAI(MissileAPI missile, float maxSeekRangeFactor) {
         super(missile, maxSeekRangeFactor);

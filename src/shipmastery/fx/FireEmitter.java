@@ -14,20 +14,23 @@ import java.awt.Color;
 public class FireEmitter extends BaseIEmitter {
 
     public Vector2f location;
-    public SpriteAPI sprite = particleengine.Utils.getLoadedSprite("graphics/fx/particlealpha_textured.png");
+    public final SpriteAPI sprite = particleengine.Utils.getLoadedSprite("graphics/fx/particlealpha_textured.png");
     private final float[] colorHSVA = new float[4];
-    public float size = 25f, sizeJitter = 0.2f;
-    public float life = 2f, lifeJitter = 0.25f;
-    public float fadeInFrac = 0.2f, fadeOutFrac = 0.8f;
+    public float size = 25f;
+    public final float sizeJitter = 0.2f;
+    public final float life = 2f;
+    public final float lifeJitter = 0.25f;
+    public final float fadeInFrac = 0.2f;
+    public final float fadeOutFrac = 0.8f;
     public float randRadius = 0f;
-    public Vector2f driftDirection = Misc.getUnitVectorAtDegreeAngle(MathUtils.randBetween(0f, 360f));
+    public final Vector2f driftDirection = Misc.getUnitVectorAtDegreeAngle(MathUtils.randBetween(0f, 360f));
 
     public float driftSpeed = 0f;
-    public float hueJitter = 5f;
-    public float saturationJitter = 0.1f;
-    public float alphaJitter = 0.5f;
+    public final float hueJitter = 5f;
+    public final float saturationJitter = 0.1f;
+    public final float alphaJitter = 0.5f;
     public float alphaMult = 1f;
-    public int blendDestFac = GL11.GL_ONE;
+    public final int blendDestFac = GL11.GL_ONE;
 
     @Override
     public int getBlendDestinationFactor() {

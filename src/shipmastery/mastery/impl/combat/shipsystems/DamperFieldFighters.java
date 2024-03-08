@@ -52,7 +52,7 @@ public class DamperFieldFighters extends ShipSystemEffect {
         static final Color jitterColor = new Color(255, 165, 90, 55);
         final float minHPFrac;
         float tempHPRevert = -1f;
-        float tempHPAmount = 1000000f;
+        final float tempHPAmount = 1000000f;
 
         DamperFieldFightersScript(@Nullable ShipAPI fighter, ShipAPI carrier, float minHPFrac, String id) {
             this.fighter = fighter;

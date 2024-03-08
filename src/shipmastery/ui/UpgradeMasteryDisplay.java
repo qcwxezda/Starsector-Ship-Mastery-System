@@ -11,8 +11,8 @@ import shipmastery.util.Strings;
 
 public class UpgradeMasteryDisplay implements CustomUIElement {
 
-    ShipHullSpecAPI spec;
-    MasteryPanel panel;
+    final ShipHullSpecAPI spec;
+    final MasteryPanel panel;
 
     public UpgradeMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;
@@ -27,7 +27,7 @@ public class UpgradeMasteryDisplay implements CustomUIElement {
         upgradeLabel.setAlignment(Alignment.MID);
         upgradeLabel.getPosition().setXAlignOffset(5f);
         int cost = MasteryUtils.getUpgradeCost(spec);
-        String buttonText = "" + cost + " MP";
+        String buttonText = cost + " MP";
         ButtonAPI upgradeButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 150f, 25f, 5f);

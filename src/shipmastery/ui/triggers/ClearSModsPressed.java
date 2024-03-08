@@ -16,9 +16,9 @@ import java.util.ArrayList;
 
 public class ClearSModsPressed extends ActionListener {
 
-    MasteryPanel masteryPanel;
-    ShipAPI module;
-    String defaultText;
+    final MasteryPanel masteryPanel;
+    final ShipAPI module;
+    final String defaultText;
 
     public ClearSModsPressed(MasteryPanel masteryPanel, ShipAPI module, String defaultText) {
         this.masteryPanel = masteryPanel;

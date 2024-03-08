@@ -49,7 +49,7 @@ public class BurnDriveMissileBoost extends ShipSystemEffect {
         final String id;
         final Map<BurstEmitter, WeaponAPI> emitters = new HashMap<>();
         final IntervalUtil burstInterval = new IntervalUtil(0.25f, 0.35f);
-        float particleLife = 1f;
+        final float particleLife = 1f;
         float timeSinceDeactivated = 0f;
         boolean active = false;
 

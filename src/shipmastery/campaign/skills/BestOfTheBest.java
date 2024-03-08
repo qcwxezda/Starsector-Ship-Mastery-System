@@ -30,7 +30,7 @@ public class BestOfTheBest {
         }
     }
 
-    public static float MASTERY_BONUS = 0.3f;
+    public static final float MASTERY_BONUS = 0.2f;
     public static class Level1 implements CharacterStatsSkillEffect {
         @Override
         public String getEffectDescription(float level) {
@@ -73,11 +73,12 @@ public class BestOfTheBest {
     }
 
 
-    public static float STATS_BONUS = 0.1f;
+    public static final float STATS_BONUS = 0.15f;
     public static class Level3 extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             if (isCapitalAndOfficer(stats)) {
+
                 stats.getMaxCombatReadiness().modifyFlat(id, STATS_BONUS, "Best of the Best skill");
                 stats.getHullBonus().modifyMult(id, 1f + STATS_BONUS);
                 stats.getFluxCapacity().modifyMult(id, 1f + STATS_BONUS);

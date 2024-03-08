@@ -72,7 +72,7 @@ public class OrionDeviceDamage extends ShipSystemEffect {
             this.damage = damage;
 
             for (WeaponAPI weapon : ship.getAllWeapons()) {
-                if ("pusherplate_lt".equals(weapon.getId())) {
+                if (weapon.getId().startsWith("pusherplate_lt")) {
                     bombLauncher = weapon;
                     return;
                 }

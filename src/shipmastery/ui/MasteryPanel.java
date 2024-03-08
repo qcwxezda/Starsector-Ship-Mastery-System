@@ -29,8 +29,8 @@ public class MasteryPanel {
     ShipAPI module;
     RefitHandler handler;
     UIPanelAPI rootPanel;
-    static String tableFont = Fonts.INSIGNIA_LARGE;
-    static String checkboxFont = Fonts.ORBITRON_24AABOLD;
+    static final String tableFont = Fonts.INSIGNIA_LARGE;
+    static final String checkboxFont = Fonts.ORBITRON_24AABOLD;
     public final static Float[] columnWidths = new Float[]{50f, 350f, 150f, 75f, 75f, 150f, 100f};
     public final static String[] columnNames =
             new String[]{
@@ -41,7 +41,7 @@ public class MasteryPanel {
                     Strings.MASTERY_POINTS_HEADER,
                     Strings.CREDITS_HEADER,
                     Strings.MODULAR_HEADER};
-    public static float tableEntryHeight = 38f;
+    public static final float tableEntryHeight = 38f;
 
 
     String currentColumnName = columnNames[6];
@@ -196,7 +196,7 @@ public class MasteryPanel {
         credits.setParaOrbitronLarge();
         LabelAPI creditsLabel = credits.addPara(creditsString, 10f);
         creditsLabel.setAlignment(Alignment.LMID);
-        creditsLabel.setHighlight("" + creditsAmtFmt);
+        creditsLabel.setHighlight(creditsAmtFmt);
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
         int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
@@ -284,7 +284,7 @@ public class MasteryPanel {
                 resetButtonTTM.addButton(Strings.CLEAR_BUTTON_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                          Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
         ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, Strings.CLEAR_BUTTON_STR));
-        if (moduleVariant.getSMods().size() == 0) {
+        if (moduleVariant.getSMods().isEmpty()) {
             resetButton.setEnabled(false);
         }
 
@@ -491,11 +491,11 @@ public class MasteryPanel {
     }
 
     public static class TableRowData {
-        public String hullModSpecId;
-        public int mpCost;
-        public int creditsCost;
-        public String cantBuildInReason;
-        public boolean isModular;
+        public final String hullModSpecId;
+        public final int mpCost;
+        public final int creditsCost;
+        public final String cantBuildInReason;
+        public final boolean isModular;
 
         // Can be built in <==> cantBuildInReason == null
         public TableRowData(String id, int mp, int credits, @Nullable String cantBuildInReason, boolean isModular) {

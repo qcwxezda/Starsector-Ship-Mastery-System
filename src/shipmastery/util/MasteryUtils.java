@@ -70,9 +70,9 @@ public abstract class MasteryUtils {
     }
 
     private static class MasteryEffectData implements Comparable<MasteryEffectData>  {
-        MasteryEffect effect;
-        int level;
-        int index;
+        final MasteryEffect effect;
+        final int level;
+        final int index;
 
         private MasteryEffectData(MasteryEffect effect, int level, int index) {
             this.effect = effect;

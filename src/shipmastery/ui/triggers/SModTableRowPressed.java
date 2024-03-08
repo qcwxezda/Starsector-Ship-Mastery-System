@@ -17,8 +17,8 @@ import java.util.List;
 
 public class SModTableRowPressed extends TriggerableProxy {
 
-    MasteryPanel masteryPanel;
-    ShipAPI module;
+    final MasteryPanel masteryPanel;
+    final ShipAPI module;
     long lastClickTime = 0;
 
 

@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.PhaseCloakStats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.combat.entities.Ship;
 import particleengine.Particles;
 import shipmastery.config.Settings;

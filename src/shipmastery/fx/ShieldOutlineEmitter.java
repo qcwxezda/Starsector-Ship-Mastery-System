@@ -13,8 +13,7 @@ import java.awt.Color;
 
 public class ShieldOutlineEmitter extends BaseIEmitter {
 
-    ShieldAPI shield;
-    final SpriteAPI sprite = null;//particleengine.Utils.getLoadedSprite("graphics/fx/particlealpha32sq.png");
+    final ShieldAPI shield;
     float lastShieldFacingBeforeOff;
 
     public ShieldOutlineEmitter(ShipAPI ship) {
@@ -39,11 +38,6 @@ public class ShieldOutlineEmitter extends BaseIEmitter {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public SpriteAPI getSprite() {
-        return sprite;
     }
 
     @Override

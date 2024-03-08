@@ -268,6 +268,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     }
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {
-        return ("" + commander.getId() + spec.getHullId() + "___").hashCode();
+        return (commander.getId() + spec.getHullId() + "___").hashCode();
     }
 }

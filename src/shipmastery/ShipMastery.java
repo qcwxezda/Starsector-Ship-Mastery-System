@@ -184,10 +184,10 @@ public abstract class ShipMastery {
         return masteryEffects;
     }
 
-    static Map<String, String> tagMap = new HashMap<>();
-    static Map<String, Integer> tierMap = new HashMap<>();
-    static Map<String, Integer> priorityMap = new HashMap<>();
-    static Map<String, Float> defaultStrengthMap = new HashMap<>();
+    static final Map<String, String> tagMap = new HashMap<>();
+    static final Map<String, Integer> tierMap = new HashMap<>();
+    static final Map<String, Integer> priorityMap = new HashMap<>();
+    static final Map<String, Float> defaultStrengthMap = new HashMap<>();
 
     static void parseLevelItem(String key, int level, Object levelItem,
                                Utils.ListPairMapMap<String, Integer, String> mapToAddTo, boolean isOption2) {

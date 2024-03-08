@@ -4,7 +4,7 @@ import shipmastery.ui.MasteryPanel;
 
 public class CancelMasteryChangesPressed extends ActionListener {
 
-    MasteryPanel masteryPanel;
+    final MasteryPanel masteryPanel;
 
     public CancelMasteryChangesPressed(MasteryPanel masteryPanel) {
         this.masteryPanel = masteryPanel;

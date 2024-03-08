@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
@@ -17,8 +16,8 @@ import shipmastery.util.Utils;
 
 public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
 
-    static int MAX_STACKS = 10;
-    static float MAX_INCREASE = 1f;
+    static final int MAX_STACKS = 10;
+    static final float MAX_INCREASE = 1f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {

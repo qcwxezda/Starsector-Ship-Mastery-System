@@ -16,7 +16,7 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class SModsOverCapacity extends AdditiveMasteryEffect {
-    static float DP_PENALTY_PER_SMOD = 0.05f;
+    static final float DP_PENALTY_PER_SMOD = 0.05f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {

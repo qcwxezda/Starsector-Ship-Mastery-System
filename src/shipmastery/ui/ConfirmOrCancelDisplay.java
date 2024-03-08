@@ -13,8 +13,8 @@ public class ConfirmOrCancelDisplay implements CustomUIElement {
     public ButtonAPI confirmButton;
     public ButtonAPI cancelButton;
 
-    ActionListener onConfirm;
-    ActionListener onCancel;
+    final ActionListener onConfirm;
+    final ActionListener onCancel;
 
     public ConfirmOrCancelDisplay(ActionListener onConfirm, ActionListener onCancel) {
         this.onCancel = onCancel;

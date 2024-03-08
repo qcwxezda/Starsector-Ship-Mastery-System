@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
 import shipmastery.combat.ai.LOSMissileAI;
 import shipmastery.config.Settings;

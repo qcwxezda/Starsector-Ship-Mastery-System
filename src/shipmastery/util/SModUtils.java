@@ -13,11 +13,11 @@ import shipmastery.config.TransientSettings;
 
 public abstract class SModUtils {
 
-    public static int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
-    public static float CREDITS_HARD_CAP = 9999999f;
-    public static int MP_HARD_CAP = 99;
+    public static final int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
+    public static final float CREDITS_HARD_CAP = 9999999f;
+    public static final int MP_HARD_CAP = 99;
 
-    public static int ADDITIONAL_MP_PER_SMOD = 1;
+    public static final int ADDITIONAL_MP_PER_SMOD = 1;
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
@@ -28,11 +28,11 @@ public abstract class SModUtils {
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
         float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
 
-        int cost = 1 + (int) (dp / 20f);
+        float cost = 1 + (int) (dp / 20f);
 
         // Built-in mods always have static cost
         if (isHullmodBuiltIn(spec, ship.getVariant())) {
-            return cost;
+            return (int) cost;
         }
 
         cost += ADDITIONAL_MP_PER_SMOD * nSMods;
@@ -49,7 +49,7 @@ public abstract class SModUtils {
         cost -= TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.getModifiedInt();
         cost = Math.max(1, cost);
 
-        return Math.min(cost, MP_HARD_CAP);
+        return (int) Math.min(cost, MP_HARD_CAP);
     }
 
     public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {

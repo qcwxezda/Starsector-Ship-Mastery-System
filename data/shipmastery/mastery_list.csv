@@ -8,7 +8,7 @@ SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logi
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
 SModRemoval,4,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
 SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
-ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
+ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.4,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
 EfficiencyOverhaulBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
@@ -103,3 +103,5 @@ TargetingFeedBoost,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsyst
 DamageChargesDamperField,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.DamageChargesDamperField
 DamperFieldFighters,9,combat unique,,0.1,shipmastery.mastery.impl.combat.shipsystems.DamperFieldFighters
 FlareRegen,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.FlareRegen
+FasterActiveFlares,9,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.FasterActiveFlares
+BDeckExtraCharges,9,combat unique,,1,shipmastery.mastery.impl.combat.BDeckExtraCharges

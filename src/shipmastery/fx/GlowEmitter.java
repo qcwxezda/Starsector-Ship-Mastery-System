@@ -11,7 +11,7 @@ import java.awt.Color;
 
 public class GlowEmitter extends BaseIEmitter {
 
-    public Vector2f location;
+    public final Vector2f location;
     public Color color = Color.WHITE;
     public float startSize = 100f, endSize = 100f, maxSize = 100f;
     public float life = 1f;

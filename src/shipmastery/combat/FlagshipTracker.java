@@ -92,8 +92,8 @@ public class FlagshipTracker implements EndOfCombatListener {
     }
 
     static class EffectActivationRecord {
-        MasteryEffect effect;
-        ShipAPI ship;
+        final MasteryEffect effect;
+        final ShipAPI ship;
 
         EffectActivationRecord(MasteryEffect effect, ShipAPI ship) {
             this.effect = effect;

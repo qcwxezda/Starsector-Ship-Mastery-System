@@ -41,8 +41,8 @@ public class MasteryDisplay implements CustomUIElement {
     static final float MIN_DESC_HEIGHT = 80f;
     static final float BUTTON_WIDTH = 35f;
 
-    Map<Integer, ButtonAPI> option1Buttons = new HashMap<>();
-    Map<Integer, ButtonAPI> option2Buttons = new HashMap<>();
+    final Map<Integer, ButtonAPI> option1Buttons = new HashMap<>();
+    final Map<Integer, ButtonAPI> option2Buttons = new HashMap<>();
 
     public MasteryDisplay(ShipAPI selectedModule, ShipAPI rootShip, float width, float height, float pad, boolean resetScrollbar, Action onButtonClick) {
         w = width;
@@ -223,7 +223,7 @@ public class MasteryDisplay implements CustomUIElement {
 
         TooltipMakerAPI levelButtonTTM = innerPanel.createUIElement(BUTTON_WIDTH, descH, false);
         String optionLetter = isOption2 ? "B" : "A";
-        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox("" + level + (showOptionLetter ? optionLetter : ""), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox(level + (showOptionLetter ? optionLetter : ""), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                                                Misc.getBrightPlayerColor(), BUTTON_WIDTH, descH, 0f);
         levelButton.setClickable(false);
         levelButton.setGlowBrightness(0.3f);

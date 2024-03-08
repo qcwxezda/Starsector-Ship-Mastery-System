@@ -39,6 +39,12 @@ public abstract class MathUtils {
         return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
     }
 
+    public static Vector2f randomPointInRing(Vector2f center, float inRadius, float outRadius) {
+        float theta = Misc.random.nextFloat() * 2f * (float) Math.PI;
+        float r = (float) Math.sqrt(Misc.random.nextFloat() * (outRadius*outRadius - inRadius*inRadius) + inRadius*inRadius);
+        return new Vector2f(center.x + r*(float)Math.cos(theta), center.y + r*(float)Math.sin(theta));
+    }
+
     /** Assumes that the quadratic is concave.
      *  Input the value of the quadratic at T = 0 (start), T = maxTime (end), and the quadratic's peak.
      *  Returns the linear and quadratic coefficients. */

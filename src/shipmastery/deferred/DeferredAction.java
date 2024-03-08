@@ -1,8 +1,8 @@
 package shipmastery.deferred;
 
 public class DeferredAction implements Comparable<DeferredAction> {
-    Action action;
-    long timeToPerform;
+    final Action action;
+    final long timeToPerform;
 
     public DeferredAction(Action action, long time) {
         this.action = action;

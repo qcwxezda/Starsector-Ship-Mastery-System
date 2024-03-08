@@ -17,7 +17,7 @@ public class ShapedChargeEmitter extends BaseIEmitter {
     public float minVelocity = 50f, maxVelocity = 100f;
     public float angleSpread = 30f;
     public float angle = 0f;
-    public CombatEntityAPI source;
+    public final CombatEntityAPI source;
     public Color color = Color.WHITE;
     public float saturationShiftOverLife = 0f;
     public float life = 1f, lifeRandomness = 0f;

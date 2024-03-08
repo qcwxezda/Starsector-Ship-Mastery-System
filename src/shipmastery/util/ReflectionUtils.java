@@ -36,17 +36,25 @@ public abstract class ReflectionUtils {
     }
 
     public static Object getField(Object o, String fieldName) {
+        return getFieldWithClass(o.getClass(), o, fieldName);
+    }
+
+    public static Object getFieldNoCatch(Object o, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        return getFieldWithClassNoCatch(o.getClass(), o, fieldName);
+    }
+
+    public static Object getFieldWithClass(Class<?> cls, Object o, String fieldName) {
         try {
-            return getFieldNoCatch(o, fieldName);
+            return getFieldWithClassNoCatch(cls, o, fieldName);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static Object getFieldNoCatch(Object o, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    public static Object getFieldWithClassNoCatch(Class<?> cls, Object o, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         if (o == null) return null;
-        Field field = o.getClass().getDeclaredField(fieldName);
+        Field field = cls.getDeclaredField(fieldName);
         field.setAccessible(true);
 
         return field.get(o);
@@ -179,9 +187,9 @@ public abstract class ReflectionUtils {
     }
 
     public static class GenericDialogData {
-        public LabelAPI textLabel;
-        public UIPanelAPI panel;
-        public UIPanelAPI dialog;
+        public final LabelAPI textLabel;
+        public final UIPanelAPI panel;
+        public final UIPanelAPI dialog;
 
         public GenericDialogData(LabelAPI label, UIPanelAPI panel, UIPanelAPI dialog) {
             textLabel = label;

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import shipmastery.combat.listeners.EndOfCombatListener;
 
 public class StateTracker {
-    public static String COMBAT_STATE = "com.fs.starfarer.combat.CombatState";
+    public static final String COMBAT_STATE = "com.fs.starfarer.combat.CombatState";
     private static String currentState = "";
 
     public static void setState(String newState) {

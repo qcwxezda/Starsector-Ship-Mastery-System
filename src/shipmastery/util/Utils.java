@@ -188,7 +188,15 @@ public abstract class Utils {
 
     public static class WeaponSlotCount {
 
-        public int sb,mb,lb,se,me,le,sm,mm,lm;
+        public final int sb;
+        public final int mb;
+        public final int lb;
+        public final int se;
+        public final int me;
+        public final int le;
+        public final int sm;
+        public final int mm;
+        public final int lm;
 
         public WeaponSlotCount(int sb, int mb, int lb, int se, int me, int le, int sm, int mm, int lm) {
             this.sb = sb;

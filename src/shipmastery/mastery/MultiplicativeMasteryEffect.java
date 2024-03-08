@@ -5,7 +5,6 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.config.Settings;
 import shipmastery.util.Utils;

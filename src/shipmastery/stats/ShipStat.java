@@ -10,7 +10,7 @@ public abstract class ShipStat {
     public String name = "NONE";
     public int tier = 1;
     public float defaultAmount = 1f;
-    public Set<String> tags = new HashSet<>();
+    public final Set<String> tags = new HashSet<>();
     /** StatBonus, MutableStat, or an array of StatBonuses or MutableStats */
     public abstract Object get(MutableShipStatsAPI stats);
 

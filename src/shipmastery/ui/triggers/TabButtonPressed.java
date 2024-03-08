@@ -5,7 +5,7 @@ import shipmastery.ui.MasteryPanel;
 
 public class TabButtonPressed extends ActionListener {
 
-    MasteryPanel masteryPanel;
+    final MasteryPanel masteryPanel;
 
     public TabButtonPressed(MasteryPanel masteryPanel) {
         this.masteryPanel = masteryPanel;

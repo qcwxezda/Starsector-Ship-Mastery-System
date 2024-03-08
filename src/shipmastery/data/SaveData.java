@@ -15,7 +15,7 @@ public class SaveData {
     /**
      * Set of mastery levels whose effects are active
      */
-    public NavigableMap<Integer, Boolean> activeLevels;
+    public final NavigableMap<Integer, Boolean> activeLevels;
 
     public SaveData(float points, int level) {
         this.points = points;

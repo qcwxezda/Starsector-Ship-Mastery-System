@@ -5,6 +5,7 @@ general_RefitScreenDisplay,Refit Screen Display,Boolean,true,,"If enabled, displ
 general_MasteryColor,Mastery Color,Color,#60c0ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,
 general_PositiveHighlightColor,Positive Highlight Color,Color,#ffd200,,Sets the highlight color for general highlighted text and positive effects in the mastery selection panel.,,,
 general_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the highlight color for negative effects in the mastery selection panel.,,,
+general_PlayerShipGraveyards,Enable Player Ship Graveyards,Boolean,true,,"If enabled, player ships that are lost due defeat in battle will be spawned as derelicts should they otherwise have been recoverable.",,,
 ,,,,,,,,
 ,,,,,,,,
 difficulty_Header,Difficulty,Header,NPC Fleet Difficulty,,,,,

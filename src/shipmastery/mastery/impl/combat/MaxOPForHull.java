@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;

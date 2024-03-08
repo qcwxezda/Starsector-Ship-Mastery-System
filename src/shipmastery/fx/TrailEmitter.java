@@ -12,7 +12,9 @@ import java.awt.Color;
 
 public class TrailEmitter extends BaseIEmitter {
     final DamagingProjectileAPI proj;
-    public float life = 1f, fadeOut = 0.25f, lifeJitter = 0f;
+    public float life = 1f;
+    public final float fadeOut = 0.25f;
+    public float lifeJitter = 0f;
     public float width = 10f, length = 25f, sizeJitter = 0f, yOffset = 0f;
     public float randomAngleDegrees = 0f;
     public float saturationChangeOverLife = 0f;

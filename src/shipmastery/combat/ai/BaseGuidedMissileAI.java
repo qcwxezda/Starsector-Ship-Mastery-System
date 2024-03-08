@@ -11,7 +11,7 @@ import shipmastery.util.TargetChecker;
 public abstract class BaseGuidedMissileAI implements MissileAIPlugin, GuidedMissileAI {
 
     protected CombatEntityAPI target;
-    protected MissileAPI missile;
+    protected final MissileAPI missile;
     protected final float maxSeekRange;
     protected final ShipAPI.HullSize smallestAutoTarget;
     protected final IntervalUtil findTargetInterval = new IntervalUtil(0.2f, 0.3f);

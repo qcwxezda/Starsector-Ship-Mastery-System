@@ -3,7 +3,6 @@ package shipmastery.mastery;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.config.Settings;
 

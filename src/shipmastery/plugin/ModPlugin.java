@@ -4,11 +4,12 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
-import lunalib.lunaSettings.LunaSettings;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.PlayerFleetHandler;
 import shipmastery.campaign.RefitHandler;
+import shipmastery.campaign.ShipGraveyardSpawner;
+import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.VariantLookup;
@@ -24,9 +25,7 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryData();
 
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
-            Settings.SettingsListener settingsListener = new Settings.SettingsListener();
-            LunaSettings.addSettingsListener(settingsListener);
-            settingsListener.settingsChanged("shipmasterysystem");
+            LunaLibSettingsListener.init();
         }
         else {
             Settings.loadSettingsFromJson();
@@ -68,6 +67,7 @@ public class ModPlugin extends BaseModPlugin {
         VariantLookup variantLookup = new VariantLookup(false);
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
+        Global.getSector().addTransientListener(new ShipGraveyardSpawner());
 
         FleetHandler fleetHandler = new FleetHandler(false);
         listeners.addListener(fleetHandler, true);

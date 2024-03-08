@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 import java.util.*;
 
 public class IgnoreNoBuildIn extends BaseMasteryEffect {
-    Set<String> hullmodIds = new TreeSet<>();
+    final Set<String> hullmodIds = new TreeSet<>();
     @Override
     public void init(String... args) {
         super.init(args);

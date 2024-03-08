@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DEMBoost extends BaseMasteryEffect {
 
-    public static final String PROCESSED_MISSILE_KEY = "sms_processed";
+    public static final String PROCESSED_MISSILE_KEY = "sms_processed_" + DEMBoost.class.getSimpleName();
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -116,7 +116,6 @@ public class DEMBoost extends BaseMasteryEffect {
                             missile.getEngineStats().getMaxSpeed().modifyPercent(id, 100f * speedIncrease);
                             missile.getEngineStats().getAcceleration().modifyPercent(id, 100f * speedIncrease);
                             missile.getEngineStats().getDeceleration().modifyPercent(id, 100f * speedIncrease);
-
                         }
                     }
                 }

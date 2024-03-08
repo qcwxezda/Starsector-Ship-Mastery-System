@@ -6,5 +6,7 @@
   "npcMasteryQuality": 0.5,
   "npcMasteryMaxLevelModifier": -3,
   "npcMasteryFlagshipBonus": 2,
-  "npcSmodQualityMod": -0.7
+  "npcSmodQualityMod": -0.7,
+
+  "enablePlayerShipGraveyards": true
 }

@@ -60,10 +60,10 @@ public class ShipSystemTracker {
     }
 
     private static class StateData {
-        boolean isOn;
-        boolean isActive;
-        boolean isChargeUp;
-        int ammo;
+        final boolean isOn;
+        final boolean isActive;
+        final boolean isChargeUp;
+        final int ammo;
         private StateData(boolean isOn, boolean isActive, boolean isChargeUp, int ammo) {
             this.isOn = isOn;
             this.isActive = isActive;

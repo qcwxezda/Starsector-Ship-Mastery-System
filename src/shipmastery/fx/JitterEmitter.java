@@ -16,7 +16,7 @@ public class JitterEmitter extends BaseIEmitter {
     final CombatEntityAPI target;
     final SpriteAPI sprite;
     final float width, height;
-    float[] colorRGB = new float[3];
+    final float[] colorRGB = new float[3];
     final int totalParticleCount;
     final float peakFraction;
     final float maxRadius;

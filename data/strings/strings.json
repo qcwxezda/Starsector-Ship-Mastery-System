@@ -261,7 +261,12 @@
     "FlareRegen": "Allows %1$s to regenerate charges at the rate of 1 charge per %2$s seconds.",
     "FlareRegenPost": "Regeneration rate is also modified by the ship's charge regeneration rate multiplier.",
     "FMRFastReplacement": "Activating %1$s also has a %2$s chance of rapidly replacing a random destroyed fighter.",
-    "PilumSalamanderBoost": "All %1$s and %2$s missiles gain %3$s durability and deal an additional %4$s energy and %5$s EMP damage."
+    "PilumSalamanderBoost": "All %1$s and %2$s missiles gain %3$s durability and deal an additional %4$s energy and %5$s EMP damage.",
+    "PilumName": "Pilum",
+    "SalamanderName": "Salamander",
+    "FasterActiveFlares": "Greatly reduces the arming time of active flares and increases their maneuverability and durability by %1$s.",
+    "BDeckExtraCharges": "Expands the ship's %1$s, increasing its number of activations by %2$s.",
+    "BDeckExtraChargesPost": "There is a minimum of a %1$s second delay between activations."
   },
 
   "sms_misc": {
@@ -272,7 +277,7 @@
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery Effect",
     "and": "and ",
-    "bestOfTheBestDesc": "Increases the strength of all ship mastery effects by %1$s",
+    "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery effects by %1$s",
     "bestOfTheBestScope": "Affects: %1$s",
     "bestOfTheBestScope2": "all capital ships with officers, including flagship",
     "bestOfTheBestDesc2": "+%1$s maximum combat readiness, hull integrity*, and flux capacity*",

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -82,6 +83,7 @@ public class FlareLauncherWhileVenting extends ShipSystemEffect {
                                 weapon.getFirePoint(0),
                                 weapon.getCurrAngle(),
                                 ship.getVelocity());
+                        Global.getCombatEngine().spawnMuzzleFlashOrSmoke(ship, weapon.getFirePoint(0), weapon.getSpec(), weapon.getCurrAngle());
                         Global.getSoundPlayer().playSound(getFireSoundString(weapon), 1f, 1f, weapon.getFirePoint(0), ship.getVelocity());
                     }
                 }

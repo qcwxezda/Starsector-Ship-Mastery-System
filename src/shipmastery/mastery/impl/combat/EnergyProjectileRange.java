@@ -23,7 +23,7 @@ public class EnergyProjectileRange extends BaseMasteryEffect {
     }
 
     static class EnergyProjectileRangeScript implements WeaponBaseRangeModifier {
-        float bonus;
+        final float bonus;
         EnergyProjectileRangeScript(float bonus) {
             this.bonus = bonus;
         }

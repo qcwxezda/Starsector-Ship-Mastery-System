@@ -84,7 +84,7 @@ public class AVLTree<T extends Comparable<T>> {
     }
 
     public static class Node<T extends Comparable<T>> {
-        T value;
+        final T value;
         int height = 0;
         Node<T> left;
         Node<T> right;

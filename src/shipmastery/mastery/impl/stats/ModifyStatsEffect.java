@@ -2,7 +2,6 @@ package shipmastery.mastery.impl.stats;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ModifyStatsEffect extends BaseMasteryEffect {
-    Map<ShipStat, Float> amounts = new LinkedHashMap<>();
+    final Map<ShipStat, Float> amounts = new LinkedHashMap<>();
     @Override
     public void init(String... args) {
         super.init(args);

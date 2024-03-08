@@ -8,7 +8,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.combat.MoteControlScript;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.config.Settings;
@@ -21,8 +20,8 @@ import java.util.Objects;
 
 public class HighFrequencyMotes extends BaseMasteryEffect {
 
-    public static float RANGE_REDUCTION = 0.6f;
-    public static float MAX_MOTES_REDUCTION = 0.5f;
+    public static final float RANGE_REDUCTION = 0.6f;
+    public static final float MAX_MOTES_REDUCTION = 0.5f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {

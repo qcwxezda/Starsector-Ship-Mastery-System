@@ -14,9 +14,9 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class UpgradeButtonPressed extends ActionListener {
-    MasteryPanel masteryPanel;
-    String defaultText;
-    ShipHullSpecAPI spec;
+    final MasteryPanel masteryPanel;
+    final String defaultText;
+    final ShipHullSpecAPI spec;
 
     public UpgradeButtonPressed(MasteryPanel masteryPanel, String defaultText, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;

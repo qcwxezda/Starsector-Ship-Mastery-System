@@ -12,13 +12,13 @@ import shipmastery.util.MathUtils;
 import java.awt.Color;
 
 public class BurstEmitter extends BaseIEmitter {
-    public SpriteAPI sprite;
+    public final SpriteAPI sprite;
     public Vector2f location = new Vector2f();
     public float xDir = 0f;
     public Color color;
     public float width;
-    public float duration;
-    public int numDirections;
+    public final float duration;
+    public final int numDirections;
     public float alphaMult = 1f;
     public float jitterRadius = 0f;
     public float widthGrowth = 0f;

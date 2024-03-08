@@ -21,7 +21,14 @@
     }
   },
 
-
+  "drover": {
+    "levels": {
+      "9": {
+        "A": "BDeckExtraCharges",
+        "B": "FasterActiveFlares"
+      }
+    }
+  },
 
 
   "apex": {

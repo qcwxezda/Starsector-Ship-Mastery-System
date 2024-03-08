@@ -2,12 +2,8 @@ package shipmastery.config;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
-import lunalib.lunaSettings.LunaSettings;
-import lunalib.lunaSettings.LunaSettingsListener;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-import shipmastery.campaign.FleetHandler;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -34,6 +30,9 @@ public class Settings {
     public static Float NPC_SMOD_QUALITY_MOD;
     public static Boolean SHOW_MP_AND_LEVEL_IN_REFIT;
 
+    /** If the player loses a battle, ships that would otherwise be recoverable are spawned as derelicts */
+    public static Boolean ENABLE_PLAYER_SHIP_GRAVEYARDS;
+
     public static void loadSettingsFromJson() throws JSONException, IOException {
         JSONObject json = Global.getSettings().loadJSON("shipmastery_settings.json", "shipmasterysystem");
         DOUBLE_CLICK_INTERVAL = (float) json.getDouble("doubleClickInterval");
@@ -43,26 +42,6 @@ public class Settings {
         NPC_MASTERY_FLAGSHIP_BONUS = json.getInt("npcMasteryFlagshipBonus");
         NPC_SMOD_QUALITY_MOD = (float) json.getDouble("npcSmodQualityMod");
         SHOW_MP_AND_LEVEL_IN_REFIT = json.getBoolean("showMpAndLevelInRefit");
-    }
-
-    public static class SettingsListener implements LunaSettingsListener {
-        @Override
-        public void settingsChanged(@NotNull String modId) {
-            if (!"shipmasterysystem".equals(modId)) return;
-
-            MASTERY_COLOR = LunaSettings.getColor("shipmasterysystem", "general_MasteryColor");
-            POSITIVE_HIGHLIGHT_COLOR = LunaSettings.getColor("shipmasterysystem", "general_PositiveHighlightColor");
-            NEGATIVE_HIGHLIGHT_COLOR = LunaSettings.getColor("shipmasterysystem", "general_NegativeHighlightColor");
-            DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat("shipmasterysystem", "general_DoubleClickInterval");
-            SHOW_MP_AND_LEVEL_IN_REFIT = LunaSettings.getBoolean("shipmasterysystem", "general_RefitScreenDisplay");
-
-            NPC_MASTERY_DENSITY = LunaSettings.getFloat("shipmasterysystem", "difficulty_Density");
-            NPC_MASTERY_QUALITY = LunaSettings.getFloat("shipmasterysystem", "difficulty_Quality");
-            NPC_MASTERY_MAX_LEVEL_MODIFIER = LunaSettings.getInt("shipmasterysystem", "difficulty_MaxLevelMod");
-            NPC_MASTERY_FLAGSHIP_BONUS = LunaSettings.getInt("shipmasterysystem", "difficulty_FlagshipBonus");
-            NPC_SMOD_QUALITY_MOD = LunaSettings.getFloat("shipmasterysystem", "difficulty_SModMod");
-
-            FleetHandler.NPC_MASTERY_CACHE.clear();
-        }
+        ENABLE_PLAYER_SHIP_GRAVEYARDS = json.getBoolean("enablePlayerShipGraveyards");
     }
 }

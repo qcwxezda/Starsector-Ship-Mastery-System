@@ -12,8 +12,8 @@ import java.util.TreeMap;
 
 public class ConfirmMasteryChangesPressed extends ActionListener {
 
-    MasteryPanel masteryPanel;
-    ShipHullSpecAPI spec;
+    final MasteryPanel masteryPanel;
+    final ShipHullSpecAPI spec;
 
     public ConfirmMasteryChangesPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;

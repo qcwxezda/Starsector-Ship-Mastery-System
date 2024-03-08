@@ -24,9 +24,9 @@ import java.util.*;
 
 public class HammerLingeringDamage extends BaseMasteryEffect {
 
-    public static float DAMAGE_OVER_TIME_DURATION = 10f;
-    public static float AMMO_GAIN = 1f;
-    public static String ON_FIRE_KEY = "sms_on_fire";
+    public static final float DAMAGE_OVER_TIME_DURATION = 10f;
+    public static final float AMMO_GAIN = 1f;
+    public static final String ON_FIRE_KEY = "sms_on_fire";
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.HammerLingeringDamage).params(
@@ -122,8 +122,9 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
         final FireEmitter emitter;
 
         static class LingeringDamageData {
-            int i, j;
-            float damage;
+            final int i;
+            final int j;
+            final float damage;
 
             LingeringDamageData(int i, int j, float damage) {
                 this.i = i;

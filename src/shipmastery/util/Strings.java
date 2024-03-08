@@ -274,5 +274,10 @@ public interface Strings {
         String FlareRegenPost = Utils.getString( "sms_descriptions", "FlareRegenPost");
         String FMRFastReplacement = Utils.getString( "sms_descriptions", "FMRFastReplacement");
         String PilumSalamanderBoost = Utils.getString( "sms_descriptions", "PilumSalamanderBoost");
+        String PilumName = Utils.getString( "sms_descriptions", "PilumName");
+        String SalamanderName = Utils.getString( "sms_descriptions", "SalamanderName");
+        String FasterActiveFlares = Utils.getString( "sms_descriptions", "FasterActiveFlares");
+        String BDeckExtraCharges = Utils.getString( "sms_descriptions", "BDeckExtraCharges");
+        String BDeckExtraChargesPost = Utils.getString( "sms_descriptions", "BDeckExtraChargesPost");
     }
 }

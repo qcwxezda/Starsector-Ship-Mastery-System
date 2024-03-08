@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
 import shipmastery.combat.listeners.ShipDestroyedListener;
 import shipmastery.config.Settings;

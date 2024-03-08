@@ -51,7 +51,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
         tooltip.addPara(
                 Strings.Descriptions.EnergyMineConversionPost,
                 0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
-                "" + Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedModule)), Utils.asInt(5f * getStrength(selectedModule)));
+                Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedModule)), Utils.asInt(5f * getStrength(selectedModule)));
     }
 
     public static class EnergyMineConversionScript extends BaseShipSystemListener {

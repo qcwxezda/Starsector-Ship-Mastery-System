@@ -12,14 +12,15 @@ import java.awt.Color;
 
 public class BeamParticleEmitter extends BaseIEmitter {
 
-    public BeamAPI beam;
-    public Color color;
-    public float size = 7.5f;
-    public float sizeJitter = 0.2f;
-    public float maxDist = 15f;
-    public float fadeInFrac = 0.2f, fadeOutFrac = 0.8f;
-    public float life = 0.5f;
-    public float lifeJitter = 0.5f;
+    public final BeamAPI beam;
+    public final Color color;
+    public final float size = 7.5f;
+    public final float sizeJitter = 0.2f;
+    public final float maxDist = 15f;
+    public final float fadeInFrac = 0.2f;
+    public final float fadeOutFrac = 0.8f;
+    public final float life = 0.5f;
+    public final float lifeJitter = 0.5f;
 
     public BeamParticleEmitter(BeamAPI beam) {
         this.beam = beam;

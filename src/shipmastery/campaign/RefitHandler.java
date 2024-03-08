@@ -90,7 +90,8 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                 // To disable the undo button
                 ReflectionUtils.invokeMethodNoCatch(refitPanel, "setEditedSinceSave", false);
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -392,8 +393,8 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         }
     }
 
-    List<EffectActivationRecord> effectsToDeactivate = new ArrayList<>();
-    public void onRefitScreenShipChanged(ShipInfo newInfo) {
+    final List<EffectActivationRecord> effectsToDeactivate = new ArrayList<>();
+    void onRefitScreenShipChanged(ShipInfo newInfo) {
         final ShipHullSpecAPI newSpec = newInfo.rootSpec;
         final ShipVariantAPI newVariant = newInfo.moduleVariant;
 
@@ -424,9 +425,9 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
     }
 
     static class EffectActivationRecord {
-        MasteryEffect effect;
-        ShipVariantAPI moduleVariant;
-        boolean isModule;
+        final MasteryEffect effect;
+        final ShipVariantAPI moduleVariant;
+        final boolean isModule;
 
         EffectActivationRecord(MasteryEffect effect, ShipVariantAPI moduleVariant, boolean isModule) {
             this.effect = effect;
@@ -437,13 +438,13 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
     static class ShipInfo {
         /** Hull spec of the root ship (so parent if ship is a module) */
-        ShipHullSpecAPI rootSpec;
+        final ShipHullSpecAPI rootSpec;
 
         /** Currently selected module variant */
-        ShipVariantAPI moduleVariant;
+        final ShipVariantAPI moduleVariant;
 
         /** Active masteries at the time of selection -- if these change, need to refresh the ship */
-        NavigableMap<Integer, Boolean> activeMasteries;
+        final NavigableMap<Integer, Boolean> activeMasteries;
 
         ShipInfo(ShipAPI moduleShip, ShipAPI rootShip) {
             if (rootShip == null) {
