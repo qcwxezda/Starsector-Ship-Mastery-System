@@ -30,6 +30,70 @@
     }
   },
 
+  "enforcer": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveCooldown",
+        "B": "ModifyStatsFlat 1.4 BallisticWeaponsOPCost"
+      }
+    }
+  },
+
+  "enforcer_xiv": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveDR",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "fulgent": {
+    "levels": {
+      "9": {
+        "A": "HEFRangeRoF",
+        "B": "HEFMissileBoost"
+      }
+    }
+  },
+
+  "gemini": {
+    "levels": {
+      "9": {
+        "A": "ReserveDeploymentBoost",
+        "B": "FighterCountDR"
+      }
+    }
+  },
+
+  "hammerhead": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "SafetyOverridesBoost"
+      }
+    }
+  },
+
+  "harbinger": {
+    "levels": {
+      "9": {
+        "A": "QuantumDisruptorDuration",
+        "B": "PhasedCRDegradation"
+      }
+    }
+  },
+
+  "manticore": {
+    "levels": {
+      "9": {
+        "A": "CanisterFlakWhileVenting",
+        "B": "BallisticFireRateFluxLevel"
+      }
+    }
+  },
+
+
 
   "apex": {
     "preset": "automated",
@@ -123,7 +187,7 @@
     "levels": {
       "9": {
         "A": "EnergyMineConversion",
-        "B": "PhasedCRDegradation"
+        "B": "PhasedArmorRepair"
       }
     }
   },
@@ -214,6 +278,15 @@
       "9": {
         "A": "PlasmaBurnEnergyRoF",
         "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "grendel": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "MissileAutoloaderCapacity"
       }
     }
   },

@@ -6,8 +6,8 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
-import shipmastery.config.Settings;
 import shipmastery.fx.EntityBurstEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -16,52 +16,53 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class BallisticFireRateHullLevel extends BaseMasteryEffect {
+public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
 
-    static final float MIN_HULL_LEVEL = 0.25f;
+    static final float MAX_FLUX_LEVEL = 0.75f;
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         String str = Utils.asPercent(getStrengthForPlayer());
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BallisticFireRateHullLevel).params(str, str);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BallisticFireRateFluxLevel).params(str, str);
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.BallisticFireRateHullLevelPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                        Utils.asPercent(MIN_HULL_LEVEL));
+        tooltip.addPara(Strings.Descriptions.BallisticFireRateFluxLevelPost, 0f, Misc.getTextColor(),
+                        Utils.asPercent(MAX_FLUX_LEVEL));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(BallisticFireRateHullLevelScript.class)) {
-            ship.addListener(new BallisticFireRateHullLevelScript(ship, getStrength(ship), MIN_HULL_LEVEL, id));
+        if (!ship.hasListenerOfClass(BallisticFireRateFluxLevelScript.class)) {
+            ship.addListener(new BallisticFireRateFluxLevelScript(ship, getStrength(ship), MAX_FLUX_LEVEL, id));
         }
     }
 
-    static class BallisticFireRateHullLevelScript implements AdvanceableListener {
+    static class BallisticFireRateFluxLevelScript implements AdvanceableListener {
         final ShipAPI ship;
-        final float maxEffectLevel, minHullLevel;
+        final float maxEffectLevel, maxFluxLevel;
         final IntervalUtil checkerInterval = new IntervalUtil(1f, 1f);
         final String id;
         final EntityBurstEmitter outlineEmitter;
         final IntervalUtil outlineInterval = new IntervalUtil(0.3f, 0.5f);
 
-        BallisticFireRateHullLevelScript(ShipAPI ship, float maxEffectLevel, float minHullLevel, String id) {
+        BallisticFireRateFluxLevelScript(ShipAPI ship, float maxEffectLevel, float maxFluxLevel, String id) {
             this.ship = ship;
             this.maxEffectLevel = maxEffectLevel;
-            this.minHullLevel = minHullLevel;
+            this.maxFluxLevel = maxFluxLevel;
             this.id = id;
-            outlineEmitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), Color.RED, 6, 0f, 1f);
+            outlineEmitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), new Color(255, 200, 100), 6, 5f, 1.5f);
             outlineEmitter.enableDynamicAnchoring();
+            outlineEmitter.fadeInFrac = 0.2f;
+            outlineEmitter.fadeOutFrac = 0.8f;
         }
 
         @Override
         public void advance(float amount) {
             checkerInterval.advance(amount);
 
-            float hullLevel = ship.getHullLevel();
-            float effectMult = Math.min(1f, (1f - hullLevel) / (1f - minHullLevel));
+            float effectMult = Math.min(1f, ship.getFluxLevel() / maxFluxLevel);
             float effectLevel = maxEffectLevel * effectMult;
             if (checkerInterval.intervalElapsed()) {
                 ship.getMutableStats().getBallisticRoFMult().modifyPercent(id, 100f * effectLevel);
@@ -73,17 +74,17 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         "graphics/icons/hullsys/ammo_feeder.png",
-                        Strings.Descriptions.BallisticFireRateHullLevelTitle,
-                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc1, Utils.asPercentNoDecimal(effectLevel), Utils.asPercentNoDecimal(2f*effectLevel)),
+                        Strings.Descriptions.BallisticFireRateFluxLevelTitle,
+                        String.format(Strings.Descriptions.BallisticFireRateFluxLevelDesc1, Utils.asPercentNoDecimal(effectLevel), Utils.asPercentNoDecimal(2f*effectLevel)),
                         false);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
                         "graphics/icons/hullsys/ammo_feeder.png",
-                        Strings.Descriptions.BallisticFireRateHullLevelTitle,
-                        String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc2, Utils.asPercentNoDecimal(effectLevel)),
+                        Strings.Descriptions.BallisticFireRateFluxLevelTitle,
+                        String.format(Strings.Descriptions.BallisticFireRateFluxLevelDesc2, Utils.asPercentNoDecimal(effectLevel)),
                         false);
-                outlineEmitter.alphaMult = effectMult * 0.4f;
-                outlineEmitter.widthGrowth = effectMult * 20f;
+                outlineEmitter.alphaMult = effectMult * 0.25f;
+                outlineEmitter.widthGrowth = effectMult * 8f;
                 outlineInterval.advance(amount);
                 if (outlineInterval.intervalElapsed()) {
                     Particles.burst(outlineEmitter, 6);

@@ -3,7 +3,6 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
@@ -31,7 +30,7 @@ public class UpgradeButtonPressed extends ActionListener {
             ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
             ShipMastery.advancePlayerMasteryLevel(spec);
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                    Strings.UPGRADE_CONFIRMED_STR + ShipMastery.getPlayerMasteryLevel(spec), Misc.getStoryBrightColor());
+                    Strings.UPGRADE_CONFIRMED_STR + ShipMastery.getPlayerMasteryLevel(spec), Settings.MASTERY_COLOR);
             Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
             masteryPanel.forceRefresh(true, false, false);
 

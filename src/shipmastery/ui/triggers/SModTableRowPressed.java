@@ -64,11 +64,11 @@ public class SModTableRowPressed extends TriggerableProxy {
                     String name = spec.getDisplayName();
                     if (SModUtils.isHullmodBuiltIn(spec, variant)) {
                         variant.getSModdedBuiltIns().add(rowData.hullModSpecId);
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.ENHANCE_STR + name, Misc.getStoryBrightColor());
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.ENHANCE_STR + name, Settings.MASTERY_COLOR);
                     }
                     else {
                         variant.addPermaMod(rowData.hullModSpecId, true);
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_STR + name, Misc.getStoryBrightColor());
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_STR + name, Settings.MASTERY_COLOR);
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 

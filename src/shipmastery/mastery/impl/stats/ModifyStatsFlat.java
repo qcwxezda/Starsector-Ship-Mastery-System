@@ -10,7 +10,6 @@ import shipmastery.stats.StatTags;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.List;
 import java.util.Map;
 
 public class ModifyStatsFlat extends ModifyStatsEffect {
@@ -59,7 +58,7 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
             ((MutableStat) stat).modifyFlat(id, amount, Strings.SHIP_MASTERY_EFFECT);
         }
         else {
-            for (Object o : (List<?>) stat) {
+            for (Object o : (Object[]) stat) {
                 modify(o, id, amount);
             }
         }

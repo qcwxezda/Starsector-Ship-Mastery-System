@@ -279,5 +279,25 @@ public interface Strings {
         String FasterActiveFlares = Utils.getString( "sms_descriptions", "FasterActiveFlares");
         String BDeckExtraCharges = Utils.getString( "sms_descriptions", "BDeckExtraCharges");
         String BDeckExtraChargesPost = Utils.getString( "sms_descriptions", "BDeckExtraChargesPost");
+        String HEFMissileBoost = Utils.getString( "sms_descriptions", "HEFMissileBoost");
+        String HEFMissileBoostPost = Utils.getString( "sms_descriptions", "HEFMissileBoostPost");
+        String HEFMissileBoostTitle = Utils.getString( "sms_descriptions", "HEFMissileBoostTitle");
+        String HEFMissileBoostDesc1 = Utils.getString( "sms_descriptions", "HEFMissileBoostDesc1");
+        String ReserveDeploymentBoost = Utils.getString( "sms_descriptions", "ReserveDeploymentBoost");
+        String ReserveDeploymentBoostPost = Utils.getString( "sms_descriptions", "ReserveDeploymentBoostPost");
+        String FighterCountDR = Utils.getString( "sms_descriptions", "FighterCountDR");
+        String FighterCountDRPost = Utils.getString( "sms_descriptions", "FighterCountDRPost");
+        String FighterCountDRTitle = Utils.getString( "sms_descriptions", "FighterCountDRTitle");
+        String FighterCountDRDesc1 = Utils.getString( "sms_descriptions", "FighterCountDRDesc1");
+        String QuantumDisruptorDuration = Utils.getString( "sms_descriptions", "QuantumDisruptorDuration");
+        String PhasedArmorRepair = Utils.getString( "sms_descriptions", "PhasedArmorRepair");
+        String PhasedArmorRepairPost = Utils.getString( "sms_descriptions", "PhasedArmorRepairPost");
+        String MissileAutoloaderCapacity = Utils.getString( "sms_descriptions", "MissileAutoloaderCapacity");
+        String CanisterFlakWhileVenting = Utils.getString( "sms_descriptions", "CanisterFlakWhileVenting");
+        String BallisticFireRateFluxLevel = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevel");
+        String BallisticFireRateFluxLevelPost = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelPost");
+        String BallisticFireRateFluxLevelTitle = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelTitle");
+        String BallisticFireRateFluxLevelDesc1 = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelDesc1");
+        String BallisticFireRateFluxLevelDesc2 = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelDesc2");
     }
 }

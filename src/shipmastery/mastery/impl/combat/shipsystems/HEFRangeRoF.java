@@ -46,6 +46,7 @@ public class HEFRangeRoF extends ShipSystemEffect {
         @Override
         public void onFullyDeactivate() {
             ship.getMutableStats().getEnergyRoFMult().unmodify(id);
+            ship.getMutableStats().getEnergyWeaponFluxCostMod().unmodify(id);
             ship.getMutableStats().getEnergyWeaponRangeBonus().unmodify(id);
         }
 

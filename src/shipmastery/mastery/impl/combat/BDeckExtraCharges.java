@@ -36,7 +36,7 @@ public class BDeckExtraCharges extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.hasListenerOfClass(BDeck.BDeckListener.class)) {
+        if (ship.hasListenerOfClass(BDeck.BDeckListener.class) && !ship.hasListenerOfClass(EnhancedBDeckListener.class)) {
             ship.removeListenerOfClass(BDeck.BDeckListener.class);
             ship.addListener(new EnhancedBDeckListener(ship, getExtraCharges(getStrength(ship))));
         }
