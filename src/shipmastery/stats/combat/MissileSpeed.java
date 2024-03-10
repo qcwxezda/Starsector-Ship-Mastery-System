@@ -13,10 +13,9 @@ import java.util.Arrays;
 public class MissileSpeed extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(
-                Arrays.asList(stats.getMissileMaxTurnRateBonus(), stats.getMissileTurnAccelerationBonus(),
+        return new Object[] { stats.getMissileMaxTurnRateBonus(), stats.getMissileTurnAccelerationBonus(),
                               stats.getMissileMaxSpeedBonus(), stats.getMissileAccelerationBonus(),
-                              stats.getMissileWeaponRangeBonus()));
+                              stats.getMissileWeaponRangeBonus()};
     }
 
     @Override

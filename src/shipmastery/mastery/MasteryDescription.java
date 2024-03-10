@@ -24,6 +24,7 @@ public class MasteryDescription {
     /** Colors to highlight the params. Must either be a single element array (highlights all params with one color) or
      *  match params in length. Each element may be null, in which case no highlight is applied for the corresponding param. */
     public Color[] colors;
+    private boolean checkedColors = false;
 
     public MasteryDescription() {}
 
@@ -39,6 +40,7 @@ public class MasteryDescription {
         if (!validColors) {
             throw new RuntimeException("Invalid colors array in MasteryDescription");
         }
+        checkedColors = true;
     }
 
     public static MasteryDescription init(String formatText) {
@@ -53,12 +55,17 @@ public class MasteryDescription {
 
     public MasteryDescription params(Object... params) {
         this.params = params;
+        if (!checkedColors) {
+            checkColors();
+        }
         return this;
     }
 
     public MasteryDescription colors(Color... colors) {
         this.colors = colors;
-        checkColors();
+        if (params != null && !checkedColors) {
+            checkColors();
+        }
         return this;
     }
 

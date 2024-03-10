@@ -11,8 +11,7 @@ import java.util.Arrays;
 public class RepairTime extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(
-                Arrays.asList(stats.getCombatEngineRepairTimeMult(), stats.getCombatWeaponRepairTimeMult()));
+        return new Object[]{stats.getCombatEngineRepairTimeMult(), stats.getCombatWeaponRepairTimeMult()};
     }
 
     @Override

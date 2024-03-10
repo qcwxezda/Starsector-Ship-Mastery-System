@@ -21,6 +21,10 @@
     }
   },
 
+  "crig": {
+    "maxLevel": 8
+  },
+
   "drover": {
     "levels": {
       "9": {
@@ -39,11 +43,20 @@
     }
   },
 
+  "enforcer_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveImpulse",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
   "enforcer_xiv": {
     "levels": {
       "9": {
         "A": "BurnDriveDR",
-        "B": "BallisticFireRateHullLevel"
+        "B": "ModifyStatsFlat 1.4 BallisticWeaponsOPCost"
       }
     }
   },
@@ -51,8 +64,8 @@
   "fulgent": {
     "levels": {
       "9": {
-        "A": "HEFRangeRoF",
-        "B": "HEFMissileBoost"
+        "A": "HEFMissileBoost",
+        "B": "HullThresholdDR"
       }
     }
   },
@@ -75,6 +88,15 @@
     }
   },
 
+  "hammerhead_LG": {
+    "levels": {
+      "9": {
+        "A": "HEFRangeRoF",
+        "B": "SafetyOverridesBoost"
+      }
+    }
+  },
+
   "harbinger": {
     "levels": {
       "9": {
@@ -91,6 +113,116 @@
         "B": "BallisticFireRateFluxLevel"
       }
     }
+  },
+
+  "manticore_pirates": {
+    "levels": {
+      "9": {
+        "A": "CanisterFlakWhileVenting",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "manticore_luddic_path": {
+    "levels": {
+      "9": {
+        "A": "SafetyOverridesPPT",
+        "B": "HammerLingeringDamage"
+      }
+    }
+  },
+
+  "medusa": {
+    "levels": {
+      "9": {
+        "A": "SkimmerEMP",
+        "B": "ShieldEfficiencyHardFlux"
+      }
+    }
+  },
+
+  "mule": {
+    "levels": {
+      "9": {
+        "A": ["ExpandedCargoBoost", "EfficiencyOverhaulBoost"],
+        "B": ["ConvertedHangarNoPenalty", "ModifyStatsFlat 1 FighterCost"]
+      }
+    }
+  },
+
+  "mule_d_pirates": {
+    "levels": {
+      "9": {
+        "A": ["ExpandedCargoBoost", "EfficiencyOverhaulBoost"],
+        "B": ["ConvertedHangarNoPenalty", "ModifyStatsFlat 1 BomberCost"]
+      }
+    }
+  },
+
+  "nebula": {
+    "preset": "logistic_crew"
+  },
+
+  "phaeton": {
+    "preset": "logistic_fuel"
+  },
+
+  "phantom": {
+    "preset": "logistic_crew"
+  },
+
+  "scintilla": {
+    "levels": {
+      "9": {
+        "A": "RecallDeviceRegeneration",
+        "B": "MinimumReplacementRate"
+      }
+    }
+  },
+
+  "shrike": {
+    "levels": {
+      "9": {
+        "A": "PlasmaBurnEnergyRoF",
+        "B": "ZeroFluxResidue"
+      }
+    }
+  },
+
+  "shrike_pirates": {
+    "levels": {
+      "9": {
+        "A": "PlasmaBurnEnergyRoF",
+        "B": "ModifyStatsFlat 1.4 AllWeaponOPCost"
+      }
+    }
+  },
+
+  "sunder": {
+    "levels": {
+      "9": {
+        "A": "HEFRangeRoF",
+        "B": "VentSpeedFluxLevel"
+      }
+    }
+  },
+
+  "sunder_LG": {
+    "levels": {
+      "9": {
+        "A": "HEFExplosion",
+        "B": "VentSpeedFluxLevel"
+      }
+    }
+  },
+
+  "tarsus": {
+    "preset": "logistic_cargo"
+  },
+
+  "valkyrie": {
+    "preset": "logistic_crew"
   },
 
 

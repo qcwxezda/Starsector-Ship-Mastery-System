@@ -11,12 +11,11 @@ import java.util.Arrays;
 public class FighterCost extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(
-                Arrays.asList(stats.getDynamic().getMod(Stats.ALL_FIGHTER_COST_MOD),
+        return new Object[] { stats.getDynamic().getMod(Stats.ALL_FIGHTER_COST_MOD),
                               stats.getDynamic().getMod(Stats.BOMBER_COST_MOD),
                               stats.getDynamic().getMod(Stats.FIGHTER_COST_MOD),
                               stats.getDynamic().getMod(Stats.INTERCEPTOR_COST_MOD),
-                              stats.getDynamic().getMod(Stats.SUPPORT_COST_MOD)));
+                              stats.getDynamic().getMod(Stats.SUPPORT_COST_MOD)};
     }
 
     @Override

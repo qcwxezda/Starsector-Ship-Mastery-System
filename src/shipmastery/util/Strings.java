@@ -299,5 +299,18 @@ public interface Strings {
         String BallisticFireRateFluxLevelTitle = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelTitle");
         String BallisticFireRateFluxLevelDesc1 = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelDesc1");
         String BallisticFireRateFluxLevelDesc2 = Utils.getString( "sms_descriptions", "BallisticFireRateFluxLevelDesc2");
+        String SkimmerEMP = Utils.getString( "sms_descriptions", "SkimmerEMP");
+        String SkimmerEMPPost = Utils.getString( "sms_descriptions", "SkimmerEMPPost");
+        String ShieldEfficiencyHardFlux = Utils.getString( "sms_descriptions", "ShieldEfficiencyHardFlux");
+        String ShieldEfficiencyHardFluxPost = Utils.getString( "sms_descriptions", "ShieldEfficiencyHardFluxPost");
+        String ShieldEfficiencyHardFluxTitle = Utils.getString( "sms_descriptions", "ShieldEfficiencyHardFluxTitle");
+        String ShieldEfficiencyHardFluxDesc1 = Utils.getString( "sms_descriptions", "ShieldEfficiencyHardFluxDesc1");
+        String ConvertedHangarNoPenalty = Utils.getString( "sms_descriptions", "ConvertedHangarNoPenalty");
+        String MinimumReplacementRate = Utils.getString( "sms_descriptions", "MinimumReplacementRate");
+        String MinimumReplacementRatePost = Utils.getString( "sms_descriptions", "MinimumReplacementRatePost");
+        String VentSpeedFluxLevel = Utils.getString( "sms_descriptions", "VentSpeedFluxLevel");
+        String VentSpeedFluxLevelTitle = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelTitle");
+        String VentSpeedFluxLevelDesc1 = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelDesc1");
+        String VentSpeedFluxLevelDesc2 = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelDesc2");
     }
 }

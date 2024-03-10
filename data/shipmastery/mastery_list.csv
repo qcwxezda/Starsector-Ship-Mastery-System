@@ -73,6 +73,10 @@ PhasedArmorRepair,9,combat unique,,0.04,shipmastery.mastery.impl.combat.PhasedAr
 MissileAutoloaderCapacity,9,combat unique,,1,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,9,combat unique,,1,shipmastery.mastery.impl.combat.BDeckExtraCharges
 FighterCountDR,9,combat unique,,0.04,shipmastery.mastery.impl.combat.FighterCountDR
+ShieldEfficiencyHardFlux,9,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
+ConvertedHangarNoPenalty,9,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
+MinimumReplacementRate,9,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
+VentSpeedFluxLevel,9,combat unique,,0.3,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
@@ -100,6 +104,7 @@ OrionDeviceDamage,9,combat unique doesnt_affect_modules prefix_flagship_only,,15
 NovaBurstDamage,9,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
 FastSkimmer,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
 SkimmerDR,9,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR
+SkimmerEMP,9,combat unique doesnt_affect_modules,,4,shipmastery.mastery.impl.combat.shipsystems.SkimmerEMP
 DroneStrikeBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeBoost
 DroneStrikeRegen,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeRegen
 FlareLauncherWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FlareLauncherWhileVenting

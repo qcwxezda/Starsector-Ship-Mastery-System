@@ -33,6 +33,10 @@ public abstract class MathUtils {
         return new Vector2f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
     }
 
+    public static float lerp(float a, float b, float t) {
+        return a + (b - a) * t;
+    }
+
     public static Vector2f randomPointInCircle(Vector2f center, float radius) {
         float theta = Misc.random.nextFloat() * 2f * (float) Math.PI;
         float r = radius * (float) Math.sqrt(Misc.random.nextFloat());

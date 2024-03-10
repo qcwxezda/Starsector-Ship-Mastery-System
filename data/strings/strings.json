@@ -92,7 +92,7 @@
     "RecallDeviceRegeneration": "Activating %1$s also boosts fighter replacement rate by %2$s and has a %3$s chance of replenishing each destroyed fighter.",
     "RecallDeviceDestruction": "Activating %1$s also spontaneously dematerializes all enemy fighters within %2$s su.",
     "RecallDeviceDestructionPost": "Effect radius is modified by mastery effect strength and not by ship system range bonuses.",
-    "BallisticFireRateHullLevel": "Increases ballistic weapons' fire rate and projectile speed by up to %1$s and decreases ballistic weapons' flux cost by up to %3$s, depending on amount of hull damage the ship has taken.",
+    "BallisticFireRateHullLevel": "Increases ballistic weapons' fire rate and projectile speed by up to %1$s and decreases ballistic weapons' flux cost by up to %2$s, depending on amount of hull damage the ship has taken.",
     "BallisticFireRateHullLevelPost": "Maximum effect level is reached when the ship's hull integrity is below %1$s of maximum.",
     "BallisticFireRateHullLevelTitle": "ballistic frenzy",
     "BallisticFireRateHullLevelDesc1": "+%1$s rof, +%2$s projectile speed",
@@ -286,7 +286,20 @@
     "PhasedArmorRepair": "Damaged armor components are slowly repaired while phased.",
     "PhasedArmorRepairPost": "While phased, repairs either %1$s percent of missing armor or %2$s armor per second, whichever is less. Increases phase cloak upkeep by %3$s.",
     "MissileAutoloaderCapacity": "If %1$s is installed, increases its capacity by %2$s.",
-    "CanisterFlakWhileVenting": "While venting, all %1$s launchers automatically fire at a rate of %2$s per second."
+    "CanisterFlakWhileVenting": "While venting, all %1$s launchers automatically fire at a rate of %2$s per second.",
+    "SkimmerEMP": "Whenever %1$s is activated, strikes up to %2$s enemy ships within %3$s su with an EMP arc dealing %4$s energy damage and %5$s EMP damage.",
+    "SkimmerEMPPost": "This effect's range is modified by the ship's system range bonus.",
+    "ShieldEfficiencyHardFlux": "Decreases shield damage taken by up to %1$s as the ship's hard flux level increases.",
+    "ShieldEfficiencyHardFluxPost": "Requires %1$s hard flux to activate. Maximum effect reached at %2$s hard flux.",
+    "ShieldEfficiencyHardFluxTitle": "Shield Overcharge",
+    "ShieldEfficiencyHardFluxDesc1": "-%1$s shield damage",
+    "ConvertedHangarNoPenalty": "Negates the replacement rate, rearm time, deployment point cost, and maintenance penalties of %1$s.",
+    "MinimumReplacementRate": "As long as combat readiness remains above %1$s, fighter replacement rate will never drop below %2$s.",
+    "MinimumReplacementRatePost": "The base minimum replacement rate is %1$s.",
+    "VentSpeedFluxLevel": "Allows the ship to vent faster at higher flux levels: vent speed is reduced by %1$s at zero flux and increased by %2$s at maximum flux.",
+    "VentSpeedFluxLevelTitle": "Dynamic Vents",
+    "VentSpeedFluxLevelDesc1": "-%1$s vent speed",
+    "VentSpeedFluxLevelDesc2": "+%1$s vent speed"
   },
 
   "sms_misc": {

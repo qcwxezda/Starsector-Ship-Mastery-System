@@ -424,6 +424,7 @@ public abstract class ShipMastery {
     public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
         ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
         String restoredSpecId = restoredSpec.getHullId();
+        ShipHullSpecAPI restoredSpecNoBase = restoredSpec;
         String restoredSpecIdNoBase = restoredSpecId;
         Integer maxLevel = maxLevelMap.get(restoredSpecId);
         SortedMap<Integer, Pair<List<String>, List<String>>> masteries = assignmentsMap.get(restoredSpecId);
@@ -443,9 +444,9 @@ public abstract class ShipMastery {
             masteries = presetsMap.get(getDefaultPresetFor(restoredSpecId));
         }
 
-        HullMasteryData masteryData = new HullMasteryData(restoredSpec);
+        HullMasteryData masteryData = new HullMasteryData(restoredSpecNoBase);
         for (int i = 1; i <= maxLevel; i++) {
-            MasteryLevelData levelData = new MasteryLevelData(restoredSpec, i);
+            MasteryLevelData levelData = new MasteryLevelData(restoredSpecNoBase, i);
             Pair<List<String>, List<String>> masteryOptions = null;
             // Mastery assignments contains an entry, so use that
             if (masteries.containsKey(i)) {
@@ -476,12 +477,12 @@ public abstract class ShipMastery {
             List<String> one = masteryOptions.one;
             for (int j = 0; j < one.size(); j++) {
                 String generator = one.get(j);
-                levelData.addEffectToOption1(instantiateEffect(generator, restoredSpec, i, j));
+                levelData.addEffectToOption1(instantiateEffect(generator, restoredSpecNoBase, i, j));
             }
             List<String> two = masteryOptions.two;
             for (int j = 0; j < two.size(); j++) {
                 String generator = two.get(j);
-                levelData.addEffectToOption2(instantiateEffect(generator, restoredSpec, i, j));
+                levelData.addEffectToOption2(instantiateEffect(generator, restoredSpecNoBase, i, j));
             }
             masteryData.addLevelData(levelData);
         }

@@ -12,8 +12,8 @@ import java.util.Arrays;
 public class PhaseSpeedAcceleration extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new ArrayList<>(
-                Arrays.asList(stats.getDynamic().getMod(Stats.PHASE_CLOAK_ACCEL_MOD), stats.getDynamic().getMod(Stats.PHASE_CLOAK_SPEED_MOD)));
+        return new Object[]{
+                stats.getDynamic().getMod(Stats.PHASE_CLOAK_ACCEL_MOD), stats.getDynamic().getMod(Stats.PHASE_CLOAK_SPEED_MOD)};
     }
 
     @Override
