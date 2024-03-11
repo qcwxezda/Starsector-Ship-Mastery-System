@@ -58,7 +58,7 @@ DamageTakenNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.D
 LargeBallisticFragDamage,9,combat unique prefix_flagship_only,,60,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
 PhasedCRDegradation,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.PhasedCRDegradation
 RangeNoNearbyEnemies,9,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
-EnergyProjectileRange,9,combat unique,,100,shipmastery.mastery.impl.combat.EnergyProjectileRange
+EnergyProjectileRange,9,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
 RandomBeamIntensity,9,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
 SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.SystemRegenOnKill
 MissileRegenOnKill,9,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRegenOnKill
@@ -70,20 +70,22 @@ LimitedArmorRegen,9,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedAr
 HammerLingeringDamage,9,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
 PilumSalamanderBoost,9,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
 PhasedArmorRepair,9,combat unique,,0.04,shipmastery.mastery.impl.combat.PhasedArmorRepair
-MissileAutoloaderCapacity,9,combat unique,,1,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
+MissileAutoloaderCapacity,9,combat unique,,0.75,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,9,combat unique,,1,shipmastery.mastery.impl.combat.BDeckExtraCharges
 FighterCountDR,9,combat unique,,0.04,shipmastery.mastery.impl.combat.FighterCountDR
 ShieldEfficiencyHardFlux,9,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
 ConvertedHangarNoPenalty,9,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
 MinimumReplacementRate,9,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
 VentSpeedFluxLevel,9,combat unique,,0.3,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
+MakeshiftShieldBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.MakeshiftShieldBoost
+MinimumCR,9,combat unique,,0.25,shipmastery.mastery.impl.combat.MinimumCR
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
 RecallDeviceRegeneration,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
 RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,400,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
 AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
-ManeuveringJetsBoost,9,combat unique doesnt_affect_modules,,20,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
+ManeuveringJetsBoost,9,combat unique doesnt_affect_modules,,25,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
 ManeuveringJetsDR,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
 ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 HEFExplosion,9,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
@@ -109,12 +111,17 @@ DroneStrikeBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystem
 DroneStrikeRegen,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeRegen
 FlareLauncherWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FlareLauncherWhileVenting
 PlasmaJetsGrazeChance,9,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsGrazeChance
+PlasmaJetsDissipation,9,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsDissipation
 MissileAutoforgeExtraCharge,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.MissileAutoforgeExtraCharge
 TargetingFeedBoost,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.TargetingFeedBoost
 DamageChargesDamperField,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.DamageChargesDamperField
 DamperFieldFighters,9,combat unique,,0.1,shipmastery.mastery.impl.combat.shipsystems.DamperFieldFighters
+DamperFieldDissipation,9,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.DamperFieldDissipation
 FlareRegen,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.FlareRegen
 FasterActiveFlares,9,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.FasterActiveFlares
 ReserveDeploymentBoost,9,combat unique,,3.5,shipmastery.mastery.impl.combat.shipsystems.ReserveDeploymentBoost
 QuantumDisruptorDuration,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.QuantumDisruptorDuration
 CanisterFlakWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.CanisterFlakWhileVenting
+EntropyAmplifierChaining,9,combat unique,,2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierChaining
+EntropyAmplifierMobility,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierMobility
+DecoyFlareBoost,9,combat unique,,0.75,shipmastery.mastery.impl.combat.shipsystems.DecoyFlareBoost

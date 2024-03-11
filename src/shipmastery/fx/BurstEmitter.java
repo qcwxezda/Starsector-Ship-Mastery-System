@@ -76,7 +76,9 @@ public class BurstEmitter extends BaseIEmitter {
         data.velocity(velocity);
         data.life(duration);
         data.fadeTime(duration * fadeInFrac, duration * fadeOutFrac);
-        data.color(new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f * alphaMult));
+        // multiply by square of sprite's alpha as generally multiple particles will be overlapping, adding up their
+        // alphas
+        data.color(new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f * alphaMult * sprite.getAlphaMult() * sprite.getAlphaMult()));
         return data;
     }
 }

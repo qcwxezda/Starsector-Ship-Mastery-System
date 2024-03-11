@@ -1,4 +1,248 @@
 {
+  "afflictor": {
+    "levels": {
+      "9": {
+        "A": "EntropyAmplifierChaining",
+        "B": "ModifyStatsFlat 1.4 EnergyWeaponsOPCost"
+      }
+    }
+  },
+
+  "afflictor_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "EntropyAmplifierMobility",
+        "B": "ModifyStatsFlat 1.4 EnergyWeaponsOPCost"
+      }
+    }
+  },
+
+  "brawler": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "VentSpeedFluxLevel"
+      }
+    }
+  },
+
+  "brawler_LG": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "EnergyProjectileRange"
+      }
+    }
+  },
+
+  "brawler_pather": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "brawler_tritachyon": {
+    "levels": {
+      "9": {
+        "A": "PlasmaJetsDissipation",
+        "B": "ShieldEfficiencyHardFlux"
+      }
+    }
+  },
+
+  "centurion": {
+    "levels": {
+      "9": {
+        "A": "DamageChargesDamperField",
+        "B": "MissileAutoloaderCapacity"
+      }
+    }
+  },
+
+  "centurion_LG": {
+    "levels": {
+      "9": {
+        "A": "DamperFieldDissipation",
+        "B": "MissileAutoloaderCapacity"
+      }
+    }
+  },
+
+  "cerberus": {
+    "levels": {
+      "9": {
+        "A": "MakeshiftShieldBoost",
+        "B": "ArmorRepair 0.05"
+      }
+    }
+  },
+
+  "cerberus_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveImpulse",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "cerberus_luddic_path": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "dram": {
+    "preset": "logistic_fuel"
+  },
+
+  "gremlin": {
+    "levels": {
+      "9": {
+        "A": "DecoyFlareBoost",
+        "B": "BallisticFireRateFluxLevel"
+      }
+    }
+  },
+
+  "gremlin_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "DecoyFlareBoost",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "gremlin_luddic_path": {
+    "levels": {
+      "9": {
+        "A": "DecoyFlareBoost",
+        "B": "HammerLingeringDamage"
+      }
+    }
+  },
+
+  "hermes": {
+    "preset": "logistic_cargo"
+  },
+
+  "hound": {
+    "levels": {
+      "9": {
+        "A": "FlareLauncherWhileVenting",
+        "B": "MakeshiftShieldBoost"
+      }
+    }
+  },
+
+  "hound_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "FlareLauncherWhileVenting",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
+
+  "hound_hegemony": {
+    "levels": {
+      "9": {
+        "A": "FlareRegen",
+        "B": "ArmorRepair 0.05"
+      }
+    }
+  },
+
+  "hound_luddic_church": {
+    "levels": {
+      "9": {
+        "A": "FlareRegen",
+        "B": "BallisticFireRateFluxLevel"
+      }
+    }
+  },
+
+  "hound_luddic_path": {
+    "levels": {
+      "9": {
+        "A": "SafetyOverridesBoost",
+        "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "hyperion": {
+    "levels": {
+      "9": {
+        "A": "MinimumCR",
+        "B": "SafetyOverridesPPT"
+      }
+    }
+  },
+
+  "glimmer": {},
+
+  "kite": {},
+
+  "kite_hegemony": {},
+
+  "kite_luddic_path": {},
+
+  "kite_original": {},
+
+  "kite_pirates": {},
+
+  "lasher": {},
+
+  "lasher_luddic_church": {},
+
+  "lasher_pather": {},
+
+  "lumen": {},
+
+  "mercury": {},
+
+  "monitor": {},
+
+  "mudskipper": {},
+
+  "mudskipper2": {},
+
+  "omen": {},
+
+  "ox": {},
+
+  "scarab": {},
+
+  "shade": {},
+
+  "shade_d_pirates": {},
+
+  "shepherd": {},
+
+  "tempest": {},
+
+  "vanguard": {},
+
+  "vanguard_pirates": {},
+
+  "vigilance": {},
+
+  "wayfarer": {},
+
+  "wolf": {},
+
+  "wolf_d_pirates": {},
+
+  "wolf_hegemony": {},
+
   "buffalo": {
     "preset": "logistic_cargo"
   },
@@ -224,8 +468,6 @@
   "valkyrie": {
     "preset": "logistic_crew"
   },
-
-
 
   "apex": {
     "preset": "automated",
@@ -489,10 +731,6 @@
       }
     }
   },
-
-
-
-
 
   "astral": {
     "levels": {

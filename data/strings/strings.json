@@ -299,7 +299,19 @@
     "VentSpeedFluxLevel": "Allows the ship to vent faster at higher flux levels: vent speed is reduced by %1$s at zero flux and increased by %2$s at maximum flux.",
     "VentSpeedFluxLevelTitle": "Dynamic Vents",
     "VentSpeedFluxLevelDesc1": "-%1$s vent speed",
-    "VentSpeedFluxLevelDesc2": "+%1$s vent speed"
+    "VentSpeedFluxLevelDesc2": "+%1$s vent speed",
+    "EntropyAmplifierChaining": "%1$s chains its effect to %2$s additional frigate-sized or larger ships within %3$s su of the initial target.",
+    "EntropyAmplifierChainingPost": "The chaining range is affected by ship system range bonuses.",
+    "EntropyAmplifierChainingDesc1": "%1$s more damage taken",
+    "EntropyAmplifierMobility": "%1$s also reduces the mobility of the affected ship by %2$s.",
+    "EntropyAmplifierMobilityDesc1": "-%1$s movement stats",
+    "PlasmaJetsDissipation": "While %1$s is active, flux dissipation is multiplied by a factor of %2$s and grants an additional %3$s to hard flux dissipation while shields are active.",
+    "DamperFieldDissipation": "While %1$s is active, flux dissipation is multiplied by a factor of %2$s.",
+    "DamperFieldDissipationTitle": "Attuned Damper",
+    "DamperFieldDissipationDesc1": "x%1$s dissipation",
+    "MakeshiftShieldBoost": "If %1$s is installed, extends shield arc by %2$s, reduces shield damage taken by %3$s, and negates the hullmod's speed penalty.",
+    "DecoyFlareBoost": "Extends the lifetime and durability of flares launched by %1$s by %2$s.",
+    "MinimumCR": "Combat readiness will never fall below %1$s during combat."
   },
 
   "sms_misc": {
@@ -313,7 +325,7 @@
     "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery bonuses by %1$s",
     "bestOfTheBestScope": "Affects: %1$s",
     "bestOfTheBestScope2": "all capital ships with officers, including flagship",
-    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, hull integrity*, and flux capacity*",
+    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, +%2$s hull integrity*, and +%3$s flux capacity*",
     "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors.",
     "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow"
   }

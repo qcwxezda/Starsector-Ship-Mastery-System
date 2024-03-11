@@ -312,5 +312,17 @@ public interface Strings {
         String VentSpeedFluxLevelTitle = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelTitle");
         String VentSpeedFluxLevelDesc1 = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelDesc1");
         String VentSpeedFluxLevelDesc2 = Utils.getString( "sms_descriptions", "VentSpeedFluxLevelDesc2");
+        String EntropyAmplifierChaining = Utils.getString( "sms_descriptions", "EntropyAmplifierChaining");
+        String EntropyAmplifierChainingPost = Utils.getString( "sms_descriptions", "EntropyAmplifierChainingPost");
+        String EntropyAmplifierChainingDesc1 = Utils.getString( "sms_descriptions", "EntropyAmplifierChainingDesc1");
+        String EntropyAmplifierMobility = Utils.getString( "sms_descriptions", "EntropyAmplifierMobility");
+        String EntropyAmplifierMobilityDesc1 = Utils.getString( "sms_descriptions", "EntropyAmplifierMobilityDesc1");
+        String PlasmaJetsDissipation = Utils.getString( "sms_descriptions", "PlasmaJetsDissipation");
+        String DamperFieldDissipation = Utils.getString( "sms_descriptions", "DamperFieldDissipation");
+        String DamperFieldDissipationTitle = Utils.getString( "sms_descriptions", "DamperFieldDissipationTitle");
+        String DamperFieldDissipationDesc1 = Utils.getString( "sms_descriptions", "DamperFieldDissipationDesc1");
+        String MakeshiftShieldBoost = Utils.getString( "sms_descriptions", "MakeshiftShieldBoost");
+        String DecoyFlareBoost = Utils.getString( "sms_descriptions", "DecoyFlareBoost");
+        String MinimumCR = Utils.getString( "sms_descriptions", "MinimumCR");
     }
 }

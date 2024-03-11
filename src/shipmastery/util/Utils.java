@@ -26,6 +26,7 @@ public abstract class Utils {
     public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
     public static final DecimalFormat integerFormat = new DecimalFormat("0");
+    public static final DecimalFormat twoDecimalPlaceFormat = new DecimalFormat("0.##");
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
 
@@ -178,6 +179,7 @@ public abstract class Utils {
     public static String asPercentNoDecimal(float num) {return percentFormatNoDecimal.format(num);}
 
     public static String asFloatOneDecimal(float num) {return oneDecimalPlaceFormat.format(num);}
+    public static String asFloatTwoDecimals(float num) {return twoDecimalPlaceFormat.format(num);}
 
     public static String asInt(float num) {
         // Should always round down, except in cases where the number is so close to the next int that it's clear

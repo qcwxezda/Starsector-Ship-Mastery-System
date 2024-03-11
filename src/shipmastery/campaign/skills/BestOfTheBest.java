@@ -73,13 +73,13 @@ public class BestOfTheBest {
     }
 
 
-    public static final float STATS_BONUS = 0.15f;
+    public static final float CR_BONUS = 0.15f, STATS_BONUS = 0.1f;
     public static class Level3 extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             if (isCapitalAndOfficer(stats)) {
 
-                stats.getMaxCombatReadiness().modifyFlat(id, STATS_BONUS, "Best of the Best skill");
+                stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, "Best of the Best skill");
                 stats.getHullBonus().modifyMult(id, 1f + STATS_BONUS);
                 stats.getFluxCapacity().modifyMult(id, 1f + STATS_BONUS);
             }
@@ -100,7 +100,7 @@ public class BestOfTheBest {
 			Color c = Misc.getBasePlayerColor();
             info.addPara(Strings.BEST_OF_THE_BEST_SCOPE, opad + 5f, Misc.getGrayColor(), c, Strings.BEST_OF_THE_BEST_SCOPE2);
 			info.addSpacer(opad);
-            info.addPara(Strings.BEST_OF_THE_BEST_DESC2, 0f, hc, hc, Utils.asPercent(STATS_BONUS));
+            info.addPara(Strings.BEST_OF_THE_BEST_DESC2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
         }
 
         @Override

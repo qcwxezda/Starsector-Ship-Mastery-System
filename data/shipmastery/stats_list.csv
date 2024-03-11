@@ -56,3 +56,4 @@ ZeroFluxSpeedBoost,the zero-flux speed boost,3,0.2,,shipmastery.stats.combat.Zer
 AllWeaponOPCost,the OP cost of all weapons,9,-1,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.AllWeaponOPCost
 ExplosionRadiusDamage,explosion radius and damage when destroyed,5,0.5,,shipmastery.stats.combat.ExplosionRadiusDamage
 BallisticWeaponsOPCost,the OP cost of all ballistic weapons,9,-1,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BallisticWeaponsOPCost
+EnergyWeaponsOPCost,the OP cost of all energy weapons,9,-1,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
