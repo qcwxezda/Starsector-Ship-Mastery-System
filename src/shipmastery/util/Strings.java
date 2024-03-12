@@ -324,5 +324,17 @@ public interface Strings {
         String MakeshiftShieldBoost = Utils.getString( "sms_descriptions", "MakeshiftShieldBoost");
         String DecoyFlareBoost = Utils.getString( "sms_descriptions", "DecoyFlareBoost");
         String MinimumCR = Utils.getString( "sms_descriptions", "MinimumCR");
+        String PhaseTeleporterTimeFlow = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlow");
+        String PhaseTeleporterTimeFlowPost = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlowPost");
+        String PhaseTeleporterTimeFlowTitle = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlowTitle");
+        String PhaseTeleporterTimeFlowDesc1 = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlowDesc1");
+        String HEFShieldEfficiency = Utils.getString( "sms_descriptions", "HEFShieldEfficiency");
+        String HEFShieldEfficiencyTitle = Utils.getString( "sms_descriptions", "HEFShieldEfficiencyTitle");
+        String HEFShieldEfficiencyDesc1 = Utils.getString( "sms_descriptions", "HEFShieldEfficiencyDesc1");
+        String ECMPackageBoost = Utils.getString( "sms_descriptions", "ECMPackageBoost");
+        String NavRelayBoost = Utils.getString( "sms_descriptions", "NavRelayBoost");
+        String OperationsCenterBoost = Utils.getString( "sms_descriptions", "OperationsCenterBoost");
+        String ReactiveFortressShield = Utils.getString( "sms_descriptions", "ReactiveFortressShield");
+        String ReactiveFortressShieldPost = Utils.getString( "sms_descriptions", "ReactiveFortressShieldPost");
     }
 }

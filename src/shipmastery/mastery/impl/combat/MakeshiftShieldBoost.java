@@ -17,7 +17,7 @@ public class MakeshiftShieldBoost extends BaseMasteryEffect {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.MakeshiftShieldBoost)
                 .params(Global.getSettings().getHullModSpec(HullMods.MAKESHIFT_GENERATOR).getDisplayName(),
                         Utils.asPercent(strength),
-                        Utils.asPercent(strength*0.25f));
+                        Utils.asPercent(strength*0.2f));
     }
 
     @Override
@@ -25,7 +25,7 @@ public class MakeshiftShieldBoost extends BaseMasteryEffect {
         if (stats.getVariant() == null || !stats.getVariant().hasHullMod(HullMods.MAKESHIFT_GENERATOR)) return;
         float strength = getStrength(stats);
         stats.getShieldArcBonus().modifyPercent(id, 100f*strength);
-        stats.getShieldDamageTakenMult().modifyMult(id, 1f - strength*0.25f);
+        stats.getShieldDamageTakenMult().modifyMult(id, 1f - strength*0.2f);
         stats.getMaxSpeed().unmodify(HullMods.MAKESHIFT_GENERATOR);
     }
 }

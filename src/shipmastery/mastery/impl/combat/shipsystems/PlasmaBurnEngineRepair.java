@@ -45,6 +45,9 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
+        ship.getMutableStats().getMaxTurnRate().unmodify(id);
+        ship.getMutableStats().getTurnAcceleration().unmodify(id);
+        ship.getMutableStats().getCombatEngineRepairTimeMult().unmodify(id);
         ship.removeListenerOfClass(PlasmaBurnEngineRepairScript.class);
     }
 

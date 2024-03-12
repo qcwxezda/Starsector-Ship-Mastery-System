@@ -75,7 +75,7 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
                         id + "1",
                         "graphics/icons/hullsys/ammo_feeder.png",
                         Strings.Descriptions.BallisticFireRateFluxLevelTitle,
-                        String.format(Strings.Descriptions.BallisticFireRateFluxLevelDesc1, Utils.asPercentNoDecimal(effectLevel), Utils.asPercentNoDecimal(2f*effectLevel)),
+                        String.format(Strings.Descriptions.BallisticFireRateFluxLevelDesc1, Utils.asPercentNoDecimal(effectLevel)),
                         false);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "2",

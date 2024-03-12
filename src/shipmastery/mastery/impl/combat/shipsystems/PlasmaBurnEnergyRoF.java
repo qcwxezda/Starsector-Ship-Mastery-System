@@ -50,6 +50,8 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
+        ship.getMutableStats().getEnergyRoFMult().unmodify(id);
+        ship.getMutableStats().getEnergyWeaponFluxCostMod().unmodify(id);
         ship.removeListenerOfClass(PlasmaBurnEnergyRoFScript.class);
     }
 

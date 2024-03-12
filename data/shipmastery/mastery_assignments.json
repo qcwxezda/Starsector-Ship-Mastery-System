@@ -181,39 +181,132 @@
   "hyperion": {
     "levels": {
       "9": {
-        "A": "MinimumCR",
-        "B": "SafetyOverridesPPT"
+        "A": "PhaseTeleporterTimeFlow",
+        "B": "MinimumCR"
       }
     }
   },
 
-  "glimmer": {},
+  "glimmer": {
+    "levels": {
+      "9": {
+        "A": "HEFShieldEfficiency",
+        "B": "HullThresholdDR"
+      }
+    }
+  },
 
-  "kite": {},
+  "kite": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "NavRelayBoost"
+      }
+    }
+  },
 
-  "kite_hegemony": {},
+  "kite_hegemony": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsDR",
+        "B": "ECMPackageBoost"
+      }
+    }
+  },
 
-  "kite_luddic_path": {},
+  "kite_luddic_path": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "ECMPackageBoost"
+      }
+    }
+  },
 
-  "kite_original": {},
+  "kite_original": {
+    "levels": {
+      "9": {
+        "A": "OperationsCenterBoost",
+        "B": "ECMPackageBoost 3"
+      }
+    }
+  },
 
-  "kite_pirates": {},
+  "kite_pirates": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "BallisticFireRateHullLevel"
+      }
+    }
+  },
 
-  "lasher": {},
+  "lasher": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "BallisticFireRateFluxLevel"
+      }
+    }
+  },
 
-  "lasher_luddic_church": {},
+  "lasher_luddic_church": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": ["ModifyStatsMult 3 ArmorPoints", "LimitedArmorRegen 0.6"]
+      }
+    }
+  },
 
-  "lasher_pather": {},
+  "lasher_pather": {
+    "levels": {
+      "9": {
+        "A": "AAFRangeDamage",
+        "B": "SafetyOverridesBoost"
+      }
+    }
+  },
 
-  "lumen": {},
+  "lumen": {
+    "levels": {
+      "9": {
+        "A": "FastSkimmer",
+        "B": "ECMPackageBoost"
+      }
+    }
+  },
 
-  "mercury": {},
+  "mercury": {
+    "preset": "logistic_crew"
+  },
 
-  "monitor": {},
+  "monitor": {
+    "levels": {
+      "9": {
+        "A": "ReactiveFortressShield",
+        "B": "ShieldEfficiencyNearbyEnemies"
+      }
+    }
+  },
 
-  "mudskipper": {},
+  "mudskipper": {
+    "levels": {
+      "9": {
+        "A": "ExpandedCrewBoost",
+        "B": "ExpandedCargoBoost"
+      }
+    }
+  },
 
-  "mudskipper2": {},
+  "mudskipper2": {
+    "levels": {
+      "9": {
+        "A": "ModifyStatsFlat 10 AllWeaponOPCost",
+        "B": "MakeshiftShieldBoost"
+      }
+    }
+  },
 
   "omen": {},
 

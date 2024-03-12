@@ -120,9 +120,10 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                 float currentTimeMult = timeMult.getModifiedValue();
                 float targetTimeMult = maxTimeMult + (1f - maxTimeMult) * timeAcceleratedUnphased / maxTime;
                 float ratio = targetTimeMult / currentTimeMult;
-                timeMult.modifyMult(id, ratio);
                 timeAcceleratedUnphased += amount / timeMult.getModifiedValue();
-                Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
+                if (ship == Global.getCombatEngine().getPlayerShip()) {
+                    Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
+                }
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
