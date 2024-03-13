@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
@@ -129,7 +128,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target, ApplyDamageResultAPI lastDamageResult) {
+        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
             if (timeLeft <= 0f) return;
             if ((source == ship || (source.isFighter() && source.getWing() != null && source.getWing().getSourceShip() == ship)) && !target.isFighter()) {
                 int size = Utils.hullSizeToInt(target.getHullSize());

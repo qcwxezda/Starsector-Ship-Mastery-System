@@ -188,7 +188,7 @@
     "ExpandedCargoBoost": "If %1$s is installed, increases cargo capacity by an additional %2$s.",
     "ExpandedFuelBoost": "If %1$s is installed, increases fuel capacity by an additional %2$s.",
     "ExpandedCrewBoost": "If %1$s is installed, increases crew capacity by an additional %2$s.",
-    "DroneStrikeBoost": "Increases the damage, speed, maneuverability, and hull integrity of drones launched by %1$s by %2$s.",
+    "DroneStrikeBoost": "Increases the damage, speed, maneuverability, and hull integrity of drones launched by %1$s by %2$s, and negates the system's flux cost..",
     "DroneStrikeRegen": "Drones launched by %1$s have a %2$s chance of being quickly replaced. Destroying a frigate-sized or larger ship with a launched terminator drone boosts fighter replacement rate by %3$s.",
     "DroneStrikeRegenPost": "The replacement rate increase will only trigger if the drone deals the finishing blow.",
     "BackArmorBoost": "Increases armor rating toward the back of ships by up to %1$s.",
@@ -229,6 +229,7 @@
     "LargeBallisticFragDamage": "All large ballistic projectile weapons deal an additional %1$s fragmentation damage on hit.",
     "LargeBallisticFragDamagePost": "Doesn't apply to weapons that themselves deal fragmentation damage.",
     "PhasedCRDegradation": "Reduces peak performance time decay and combat readiness degradation rate by %1$s while phased.",
+    "TemporalShellCRDegradation": "While %1$s is active, reduces peak performance time decay and combat readiness degradation rate by %2$s.",
     "ManeuveringJetsBoost": "Maneuvering jets increases maximum speed by an additional %1$s su/s.",
     "ManeuveringJetsBoostTitle": "improved maneuvering jets",
     "ManeuveringJetsBoostDesc1": "+%1$s top speed",
@@ -323,7 +324,16 @@
     "NavRelayBoost": "If %1$s is installed, improves its effect by %2$s.",
     "OperationsCenterBoost": "If %1$s is installed on the flagship, improves its effect by %2$s.",
     "ReactiveFortressShield": "Whenever %1$s blocks a projectile, there is a %2$s chance that a bolt dealing %3$s energy damage and %4$s EMP damage will strike a nearby enemy ship.",
-    "ReactiveFortressShieldPost": "The system will target the nearest ship within %1$s su and within a %2$s arc of the hit angle. The range is boosted by ship system range modifiers."
+    "ReactiveFortressShieldPost": "The system will target the nearest ship within %1$s su and within a %2$s degree arc of the hit angle. The range is boosted by ship system range modifiers.",
+    "EMPEmitterFluxBoost": "Whenever %1$s strikes a frigate-sized or larger ship, gain %2$s flux dissipation and dissipate an additional %3$s of hard flux while shield are up.",
+    "EMPEmitterFluxBoostPost": "This effect stacks up to %1$s times, for a maximum dissipation bonus of %2$s, and decays at the rate of %3$s per second.",
+    "EMPEmitterFluxBoostTitle": "Flux Grid Overcharge",
+    "EMPEmitterFluxBoostDesc1": "+%1$s hard flux dissipation",
+    "EMPEmitterEnergyDamage": "Each bolt from %1$s deals an additional %2$s energy damage to fighters and ships.",
+    "EMPEmitterFragDamage": "Each bolt from %1$s deals an additional %2$s fragmentation damage to fighters and ships.",
+    "DriveFieldStabilizerBoost": "If %1$s is installed, increases the fleet's burn bonus by an additional %2$s.",
+    "GroundSupportBoost": "If %1$s or %2$s is installed, increases the fleet's ground support bonus by an additional %3$s.",
+    "MaxAutomatedCR": "The %1$s skill always grants an additional %2$s maximum combat readiness regardless of the fleet's automated ship points."
   },
 
   "sms_misc": {

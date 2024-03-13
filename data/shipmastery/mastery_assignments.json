@@ -98,6 +98,10 @@
     }
   },
 
+  "defender": {
+    "preset": "derelict_drone"
+  },
+
   "dram": {
     "preset": "logistic_fuel"
   },
@@ -224,6 +228,7 @@
   },
 
   "kite_original": {
+    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "OperationsCenterBoost",
@@ -291,6 +296,7 @@
   },
 
   "mudskipper": {
+    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "ExpandedCrewBoost",
@@ -308,33 +314,152 @@
     }
   },
 
-  "omen": {},
+  "omen": {
+    "levels": {
+      "9": {
+        "A": "EMPEmitterFluxBoost",
+        "B": "ShieldEfficiencyHardFlux"
+      }
+    }
+  },
 
-  "ox": {},
+  "ox": {
+    "preset":"_DEFAULT_CIVILIAN_",
+    "levels": {
+      "9": {
+        "A": "DriveFieldStabilizerBoost",
+        "B": "EfficiencyOverhaulBoost"
+      }
+    }
+  },
 
-  "scarab": {},
+  "picket": {
+    "preset": "derelict_drone"
+  },
 
-  "shade": {},
+  "scarab": {
+    "levels": {
+      "9": {
+        "A": "TemporalShellCRDegradation",
+        "B": "ModifyStatsFlat 1 AllWeaponOPCost"
+      }
+    }
+  },
 
-  "shade_d_pirates": {},
+  "sentry": {
+    "preset": "derelict_drone"
+  },
 
-  "shepherd": {},
+  "shade": {
+    "levels": {
+      "9": {
+        "A": "EMPEmitterEnergyDamage",
+        "B": "PhasedCRDegradation"
+      }
+    }
+  },
 
-  "tempest": {},
+  "shade_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "EMPEmitterFragDamage",
+        "B": "PhasedArmorRepair"
+      }
+    }
+  },
 
-  "vanguard": {},
+  "shepherd": {
+    "levels": {
+      "9": {
+        "A": "ManeuveringJetsBoost",
+        "B": "ExtraMiningDrones 2"
+      }
+    }
+  },
 
-  "vanguard_pirates": {},
+  "tempest": {
+    "levels": {
+      "9": {
+        "A": "DroneStrikeBoost",
+        "B": "MissileAutoloaderCapacity"
+      }
+    }
+  },
 
-  "vigilance": {},
+  "vanguard": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveDR",
+        "B": "ArmorRepair 0.05"
+      }
+    }
+  },
 
-  "wayfarer": {},
+  "vanguard_pirates": {
+    "levels": {
+      "9": {
+        "A": "BurnDriveImpulse",
+        "B": "LimitedArmorRegen 0.6"
+      }
+    }
+  },
 
-  "wolf": {},
+  "vigilance": {
+    "levels": {
+      "9": {
+        "A": "FMRRegen 0.05",
+        "B": "PilumSalamanderBoost"
+      }
+    }
+  },
 
-  "wolf_d_pirates": {},
+  "warden": {
+    "preset": "derelict_drone"
+  },
 
-  "wolf_hegemony": {},
+  "wayfarer": {
+    "levels": {
+      "9": {
+        "A": "FlareRegen",
+        "B": "ModifyStatsFlat 1 AllWeaponOPCost"
+      }
+    }
+  },
+
+  "wolf": {
+    "levels": {
+      "9": {
+        "A": "FastSkimmer",
+        "B": "VentingSpeedBoost"
+      }
+    }
+  },
+
+  "wolf_d_pirates": {
+    "levels": {
+      "9": {
+        "A": "FastSkimmer",
+        "B": "SpeedHullLevel"
+      }
+    }
+  },
+
+  "wolf_hegemony": {
+    "levels": {
+      "9": {
+        "A": "FastSkimmer",
+        "B": "ModifyStatsFlat 1 AllWeaponOPCost"
+      }
+    }
+  },
+
+  "bastillon": {
+    "preset": "derelict_drone"
+  },
+
+  "berserker": {
+    "preset": "derelict_drone"
+  },
 
   "buffalo": {
     "preset": "logistic_cargo"
@@ -359,7 +484,8 @@
   },
 
   "crig": {
-    "maxLevel": 8
+    "maxLevel": 8,
+    "preset":"_DEFAULT_CIVILIAN_"
   },
 
   "drover": {
@@ -506,7 +632,13 @@
   },
 
   "phantom": {
-    "preset": "logistic_crew"
+    "preset": "_DEFAULT_CIVILIAN",
+    "levels": {
+      "9": {
+        "A": "GroundSupportBoost",
+        "B": "ExpandedCrewBoost"
+      }
+    }
   },
 
   "scintilla": {
@@ -559,7 +691,13 @@
   },
 
   "valkyrie": {
-    "preset": "logistic_crew"
+    "preset": "_DEFAULT_CIVILIAN",
+    "levels": {
+      "9": {
+        "A": "GroundSupportBoost",
+        "B": "ExpandedCrewBoost"
+      }
+    }
   },
 
   "apex": {
@@ -785,7 +923,12 @@
     }
   },
 
+  "rampart": {
+    "preset": "derelict_drone"
+  },
+
   "revenant": {
+    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "ExpandedCargoBoost",
@@ -865,6 +1008,16 @@
     }
   },
 
+  "guardian": {
+    "preset": "automated",
+    "levels": {
+      "9": {
+        "A": "PlasmaJetsDissipation",
+        "B": "MaxAutomatedCR"
+      }
+    }
+  },
+
   "invictus": {
     "levels": {
       "9": {
@@ -933,7 +1086,7 @@
     "levels": {
       "9": {
         "A": "ShieldDeflection",
-        "B": "ShieldEfficiencyNearbyEnemies"
+        "B": "ReactiveFortressShield"
       }
     }
   },

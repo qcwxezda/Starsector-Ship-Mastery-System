@@ -54,7 +54,7 @@ public class ExtraMiningDrones extends BaseMasteryEffect {
                 for (FighterLaunchBayAPI bay : ship.getLaunchBaysCopy()) {
                     if (bay.getWing() == null) continue;
                     FighterWingSpecAPI spec = bay.getWing().getSpec();
-                    if (!"mining_drone_wing".equals(spec.getId())) continue;
+                    if (!"mining_drone_wing".equals(spec.getId()) && !"borer_wing".equals(spec.getId())) continue;
                     int numInWing = spec.getNumFighters();
                     if (bay.getExtraDeployments() > 0) continue;
                     if (bay.getWing().getWingMembers().size() >= numInWing + extraDrones) continue;
@@ -63,6 +63,7 @@ public class ExtraMiningDrones extends BaseMasteryEffect {
                     bay.setExtraDuration(999999999f);
                 }
             }
+
         }
     }
 }

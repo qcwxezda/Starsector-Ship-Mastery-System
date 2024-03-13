@@ -2,7 +2,6 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
-import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import particleengine.Particles;
@@ -61,7 +60,7 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target, ApplyDamageResultAPI lastDamageResult) {
+        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
             if ((source == ship || (source.isFighter() && source.getWing() != null && source.getWing().getSourceShip() == ship)) && !target.isFighter()) {
                 int index = Utils.hullSizeToInt(target.getHullSize());
                 ShipSystemAPI system = ship.getSystem();

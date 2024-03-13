@@ -103,7 +103,7 @@ public class ReactiveFortressShield extends ShipSystemEffect {
             ShipAPI closestTarget = null;
             float closestDist = Float.MAX_VALUE;
             for (ShipAPI target : Global.getCombatEngine().getShips()) {
-                if (!target.isAlive()) continue;
+                if (!target.isAlive() || target.getHitpoints() <= 0f) continue;
                 if (!CollisionUtils.canCollide(target, null, ship, false)) continue;
                 float dist = MathUtils.dist(point, target.getLocation());
                 if (dist > Math.min(closestDist, range + target.getCollisionRadius())) continue;

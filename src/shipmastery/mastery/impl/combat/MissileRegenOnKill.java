@@ -3,7 +3,6 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -81,7 +80,7 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target, ApplyDamageResultAPI lastDamageResult) {
+        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
             if ((source == ship || (source.isFighter() && source.getWing() != null && source.getWing().getSourceShip() == ship)) && !target.isFighter()) {
                 float reloadFrac = AMMO_PER_KILL_MULTIPLIER[Utils.hullSizeToInt(target.getHullSize())] * strength;
                 for (WeaponAPI weapon : missileWeapons) {

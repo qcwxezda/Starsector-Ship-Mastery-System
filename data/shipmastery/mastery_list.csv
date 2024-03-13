@@ -15,6 +15,8 @@ EfficiencyOverhaulBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logisti
 ExpandedCargoBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
 ExpandedFuelBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
 ExpandedCrewBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
+DriveFieldStabilizerBoost,9,unique logistic,1,1,shipmastery.mastery.impl.logistics.DriveFieldStabilizerBoost
+GroundSupportBoost,9,unique logistic,1,100,shipmastery.mastery.impl.logistics.GroundSupportBoost
 #### STATS ####
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
@@ -32,7 +34,7 @@ RangeIfNoBonuses,3,negative_strength_allowed combat,1,0.3,shipmastery.mastery.im
 MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
 DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
 PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
-ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,6,shipmastery.mastery.impl.combat.ShieldDeflection
+ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,8,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
 ZeroFluxResidue,7,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
 BallisticFireRateHullLevel,9,combat unique,,0.2,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
@@ -82,6 +84,7 @@ MinimumCR,9,combat unique,,0.25,shipmastery.mastery.impl.combat.MinimumCR
 NavRelayBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.NavRelayBoost
 ECMPackageBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
+MaxAutomatedCR,9,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
@@ -131,3 +134,7 @@ EntropyAmplifierMobility,9,combat unique,,0.2,shipmastery.mastery.impl.combat.sh
 DecoyFlareBoost,9,combat unique,,0.75,shipmastery.mastery.impl.combat.shipsystems.DecoyFlareBoost
 PhaseTeleporterTimeFlow,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.PhaseTeleporterTimeFlow
 ReactiveFortressShield,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.ReactiveFortressShield
+EMPEmitterFluxBoost,9,combat unique,,0.01,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFluxBoost
+EMPEmitterEnergyDamage,9,combat unique,,150,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterEnergyDamage
+EMPEmitterFragDamage,9,combat unique,,300,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFragDamage
+TemporalShellCRDegradation,9,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.shipsystems.TemporalShellCRDegradation

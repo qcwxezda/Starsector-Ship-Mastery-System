@@ -336,5 +336,15 @@ public interface Strings {
         String OperationsCenterBoost = Utils.getString( "sms_descriptions", "OperationsCenterBoost");
         String ReactiveFortressShield = Utils.getString( "sms_descriptions", "ReactiveFortressShield");
         String ReactiveFortressShieldPost = Utils.getString( "sms_descriptions", "ReactiveFortressShieldPost");
+        String EMPEmitterFluxBoost = Utils.getString( "sms_descriptions", "EMPEmitterFluxBoost");
+        String EMPEmitterFluxBoostPost = Utils.getString( "sms_descriptions", "EMPEmitterFluxBoostPost");
+        String EMPEmitterFluxBoostTitle = Utils.getString( "sms_descriptions", "EMPEmitterFluxBoostTitle");
+        String EMPEmitterFluxBoostDesc1 = Utils.getString( "sms_descriptions", "EMPEmitterFluxBoostDesc1");
+        String DriveFieldStabilizerBoost = Utils.getString( "sms_descriptions", "DriveFieldStabilizerBoost");
+        String GroundSupportBoost = Utils.getString( "sms_descriptions", "GroundSupportBoost");
+        String TemporalShellCRDegradation = Utils.getString( "sms_descriptions", "TemporalShellCRDegradation");
+        String EMPEmitterEnergyDamage = Utils.getString( "sms_descriptions", "EMPEmitterEnergyDamage");
+        String EMPEmitterFragDamage = Utils.getString( "sms_descriptions", "EMPEmitterFragDamage");
+        String MaxAutomatedCR = Utils.getString( "sms_descriptions", "MaxAutomatedCR");
     }
 }

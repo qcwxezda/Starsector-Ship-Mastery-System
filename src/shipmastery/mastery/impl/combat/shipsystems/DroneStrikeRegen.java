@@ -3,7 +3,6 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -75,7 +74,8 @@ public class DroneStrikeRegen extends ShipSystemEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target, ApplyDamageResultAPI lastDamageResult) {
+        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
+            if (target.isFighter()) return;
             Object lastDamagedBy = target.getParamAboutToApplyDamage();
             if (lastDamagedBy instanceof DamagingProjectileAPI) {
                 DamagingProjectileAPI proj = (DamagingProjectileAPI) lastDamagedBy;

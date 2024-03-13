@@ -37,6 +37,13 @@
     }
   },
 
+  "derelict_drone": {
+    "preset": "automated",
+    "levels": {
+      "9": ["MaxAutomatedCR","ModifyStatsMult 1 DModEffect -0.5"]
+    }
+  },
+
   "phase": {
     "preset": "_DEFAULT_",
     "levels": {

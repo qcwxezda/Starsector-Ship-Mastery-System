@@ -41,6 +41,7 @@ public class DroneStrikeBoost extends ShipSystemEffect {
             this.increase = increase;
             this.numMissiles = numMissiles;
             this.id = id;
+            ship.getSystem().setFluxPerUse(0f);
         }
 
         @Override

@@ -40,7 +40,8 @@ public class FastSkimmer extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"displacer".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null ||
+                (!"displacer".equals(ship.getSystem().getId()) && !"displacer_degraded".equals(ship.getSystem().getId()))) {
             return;
         }
         if (!ship.hasListenerOfClass(FastSkimmerScript.class)) {
