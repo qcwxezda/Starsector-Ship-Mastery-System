@@ -1,6 +1,8 @@
 package shipmastery.mastery.impl.combat;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -10,6 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class ExtraFighterPerWing extends BaseMasteryEffect {
 
@@ -63,5 +66,12 @@ public class ExtraFighterPerWing extends BaseMasteryEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (spec.getFighterBays() <= 0) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2, false);
     }
 }

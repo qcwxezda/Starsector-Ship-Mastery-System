@@ -16,18 +16,23 @@ public class EntropyAmplifierMobility extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EntropyAmplifierMobility)
-                                 .params(systemName,
+                                 .params(getSystemName(),
                                          Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !ENTROPY_AMPLIFIER_ID.equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(EntropyAmplifierMobilityScript.class)) {
             ship.addListener(new EntropyAmplifierMobilityScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return ENTROPY_AMPLIFIER_ID;
     }
 
     static class EntropyAmplifierMobilityScript extends BaseShipSystemListener implements AdvanceableListener {

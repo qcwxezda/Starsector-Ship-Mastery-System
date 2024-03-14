@@ -13,11 +13,11 @@ public class ShieldSpeed extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        if (!Utils.hasShield(spec)) return 0f;
-        // Prefer shields with greater arc
-        return (float) Math.log(spec.getShieldSpec().getArc() + 2f);
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!Utils.hasShield(spec)) return null;
+        // Prefer ships with higher shield upkeep
+        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getArc(), 150f, false);
     }
 }

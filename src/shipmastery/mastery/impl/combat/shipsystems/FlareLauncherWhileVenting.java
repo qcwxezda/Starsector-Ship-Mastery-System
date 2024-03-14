@@ -2,13 +2,15 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
+import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -16,7 +18,7 @@ import shipmastery.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlareLauncherWhileVenting extends ShipSystemEffect {
+public class FlareLauncherWhileVenting extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FlareLauncherWhileVenting).params(
@@ -89,5 +91,19 @@ public class FlareLauncherWhileVenting extends ShipSystemEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        for (String id : spec.getBuiltInWeapons().values()) {
+            WeaponSpecAPI wSpec = Global.getSettings().getWeaponSpec(id);
+            Object pSpec = wSpec.getProjectileSpec();
+            if (!(pSpec instanceof MissileSpecAPI)) continue;
+            String type = ((MissileSpecAPI) pSpec).getTypeString();
+            if ("FLARE_JAMMER".equals(type) || "FLARE_SEEKER".equals(type) || "FLARE".equals(type)) {
+                return 3f;
+            }
+        }
+        return null;
     }
 }

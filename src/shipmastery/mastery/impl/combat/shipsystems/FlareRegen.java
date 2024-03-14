@@ -18,7 +18,7 @@ public class FlareRegen extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.FlareRegen)
-                .params(systemName, Utils.asFloatOneDecimal(1f / getStrength(selectedModule)));
+                .params(getSystemName(), Utils.asFloatOneDecimal(1f / getStrength(selectedModule)));
     }
 
     @Override
@@ -29,11 +29,16 @@ public class FlareRegen extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"flarelauncher".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
 
         if (!ship.hasListenerOfClass(FlareRegenScript.class)) {
             ship.addListener(new FlareRegenScript(ship, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "flarelauncher";
     }
 
     static class FlareRegenScript implements AdvanceableListener {

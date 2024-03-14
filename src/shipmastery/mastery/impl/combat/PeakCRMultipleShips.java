@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.campaign.fleet.FleetData;
@@ -72,5 +73,11 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
             case CRUISER: value *= 0.75f; break;
         }
         return value;
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
     }
 }

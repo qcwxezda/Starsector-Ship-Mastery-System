@@ -1,9 +1,6 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.combat.CombatEntityAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -22,12 +19,12 @@ public class DamperFieldFighters extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.DamperFieldFighters)
-                .params(systemName, Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"damper".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DamperFieldFightersScript.class)) {
             // Also add to carrier just for the invulnerability effect
             ship.addListener(new DamperFieldFightersScript(null, ship, getStrength(ship), id));
@@ -36,10 +33,15 @@ public class DamperFieldFighters extends ShipSystemEffect {
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship) {
-        if (ship.getSystem() == null || !"damper".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!fighter.hasListenerOfClass(DamperFieldFightersScript.class)) {
             fighter.addListener(new DamperFieldFightersScript(fighter, ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "damper";
     }
 
     static class DamperFieldFightersScript implements AdvanceableListener, DamageTakenModifier, DamageListener {
@@ -105,5 +107,14 @@ public class DamperFieldFighters extends ShipSystemEffect {
                 tempHPRevert = -1f;
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        Float mult = super.getSelectionWeight(spec);
+        if (mult == null) return null;
+        int n = spec.getFighterBays();
+        if (n <= 0) return null;
+        return mult * Utils.getSelectionWeightScaledByValue(n, 2f, false);
     }
 }

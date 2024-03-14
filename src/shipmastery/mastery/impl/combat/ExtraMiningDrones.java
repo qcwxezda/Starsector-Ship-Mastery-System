@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -11,6 +12,8 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
+
+import java.util.List;
 
 public class ExtraMiningDrones extends BaseMasteryEffect {
     @Override
@@ -63,7 +66,13 @@ public class ExtraMiningDrones extends BaseMasteryEffect {
                     bay.setExtraDuration(999999999f);
                 }
             }
-
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        List<String> fighters = spec.getBuiltInWings();
+        return fighters.contains("mining_drone_wing") || fighters.contains("borer_wing") ? 1f : null;
     }
 }

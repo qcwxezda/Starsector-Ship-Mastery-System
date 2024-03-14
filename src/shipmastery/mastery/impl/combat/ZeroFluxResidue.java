@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -66,5 +67,10 @@ public class ZeroFluxResidue extends BaseMasteryEffect {
             engineBoostActiveLastFrame = isEngineBoostActive;
             duration += amount;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return spec.isCivilianNonCarrier() ? null : 1f;
     }
 }

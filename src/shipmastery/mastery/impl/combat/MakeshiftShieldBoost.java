@@ -2,7 +2,9 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -27,5 +29,12 @@ public class MakeshiftShieldBoost extends BaseMasteryEffect {
         stats.getShieldArcBonus().modifyPercent(id, 100f*strength);
         stats.getShieldDamageTakenMult().modifyMult(id, 1f - strength*0.2f);
         stats.getMaxSpeed().unmodify(HullMods.MAKESHIFT_GENERATOR);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (spec.getShieldType() != ShieldAPI.ShieldType.NONE) return null;
+        return 1f;
     }
 }

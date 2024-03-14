@@ -2,8 +2,8 @@ package shipmastery.stats.logistics;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.stats.ShipStat;
+import shipmastery.util.Utils;
 
 public class SupplyUsage extends ShipStat {
     @Override
@@ -12,9 +12,9 @@ public class SupplyUsage extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
-        float weight = spec.getSuppliesPerMonth() + 1f;
-        if (spec.getBuiltInMods().contains(HullMods.INCREASED_MAINTENANCE)) weight *= 2f;
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        float weight = Utils.getSelectionWeightScaledByValue(spec.getSuppliesPerMonth(), 10f, false);
+        if (spec.getBuiltInMods().contains("high_maintenance")) weight *= 2f;
         return weight;
     }
 }

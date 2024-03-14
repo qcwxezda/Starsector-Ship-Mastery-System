@@ -3,12 +3,14 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class FluxByShieldUpkeep extends BaseMasteryEffect {
     @Override
@@ -41,5 +43,12 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
                 false,
                 increase,
                 increase * 10f);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (spec.getShieldType() == ShieldAPI.ShieldType.PHASE || spec.getShieldType() == ShieldAPI.ShieldType.PHASE) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getUpkeepCost(), 200f, false);
     }
 }

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -50,5 +51,12 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
                     .initDefaultHighlight(Strings.Descriptions.ConvertedHangarBaysPost)
                     .params(Global.getSettings().getHullModSpec(HullMods.CONVERTED_HANGAR).getDisplayName());
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (ShipAPI.HullSize.FRIGATE.equals(spec.getHullSize())) return null;
+        return 1f;
     }
 }

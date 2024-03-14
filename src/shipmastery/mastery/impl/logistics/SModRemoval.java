@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -23,6 +24,11 @@ public class SModRemoval extends BaseMasteryEffect {
     @Override
     public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SMOD_REMOVAL_ENABLED = false;
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return null;
     }
 
     @Override

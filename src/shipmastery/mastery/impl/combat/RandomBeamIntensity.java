@@ -1,10 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.BeamAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -19,7 +16,10 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RandomBeamIntensity extends BaseMasteryEffect {
 
@@ -150,5 +150,14 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.se + wsc.me + wsc.le;
+        if (count == 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 3, false);
     }
 }

@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.config.Settings;
@@ -52,5 +53,12 @@ public class PhasedArmorRepair extends ArmorRepair {
             if (!ship.isPhased()) return;
             super.advance(amount);
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!spec.isPhase()) return null;
+        return 0.5f + Utils.hullSizeToInt(spec.getHullSize());
     }
 }

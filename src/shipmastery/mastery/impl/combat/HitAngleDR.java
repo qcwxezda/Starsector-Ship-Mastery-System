@@ -11,6 +11,7 @@ import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class HitAngleDR extends MultiplicativeMasteryEffect {
     @Override
@@ -72,5 +73,11 @@ public class HitAngleDR extends MultiplicativeMasteryEffect {
             }
             return id;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getArmorRating(), 700f, false);
     }
 }

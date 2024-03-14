@@ -14,16 +14,21 @@ public class TargetingFeedBoost extends ShipSystemEffect {
         float strength = getStrength(selectedModule);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.TargetingFeedBoost)
-                .params(systemName, Utils.asPercent(strength), Utils.asPercent(2f * strength));
+                .params(getSystemName(), Utils.asPercent(strength), Utils.asPercent(2f * strength));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"targetingfeed".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         ship.getSystem().setFluxPerUse(0f);
         if (!ship.hasListenerOfClass(TargetingFeedBoostScript.class)) {
             ship.addListener(new TargetingFeedBoostScript(ship, getStrength(ship), 2f * getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "targetingfeed";
     }
 
     static class TargetingFeedBoostScript extends BaseShipSystemListener {
@@ -37,6 +42,7 @@ public class TargetingFeedBoost extends ShipSystemEffect {
             this.speedIncrease = speedIncrease;
             this.damageToFightersIncrease = damageToFightersIncrease;
             this.id = id;
+            ship.getSystem().setFluxPerUse(0f);
         }
 
         @Override

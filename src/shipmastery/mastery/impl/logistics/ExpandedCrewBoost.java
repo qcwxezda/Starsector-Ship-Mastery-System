@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.logistics;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -24,5 +25,11 @@ public class ExpandedCrewBoost extends BaseMasteryEffect {
         if (stats.getVariant().hasHullMod(HullMods.ADDITIONAL_BERTHING)) {
             stats.getMaxCrewMod().modifyPercent(id, 100f * getStrength(stats));
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (!spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getMaxCrew(), 300f, false);
     }
 }

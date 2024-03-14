@@ -445,4 +445,10 @@ public abstract class Utils {
         }
         return res;
     }
+
+    public static float getSelectionWeightScaledByValue(float value, float valueForOneWeight, boolean lowerValuesHigherWeight) {
+        float f = (float) (Math.log(1f + value/valueForOneWeight)/Math.log(2f));
+        if (!lowerValuesHigherWeight) return f;
+        else return getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
+    }
 }

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.logistics;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -26,5 +27,13 @@ public class EfficiencyOverhaulBoost extends BaseMasteryEffect {
             stats.getSuppliesPerMonth().modifyMult(id, 1f - strength);
             stats.getFuelUseMod().modifyMult(id, 1f - strength);
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (!spec.isCivilianNonCarrier()) return 0f;
+        float f = Utils.getSelectionWeightScaledByValue(spec.getSuppliesPerMonth() + 4f*spec.getFuelPerLY(), 20f, false);
+        if (spec.isBuiltInMod("high_maintenance")) f *= 2;
+        return f;
     }
 }

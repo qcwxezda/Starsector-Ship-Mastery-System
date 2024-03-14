@@ -7,6 +7,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
  *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#UNIQUE} is not set, i.e. is stackable, and
  *  {@code shipmastery_[ID]} otherwise. <br>
@@ -108,4 +110,8 @@ public interface MasteryEffect {
 
     /** id assigned to this mastery effect on generation. Can't be changed. */
     String getId();
+
+    /** Generate random arguments, if the mastery effect takes required arguments.
+     *  Don't include effect strength as an argument. */
+    List<String> generateRandomArgs(ShipHullSpecAPI spec);
 }

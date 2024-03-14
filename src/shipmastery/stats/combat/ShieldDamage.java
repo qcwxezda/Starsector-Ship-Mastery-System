@@ -13,11 +13,11 @@ public class ShieldDamage extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        if (!Utils.hasShield(spec)) return 0f;
-        // Prefer shields with already good efficiency
-        return Math.max(0.5f, 1.5f - spec.getBaseShieldFluxPerDamageAbsorbed());
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!Utils.hasShield(spec)) return null;
+        // Prefer ships with higher shield upkeep
+        return Utils.getSelectionWeightScaledByValue(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.8f, true);
     }
 }

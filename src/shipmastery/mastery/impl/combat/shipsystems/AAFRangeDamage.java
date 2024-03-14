@@ -13,7 +13,7 @@ public class AAFRangeDamage extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {50f, 100f, 150f, 200f};
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.AAFRangeDamage).params(systemName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.AAFRangeDamage).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
@@ -25,10 +25,15 @@ public class AAFRangeDamage extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"ammofeed".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(AAFRangeDamageScript.class)) {
             ship.addListener(new AAFRangeDamageScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "ammofeed";
     }
 
     static class AAFRangeDamageScript extends BaseShipSystemListener {

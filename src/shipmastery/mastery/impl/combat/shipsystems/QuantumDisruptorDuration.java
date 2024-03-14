@@ -15,15 +15,20 @@ public class QuantumDisruptorDuration extends ShipSystemEffect {
         float str = getStrength(selectedModule);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.QuantumDisruptorDuration)
-                .params(systemName, Utils.asPercent(str), Utils.asPercent(str * 0.15f));
+                .params(getSystemName(), Utils.asPercent(str), Utils.asPercent(str * 0.15f));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"acausaldisruptor".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(QuantumDisruptorDurationScript.class)) {
             ship.addListener(new QuantumDisruptorDurationScript(ship, getStrength(ship), getStrength(ship) * 0.15f, id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "acausaldisruptor";
     }
 
     static class QuantumDisruptorDurationScript extends BaseShipSystemListener {

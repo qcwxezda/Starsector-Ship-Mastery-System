@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.ReflectionUtils;
+import shipmastery.util.Utils;
 
 public class CRRecoveryRate extends ShipStat {
     @Override
@@ -12,10 +13,10 @@ public class CRRecoveryRate extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.isCivilianNonCarrier()) return 0f;
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
         // For some reason repair % per day isn't exposed in API ???
         float repairPercent = (float) ReflectionUtils.invokeMethod(spec, "getRepairPercentPerDay");
-        return Math.max(1f, 20f - repairPercent);
+        return Utils.getSelectionWeightScaledByValue(repairPercent, 5f, true);
     }
 }

@@ -18,7 +18,9 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class PilumSalamanderBoost extends BaseMasteryEffect {
     @Override
@@ -147,5 +149,14 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
             }, 0f);
             return null;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.sm + wsc.mm + wsc.lm;
+        if (count == 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 3, false);
     }
 }

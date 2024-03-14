@@ -3,6 +3,7 @@ package shipmastery.stats.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
+import shipmastery.util.Utils;
 
 public class MaxSpeed extends ShipStat {
     @Override
@@ -11,9 +12,9 @@ public class MaxSpeed extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        return 150f / spec.getEngineSpec().getMaxSpeed() + 1f;
+        if (spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getEngineSpec().getMaxSpeed(), 85f, true);
     }
 }

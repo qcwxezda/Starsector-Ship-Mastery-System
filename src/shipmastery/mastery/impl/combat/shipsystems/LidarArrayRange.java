@@ -10,18 +10,23 @@ import shipmastery.util.Utils;
 public class LidarArrayRange extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LidarArrayRange).params(systemName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LidarArrayRange).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"lidararray".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
 
         if (!ship.hasListenerOfClass(LidarArrayRangeScript.class)) {
             ship.addListener(new LidarArrayRangeScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "lidararray";
     }
 
     static class LidarArrayRangeScript implements AdvanceableListener {

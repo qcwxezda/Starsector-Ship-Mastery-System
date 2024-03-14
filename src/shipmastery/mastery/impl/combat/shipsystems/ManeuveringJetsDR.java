@@ -14,7 +14,7 @@ public class ManeuveringJetsDR extends ShipSystemDR {
     }
 
     @Override
-    protected String getSystemId() {
+    public String getSystemSpecId() {
         return "maneuveringjets";
     }
 }

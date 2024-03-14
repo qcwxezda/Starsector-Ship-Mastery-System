@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -100,5 +101,14 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
                 Particles.burst(emitter, 1);
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        // Small count as 1, medium as 2, large as 4
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.sm + wsc.mm * 2f  + wsc.lm * 4f;
+        if (count == 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 5f, false);
     }
 }

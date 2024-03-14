@@ -1,20 +1,22 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 
 public abstract class ShipSystemEffect extends BaseMasteryEffect {
+    String name;
+    public String getSystemName() {
+        if (name != null) return name;
+        return name = Global.getSettings().getShipSystemSpec(getSystemSpecId()).getName();
+    }
 
-    protected ShipSystemSpecAPI systemSpec;
-    protected String systemName = "";
-    protected String systemSpriteName = "";
+    public abstract String getSystemSpecId();
 
     @Override
-    public void init(String... args) {
-        super.init(args);
-        systemSpec = Global.getSettings().getShipSystemSpec(getHullSpec().getShipSystemId());
-        systemName = systemSpec.getName();
-        systemSpriteName = systemSpec.getIconSpriteName();
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (spec.getShipSystemId() == null || !spec.getShipSystemId().equals(getSystemSpecId())) return null;
+        return 3f;
     }
 }

@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -24,7 +25,7 @@ public class HEFMissileBoost extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {100f, 200f, 300f, 400f};
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFMissileBoost).params(systemName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFMissileBoost).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
@@ -36,10 +37,15 @@ public class HEFMissileBoost extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(HEFMissileBoostScript.class)) {
             ship.addListener(new HEFMissileBoostScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "highenergyfocus";
     }
 
     static class HEFMissileBoostScript extends BaseShipSystemListener implements AdvanceableListener {
@@ -120,5 +126,15 @@ public class HEFMissileBoost extends ShipSystemEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        Float mult = super.getSelectionWeight(spec);
+        if (mult == null) return null;
+        // Must have at least one missile weapon
+        Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
+        int weightedCount = count.sm + 2*count.mm + 4*count.lm;
+        return weightedCount == 0 ? null : mult * Utils.getSelectionWeightScaledByValue(weightedCount, 4f, false);
     }
 }

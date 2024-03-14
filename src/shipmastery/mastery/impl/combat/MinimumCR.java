@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -34,5 +35,11 @@ public class MinimumCR extends BaseMasteryEffect {
         public void advance(float amount) {
             ship.setCurrentCR(Math.min(ship.getCRAtDeployment(), Math.max(ship.getCurrentCR(), minimum)));
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
     }
 }

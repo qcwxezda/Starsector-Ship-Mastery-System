@@ -12,9 +12,9 @@ public class WeaponTurnRate extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
+        if (spec.isCivilianNonCarrier()) return null;
         return 1f;
     }
 }

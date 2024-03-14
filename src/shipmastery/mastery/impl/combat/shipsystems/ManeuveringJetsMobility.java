@@ -18,7 +18,7 @@ import java.awt.Color;
 public class ManeuveringJetsMobility extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsMobility).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsMobility).params(getSystemName());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !"maneuveringjets".equals(ship.getSystem().getId())) {
+        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(ManeuveringJetsMobilityScript.class)) {
@@ -44,6 +44,11 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
             listener.onFullyDeactivate();
         }
         ship.removeListenerOfClass(ManeuveringJetsMobilityScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "maneuveringjets";
     }
 
     public static class ManeuveringJetsMobilityScript extends BaseShipSystemListener {

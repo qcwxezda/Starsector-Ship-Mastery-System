@@ -2,8 +2,11 @@ package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -47,5 +50,29 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
             i++;
         }
         return Utils.joinStringList(names) + ".";
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if ((ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) || spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) &&
+                (!spec.isPhase() || spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) &&
+                (!spec.isBuiltInMod(HullMods.AUTOMATED) || spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR))) return null;
+        return 0f;
+    }
+
+    @Override
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec) {
+        WeightedRandomPicker<String> wrp = new WeightedRandomPicker<>();
+        if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) && !spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) {
+            wrp.add(HullMods.SAFETYOVERRIDES);
+        }
+        if (spec.isPhase() && !spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) {
+            wrp.add(HullMods.PHASE_ANCHOR);
+        }
+        if (spec.isBuiltInMod(HullMods.AUTOMATED) && !spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR)) {
+            wrp.add(HullMods.NEURAL_INTEGRATOR);
+        }
+        if (wrp.isEmpty()) return new ArrayList<>();
+        return Collections.singletonList(wrp.pick());
     }
 }

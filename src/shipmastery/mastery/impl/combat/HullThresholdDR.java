@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -142,5 +143,11 @@ public class HullThresholdDR extends BaseMasteryEffect {
                 Global.getSoundPlayer().playLoop("system_damper_loop", ship, 1f, effectLevel, ship.getLocation(), ship.getVelocity());
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getHitpoints(), 5000f, false);
     }
 }

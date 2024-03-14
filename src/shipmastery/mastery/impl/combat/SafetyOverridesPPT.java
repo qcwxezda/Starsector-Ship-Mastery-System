@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -25,5 +26,12 @@ public class SafetyOverridesPPT extends BaseMasteryEffect {
         if (stats.getVariant().hasHullMod(HullMods.SAFETYOVERRIDES)) {
             stats.getPeakCRDuration().modifyMult(id, 1f + getStrength(stats));
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return null;
+        return 3f - Utils.hullSizeToInt(spec.getHullSize());
     }
 }

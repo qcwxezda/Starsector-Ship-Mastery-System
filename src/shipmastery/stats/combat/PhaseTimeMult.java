@@ -13,9 +13,9 @@ public class PhaseTimeMult extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        return spec.isPhase() ? 1f : 0f;
+        if (spec.isCivilianNonCarrier()) return null;
+        return spec.isPhase() ? 1f : null;
     }
 }

@@ -3,6 +3,7 @@ package shipmastery.stats.logistics;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
+import shipmastery.util.Utils;
 
 public class FuelCapacity extends ShipStat {
     @Override
@@ -11,9 +12,8 @@ public class FuelCapacity extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
-        float weight = (float) Math.log(spec.getFuel() + 2f);
-        if (spec.isCivilianNonCarrier()) weight *= 3f;
-        return weight;
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (!spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getFuel(), 300f, false);
     }
 }

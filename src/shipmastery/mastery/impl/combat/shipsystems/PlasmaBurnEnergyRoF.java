@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -25,7 +26,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.PlasmaBurnEnergyRoF)
-                .params(systemName,Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(),Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
@@ -36,12 +37,12 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asFloatOneDecimal(getStrength(selectedModule) * 20f),
-                systemName);
+                getSystemName());
     }
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !"microburn".equals(ship.getSystem().getId())) return;
+        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(PlasmaBurnEnergyRoFScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new PlasmaBurnEnergyRoFScript(ship, strength, 20f * strength, id));
@@ -53,6 +54,11 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
         ship.getMutableStats().getEnergyRoFMult().unmodify(id);
         ship.getMutableStats().getEnergyWeaponFluxCostMod().unmodify(id);
         ship.removeListenerOfClass(PlasmaBurnEnergyRoFScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "microburn";
     }
 
     static class PlasmaBurnEnergyRoFScript extends BaseShipSystemListener implements AdvanceableListener {
@@ -130,5 +136,15 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        Float mult = super.getSelectionWeight(spec);
+        if (mult == null) return null;
+        // Must have at least one energy weapon
+        Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
+        int weightedCount = count.se + count.me + count.le;
+        return weightedCount == 0 ? null : mult * Utils.getSelectionWeightScaledByValue(weightedCount, 4f, false);
     }
 }

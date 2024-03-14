@@ -24,7 +24,7 @@ public class SkimmerEMP extends ShipSystemEffect {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerEMP)
                                  .params(
-                                         systemName,
+                                         getSystemName(),
                                          Utils.asInt(strength),
                                          Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(MAX_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())])),
                                          Utils.asFloatOneDecimal(strength*50f),
@@ -39,13 +39,18 @@ public class SkimmerEMP extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"displacer".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(SkimmerEMPScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new SkimmerEMPScript(ship, (int) strength, strength*50f, strength*125f));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "displacer";
     }
 
     static class SkimmerEMPScript extends BaseShipSystemListener {

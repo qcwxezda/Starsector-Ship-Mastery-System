@@ -1,18 +1,16 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
+import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.combat.listeners.ShipSystemListener;
-import shipmastery.deferred.Action;
-import shipmastery.deferred.CombatDeferredActionPlugin;
+import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class FasterActiveFlares extends ShipSystemEffect {
+public class FasterActiveFlares extends BaseMasteryEffect {
 
     public static final String PROCESSED_KEY = "sms_processed_" + FasterActiveFlares.class.getSimpleName();
 
@@ -93,5 +91,19 @@ public class FasterActiveFlares extends ShipSystemEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        for (String id : spec.getBuiltInWeapons().values()) {
+            WeaponSpecAPI wSpec = Global.getSettings().getWeaponSpec(id);
+            Object pSpec = wSpec.getProjectileSpec();
+            if (!(pSpec instanceof MissileSpecAPI)) continue;
+            String type = ((MissileSpecAPI) pSpec).getTypeString();
+            if ("FLARE_SEEKER".equals(type)) {
+                return 3f;
+            }
+        }
+        return null;
     }
 }

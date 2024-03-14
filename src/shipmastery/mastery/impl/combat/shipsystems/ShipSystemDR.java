@@ -23,11 +23,10 @@ public abstract class ShipSystemDR extends ShipSystemEffect {
 
     protected abstract String getStatusTitle();
     protected abstract boolean affectsFighters();
-    protected abstract String getSystemId();
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ShipSystemDR).params(
-                Global.getSettings().getShipSystemSpec(getSystemId()).getName(), Utils.asPercent(getStrengthForPlayer()));
+                Global.getSettings().getShipSystemSpec(getSystemSpecId()).getName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
@@ -40,7 +39,7 @@ public abstract class ShipSystemDR extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemId().equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(ShipSystemDRScript.class)) {

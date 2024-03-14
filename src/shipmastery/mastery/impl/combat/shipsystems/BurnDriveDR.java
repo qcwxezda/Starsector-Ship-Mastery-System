@@ -15,7 +15,7 @@ public class BurnDriveDR extends ShipSystemDR {
     }
 
     @Override
-    protected String getSystemId() {
+    public String getSystemSpecId() {
         return "burndrive";
     }
 }

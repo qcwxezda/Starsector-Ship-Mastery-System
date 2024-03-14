@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.hullmods.BDeck;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -62,5 +63,12 @@ public class BDeckExtraCharges extends BaseMasteryEffect {
                 }, DELAY_SECONDS);
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!spec.isBuiltInMod("bdeck")) return null;
+        return 3f;
     }
 }

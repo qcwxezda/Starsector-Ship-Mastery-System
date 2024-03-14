@@ -5,9 +5,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class RepairTime extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
@@ -15,9 +12,9 @@ public class RepairTime extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
+        if (spec.isCivilianNonCarrier()) return null;
         return 1f;
     }
 }

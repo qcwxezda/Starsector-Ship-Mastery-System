@@ -31,12 +31,12 @@ public class OrionDeviceDamage extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.OrionDeviceDamage).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.OrionDeviceDamage).params(getSystemName());
     }
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null | !"orion_device".equals(ship.getSystem().getId())) {
+        if (ship == null || ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(OrionDeviceDamageScript.class)) {
@@ -60,6 +60,11 @@ public class OrionDeviceDamage extends ShipSystemEffect {
                 DamageType.HIGH_EXPLOSIVE.getDisplayName(),
                 Utils.asInt(ARC_DEGREES),
                 Utils.asInt(RANGE));
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "orion_device";
     }
 
     static class OrionDeviceDamageScript extends BaseShipSystemListener {

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -27,5 +28,12 @@ public class ConvertedHangarNoPenalty extends BaseMasteryEffect {
         stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).unmodify(HullMods.CONVERTED_HANGAR);
         stats.getSuppliesToRecover().unmodify(HullMods.CONVERTED_HANGAR);
         stats.getCRPerDeploymentPercent().unmodify(HullMods.CONVERTED_HANGAR);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (ShipAPI.HullSize.FRIGATE.equals(spec.getHullSize())) return null;
+        return 1f;
     }
 }

@@ -11,14 +11,13 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.config.Settings;
-import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.Objects;
 
-public class HighFrequencyMotes extends BaseMasteryEffect {
+public class HighFrequencyMotes extends ShipSystemEffect {
 
     public static final float RANGE_REDUCTION = 0.6f;
     public static final float MAX_MOTES_REDUCTION = 0.5f;
@@ -54,5 +53,10 @@ public class HighFrequencyMotes extends BaseMasteryEffect {
         ship.getVariant().removeMod(HullMods.HIGH_FREQUENCY_ATTRACTOR);
         MoteControlScript.MOTE_DATA.get(MoteControlScript.MOTELAUNCHER_HF).maxMotes = MoteControlScript.MAX_MOTES_HF;
         ship.getMutableStats().getSystemRangeBonus().unmodify(id);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "mote_control";
     }
 }

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -127,5 +128,14 @@ public class TorpedoTracking extends BaseMasteryEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        // Small count as 1, medium as 2, large as 4
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.sm + wsc.mm * 2f  + wsc.lm * 4f;
+        if (count == 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 5f, false);
     }
 }

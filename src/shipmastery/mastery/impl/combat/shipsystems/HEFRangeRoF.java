@@ -13,7 +13,7 @@ public class HEFRangeRoF extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {100f, 200f, 300f, 400f};
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFRangeRoF).params(systemName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFRangeRoF).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
@@ -25,10 +25,15 @@ public class HEFRangeRoF extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(HEFRangeRoFScript.class)) {
             ship.addListener(new HEFRangeRoFScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "highenergyfocus";
     }
 
     static class HEFRangeRoFScript extends BaseShipSystemListener {

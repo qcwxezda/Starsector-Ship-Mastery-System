@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader;
@@ -36,5 +37,14 @@ public class MissileAutoloaderCapacity extends BaseMasteryEffect {
             data.opLeft *= 1f + getStrength(ship);
             data.opLeft = (int) data.opLeft;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.sm;
+        if (count == 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 3, true);
     }
 }

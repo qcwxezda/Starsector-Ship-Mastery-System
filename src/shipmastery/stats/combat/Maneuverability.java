@@ -3,6 +3,7 @@ package shipmastery.stats.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
+import shipmastery.util.Utils;
 
 public class Maneuverability extends ShipStat {
     @Override
@@ -11,11 +12,11 @@ public class Maneuverability extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
+        if (spec.isCivilianNonCarrier()) return null;
         // Prefer less maneuverable ships
         ShipHullSpecAPI.EngineSpecAPI engine = spec.getEngineSpec();
-        return 200f / engine.getAcceleration() + 200f / engine.getDeceleration() + 200f / engine.getMaxTurnRate() + 200f / engine.getTurnAcceleration() + 1f;
+        return Utils.getSelectionWeightScaledByValue(engine.getMaxTurnRate(), 20f, true);
     }
 }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.campaign.fleet.FleetData;
@@ -60,4 +61,11 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         return Math.max(amount, -1f);
     }
 
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        float dp = spec.getSuppliesToRecover();
+        if (dp < 10f) return null;
+        return Utils.getSelectionWeightScaledByValue(dp, 20f, false);
+    }
 }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.stats.ShipStat;
+import shipmastery.util.Utils;
 
 public class FighterCrewLoss extends ShipStat {
     @Override
@@ -13,9 +14,9 @@ public class FighterCrewLoss extends ShipStat {
     }
 
     @Override
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        return spec.getFighterBays() <= 0 ? 0f : 1f;
+        if (spec.isCivilianNonCarrier()) return null;
+        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2f, false);
     }
 }

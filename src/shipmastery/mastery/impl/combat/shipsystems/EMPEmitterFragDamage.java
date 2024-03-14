@@ -15,14 +15,19 @@ public class EMPEmitterFragDamage extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EMPEmitterFragDamage)
-                                 .params(systemName, Utils.asInt(getStrength(selectedModule)));
+                                 .params(getSystemName(), Utils.asInt(getStrength(selectedModule)));
     }
 
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"emp".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(EMPEmitterFragDamageScript.class)) {
             ship.addListener(new EMPEmitterFragDamageScript(ship, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "emp";
     }
 
     static class EMPEmitterFragDamageScript implements EMPEmitterDamageListener {

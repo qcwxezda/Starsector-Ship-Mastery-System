@@ -105,4 +105,13 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
             return null;
         }
     }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.lb;
+        if (count <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 1f, false);
+    }
 }

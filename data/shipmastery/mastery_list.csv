@@ -52,6 +52,7 @@ VentingSpeedBoost,9,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingS
 RangeNotMoving,9,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
 SafetyOverridesBoost,9,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,9,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
+TimeFlowNearbyEnemies,9,combat unique,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
 ConvertedCargoBayNoPenalty,5,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty

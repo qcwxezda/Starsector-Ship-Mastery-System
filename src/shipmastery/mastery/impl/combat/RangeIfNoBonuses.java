@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
@@ -74,5 +75,13 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
             case CRUISER: amount *= 2f / 3f; break;
         }
         return Math.max(amount, -1f);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        // Works too well with DTC
+        if (spec.isBuiltInMod(HullMods.DISTRIBUTED_FIRE_CONTROL)) return 0f;
+        return 1f;
     }
 }

@@ -28,7 +28,7 @@ public class ReactiveFortressShield extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ReactiveFortressShield)
-                                 .params(systemName,
+                                 .params(getSystemName(),
                                          Utils.asPercent(strength),
                                          Utils.asFloatOneDecimal(strength*5000f),
                                          Utils.asFloatTwoDecimals(strength*10000f));
@@ -47,7 +47,7 @@ public class ReactiveFortressShield extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"fortressshield".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(ReactiveFortressShieldScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new ReactiveFortressShieldScript(
@@ -57,6 +57,11 @@ public class ReactiveFortressShield extends ShipSystemEffect {
                     strength*10000f,
                     ship.getMutableStats().getSystemRangeBonus().computeEffective(BASE_RANGE[Utils.hullSizeToInt(ship.getHullSize())])));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "fortressshield";
     }
 
     static class ReactiveFortressShieldScript implements DamageTakenModifier {

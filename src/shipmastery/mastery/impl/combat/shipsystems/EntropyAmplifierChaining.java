@@ -15,9 +15,9 @@ import shipmastery.util.TargetChecker;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 public class EntropyAmplifierChaining extends ShipSystemEffect {
 
@@ -27,7 +27,7 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EntropyAmplifierChaining)
-                                 .params(systemName,
+                                 .params(getSystemName(),
                                          Utils.asInt(getStrength(selectedModule)),
                                          Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(MAX_RANGE)));
     }
@@ -40,12 +40,17 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !ENTROPY_AMPLIFIER_ID.equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(EntropyAmplifierChainingScript.class)) {
             ship.addListener(new EntropyAmplifierChainingScript(ship, (int) getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return ENTROPY_AMPLIFIER_ID;
     }
 
     static class EntropyAmplifierChainingScript extends BaseShipSystemListener implements AdvanceableListener {

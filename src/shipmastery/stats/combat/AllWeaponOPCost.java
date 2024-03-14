@@ -1,6 +1,7 @@
 package shipmastery.stats.combat;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.stats.ShipStat;
 
@@ -17,5 +18,12 @@ public class AllWeaponOPCost extends ShipStat {
                 stats.getDynamic().getMod(Stats.SMALL_MISSILE_MOD),
                 stats.getDynamic().getMod(Stats.MEDIUM_MISSILE_MOD),
                 stats.getDynamic().getMod(Stats.LARGE_MISSILE_MOD)};
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        // No civilian ships
+        if (spec.isCivilianNonCarrier()) return null;
+        return 1f;
     }
 }

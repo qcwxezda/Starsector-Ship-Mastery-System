@@ -23,7 +23,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaBurnEngineRepair).params(systemName,
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaBurnEngineRepair).params(getSystemName(),
                                                                                                            Utils.asFloatOneDecimal(5f * getStrengthForPlayer()));
     }
 
@@ -36,7 +36,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !"microburn".equals(ship.getSystem().getId())) return;
+        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(PlasmaBurnEngineRepairScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new PlasmaBurnEngineRepairScript(ship, 5f * strength, strength, strength, id));
@@ -49,6 +49,11 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
         ship.getMutableStats().getTurnAcceleration().unmodify(id);
         ship.getMutableStats().getCombatEngineRepairTimeMult().unmodify(id);
         ship.removeListenerOfClass(PlasmaBurnEngineRepairScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "microburn";
     }
 
     static class PlasmaBurnEngineRepairScript extends BaseShipSystemListener implements AdvanceableListener {

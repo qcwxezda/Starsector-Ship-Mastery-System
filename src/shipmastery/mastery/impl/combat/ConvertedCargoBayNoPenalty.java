@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -31,5 +32,12 @@ public class ConvertedCargoBayNoPenalty extends BaseMasteryEffect {
         stats.getShieldDamageTakenMult().unmodify(HullMods.CONVERTED_BAY);
         stats.getHullDamageTakenMult().unmodify(HullMods.CONVERTED_BAY);
         fighter.setDHullOverlay(null);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!spec.isBuiltInMod(HullMods.CONVERTED_BAY) && !spec.isBuiltInMod(HullMods.DEFECTIVE_MANUFACTORY)) return null;
+        return 3f;
     }
 }

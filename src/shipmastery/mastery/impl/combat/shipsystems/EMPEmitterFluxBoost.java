@@ -23,7 +23,7 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         String str = Utils.asPercent(getStrength(selectedModule));
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EMPEmitterFluxBoost)
-                                 .params(systemName, str, str);
+                                 .params(getSystemName(), str, str);
     }
 
     @Override
@@ -37,10 +37,15 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"emp".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(EMPEmitterFluxBoostScript.class)) {
             ship.addListener(new EMPEmitterFluxBoostScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "emp";
     }
 
     static class EMPEmitterFluxBoostScript implements EMPEmitterDamageListener, AdvanceableListener {

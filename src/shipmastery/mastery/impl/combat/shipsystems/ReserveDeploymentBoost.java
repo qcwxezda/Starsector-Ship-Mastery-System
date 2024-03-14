@@ -16,7 +16,7 @@ public class ReserveDeploymentBoost extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ReserveDeploymentBoost).params(
-                Utils.asInt(getCount(selectedModule)), systemName, Utils.asPercent(getRefitTimeDecrease(selectedModule)));
+                Utils.asInt(getCount(selectedModule)), getSystemName(), Utils.asPercent(getRefitTimeDecrease(selectedModule)));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ReserveDeploymentBoost extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"reservewing".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(ReserveDeploymentBoostScript.class)) {
             ship.addListener(new ReserveDeploymentBoostScript(ship, getCount(ship), getRefitTimeDecrease(ship), id));
         }
@@ -39,6 +39,11 @@ public class ReserveDeploymentBoost extends ShipSystemEffect {
 
     public float getRefitTimeDecrease(ShipAPI ship) {
         return getStrength(ship) * 0.25f / 3.5f;
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "reservewing";
     }
 
     static class ReserveDeploymentBoostScript extends BaseShipSystemListener {

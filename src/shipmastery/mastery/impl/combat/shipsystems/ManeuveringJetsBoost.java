@@ -15,11 +15,17 @@ public class ManeuveringJetsBoost extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"maneuveringjets".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(ManeuveringJetsBoostScript.class)) {
             ship.addListener(new ManeuveringJetsBoostScript(ship, getStrength(ship), id));
         }
     }
+
+    @Override
+    public String getSystemSpecId() {
+        return "maneuveringjets";
+    }
+
     static class ManeuveringJetsBoostScript extends BaseShipSystemListener {
 
         final ShipAPI ship;

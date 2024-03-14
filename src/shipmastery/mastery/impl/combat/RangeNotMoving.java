@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -90,5 +91,11 @@ public class RangeNotMoving extends BaseMasteryEffect {
                 ship.getMutableStats().getBallisticWeaponRangeBonus().unmodify(id);
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        return 1f + Utils.hullSizeToInt(spec.getHullSize());
     }
 }

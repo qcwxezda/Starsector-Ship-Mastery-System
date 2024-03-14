@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.logistics;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -26,5 +27,11 @@ public class GroundSupportBoost extends BaseMasteryEffect {
                 (!stats.getVariant().hasHullMod("ground_support") &&
                         !stats.getVariant().hasHullMod("advanced_ground_support"))) return;
         stats.getDynamic().getMod(Stats.FLEET_GROUND_SUPPORT).modifyFlat(id, getStrength(stats));
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isBuiltInMod("ground_support") || spec.isBuiltInMod("advanced_ground_support")) return 1f;
+        return null;
     }
 }

@@ -21,7 +21,7 @@ public class PlasmaJetsGrazeChance extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsGrazeChance).params(systemName, Utils.asPercent(DAMAGE_MULT));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsGrazeChance).params(getSystemName(), Utils.asPercent(DAMAGE_MULT));
     }
 
     @Override
@@ -32,12 +32,17 @@ public class PlasmaJetsGrazeChance extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"plasmajets".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(PlasmaJetsGrazeChanceScript.class)) {
             ship.addListener(new PlasmaJetsGrazeChanceScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "plasmajets";
     }
 
     static class PlasmaJetsGrazeChanceScript extends BaseShipSystemListener implements DamageTakenModifier {

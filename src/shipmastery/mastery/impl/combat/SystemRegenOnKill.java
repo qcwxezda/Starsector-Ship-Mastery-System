@@ -1,7 +1,10 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
+import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import particleengine.Particles;
@@ -84,5 +87,14 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.getShipSystemId() == null) return null;
+        ShipSystemSpecAPI system = Global.getSettings().getShipSystemSpec(spec.getShipSystemId());
+        float regen = system.getRegen(null);
+        if (regen <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValue(regen, 0.1f, true);
     }
 }

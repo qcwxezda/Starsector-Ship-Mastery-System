@@ -30,7 +30,7 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float radius = getEffectRadius(Global.getSector().getPlayerPerson(), selectedModule.getHullSize());
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceDestruction).params(systemName, (int) radius);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceDestruction).params(getSystemName(), (int) radius);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !"recalldevice".equals(ship.getSystem().getId())) return;
+        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(RecallDeviceDestructionScript.class)) {
             ship.addListener(new RecallDeviceDestructionScript(ship, getEffectRadius(commander, ship.getHullSize())));
         }
@@ -50,6 +50,11 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         ship.removeListenerOfClass(RecallDeviceDestructionScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "recalldevice";
     }
 
     public static class RecallDeviceDestructionScript extends BaseShipSystemListener {

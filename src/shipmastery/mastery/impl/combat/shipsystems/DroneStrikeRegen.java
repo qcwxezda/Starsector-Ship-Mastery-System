@@ -20,12 +20,12 @@ public class DroneStrikeRegen extends ShipSystemEffect {
         float strength = getStrength(selectedModule);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.DroneStrikeRegen)
-                .params(systemName, Utils.asPercent(strength), Utils.asPercent(strength));
+                .params(getSystemName(), Utils.asPercent(strength), Utils.asPercent(strength));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"drone_strike".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DroneStrikeRegenScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new DroneStrikeRegenScript(ship, strength, strength, id));
@@ -36,6 +36,11 @@ public class DroneStrikeRegen extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.DroneStrikeRegenPost, 0f);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "drone_strike";
     }
 
     static class DroneStrikeRegenScript extends BaseShipSystemListener implements ShipDestroyedListener {

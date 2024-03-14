@@ -11,15 +11,20 @@ public class DamperFieldDissipation extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.DamperFieldDissipation)
-                                 .params(systemName, Utils.asFloatTwoDecimals(1f + getStrength(selectedModule)));
+                                 .params(getSystemName(), Utils.asFloatTwoDecimals(1f + getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"damper".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DamperFieldDissipationScript.class)) {
             ship.addListener(new DamperFieldDissipationScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "damper";
     }
 
     static class DamperFieldDissipationScript extends BaseShipSystemListener {

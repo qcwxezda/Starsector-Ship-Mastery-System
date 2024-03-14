@@ -18,15 +18,20 @@ public class CanisterFlakWhileVenting extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.CanisterFlakWhileVenting).params(
-                systemName, Utils.asFloatOneDecimal(getStrength(selectedModule)));
+                getSystemName(), Utils.asFloatOneDecimal(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"canister_flak".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(CanisterFlakWhileVentingScript.class)) {
             ship.addListener(new CanisterFlakWhileVentingScript(ship, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "canister_flak";
     }
 
     static class CanisterFlakWhileVentingScript implements AdvanceableListener {

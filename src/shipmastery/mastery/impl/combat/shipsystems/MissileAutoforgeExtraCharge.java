@@ -9,17 +9,22 @@ import shipmastery.util.Strings;
 public class MissileAutoforgeExtraCharge extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.MissileAutoforgeExtraCharge).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.MissileAutoforgeExtraCharge).params(getSystemName());
     }
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
-        if (stats.getVariant() == null || stats.getVariant().getHullSpec() == null || !"forgevats".equals(stats.getVariant().getHullSpec().getShipSystemId())) return;
+        if (stats.getVariant() == null || stats.getVariant().getHullSpec() == null || !getSystemSpecId().equals(stats.getVariant().getHullSpec().getShipSystemId())) return;
         stats.getSystemUsesBonus().modifyFlat(id, 1);
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         ship.getSystem().setFluxPerUse(0f);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "forgevats";
     }
 }

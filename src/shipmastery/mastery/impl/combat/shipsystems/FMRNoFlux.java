@@ -8,12 +8,17 @@ import shipmastery.util.Strings;
 public class FMRNoFlux extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRNoFlux).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRNoFlux).params(getSystemName());
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"fastmissileracks".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         ship.getSystem().setFluxPerUse(0f);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "fastmissileracks";
     }
 }

@@ -22,21 +22,27 @@ import java.util.Map;
 public class BurnDriveMissileBoost extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveMissileBoost).params(systemName, Utils.asPercent(getStrengthForPlayer()));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveMissileBoost).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "burndrive";
     }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (!"burndrive".equals(spec.getShipSystemId())) return null;
+        Float mult = super.getSelectionWeight(spec);
+        if (mult == null) return null;
         // Must have at least one missile weapon
         Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
         int weightedCount = count.sm + 2*count.mm + 4*count.lm;
-        return weightedCount == 0 ? null : (float) weightedCount;
+        return weightedCount == 0 ? null : mult * Utils.getSelectionWeightScaledByValue(weightedCount, 4f, false);
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"burndrive".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(BurnDriveMissileBoostScript.class)) {
             ship.addListener(new BurnDriveMissileBoostScript(ship, getStrength(ship), id));
         }

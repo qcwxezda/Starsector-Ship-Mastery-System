@@ -29,11 +29,11 @@ public class NovaBurstDamage extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(getSystemName());
     }
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null | !"nova_burst".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(NovaBurstDamageScript.class)) {
@@ -52,6 +52,11 @@ public class NovaBurstDamage extends ShipSystemEffect {
                 DamageType.ENERGY.getDisplayName(),
                 Utils.asInt(ARC_DEGREES),
                 Utils.asInt(RANGE));
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "nova_burst";
     }
 
     static class NovaBurstDamageScript extends BaseShipSystemListener {

@@ -25,7 +25,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseTeleporterTimeFlow)
-                                 .params(systemName, Utils.asPercent(strength), Utils.asFloatOneDecimal(5f*strength));
+                                 .params(getSystemName(), Utils.asPercent(strength), Utils.asFloatOneDecimal(5f*strength));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null | !"phaseteleporter".equals(ship.getSystem().getId())) {
+        if (ship == null || ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(PhaseTeleporterTimeFlowScript.class)) {
@@ -56,6 +56,11 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         ship.getMutableStats().getTimeMult().unmodify(id);
         ship.removeListenerOfClass(PhaseTeleporterTimeFlowScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "phaseteleporter";
     }
 
     static class PhaseTeleporterTimeFlowScript extends BaseShipSystemListener implements AdvanceableListener,

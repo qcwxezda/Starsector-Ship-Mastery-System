@@ -243,4 +243,13 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
             }
         }
     }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.sm + 2f * wsc.mm + 3f * wsc.lm;
+        if (count <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 4f, false);
+    }
 }

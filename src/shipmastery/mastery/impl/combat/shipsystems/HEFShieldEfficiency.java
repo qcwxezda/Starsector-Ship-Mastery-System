@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.MasteryDescription;
@@ -12,15 +13,20 @@ import java.awt.Color;
 public class HEFShieldEfficiency extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFShieldEfficiency).params(systemName, Utils.asPercent(getStrength(selectedModule)));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFShieldEfficiency).params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getShield() == null || ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) return;
+        if (ship.getShield() == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(HEFShieldEfficiencyScript.class)) {
             ship.addListener(new HEFShieldEfficiencyScript(ship, getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "highenergyfocus";
     }
 
     static class HEFShieldEfficiencyScript extends BaseShipSystemListener {
@@ -57,7 +63,12 @@ public class HEFShieldEfficiency extends ShipSystemEffect {
                 ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
                 ship.getShield().setInnerColor(originalColor);
             }
-
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (!Utils.hasShield(spec)) return null;
+        return super.getSelectionWeight(spec);
     }
 }

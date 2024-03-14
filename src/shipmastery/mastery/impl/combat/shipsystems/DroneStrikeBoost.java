@@ -18,16 +18,21 @@ public class DroneStrikeBoost extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.DroneStrikeBoost)
-                .params(systemName, Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"drone_strike".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DroneStrikeBoostScript.class)) {
             // numMissiles should be getNumToFire, but the method is protected, so...
             ship.addListener(new DroneStrikeBoostScript(ship, getStrength(ship), 1, id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "drone_strike";
     }
 
     static class DroneStrikeBoostScript extends BaseShipSystemListener {

@@ -16,17 +16,22 @@ public class RecallDeviceRegeneration extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceRegeneration)
                                  .params(
-                                         systemName,
+                                         getSystemName(),
                                          Utils.asPercent(getStrengthForPlayer() / 6f),
                                          Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"recalldevice".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(RecallDeviceRegenerationScript.class)) {
             ship.addListener(new RecallDeviceRegenerationScript(ship, getStrength(ship) / 6f, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "recalldevice";
     }
 
     public static class RecallDeviceRegenerationScript extends BaseShipSystemListener {

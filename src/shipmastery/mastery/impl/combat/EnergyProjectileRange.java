@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponBaseRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -42,5 +43,14 @@ public class EnergyProjectileRange extends BaseMasteryEffect {
         public float getWeaponBaseRangeFlatMod(ShipAPI ship, WeaponAPI weapon) {
             return WeaponAPI.WeaponType.ENERGY.equals(weapon.getType()) && !weapon.isBeam() ? bonus : 0f;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        float count = wsc.se + wsc.me + wsc.le;
+        if (count <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 3f, false);
     }
 }

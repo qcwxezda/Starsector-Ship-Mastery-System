@@ -20,7 +20,7 @@ public class SkimmerDR extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerDR).params(
-                systemName,
+                getSystemName(),
                 Utils.asPercent(strength),
                 Utils.asFloatOneDecimal(10f * strength));
     }
@@ -33,13 +33,18 @@ public class SkimmerDR extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"displacer".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(SkimmerDRScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new SkimmerDRScript(ship, 1f - strength, strength * 10f, id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "displacer";
     }
 
     static class SkimmerDRScript extends BaseShipSystemListener implements AdvanceableListener {

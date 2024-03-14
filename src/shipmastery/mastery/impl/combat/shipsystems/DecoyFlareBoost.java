@@ -17,15 +17,20 @@ public class DecoyFlareBoost extends ShipSystemEffect{
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.DecoyFlareBoost)
-                                 .params(systemName, Utils.asPercent(getStrength(selectedModule)));
+                                 .params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"flarelauncher_fighter".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DecoyFlareBoostScript.class)) {
             ship.addListener(new DecoyFlareBoostScript(ship, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "flarelauncher_fighter";
     }
 
     static class DecoyFlareBoostScript extends BaseShipSystemListener {

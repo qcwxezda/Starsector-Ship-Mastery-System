@@ -15,7 +15,7 @@ public abstract class ShipStat {
     public abstract Object get(MutableShipStatsAPI stats);
 
     /** Selection weight for each stat will be normalized across all hull specs. */
-    public float getSelectionWeight(ShipHullSpecAPI spec) {
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 1f;
     }
 

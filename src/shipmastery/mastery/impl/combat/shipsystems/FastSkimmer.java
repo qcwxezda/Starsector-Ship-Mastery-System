@@ -17,7 +17,7 @@ public class FastSkimmer extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FastSkimmer).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FastSkimmer).params(getSystemName());
     }
 
     @Override
@@ -40,14 +40,18 @@ public class FastSkimmer extends ShipSystemEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null ||
-                (!"displacer".equals(ship.getSystem().getId()) && !"displacer_degraded".equals(ship.getSystem().getId()))) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(FastSkimmerScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new FastSkimmerScript(ship, Math.max(0f, 1f-strength/2f), 1f+strength, 1f+strength, id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "displacer";
     }
 
     static class FastSkimmerScript extends BaseShipSystemListener {

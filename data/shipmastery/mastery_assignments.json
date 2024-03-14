@@ -368,6 +368,18 @@
     }
   },
 
+  "shard_left": {
+    "levels": {
+      "9": "TimeFlowNearbyEnemies"
+    }
+  },
+
+  "shard_right": {
+    "levels": {
+      "9": "TimeFlowNearbyEnemies"
+    }
+  },
+
   "shepherd": {
     "levels": {
       "9": {
@@ -438,7 +450,7 @@
   "wolf_d_pirates": {
     "levels": {
       "9": {
-        "A": "FastSkimmer",
+        "A": "VentingSpeedBoost",
         "B": "SpeedHullLevel"
       }
     }
@@ -521,6 +533,12 @@
         "A": "BurnDriveDR",
         "B": "ModifyStatsFlat 1.4 BallisticWeaponsOPCost"
       }
+    }
+  },
+
+  "facet": {
+    "levels": {
+      "9": "TimeFlowNearbyEnemies"
     }
   },
 
@@ -939,6 +957,12 @@
 
   "starliner": {
     "preset": "logistic_crew"
+  },
+
+  "tesseract": {
+    "levels": {
+      "9": "TimeFlowNearbyEnemies"
+    }
   },
 
   "venture": {

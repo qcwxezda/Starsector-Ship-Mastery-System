@@ -14,7 +14,7 @@ import shipmastery.util.Utils;
 public class BurnDriveCooldown extends ShipSystemEffect{
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveCooldown).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveCooldown).params(getSystemName());
     }
 
     @Override
@@ -26,10 +26,15 @@ public class BurnDriveCooldown extends ShipSystemEffect{
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"burndrive".equals(ship.getSystem().getId())) return;
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(BurnDriveCooldownScript.class)) {
             ship.addListener(new BurnDriveCooldownScript(ship, getStrength(ship)));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "burndrive";
     }
 
     static class BurnDriveCooldownScript extends BaseShipSystemListener implements AdvanceableListener {

@@ -11,14 +11,20 @@ public class TemporalShellCRDegradation extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TemporalShellCRDegradation).params(
-                systemName, Utils.asPercent(getStrength(selectedModule)));
+                getSystemName(), Utils.asPercent(getStrength(selectedModule)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(TemporalShellCRDegradationScript.class)) {
             ship.addListener(new TemporalShellCRDegradationScript(ship, 1f - getStrength(ship), id));
         }
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "temporalshell";
     }
 
     static class TemporalShellCRDegradationScript implements AdvanceableListener {

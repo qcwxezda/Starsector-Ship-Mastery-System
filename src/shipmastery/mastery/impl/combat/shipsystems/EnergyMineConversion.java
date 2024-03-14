@@ -32,12 +32,12 @@ public class EnergyMineConversion extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(getSystemName());
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"mine_strike".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(EnergyMineConversionScript.class)) {
@@ -52,6 +52,11 @@ public class EnergyMineConversion extends ShipSystemEffect {
                 Strings.Descriptions.EnergyMineConversionPost,
                 0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedModule)), Utils.asInt(5f * getStrength(selectedModule)));
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "mine_strike";
     }
 
     public static class EnergyMineConversionScript extends BaseShipSystemListener {

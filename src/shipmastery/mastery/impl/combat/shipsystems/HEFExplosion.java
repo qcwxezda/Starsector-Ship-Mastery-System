@@ -32,7 +32,7 @@ public class HEFExplosion extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFExplosion).params(systemName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFExplosion).params(getSystemName());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class HEFExplosion extends ShipSystemEffect {
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !"highenergyfocus".equals(ship.getSystem().getId())) {
+        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(HEFExplosionScript.class)) {
@@ -55,6 +55,11 @@ public class HEFExplosion extends ShipSystemEffect {
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         ship.removeListenerOfClass(HEFExplosionScript.class);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "highenergyfocus";
     }
 
     static class HEFExplosionScript extends BaseShipSystemListener implements DamageDealtModifier {

@@ -16,13 +16,13 @@ import java.util.Set;
 public class FMRRegen extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRRegen).params(systemName,
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FMRRegen).params(getSystemName(),
                                                                                              Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !"fastmissileracks".equals(ship.getSystem().getId())) {
+        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
             return;
         }
         if (!ship.hasListenerOfClass(FMRRegenScript.class)) {
@@ -34,6 +34,11 @@ public class FMRRegen extends ShipSystemEffect {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.FMRRegenPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, "" + 1);
+    }
+
+    @Override
+    public String getSystemSpecId() {
+        return "fastmissileracks";
     }
 
     static class FMRRegenScript extends BaseShipSystemListener {

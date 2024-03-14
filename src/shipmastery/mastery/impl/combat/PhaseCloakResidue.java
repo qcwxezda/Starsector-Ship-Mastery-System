@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.PhaseCloakStats;
@@ -154,5 +155,12 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             stats.getArmorDamageTakenMult().unmodify(id);
             stats.getEmpDamageTakenMult().unmodify(id);
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!spec.isPhase()) return null;
+        return 0.5f + Utils.hullSizeToInt(spec.getHullSize());
     }
 }

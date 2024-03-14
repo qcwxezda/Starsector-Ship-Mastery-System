@@ -12,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.util.VariantLookup;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class BaseMasteryEffect implements MasteryEffect {
 
@@ -199,5 +197,10 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
             throw new RuntimeException("Changing the id of a mastery effect is not allowed");
         }
         this.ID = id;
+    }
+
+    @Override
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec) {
+        return new ArrayList<>();
     }
 }
