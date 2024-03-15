@@ -451,4 +451,11 @@ public abstract class Utils {
         if (!lowerValuesHigherWeight) return f;
         else return getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
     }
+
+    public static class IntRef {
+        public Integer value;
+        public IntRef(Integer i) {
+            this.value = i;
+        }
+    }
 }

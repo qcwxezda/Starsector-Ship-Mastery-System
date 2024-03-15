@@ -6,11 +6,9 @@ import com.fs.starfarer.api.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import shipmastery.data.HullMasteryData;
-import shipmastery.data.MasteryLevelData;
-import shipmastery.data.SaveData;
-import shipmastery.mastery.BaseMasteryEffect;
+import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.plugin.ModPlugin;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -18,6 +16,7 @@ import shipmastery.util.Utils;
 import java.io.IOException;
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 public abstract class ShipMastery {
 
     /**
@@ -27,35 +26,18 @@ public abstract class ShipMastery {
 
     public static final String MASTERY_KEY = "shipmastery_Mastery";
     public static final String DEFAULT_PRESET_NAME = "_DEFAULT_";
-    public static final String DEFAULT_CIVILIAN_PRESET_NAME = "_DEFAULT_CIVILIAN_";
     private static SaveDataTable SAVE_DATA_TABLE;
 
-    /**
-     * Maps mastery effect classes to their ids
-     */
-    private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
-    /**
-     * Maps mastery effect ids to their classes
-     */
-    private static final Map<String, Class<?>> idToEffectMap = new HashMap<>();
-    /**
-     * Preset name -> Mastery level -> initialization strings
-     */
-    private static final Utils.ListPairMapMap<String, Integer, String> assignmentsMap = new Utils.ListPairMapMap<>();
-    private static final Map<String, Integer> maxLevelMap = new HashMap<>();
-    /** For each hull type, keep track of the preset that should be used if a level isn't specified. */
-    private static final Map<String, String> assignmentsToPresetsMap = new HashMap<>();
-    /** Presets can also have fallback presets */
-    private static final Map<String, String> presetToPresetMap = new HashMap<>();
-    private static final Utils.ListPairMapMap<String, Integer, String> presetsMap = new Utils.ListPairMapMap<>();
-    private static final Map<String, Integer> presetsMaxLevelMap = new HashMap<>();
 
     /**
      * Ship stat id -> singleton object
      */
     private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
-    private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
+    private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
 
+    private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
+    private static JSONObject masteryAssignments;
+    private static final Map<String, MasteryInfo> masteryInfoMap = new HashMap<>();
 
     public static int getMaxMasteryLevel(ShipHullSpecAPI spec) {
         String id = Utils.getRestoredHullSpecId(spec);
@@ -166,201 +148,25 @@ public abstract class ShipMastery {
     }
 
     /**
-     * This function 1-indexed
+     * This function is 1-indexed
      */
     public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level, boolean isOption2) {
-        String id = Utils.getRestoredHullSpecId(spec);
-        HullMasteryData masteryData = masteryMap.get(id);
-        if (masteryData == null) return new ArrayList<>();
-        MasteryLevelData levelData = masteryData.getDataForLevel(level - 1);
+        MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
         return isOption2 ? levelData.getEffectsListOption2() : levelData.getEffectsListOption1();
     }
 
-    public static List<MasteryEffect> getMasteryEffectsBothOptions(ShipHullSpecAPI spec, int level) {
-        List<MasteryEffect> masteryEffects = new ArrayList<>();
-        masteryEffects.addAll(getMasteryEffects(spec, level, false));
-        masteryEffects.addAll(getMasteryEffects(spec, level, true));
-        return masteryEffects;
+    public static List<MasteryGenerator> getGenerators(ShipHullSpecAPI spec, int level, boolean isOption2) {
+        MasteryLevelData levelData = getLevelData(spec, level);
+        if (levelData == null) return new ArrayList<>();
+        return isOption2 ? levelData.getGeneratorsOption2() : levelData.getGeneratorsOption1();
     }
 
-    static final Map<String, String> tagMap = new HashMap<>();
-    static final Map<String, Integer> tierMap = new HashMap<>();
-    static final Map<String, Integer> priorityMap = new HashMap<>();
-    static final Map<String, Float> defaultStrengthMap = new HashMap<>();
-
-    static void parseLevelItem(String key, int level, Object levelItem,
-                               Utils.ListPairMapMap<String, Integer, String> mapToAddTo, boolean isOption2) {
-        if (levelItem instanceof String) {
-            if (isOption2) {
-                mapToAddTo.add2(key, level, (String) levelItem);
-            } else {
-                mapToAddTo.add1(key, level, (String) levelItem);
-            }
-        }
-        // Array of strings means no options, just a list of mastery effects
-        else if (levelItem instanceof JSONArray) {
-            JSONArray levelItemArray = (JSONArray) levelItem;
-            if (levelItemArray.length() == 0) return;
-            for (int i = 0; i < levelItemArray.length(); i++) {
-                try {
-                    String effectString = levelItemArray.getString(i);
-                    if (isOption2) {
-                        mapToAddTo.add2(key, level, effectString);
-                    } else {
-                        mapToAddTo.add1(key, level, effectString);
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException("Effect initializer not a string: " + key + " at level " + level);
-                }
-            }
-        } else {
-            throw new RuntimeException("Malformed level item: " + key + " at level " + level);
-        }
-    }
-
-    static void parseLevelItemOrOption(
-            String key,
-            String levelString,
-            JSONObject levelsJson,
-            Utils.ListPairMapMap<String, Integer, String> mapToAddTo,
-            Map<String, Integer> mapToCheckLevels) throws JSONException {
-        int level;
-        try {
-            level = Integer.parseInt(levelString);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(
-                    "Level key " + levelString + " in preset " + key + " is not a number");
-        }
-
-        Integer maxLevel = mapToCheckLevels.get(key);
-        if (maxLevel == null || level > maxLevel) {
-            throw new RuntimeException(
-                    "Assignment or preset " + key + " has max level " + maxLevel + "; can't assign mastery to level " +
-                            level);
-        }
-
-        Object levelItem = levelsJson.get(levelString);
-        if (levelItem instanceof String || levelItem instanceof JSONArray) {
-            parseLevelItem(key, level, levelItem, mapToAddTo, false);
-        }
-        // JSON object means it's a choice between two effect lists
-        else if (levelItem instanceof JSONObject) {
-            JSONObject levelItemObject = (JSONObject) levelItem;
-            if (!levelItemObject.has("A")) {
-                throw new RuntimeException("Option A missing from level " + level + " of preset " + key);
-            }
-            if (!levelItemObject.has("B")) {
-                throw new RuntimeException("Option B missing from level " + level + "of preset " + key);
-            }
-            parseLevelItem(key, level, levelItemObject.get("A"), mapToAddTo, false);
-            parseLevelItem(key, level, levelItemObject.get("B"), mapToAddTo, true);
-        }
-    }
-
-    static void loadPresets()
-            throws JSONException, IOException {
-        JSONObject masteryPresets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
-
-        //noinspection unchecked
-        Iterator<String> presetsIterator = masteryPresets.keys();
-        while (presetsIterator.hasNext()) {
-            String presetName = presetsIterator.next();
-            JSONObject preset = masteryPresets.getJSONObject(presetName);
-            int maxLevel;
-            if (preset.has("maxLevel")) {
-                maxLevel = preset.getInt("maxLevel");
-            }
-            else {
-                Integer max = null;
-                String parentPresetName = presetName;
-                Set<String> seenNames = new LinkedHashSet<>();
-                do {
-                    if (parentPresetName == null) {
-                        max = 0;
-                    }
-                    else {
-                        JSONObject object = masteryPresets.getJSONObject(parentPresetName);
-                        if (object.has("maxLevel")) {
-                            max = object.getInt("maxLevel");
-                        }
-                        if (seenNames.contains(parentPresetName)) {
-                            throw new RuntimeException("Circular preset dependency: " + seenNames);
-                        }
-                        seenNames.add(parentPresetName);
-                        parentPresetName = object.optString("preset", null);
-                    }
-                } while (max == null);
-                maxLevel = max;
-            }
-            presetsMaxLevelMap.put(presetName, maxLevel);
-            String copyPresetName = preset.optString("preset");
-            if (copyPresetName != null) {
-                presetToPresetMap.put(presetName, copyPresetName);
-            }
-            JSONObject levelsJson = preset.optJSONObject("levels");
-            if (levelsJson != null) {
-                //noinspection unchecked
-                Iterator<String> levelsItr = levelsJson.keys();
-                while (levelsItr.hasNext()) {
-                    parseLevelItemOrOption(presetName, levelsItr.next(), levelsJson, presetsMap,
-                                           presetsMaxLevelMap);
-                }
-            }
-        }
-    }
-
-    static String getDefaultPresetFor(String hullId) {
-        return Global.getSettings().getHullSpec(hullId).isCivilianNonCarrier() ? DEFAULT_CIVILIAN_PRESET_NAME : DEFAULT_PRESET_NAME;
-    }
-
-    static void loadAssignments() throws JSONException, IOException {
-        JSONObject masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
-        //noinspection unchecked
-        Iterator<String> assignmentsIterator = masteryAssignments.keys();
-        while (assignmentsIterator.hasNext()) {
-            String hullId = assignmentsIterator.next();
-            JSONObject assignment = masteryAssignments.getJSONObject(hullId);
-            int maxLevel;
-            String presetName = assignment.optString("preset", null);
-            if (presetName != null) {
-                assignmentsToPresetsMap.put(hullId, presetName);
-            }
-            else {
-                assignmentsToPresetsMap.put(hullId, getDefaultPresetFor(hullId));
-            }
-            if (assignment.has("maxLevel")) {
-                maxLevel = assignment.getInt("maxLevel");
-            }
-            else {
-                Integer max;
-                Set<String> seenNames = new LinkedHashSet<>();
-                do {
-                    if (presetName == null) {
-                        max = presetsMaxLevelMap.get(getDefaultPresetFor(hullId));
-                    }
-                    else {
-                        max = presetsMaxLevelMap.get(presetName);
-                        if (seenNames.contains(presetName)) {
-                            throw new RuntimeException("Circular preset dependency: " + seenNames);
-                        }
-                        seenNames.add(presetName);
-                        presetName = presetToPresetMap.get(presetName);
-                    }
-                } while (max == null);
-                maxLevel = max;
-            }
-            maxLevelMap.put(hullId, maxLevel);
-            assignmentsMap.put(hullId, new TreeMap<Integer, Pair<List<String>, List<String>>>());
-            if (assignment.has("levels")) {
-                JSONObject levelsJson = assignment.getJSONObject("levels");
-                //noinspection unchecked
-                Iterator<String> levelsItr = levelsJson.keys();
-                while (levelsItr.hasNext()) {
-                    parseLevelItemOrOption(hullId, levelsItr.next(), levelsJson, assignmentsMap, maxLevelMap);
-                }
-            }
-        }
+    private static MasteryLevelData getLevelData(ShipHullSpecAPI spec, int level) {
+        String id = Utils.getRestoredHullSpecId(spec);
+        HullMasteryData masteryData = masteryMap.get(id);
+        if (masteryData == null) return null;
+        return masteryData.getDataForLevel(level);
     }
 
     static void loadStats() throws JSONException, InstantiationException, IllegalAccessException,
@@ -370,9 +176,10 @@ public abstract class ShipMastery {
             JSONObject item = statsList.getJSONObject(i);
             String id = item.getString("id");
             String className = item.getString("location");
-            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
+            Class<?> cls = ModPlugin.getClassLoader().loadClass(className);
             ShipStat stat = (ShipStat) cls.newInstance();
-            stat.name = item.getString("name");
+            stat.id = id;
+            stat.description = item.getString("description");
             stat.tier = item.optInt("tier", 1);
             stat.defaultAmount = (float) item.optDouble("default_amount", 1f);
             stat.tags.addAll(Arrays.asList(item.getString("tags").trim().split("\\s+")));
@@ -380,7 +187,142 @@ public abstract class ShipMastery {
         }
     }
 
-    static void loadMasteriesCsv() throws JSONException, IOException, ClassNotFoundException {
+    public static void loadMasteryData()
+            throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+        loadMasteries();
+        loadStats();
+        initMasteries();
+    }
+
+    public static MasteryGenerator makeGenerator(String rawString) {
+        String[] strList = rawString.trim().split("\\s+");
+        String id = strList[0];
+        String[] params = Arrays.copyOfRange(strList, 1, strList.length);
+        MasteryInfo info = masteryInfoMap.get(id);
+        if (info == null) {
+            throw new RuntimeException("Unknown mastery effect: " + id);
+        }
+        return new MasteryGenerator(info.effectClass, params, info.tags, info.defaultStrength, info.priority);
+    }
+
+    public static void processLevelData(Object generator, MasteryLevelData data, boolean isOption2)
+            throws JSONException {
+        if (generator instanceof String) {
+            if (isOption2) {
+                data.addGeneratorToOption2(makeGenerator((String) generator));
+            } else {
+                data.addGeneratorToOption1(makeGenerator((String) generator));
+            }
+        }
+        // Array of strings means no options, just a list of mastery effects
+        else if (generator instanceof JSONArray) {
+            JSONArray array = (JSONArray) generator;
+            if (array.length() == 0) return;
+            for (int i = 0; i < array.length(); i++) {
+                try {
+                    String effectString = array.getString(i);
+                    if (isOption2) {
+                        data.addGeneratorToOption2(makeGenerator(effectString));
+                    } else {
+                        data.addGeneratorToOption1(makeGenerator(effectString));
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(array.getString(i) + " is not a string");
+                }
+            }
+        }
+        else if (generator instanceof JSONObject) {
+            JSONObject json = (JSONObject) generator;
+            processLevelData(json.get("A"), data, false);
+            processLevelData(json.get("B"), data, true);
+        }
+        else {
+            throw new RuntimeException("Unable to parse generator: " + generator);
+        }
+    }
+
+    public static Pair<Integer, Map<Integer, MasteryLevelData>> initMasteries(String name, Set<String> presetChain) throws JSONException {
+        Map<Integer, MasteryLevelData> levelDataMap = new HashMap<>();
+        Integer maxLevel = null;
+        JSONObject json = (JSONObject) masteryAssignments.opt(name);
+        presetChain.add(name);
+
+        if (json != null) {
+            if (json.has("levels")) {
+                JSONObject levels = (JSONObject) json.get("levels");
+                Iterator<String> itr = levels.keys();
+                while (itr.hasNext()) {
+                    String levelStr = itr.next();
+                    int level = Integer.parseInt(levelStr);
+                    MasteryLevelData levelData = new MasteryLevelData(name, level);
+                    processLevelData(levels.get(levelStr), levelData, false);
+                    levelDataMap.put(level, levelData);
+                }
+            }
+            if (json.has("maxLevel")) {
+                maxLevel = json.getInt("maxLevel");
+            }
+        }
+
+        String preset = json == null ? null : json.optString("preset", null);
+        String defaultPreset = DEFAULT_PRESET_NAME;
+
+        if (preset == null && !name.equals(defaultPreset)) {
+            preset = defaultPreset;
+        }
+        if (presetChain.contains(preset)) {
+            throw new RuntimeException("Circular preset dependency: " + presetChain);
+        }
+        if (preset != null) {
+            Pair<Integer, Map<Integer, MasteryLevelData>> presetLevelData = initMasteries(preset, presetChain);
+            maxLevel = maxLevel == null ? presetLevelData.one : Math.max(maxLevel, presetLevelData.one);
+            for (Map.Entry<Integer, MasteryLevelData> entry : presetLevelData.two.entrySet()) {
+                int level = entry.getKey();
+                MasteryLevelData levelData = entry.getValue();
+                if (!levelDataMap.containsKey(level)) {
+                    MasteryLevelData copy = new MasteryLevelData(name, level);
+                    for (MasteryGenerator generator : levelData.getGeneratorsOption1()) {
+                        copy.addGeneratorToOption1(generator);
+                    }
+                    for (MasteryGenerator generator : levelData.getGeneratorsOption2()) {
+                        copy.addGeneratorToOption2(generator);
+                    }
+                    levelDataMap.put(level, copy);
+                }
+            }
+        }
+
+        int ml = maxLevel == null ? 0 : maxLevel;
+        HullMasteryData masteryData = new HullMasteryData(name, ml);
+        for (int i = 1; i <= ml; i++) {
+            masteryData.setLevelData(i, levelDataMap.get(i));
+        }
+        masteryMap.put(name, masteryData);
+        return new Pair<>(maxLevel, levelDataMap);
+    }
+
+
+    public static void initMasteries() throws JSONException, IOException {
+        masteryMap.clear();
+        masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
+        JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
+        Iterator<String> itr = presets.keys();
+        while (itr.hasNext()) {
+            String name = itr.next();
+            masteryAssignments.put(name, presets.getJSONObject(name));
+        }
+
+        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+            spec = Utils.getRestoredHullSpec(spec);
+            String id = spec.getHullId();
+            if (!masteryMap.containsKey(id)) {
+                initMasteries(id, new HashSet<String>());
+            }
+        }
+    }
+
+    static void loadMasteries() throws JSONException, IOException, ClassNotFoundException {
         JSONArray masteryList =
                 Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
         for (int i = 0; i < masteryList.length(); i++) {
@@ -391,116 +333,34 @@ public abstract class ShipMastery {
             int tier = item.optInt("tier", 1);
             int priority = item.optInt("priority", 0);
             float defaultStrength = (float) item.optDouble("default_strength", 0f);
-            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
-            effectToIdMap.put(cls, id);
-            idToEffectMap.put(id, cls);
-            tagMap.put(id, tags);
-            tierMap.put(id, tier);
-            priorityMap.put(id, priority);
-            defaultStrengthMap.put(id, defaultStrength);
-        }
-    }
+            Class<? extends MasteryEffect> cls =
+                    (Class<? extends MasteryEffect>) Global.getSettings().getScriptClassLoader().loadClass(className);
 
-    static MasteryEffect instantiateEffect(String generator, ShipHullSpecAPI hullSpec, int level, int index) throws InstantiationException, IllegalAccessException {
-        String[] params = generator.trim().split("\\s+");
-        String id = params[0];
-        // If no params, use default strength
-        if (params.length == 1) {
-            params = new String[] {id, "" + defaultStrengthMap.get(id)};
+            MasteryInfo info = new MasteryInfo();
+            effectToIdMap.put(cls, id);
+            info.defaultStrength = defaultStrength;
+            info.effectClass = cls;
+            info.priority = priority;
+            info.tier = tier;
+            info.tags = tags.trim().split("\\s+");
+            masteryInfoMap.put(id, info);
         }
-        Class<?> cls = idToEffectMap.get(id);
-        if (cls == null) {
-            throw new RuntimeException("Unknown effect: " + id);
-        }
-        BaseMasteryEffect effect = (BaseMasteryEffect) cls.newInstance();
-        effect.setPriority(priorityMap.get(id));
-        effect.setHullSpec(hullSpec);
-        effect.setId(MasteryUtils.makeEffectId(effect, level, index));
-        effect.addTags(tagMap.get(id).trim().split("\\s+"));
-        effect.init(Arrays.copyOfRange(params, 1, params.length));
-        return effect;
     }
 
     public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
-        ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
-        String restoredSpecId = restoredSpec.getHullId();
-        ShipHullSpecAPI restoredSpecNoBase = restoredSpec;
-        String restoredSpecIdNoBase = restoredSpecId;
-        Integer maxLevel = maxLevelMap.get(restoredSpecId);
-        SortedMap<Integer, Pair<List<String>, List<String>>> masteries = assignmentsMap.get(restoredSpecId);
-        // Hull not tracked
-        if (maxLevel == null && masteries == null) {
-            // Try the base hull id
-            if (restoredSpec.getBaseHull() != null) {
-                restoredSpec = restoredSpec.getBaseHull();
-                restoredSpecId = restoredSpec.getHullId();
+        HullMasteryData data = masteryMap.get(spec.getHullId());
+        for (int i = 1; i <= data.getMaxLevel(); i++) {
+            MasteryLevelData levelData = data.getDataForLevel(i);
+            if (levelData != null) {
+                levelData.generateEffects();
             }
-            maxLevel = maxLevelMap.get(restoredSpecId);
-            masteries = assignmentsMap.get(restoredSpecId);
         }
-        // Still null, use default level
-        if (maxLevel == null) {
-            maxLevel = presetsMaxLevelMap.get(getDefaultPresetFor(restoredSpecId));
-            masteries = presetsMap.get(getDefaultPresetFor(restoredSpecId));
-        }
-
-        HullMasteryData masteryData = new HullMasteryData(restoredSpecNoBase);
-        for (int i = 1; i <= maxLevel; i++) {
-            MasteryLevelData levelData = new MasteryLevelData(restoredSpecNoBase, i);
-            Pair<List<String>, List<String>> masteryOptions = null;
-            // Mastery assignments contains an entry, so use that
-            if (masteries.containsKey(i)) {
-                masteryOptions = masteries.get(i);
-            }
-            // Mastery assignments doesn't contain the entry, but the preset does, so use that
-            // as a fallback
-            else if (assignmentsToPresetsMap.containsKey(restoredSpecId)) {
-                String presetName = assignmentsToPresetsMap.get(restoredSpecId);
-                Set<String> seenPresets = new LinkedHashSet<>();
-                do {
-                    if (presetsMap.containsKey(presetName)) {
-                        masteryOptions = presetsMap.get(presetName).get(i);
-                    }
-                    if (seenPresets.contains(presetName)) {
-                        throw new RuntimeException("Circular preset dependency: " + seenPresets);
-                    }
-                    seenPresets.add(presetName);
-                    presetName = presetToPresetMap.get(presetName);
-                }
-                while (presetName != null && masteryOptions == null);
-            }
-            // Neither the assignments nor the preset have data for this level, so need to randomly generate it
-            if (masteryOptions == null) {
-                masteryOptions = new Pair<List<String>, List<String>>(new ArrayList<String>(), new ArrayList<String>());
-                masteryOptions.one.add("ModifyStatsMult 1 FluxCapacity");
-            }
-            List<String> one = masteryOptions.one;
-            for (int j = 0; j < one.size(); j++) {
-                String generator = one.get(j);
-                levelData.addEffectToOption1(instantiateEffect(generator, restoredSpecNoBase, i, j));
-            }
-            List<String> two = masteryOptions.two;
-            for (int j = 0; j < two.size(); j++) {
-                String generator = two.get(j);
-                levelData.addEffectToOption2(instantiateEffect(generator, restoredSpecNoBase, i, j));
-            }
-            masteryData.addLevelData(levelData);
-        }
-        masteryMap.put(restoredSpecIdNoBase, masteryData);
     }
 
-    public static void loadMasteryData()
-            throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-        loadMasteriesCsv();
-        loadStats();
-        loadPresets();
-        loadAssignments();
-    }
-
-    public static void generateAllMasteries() throws InstantiationException, IllegalAccessException {
+    public static void generateMasteries() throws InstantiationException, IllegalAccessException {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
-            spec = Utils.getRestoredHullSpec(spec);
+            ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
+            if (spec != restoredSpec) continue;
 
             generateMasteries(spec);
             clearInvalidActiveLevels(spec);
@@ -543,5 +403,17 @@ public abstract class ShipMastery {
 
     public static ShipStat getStatParams(String id) {
         return statSingletonMap.get(id);
+    }
+
+    public static Set<String> getAllStatNames() {
+        return statSingletonMap.keySet();
+    }
+
+    public static Set<String> getAllMasteryNames() {
+        return masteryInfoMap.keySet();
+    }
+
+    public static MasteryInfo getMasteryInfo(String name) {
+        return masteryInfoMap.get(name);
     }
 }

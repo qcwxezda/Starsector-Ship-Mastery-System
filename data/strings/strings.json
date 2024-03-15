@@ -75,7 +75,7 @@
     "DPIfOnlyShipNeg": "If this is the only %1$s-class ship in your fleet, its DP cost is reduced by %2$s.",
     "PeakCRMultipleShips": "Increases peak combat readiness duration by %1$s for each additional %2$s-class ship in your fleet.",
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %1$s for each additional %2$s-class ship in your fleet.",
-    "PeakCRMultipleShipsPost": "Effect stacks up to %1$s times and has a hard cap of %s increase to peak CR.",
+    "PeakCRMultipleShipsPost": "Effect stacks up to %1$s times and has a hard cap of %2$s increase to peak CR.",
     "ShieldDeflection": "Shield deflects all incoming projectiles for %1$s seconds when activated. Decreases shield unfolding rate by %2$s.",
     "ShieldDeflectionPost": "Shields take %1$s damage from deflected projectiles.",
     "ShieldDeflectionStatusTitle": "deflecting shield",

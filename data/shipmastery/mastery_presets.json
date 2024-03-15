@@ -4,25 +4,29 @@
   "_DEFAULT_": {
     "maxLevel": 9,
     "levels": {
+      "1": "RandomMastery 0.5 1",
       "2": "SModCapacity",
+      "3": {
+        "A": "RandomMastery 0.5 1",
+        "B": "RandomMastery 0.5 1"
+      },
       "4": "SModCapacity",
-      "7": ["SModCapacity","SModRemoval"],
+      "5": {
+        "A": "RandomMastery 0.75 2",
+        "B": "RandomMastery 0.75 2"
+      },
+      "6": ["SModCapacity","SModRemoval"],
+      "7": {
+        "A": "RandomMastery 1 2",
+        "B": "RandomMastery 1 2"
+      },
       "8": {
         "A": "SModsOverCapacity",
         "B": "ScaleOtherMasteries"
-      }
-    }
-  },
-
-  "_DEFAULT_CIVILIAN_": {
-    "maxLevel": 9,
-    "levels": {
-      "2": "SModCapacity",
-      "4": "SModCapacity",
-      "7": ["SModCapacity","SModRemoval"],
-      "8": {
-        "A": "SModsOverCapacity",
-        "B": "ScaleOtherMasteries"
+      },
+      "9": {
+        "A": "RandomMastery 1 3",
+        "B": "RandomMastery 1 3"
       }
     }
   },
@@ -55,7 +59,7 @@
   },
 
   "logistic_cargo": {
-    "preset": "_DEFAULT_CIVILIAN_",
+    "preset": "_DEFAULT_",
     "levels": {
       "9": {
         "A": "EfficiencyOverhaulBoost",
@@ -65,7 +69,7 @@
   },
 
   "logistic_fuel": {
-    "preset": "_DEFAULT_CIVILIAN_",
+    "preset": "_DEFAULT_",
     "levels": {
       "9": {
         "A": "EfficiencyOverhaulBoost",
@@ -75,7 +79,7 @@
   },
 
   "logistic_crew": {
-    "preset": "_DEFAULT_CIVILIAN_",
+    "preset": "_DEFAULT_",
     "levels": {
       "9": {
         "A": "EfficiencyOverhaulBoost",

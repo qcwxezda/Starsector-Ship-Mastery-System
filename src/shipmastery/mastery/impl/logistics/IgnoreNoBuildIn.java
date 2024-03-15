@@ -10,6 +10,7 @@ import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -18,9 +19,10 @@ import java.util.*;
 public class IgnoreNoBuildIn extends BaseMasteryEffect {
     final Set<String> hullmodIds = new TreeSet<>();
     @Override
-    public void init(String... args) {
+    public MasteryEffect init(String... args) {
         super.init(args);
         hullmodIds.addAll(Arrays.asList(args).subList(1, args.length));
+        return this;
     }
 
     @Override
@@ -61,8 +63,9 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public List<String> generateRandomArgs(ShipHullSpecAPI spec) {
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
         WeightedRandomPicker<String> wrp = new WeightedRandomPicker<>();
+        wrp.setRandom(new Random(seed));
         if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) && !spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) {
             wrp.add(HullMods.SAFETYOVERRIDES);
         }
@@ -72,7 +75,7 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
         if (spec.isBuiltInMod(HullMods.AUTOMATED) && !spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR)) {
             wrp.add(HullMods.NEURAL_INTEGRATOR);
         }
-        if (wrp.isEmpty()) return new ArrayList<>();
+        if (wrp.isEmpty()) return null;
         return Collections.singletonList(wrp.pick());
     }
 }

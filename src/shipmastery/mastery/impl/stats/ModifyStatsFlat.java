@@ -1,15 +1,13 @@
 package shipmastery.mastery.impl.stats;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.stats.ShipStat;
 import shipmastery.stats.StatTags;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.List;
 import java.util.Map;
 
 public class ModifyStatsFlat extends ModifyStatsEffect {
@@ -62,5 +60,15 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
                 modify(o, id, amount);
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return 0.5f;
+    }
+
+    @Override
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
+        return super.generateRandomArgs(spec, maxTier, seed, true);
     }
 }

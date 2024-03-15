@@ -1,22 +1,24 @@
 id,tier,tags,priority,default_strength,script
 ### Minimum (and default) tier is 1 ###
 ### Priority affects activation order. Higher priority ==> activates later ###
+### Random masteries: takes an additional argument indicating the maximum tier of masteries that may be selected
+RandomMastery,,,,1,shipmastery.mastery.impl.random.RandomMastery
 ### LOGISTICS ###
-SModCapacity,3,no_disable logistic,,0.5,shipmastery.mastery.impl.logistics.SModCapacity
+SModCapacity,,no_disable logistic,,0.5,shipmastery.mastery.impl.logistics.SModCapacity
 SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.SModCreditsCost
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
-SModRemoval,4,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
-SModsOverCapacity,7,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
-ScaleOtherMasteries,9,negative_strength_allowed unique logistic,-1,0.4,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
+SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
+SModsOverCapacity,3,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
+ScaleOtherMasteries,2,negative_strength_allowed unique logistic,-1,0.4,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
-IgnoreNoBuildIn,7,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
-EfficiencyOverhaulBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
-ExpandedCargoBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
-ExpandedFuelBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
-ExpandedCrewBoost,9,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
-DriveFieldStabilizerBoost,9,unique logistic,1,1,shipmastery.mastery.impl.logistics.DriveFieldStabilizerBoost
-GroundSupportBoost,9,unique logistic,1,100,shipmastery.mastery.impl.logistics.GroundSupportBoost
+IgnoreNoBuildIn,2,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+EfficiencyOverhaulBoost,3,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
+ExpandedCargoBoost,3,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
+ExpandedFuelBoost,3,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
+ExpandedCrewBoost,3,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
+DriveFieldStabilizerBoost,3,unique logistic,1,1,shipmastery.mastery.impl.logistics.DriveFieldStabilizerBoost
+GroundSupportBoost,3,unique logistic,1,100,shipmastery.mastery.impl.logistics.GroundSupportBoost
 #### STATS ####
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
@@ -31,111 +33,111 @@ RangeIfNoBonuses,3,negative_strength_allowed combat,1,0.3,shipmastery.mastery.im
 # Negative strength not allowed -- OP maluses should be avoided
 # due to reversion of global changes after selecting a different ship, an OP malus would
 # incorrectly cause ships in the refit/fleet panel to display unused OP.
-MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
-DPIfOnlyShip,6,negative_strength_allowed combat doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
-PeakCRMultipleShips,5,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
-ShieldDeflection,9,combat unique doesnt_affect_modules prefix_flagship_only,,8,shipmastery.mastery.impl.combat.ShieldDeflection
-PhaseCloakResidue,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
-ZeroFluxResidue,7,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
-BallisticFireRateHullLevel,9,combat unique,,0.2,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
-BallisticFireRateFluxLevel,9,combat unique,,0.12,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
-SpeedHullLevel,9,combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.SpeedHullLevel
-HitAngleDR,7,combat negative_strength_allowed,,-0.25,shipmastery.mastery.impl.combat.HitAngleDR
-TPCUpgrade,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
-TPCChaining,9,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
-TorpedoTracking,9,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
-ArmorRepair,9,combat unique,,0.025,shipmastery.mastery.impl.combat.ArmorRepair
-HullThresholdDR,9,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
-BackArmorBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.BackArmorBoost
-ShieldEfficiencyNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
-VentingSpeedBoost,9,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingSpeedBoost
-RangeNotMoving,9,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
-SafetyOverridesBoost,9,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
-BuiltInMissileRegen,9,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
-TimeFlowNearbyEnemies,9,combat unique,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
+# MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
+DPIfOnlyShip,2,negative_strength_allowed combat doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
+PeakCRMultipleShips,2,negative_strength_allowed combat doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
+ShieldDeflection,3,combat unique doesnt_affect_modules prefix_flagship_only,,8,shipmastery.mastery.impl.combat.ShieldDeflection
+PhaseCloakResidue,3,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
+ZeroFluxResidue,2,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
+BallisticFireRateHullLevel,3,combat unique,,0.2,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
+BallisticFireRateFluxLevel,3,combat unique,,0.12,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
+SpeedHullLevel,3,combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.SpeedHullLevel
+HitAngleDR,2,combat unique negative_strength_allowed,,-0.25,shipmastery.mastery.impl.combat.HitAngleDR
+TPCUpgrade,3,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
+TPCChaining,3,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
+TorpedoTracking,3,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
+ArmorRepair,3,combat unique,,0.025,shipmastery.mastery.impl.combat.ArmorRepair
+HullThresholdDR,3,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
+BackArmorBoost,3,combat unique,,0.3,shipmastery.mastery.impl.combat.BackArmorBoost
+ShieldEfficiencyNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
+VentingSpeedBoost,3,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingSpeedBoost
+RangeNotMoving,3,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
+SafetyOverridesBoost,3,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
+BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
+TimeFlowNearbyEnemies,3,combat unique,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
-ConvertedHangarBays,7,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
-ConvertedCargoBayNoPenalty,5,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
-ExtraFighterPerWing,7,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
-DamageTakenNearbyEnemies,9,combat unique,,0.02,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
-LargeBallisticFragDamage,9,combat unique prefix_flagship_only,,60,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
-PhasedCRDegradation,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.PhasedCRDegradation
-RangeNoNearbyEnemies,9,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
-EnergyProjectileRange,9,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
-RandomBeamIntensity,9,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
-SystemRegenOnKill,9,combat unique,,5,shipmastery.mastery.impl.combat.SystemRegenOnKill
-MissileRegenOnKill,9,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRegenOnKill
-SafetyOverridesPPT,9,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT
-DEMBoost,9,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
-RegroupReplacement,9,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
-ExtraMiningDrones,9,combat unique,,3,shipmastery.mastery.impl.combat.ExtraMiningDrones
-LimitedArmorRegen,9,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
-HammerLingeringDamage,9,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
-PilumSalamanderBoost,9,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
-PhasedArmorRepair,9,combat unique,,0.04,shipmastery.mastery.impl.combat.PhasedArmorRepair
-MissileAutoloaderCapacity,9,combat unique,,0.75,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
-BDeckExtraCharges,9,combat unique,,1,shipmastery.mastery.impl.combat.BDeckExtraCharges
-FighterCountDR,9,combat unique,,0.04,shipmastery.mastery.impl.combat.FighterCountDR
-ShieldEfficiencyHardFlux,9,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
-ConvertedHangarNoPenalty,9,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
-MinimumReplacementRate,9,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
-VentSpeedFluxLevel,9,combat unique,,0.3,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
-MakeshiftShieldBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.MakeshiftShieldBoost
-MinimumCR,9,combat unique,,0.25,shipmastery.mastery.impl.combat.MinimumCR
-NavRelayBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.NavRelayBoost
-ECMPackageBoost,9,combat unique,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
-OperationsCenterBoost,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
-MaxAutomatedCR,9,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
+ConvertedHangarBays,2,combat,,1,shipmastery.mastery.impl.combat.ConvertedHangarBays
+ConvertedCargoBayNoPenalty,,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
+ExtraFighterPerWing,2,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
+DamageTakenNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
+LargeBallisticFragDamage,3,combat unique prefix_flagship_only,,60,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
+PhasedCRDegradation,3,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.PhasedCRDegradation
+RangeNoNearbyEnemies,3,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
+EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
+RandomBeamIntensity,3,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
+SystemRegenOnKill,3,combat unique,,5,shipmastery.mastery.impl.combat.SystemRegenOnKill
+MissileRegenOnKill,3,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRegenOnKill
+SafetyOverridesPPT,3,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT
+DEMBoost,3,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
+RegroupReplacement,3,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
+ExtraMiningDrones,3,combat unique,,3,shipmastery.mastery.impl.combat.ExtraMiningDrones
+LimitedArmorRegen,3,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
+HammerLingeringDamage,3,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
+PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
+PhasedArmorRepair,3,combat unique,,0.04,shipmastery.mastery.impl.combat.PhasedArmorRepair
+MissileAutoloaderCapacity,3,combat unique,,0.75,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
+BDeckExtraCharges,3,combat unique,,1,shipmastery.mastery.impl.combat.BDeckExtraCharges
+FighterCountDR,3,combat unique,,0.04,shipmastery.mastery.impl.combat.FighterCountDR
+ShieldEfficiencyHardFlux,3,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
+ConvertedHangarNoPenalty,3,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
+MinimumReplacementRate,3,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
+VentSpeedFluxLevel,3,combat unique,,0.3,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
+MakeshiftShieldBoost,3,combat unique,,1,shipmastery.mastery.impl.combat.MakeshiftShieldBoost
+MinimumCR,3,combat unique,,0.25,shipmastery.mastery.impl.combat.MinimumCR
+NavRelayBoost,3,combat unique,,1,shipmastery.mastery.impl.combat.NavRelayBoost
+ECMPackageBoost,3,combat unique,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
+OperationsCenterBoost,3,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
+MaxAutomatedCR,3,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
 #### SHIP SYSTEM ENHANCEMENTS ####
-HighFrequencyMotes,9,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
-EnergyMineConversion,9,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
-RecallDeviceRegeneration,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
-RecallDeviceDestruction,9,combat unique doesnt_affect_modules prefix_flagship_only,,400,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
-AAFRangeDamage,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
-ManeuveringJetsBoost,9,combat unique doesnt_affect_modules,,25,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
-ManeuveringJetsDR,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
-ManeuveringJetsMobility,9,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
-HEFExplosion,9,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
-HEFRangeRoF,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFRangeRoF
-HEFMissileBoost,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.HEFMissileBoost
-HEFShieldEfficiency,9,combat unique,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFShieldEfficiency
-LidarArrayRange,9,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
-LidarArrayFlux,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
-BurnDriveDR,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
-BurnDriveMissileBoost,9,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveMissileBoost
-BurnDriveImpulse,9,combat unique doesnt_affect_modules,,650,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
-BurnDriveCooldown,9,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.BurnDriveCooldown
-PlasmaBurnEngineRepair,9,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
-PlasmaBurnEnergyRoF,9,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
-FMRFastReplacement,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.FMRFastReplacement
-FMRRegen,9,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
-FMRNoFlux,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.FMRNoFlux
-OrionDeviceDamage,9,combat unique doesnt_affect_modules prefix_flagship_only,,1500,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
-NovaBurstDamage,9,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
-FastSkimmer,9,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
-SkimmerDR,9,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR
-SkimmerEMP,9,combat unique doesnt_affect_modules,,4,shipmastery.mastery.impl.combat.shipsystems.SkimmerEMP
-DroneStrikeBoost,9,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeBoost
-DroneStrikeRegen,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeRegen
-FlareLauncherWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FlareLauncherWhileVenting
-PlasmaJetsGrazeChance,9,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsGrazeChance
-PlasmaJetsDissipation,9,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsDissipation
-MissileAutoforgeExtraCharge,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.MissileAutoforgeExtraCharge
-TargetingFeedBoost,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.TargetingFeedBoost
-DamageChargesDamperField,9,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.DamageChargesDamperField
-DamperFieldFighters,9,combat unique,,0.1,shipmastery.mastery.impl.combat.shipsystems.DamperFieldFighters
-DamperFieldDissipation,9,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.DamperFieldDissipation
-FlareRegen,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.FlareRegen
-FasterActiveFlares,9,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.FasterActiveFlares
-ReserveDeploymentBoost,9,combat unique,,3.5,shipmastery.mastery.impl.combat.shipsystems.ReserveDeploymentBoost
-QuantumDisruptorDuration,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.QuantumDisruptorDuration
-CanisterFlakWhileVenting,9,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.CanisterFlakWhileVenting
-EntropyAmplifierChaining,9,combat unique,,2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierChaining
-EntropyAmplifierMobility,9,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierMobility
-DecoyFlareBoost,9,combat unique,,0.75,shipmastery.mastery.impl.combat.shipsystems.DecoyFlareBoost
-PhaseTeleporterTimeFlow,9,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.PhaseTeleporterTimeFlow
-ReactiveFortressShield,9,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.ReactiveFortressShield
-EMPEmitterFluxBoost,9,combat unique,,0.01,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFluxBoost
-EMPEmitterEnergyDamage,9,combat unique,,150,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterEnergyDamage
-EMPEmitterFragDamage,9,combat unique,,300,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFragDamage
-TemporalShellCRDegradation,9,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.shipsystems.TemporalShellCRDegradation
+HighFrequencyMotes,3,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
+EnergyMineConversion,3,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
+RecallDeviceRegeneration,3,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceRegeneration
+RecallDeviceDestruction,3,combat unique doesnt_affect_modules prefix_flagship_only,,400,shipmastery.mastery.impl.combat.shipsystems.RecallDeviceDestruction
+AAFRangeDamage,3,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
+ManeuveringJetsBoost,3,combat unique doesnt_affect_modules,,25,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
+ManeuveringJetsDR,3,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
+ManeuveringJetsMobility,3,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
+HEFExplosion,3,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
+HEFRangeRoF,3,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFRangeRoF
+HEFMissileBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.HEFMissileBoost
+HEFShieldEfficiency,3,combat unique,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFShieldEfficiency
+LidarArrayRange,3,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.LidarArrayRange
+LidarArrayFlux,3,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.LidarArrayFlux
+BurnDriveDR,3,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveDR
+BurnDriveMissileBoost,3,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveMissileBoost
+BurnDriveImpulse,3,combat unique doesnt_affect_modules,,650,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
+BurnDriveCooldown,3,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.shipsystems.BurnDriveCooldown
+PlasmaBurnEngineRepair,3,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
+PlasmaBurnEnergyRoF,3,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
+FMRFastReplacement,3,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.FMRFastReplacement
+FMRRegen,3,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
+FMRNoFlux,3,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.FMRNoFlux
+OrionDeviceDamage,3,combat unique doesnt_affect_modules prefix_flagship_only,,1500,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
+NovaBurstDamage,3,combat unique doesnt_affect_modules,,2000,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
+FastSkimmer,3,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
+SkimmerDR,3,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR
+SkimmerEMP,3,combat unique doesnt_affect_modules,,4,shipmastery.mastery.impl.combat.shipsystems.SkimmerEMP
+DroneStrikeBoost,3,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeBoost
+DroneStrikeRegen,3,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.DroneStrikeRegen
+FlareLauncherWhileVenting,3,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.FlareLauncherWhileVenting
+PlasmaJetsGrazeChance,3,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsGrazeChance
+PlasmaJetsDissipation,3,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.shipsystems.PlasmaJetsDissipation
+MissileAutoforgeExtraCharge,3,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.MissileAutoforgeExtraCharge
+TargetingFeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.TargetingFeedBoost
+DamageChargesDamperField,3,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.DamageChargesDamperField
+DamperFieldFighters,3,combat unique,,0.1,shipmastery.mastery.impl.combat.shipsystems.DamperFieldFighters
+DamperFieldDissipation,3,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.DamperFieldDissipation
+FlareRegen,3,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.FlareRegen
+FasterActiveFlares,3,combat unique,,0.5,shipmastery.mastery.impl.combat.shipsystems.FasterActiveFlares
+ReserveDeploymentBoost,3,combat unique,,3.5,shipmastery.mastery.impl.combat.shipsystems.ReserveDeploymentBoost
+QuantumDisruptorDuration,3,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.QuantumDisruptorDuration
+CanisterFlakWhileVenting,3,combat unique,,1,shipmastery.mastery.impl.combat.shipsystems.CanisterFlakWhileVenting
+EntropyAmplifierChaining,3,combat unique,,2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierChaining
+EntropyAmplifierMobility,3,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.EntropyAmplifierMobility
+DecoyFlareBoost,3,combat unique,,0.75,shipmastery.mastery.impl.combat.shipsystems.DecoyFlareBoost
+PhaseTeleporterTimeFlow,3,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.PhaseTeleporterTimeFlow
+ReactiveFortressShield,3,combat unique,,0.05,shipmastery.mastery.impl.combat.shipsystems.ReactiveFortressShield
+EMPEmitterFluxBoost,3,combat unique,,0.01,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFluxBoost
+EMPEmitterEnergyDamage,3,combat unique,,150,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterEnergyDamage
+EMPEmitterFragDamage,3,combat unique,,300,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFragDamage
+TemporalShellCRDegradation,3,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.shipsystems.TemporalShellCRDegradation

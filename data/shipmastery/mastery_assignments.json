@@ -228,7 +228,6 @@
   },
 
   "kite_original": {
-    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "OperationsCenterBoost",
@@ -296,7 +295,6 @@
   },
 
   "mudskipper": {
-    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "ExpandedCrewBoost",
@@ -324,7 +322,6 @@
   },
 
   "ox": {
-    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "DriveFieldStabilizerBoost",
@@ -496,8 +493,7 @@
   },
 
   "crig": {
-    "maxLevel": 8,
-    "preset":"_DEFAULT_CIVILIAN_"
+    "maxLevel": 8
   },
 
   "drover": {
@@ -650,7 +646,6 @@
   },
 
   "phantom": {
-    "preset": "_DEFAULT_CIVILIAN",
     "levels": {
       "9": {
         "A": "GroundSupportBoost",
@@ -709,7 +704,6 @@
   },
 
   "valkyrie": {
-    "preset": "_DEFAULT_CIVILIAN",
     "levels": {
       "9": {
         "A": "GroundSupportBoost",
@@ -946,7 +940,6 @@
   },
 
   "revenant": {
-    "preset":"_DEFAULT_CIVILIAN_",
     "levels": {
       "9": {
         "A": "ExpandedCargoBoost",

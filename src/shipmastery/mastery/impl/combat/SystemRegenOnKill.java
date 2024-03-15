@@ -93,6 +93,7 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.getShipSystemId() == null) return null;
         ShipSystemSpecAPI system = Global.getSettings().getShipSystemSpec(spec.getShipSystemId());
+        if (system == null) return null;
         float regen = system.getRegen(null);
         if (regen <= 0f) return null;
         return Utils.getSelectionWeightScaledByValue(regen, 0.1f, true);

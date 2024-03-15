@@ -1,26 +1,27 @@
 package shipmastery.mastery.impl.stats;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Pair;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.mastery.MasteryEffect;
 import shipmastery.stats.ShipStat;
+import shipmastery.stats.StatTags;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     final Map<ShipStat, Float> amounts = new LinkedHashMap<>();
     @Override
-    public void init(String... args) {
+    public MasteryEffect init(String... args) {
         super.init(args);
         for (int i = 1; i < args.length; i++) {
             String id = args[i];
@@ -39,6 +40,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             amounts.put(stat, existing == null ? amount : existing + amount);
             addTags(stat.tags.toArray(new String[0]));
         }
+        return this;
     }
 
     @Override
@@ -64,7 +66,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
         for (Pair<ShipStat, Float> item : positiveAmounts) {
             descriptionListPos.add(Strings.Descriptions.StatListItem);
-            params.add(item.one.name);
+            params.add(item.one.description);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
             colors.add(!(item.one.defaultAmount < 0)? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
@@ -72,7 +74,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
         for (Pair<ShipStat, Float> item : negativeAmounts) {
             descriptionListNeg.add(Strings.Descriptions.StatListItem);
-            params.add(item.one.name);
+            params.add(item.one.description);
             params.add(getAmountString(item.one, item.two));
             colors.add(null);
             colors.add(item.one.defaultAmount < 0? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
@@ -99,4 +101,23 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
     abstract float getModifiedAmount(ShipStat stat, float amount);
     abstract String getAmountString(ShipStat stat, float modifiedAmount);
+
+    protected final List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
+        WeightedRandomPicker<ShipStat> picker = new WeightedRandomPicker<>();
+        picker.setRandom(new Random(seed));
+        for (String name : ShipMastery.getAllStatNames()) {
+            ShipStat stat = ShipMastery.getStatParams(name);
+            if (modifyFlat && !stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
+            if (!modifyFlat && stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
+            if (stat.tier > maxTier) continue;
+            Float weight = stat.getSelectionWeight(spec);
+            if (weight != null && weight > 0f) {
+                picker.add(stat, weight);
+            }
+        }
+
+        if (picker.isEmpty()) return null;
+        ShipStat selected = picker.pickAndRemove();
+        return Collections.singletonList(selected.id);
+    }
 }

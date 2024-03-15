@@ -22,9 +22,12 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
     private ShipHullSpecAPI spec;
+    private Boolean isOption2 = null;
     private String ID = null;
     /** Same as id but can be accessed directly without a getter */
     protected String id = null;
+    protected Integer level = null;
+    protected Integer index = null;
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
@@ -39,7 +42,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void onDeactivate(PersonAPI commander) {}
 
     @Override
-    public void init(String... args) {
+    public MasteryEffect init(String... args) {
         if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect init called with null or 0 args");
 
         try {
@@ -48,6 +51,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
             throw new RuntimeException("First argument in mastery params list must be its strength", e);
         }
         id = ID;
+        return this;
     }
 
     @Override
@@ -82,6 +86,11 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         for (String tag : tags) {
             this.tags.remove(tag);
         }
+    }
+
+    @Override
+    public Set<String> getTags() {
+        return tags;
     }
 
     @Override
@@ -193,14 +202,47 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     public final void setId(String id) {
-        if (this.ID != null) {
-            throw new RuntimeException("Changing the id of a mastery effect is not allowed");
-        }
         this.ID = id;
     }
 
     @Override
-    public List<String> generateRandomArgs(ShipHullSpecAPI spec) {
+    public int getLevel() {
+        return level;
+    }
+
+    public final void setLevel(int level) {
+        if (this.level != null) {
+            throw new RuntimeException("Changing the level of a mastery effect is not allowed");
+        }
+        this.level = level;
+    }
+
+    @Override
+    public int getIndex() {
+        return index;
+    }
+
+    public final void setIndex(int index) {
+        if (this.index != null) {
+            throw new RuntimeException("Changing the index of a mastery effect is not allowed");
+        }
+        this.index = index;
+    }
+
+    @Override
+    public boolean isOption2() {
+        return isOption2 != null && isOption2;
+    }
+
+    public final void setIsOption2(boolean isOption2) {
+        if (this.isOption2 != null) {
+            throw new RuntimeException("Changing the option index of a mastery effect is not allowed");
+        }
+        this.isOption2 = isOption2;
+    }
+
+    @Override
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
         return new ArrayList<>();
     }
 }

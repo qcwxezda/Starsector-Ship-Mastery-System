@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class ShipStat {
-    public String name = "NONE";
+    public String id;
+    public String description = "NONE";
     public int tier = 1;
     public float defaultAmount = 1f;
     public final Set<String> tags = new HashSet<>();
@@ -22,11 +23,11 @@ public abstract class ShipStat {
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof ShipStat)) return false;
-        return name.equals(((ShipStat) other).name);
+        return id.equals(((ShipStat) other).id);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return id.hashCode();
     }
 }

@@ -20,6 +20,9 @@ import java.net.URLClassLoader;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
 
+    public static String lastSaveId = null;
+    private static ReflectionEnabledClassLoader classLoader = null;
+
     @Override
     public void onApplicationLoad() throws Exception {
         ShipMastery.loadMasteryData();
@@ -36,14 +39,19 @@ public class ModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame) {
         ShipMastery.loadMasteryTable();
         // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
-        try {
-            ShipMastery.generateAllMasteries();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to generate mastery effects", e);
+        String id = Global.getSector().getPlayerPerson().getId();
+        if (!id.equals(lastSaveId)) {
+            lastSaveId = id;
+
+            try {
+                ShipMastery.generateMasteries();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException("Failed to generate mastery effects", e);
+            }
         }
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
-        ClassLoader classLoader = makeClassLoader();
+        ClassLoader classLoader = getClassLoader();
         try {
             Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
             if (!listeners.hasListenerOfClass(RefitHandler.class)) {
@@ -89,9 +97,10 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.stats.logistics"
     };
 
-    private static ReflectionEnabledClassLoader makeClassLoader() {
+    public static ReflectionEnabledClassLoader getClassLoader() {
+        if (classLoader != null) return classLoader;
         URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
-        return new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
+        return classLoader = new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
     }
 
     public static class ReflectionEnabledClassLoader extends URLClassLoader {

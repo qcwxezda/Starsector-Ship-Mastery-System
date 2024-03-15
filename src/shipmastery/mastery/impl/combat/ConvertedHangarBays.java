@@ -57,6 +57,7 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (ShipAPI.HullSize.FRIGATE.equals(spec.getHullSize())) return null;
+        if (spec.getFighterBays() > 0) return null;
         return 1f;
     }
 }

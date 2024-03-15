@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.config.TransientSettings;
@@ -25,5 +26,10 @@ public class SModCreditsCost extends MultiplicativeMasteryEffect {
     @Override
     public void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule) {
         TransientSettings.SMOD_CREDITS_COST_MULT.unmodify(id);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return 0.25f;
     }
 }

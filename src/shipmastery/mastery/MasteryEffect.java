@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 /** Note: If a method takes an {@code id} as a parameter, the {@code id} given is
  *  {@code shipmastery_[ID]_[LEVEL]} if {@link MasteryTags#UNIQUE} is not set, i.e. is stackable, and
@@ -31,8 +32,10 @@ public interface MasteryEffect {
      *    - "effectId 0.5" will set the effect strength to 0.5 upon generation <br>
      *    - "effectId 0.5 hello 3" will result in calling {@code init("0.5", "hello", "3")} <br>
      *  If passing args, effect strength must be the first argument.
+     *  Returns the mastery effect to be added, which is generally itself. <br><br>
+     *  {@link shipmastery.mastery.impl.random.RandomMastery} is the exception.
      *  */
-    void init(String... args);
+    MasteryEffect init(String... args);
 
     /** Same usage as {@link HullModEffect#applyEffectsBeforeShipCreation}. <br>
      *  All mastery effects are applied after all other hullmod effects.
@@ -104,6 +107,7 @@ public interface MasteryEffect {
     void removeTags(String... tags);
 
     boolean hasTag(String tag);
+    Set<String> getTags();
 
     /** Hull spec assigned to this mastery effect on generation. Can't be changed. */
     ShipHullSpecAPI getHullSpec();
@@ -111,7 +115,13 @@ public interface MasteryEffect {
     /** id assigned to this mastery effect on generation. Can't be changed. */
     String getId();
 
+    /** Level and index in the mastery list of that particular level that this mastery resides in. */
+    int getLevel();
+    int getIndex();
+    boolean isOption2();
+
     /** Generate random arguments, if the mastery effect takes required arguments.
+     *  Return null to indicate a failure and that this effect should not be selected.
      *  Don't include effect strength as an argument. */
-    List<String> generateRandomArgs(ShipHullSpecAPI spec);
+    List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed);
 }
