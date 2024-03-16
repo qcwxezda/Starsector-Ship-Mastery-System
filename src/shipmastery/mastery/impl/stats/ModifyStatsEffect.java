@@ -21,8 +21,7 @@ import java.util.*;
 public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     final Map<ShipStat, Float> amounts = new LinkedHashMap<>();
     @Override
-    public MasteryEffect init(String... args) {
-        super.init(args);
+    public MasteryEffect postInit(String... args) {
         for (int i = 1; i < args.length; i++) {
             String id = args[i];
             ShipStat stat = ShipMastery.getStatParams(id);
@@ -105,14 +104,24 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     protected final List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
         WeightedRandomPicker<ShipStat> picker = new WeightedRandomPicker<>();
         picker.setRandom(new Random(seed));
+        outer:
         for (String name : ShipMastery.getAllStatNames()) {
             ShipStat stat = ShipMastery.getStatParams(name);
             if (modifyFlat && !stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (!modifyFlat && stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (stat.tier > maxTier) continue;
+            List<String[]> usedArgs = getAllUsedArgs();
+            for (String[] args : usedArgs) {
+                // Avoid duplicate stat buffs
+                if (args.length >= 2 && args[1].equals(stat.id)) {
+                    continue outer;
+                }
+            }
+
             Float weight = stat.getSelectionWeight(spec);
             if (weight != null && weight > 0f) {
-                picker.add(stat, weight);
+                // try to prioritize higher tier stats, if applicable
+                picker.add(stat, weight * stat.tier);
             }
         }
 

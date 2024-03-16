@@ -30,6 +30,7 @@ public class SModCreditsCost extends MultiplicativeMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 0.25f;
+        // boring, don't select
+        return null;
     }
 }

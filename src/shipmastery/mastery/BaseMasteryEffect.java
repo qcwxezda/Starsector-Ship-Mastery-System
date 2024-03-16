@@ -10,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import shipmastery.ShipMastery;
 import shipmastery.util.VariantLookup;
 
 import java.util.*;
@@ -28,6 +29,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     protected String id = null;
     protected Integer level = null;
     protected Integer index = null;
+    private String[] args = null;
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {}
@@ -42,7 +44,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     public void onDeactivate(PersonAPI commander) {}
 
     @Override
-    public MasteryEffect init(String... args) {
+    public final MasteryEffect init(String... args) {
         if (args == null || args.length == 0) throw new RuntimeException("BaseMasteryEffect init called with null or 0 args");
 
         try {
@@ -51,7 +53,32 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
             throw new RuntimeException("First argument in mastery params list must be its strength", e);
         }
         id = ID;
+        this.args = args;
+        return postInit(args);
+    }
+
+    public MasteryEffect postInit(String... args) {
         return this;
+    }
+
+    @Override
+    public final String[] getArgs() {
+        return args;
+    }
+
+    protected final List<String[]> getAllUsedArgs() {
+        ShipHullSpecAPI spec = getHullSpec();
+        List<String[]> usedArgs = new ArrayList<>();
+        for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
+            List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
+            effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
+            for (MasteryEffect effect : effects) {
+                if (getClass().isAssignableFrom(effect.getClass())) {
+                    usedArgs.add(effect.getArgs());
+                }
+            }
+        }
+        return usedArgs;
     }
 
     @Override
@@ -227,6 +254,11 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
             throw new RuntimeException("Changing the index of a mastery effect is not allowed");
         }
         this.index = index;
+    }
+
+    public final void setTags(Set<String> tags) {
+        this.tags.clear();
+        this.tags.addAll(tags);
     }
 
     @Override

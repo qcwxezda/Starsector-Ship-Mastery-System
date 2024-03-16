@@ -23,7 +23,7 @@ import java.util.List;
 public class MissileRegenOnKill extends BaseMasteryEffect {
 
     static final float[] AMMO_PER_KILL_MULTIPLIER = new float[] {1f, 2f, 3f, 4f};
-    public static final float DAMAGE_MULT = 0.75f;
+    public static final float DAMAGE_MULT = 0.8f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {

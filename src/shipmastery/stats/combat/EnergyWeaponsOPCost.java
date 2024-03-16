@@ -2,6 +2,7 @@ package shipmastery.stats.combat;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Utils;
@@ -19,10 +20,8 @@ public class EnergyWeaponsOPCost extends ShipStat {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
-        if (spec.isCivilianNonCarrier()) return 0f;
-        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.se + wsc.me + wsc.le;
-        if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 4f, false);
+        if (spec.isCivilianNonCarrier()) return null;
+        if (!Utils.getDominantWeaponTypes(spec).contains(WeaponAPI.WeaponType.ENERGY)) return null;
+        return 1f;
     }
 }

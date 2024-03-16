@@ -155,8 +155,8 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + wsc.mm + wsc.lm;
-        if (count == 0) return null;
+        float count = 0.5f*wsc.sm + 2f*wsc.mm + 4f*wsc.lm;
+        if (count < 3f) return null;
         return Utils.getSelectionWeightScaledByValue(count, 3, false);
     }
 }

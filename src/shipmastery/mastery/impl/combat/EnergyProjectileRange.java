@@ -48,9 +48,7 @@ public class EnergyProjectileRange extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.se + wsc.me + wsc.le;
-        if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 3f, false);
+        if (!Utils.getDominantWeaponTypes(spec).contains(WeaponAPI.WeaponType.ENERGY)) return null;
+        return 1f;
     }
 }

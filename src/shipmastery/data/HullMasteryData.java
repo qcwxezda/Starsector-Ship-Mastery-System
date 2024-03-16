@@ -1,7 +1,5 @@
 package shipmastery.data;
 
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-
 import java.util.ArrayList;
 import java.util.List;
 

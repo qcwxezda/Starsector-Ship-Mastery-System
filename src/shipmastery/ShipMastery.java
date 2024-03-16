@@ -176,7 +176,7 @@ public abstract class ShipMastery {
             JSONObject item = statsList.getJSONObject(i);
             String id = item.getString("id");
             String className = item.getString("location");
-            Class<?> cls = ModPlugin.getClassLoader().loadClass(className);
+            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             ShipStat stat = (ShipStat) cls.newInstance();
             stat.id = id;
             stat.description = item.getString("description");
@@ -342,7 +342,8 @@ public abstract class ShipMastery {
             info.effectClass = cls;
             info.priority = priority;
             info.tier = tier;
-            info.tags = tags.trim().split("\\s+");
+            info.tags = new HashSet<>();
+            info.tags.addAll(Arrays.asList(tags.trim().split("\\s+")));
             masteryInfoMap.put(id, info);
         }
     }

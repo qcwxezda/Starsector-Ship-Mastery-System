@@ -12,6 +12,7 @@ import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+@Deprecated
 public class MaxOPForHull extends MultiplicativeMasteryEffect {
 
     static final float HULL_LOSS_PER_PERCENT_OP = 0.03f;

@@ -78,6 +78,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        float dp = spec.getSuppliesToRecover();
+        return Utils.getSelectionWeightScaledByValue(dp, 8f, true);
     }
 }

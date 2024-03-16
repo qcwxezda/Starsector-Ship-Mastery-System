@@ -54,6 +54,8 @@ public interface Strings {
     String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
     String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
     String EXCESS_OP_WARNING = Utils.getString("sms_misc", "excessOPWarning");
+    String gainedMPSingle = Utils.getString("sms_messages", "gainedMPSingle");
+    String gainedMPMultiple = Utils.getString("sms_messages", "gainedMPMultiple");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
@@ -350,5 +352,18 @@ public interface Strings {
         String TimeFlowNearbyEnemiesPost = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesPost");
         String TimeFlowNearbyEnemiesTitle = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesTitle");
         String TimeFlowNearbyEnemiesDesc1 = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesDesc1");
+        String ApplyOfficerSkill = Utils.getString( "sms_descriptions", "ApplyOfficerSkill");
+        String ShieldHullmodPackage = Utils.getString( "sms_descriptions", "ShieldHullmodPackage");
+        String ArmorHullmodPackage = Utils.getString( "sms_descriptions", "ArmorHullmodPackage");
+        String ArmorHullmodPackagePost = Utils.getString( "sms_descriptions", "ArmorHullmodPackagePost");
+        String HullHullmodPackage = Utils.getString( "sms_descriptions", "HullHullmodPackage");
+        String EngineHullmodPackage = Utils.getString( "sms_descriptions", "EngineHullmodPackage");
+        String FighterHullmodPackage = Utils.getString( "sms_descriptions", "FighterHullmodPackage");
+        String FluxHullmodPackage = Utils.getString( "sms_descriptions", "FluxHullmodPackage");
+        String BuiltInHSA = Utils.getString( "sms_descriptions", "BuiltInHSA");
+        String AmmoHullmodPackage = Utils.getString( "sms_descriptions", "AmmoHullmodPackage");
+        String BuiltInNeuralIntegrator = Utils.getString( "sms_descriptions", "BuiltInNeuralIntegrator");
+        String EmptyMountsReduceFlux = Utils.getString( "sms_descriptions", "EmptyMountsReduceFlux");
+        String EmptyMountsReduceFluxPost = Utils.getString( "sms_descriptions", "EmptyMountsReduceFluxPost");
     }
 }

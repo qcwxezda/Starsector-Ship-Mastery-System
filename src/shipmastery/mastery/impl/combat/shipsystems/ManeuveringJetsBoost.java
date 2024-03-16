@@ -10,7 +10,8 @@ import shipmastery.util.Utils;
 public class ManeuveringJetsBoost extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsBoost).params(Utils.asInt(getStrength(selectedModule)));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ManeuveringJetsBoost).params(
+                getSystemName(), Utils.asInt(getStrength(selectedModule)));
     }
 
     @Override

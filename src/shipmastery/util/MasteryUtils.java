@@ -14,7 +14,7 @@ public abstract class MasteryUtils {
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
-        return (2 + level) * 2;
+        return 2 + level;
     }
 
     public static String makeEffectId(MasteryEffect effect, int level, int index) {

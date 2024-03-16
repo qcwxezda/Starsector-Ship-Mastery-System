@@ -2,8 +2,6 @@ package shipmastery.data;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.util.Misc;
-import shipmastery.ShipMastery;
 import shipmastery.mastery.MasteryEffect;
 
 import java.util.ArrayList;

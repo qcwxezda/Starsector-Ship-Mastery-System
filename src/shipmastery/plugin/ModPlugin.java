@@ -5,10 +5,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.FleetHandler;
-import shipmastery.campaign.PlayerFleetHandler;
-import shipmastery.campaign.RefitHandler;
-import shipmastery.campaign.ShipGraveyardSpawner;
+import shipmastery.campaign.*;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
@@ -72,6 +69,10 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
 
+        PlayerXPTracker xpTracker = new PlayerXPTracker(false);
+        Global.getSector().addTransientScript(xpTracker);
+        Global.getSector().addTransientListener(xpTracker);
+
         VariantLookup variantLookup = new VariantLookup(false);
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
@@ -94,7 +95,6 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",
-            "shipmastery.stats.logistics"
     };
 
     public static ReflectionEnabledClassLoader getClassLoader() {

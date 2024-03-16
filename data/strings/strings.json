@@ -234,7 +234,7 @@
     "LargeBallisticFragDamagePost": "Doesn't apply to weapons that themselves deal fragmentation damage.",
     "PhasedCRDegradation": "Reduces peak performance time decay and combat readiness degradation rate by %1$s while phased.",
     "TemporalShellCRDegradation": "While %1$s is active, reduces peak performance time decay and combat readiness degradation rate by %2$s.",
-    "ManeuveringJetsBoost": "Maneuvering jets increases maximum speed by an additional %1$s su/s.",
+    "ManeuveringJetsBoost": "%1$s increases maximum speed by an additional %2$s su/s.",
     "ManeuveringJetsBoostTitle": "improved maneuvering jets",
     "ManeuveringJetsBoostDesc1": "+%1$s top speed",
     "RangeNoNearbyEnemies": "Boosts ballistic and energy weapon ranges by up to %1$s if no frigate-sized or larger enemy ships are nearby.",
@@ -337,7 +337,25 @@
     "EMPEmitterFragDamage": "Each bolt from %1$s deals an additional %2$s fragmentation damage to fighters and ships.",
     "DriveFieldStabilizerBoost": "If %1$s is installed, increases the fleet's burn bonus by an additional %2$s.",
     "GroundSupportBoost": "If %1$s or %2$s is installed, increases the fleet's ground support bonus by an additional %3$s.",
-    "MaxAutomatedCR": "The %1$s skill always grants an additional %2$s maximum combat readiness regardless of the fleet's automated ship points."
+    "MaxAutomatedCR": "The %1$s skill always grants an additional %2$s maximum combat readiness regardless of the fleet's automated ship points.",
+    "ApplyOfficerSkill": "Grants the non-elite effect of %1$s to ships not captained by an officer already possessing that skill.",
+    "ShieldHullmodPackage": "If 3 of the following hullmods are installed: %1$s, %2$s, %3$s, and %4$s, negates shield upkeep entirely and reduces shield damage taken by %5$s.",
+    "ArmorHullmodPackage": "If %1$s and %2$s are installed, increases armor by an additional %3$s",
+    "ArmorHullmodPackagePost": "Effect stacks multiplicatively on top of other armor modifiers.",
+    "HullHullmodPackage": "If %1$s and %2$s are installed, reduces hull and armor damage taken by %3$s.",
+    "EngineHullmodPackage": "If %1$s, %2$s, and %3$s are installed, negates the range and fighter replacement time penalties of %4$s.",
+    "FighterHullmodPackage": "If %1$s and %2$s are installed, reduces fighter replacement time by %3$s.",
+    "FluxHullmodPackage": "If %1$s, %2$s, and %3$s are installed, increases flux capacity and flux dissipation by an additional %4$s.",
+    "BuiltInHSA": "If %1$s is built in, increases the range of all beam weapons by an additional %2$s su.",
+    "AmmoHullmodPackage": "If %1$s and %2$s are installed, increases ammo of all weapons by an additional %3$s.",
+    "BuiltInNeuralIntegrator": "If %1$s is built in, negates its deployment point cost penalty.",
+    "EmptyMountsReduceFlux": "Each small/medium/large weapon mount left empty reduces the flux cost of all weapons by %1$s/%2$s/%3$s.",
+    "EmptyMountsReduceFluxPost": "This effect has a hard cap of %1$s total weapon flux reduction."
+  },
+
+  "sms_messages": {
+    "gainedMPSingle": "Gained %1$s MP for %2$s ships.",
+    "gainedMPMultiple": "Gained %1$s MP across %2$s ship hull types."
   },
 
   "sms_misc": {
@@ -346,7 +364,7 @@
     "flagshipOnly": "Flagship only: ",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
-    "shipMasteryEffect": "Mastery Effect",
+    "shipMasteryEffect": "Mastery effect",
     "and": "and ",
     "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery bonuses by %1$s",
     "bestOfTheBestScope": "Affects: %1$s",

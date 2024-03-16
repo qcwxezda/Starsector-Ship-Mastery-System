@@ -5,17 +5,19 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.MasteryUtils;
 
+import java.util.Set;
+
 public class MasteryGenerator {
     public Class<? extends MasteryEffect> effectClass;
     public String[] params;
-    public String[] tags;
+    public Set<String> tags;
     public float defaultStrength;
     public int priority;
 
     public MasteryGenerator(
             Class<? extends MasteryEffect> effectClass,
             String[] params,
-            String[] tags,
+            Set<String> tags,
             float defaultStrength,
             int priority) {
         this.effectClass = effectClass;
@@ -37,7 +39,7 @@ public class MasteryGenerator {
         effect.setId(MasteryUtils.makeEffectId(effect, level, index));
         effect.setLevel(level);
         effect.setIndex(index);
-        effect.addTags(tags);
+        effect.setTags(tags);
         return effect;
     }
 

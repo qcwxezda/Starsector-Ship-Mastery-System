@@ -125,6 +125,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                 if (ship == Global.getCombatEngine().getPlayerShip()) {
                     Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
                 }
+                timeMult.modifyMult(id, ratio);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),

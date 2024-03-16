@@ -17,7 +17,8 @@ public abstract class SModUtils {
     public static final float CREDITS_HARD_CAP = 9999999f;
     public static final int MP_HARD_CAP = 99;
 
-    public static final int ADDITIONAL_MP_PER_SMOD = 1;
+    public static final int ADDITIONAL_MP_PER_SMOD = 0;
+    public static final float DP_PER_EXTRA_MP = 1000000f;
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
@@ -28,7 +29,7 @@ public abstract class SModUtils {
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
         float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
 
-        float cost = 1 + (int) (dp / 20f);
+        float cost = 1 + (int) (dp / DP_PER_EXTRA_MP);
 
         // Built-in mods always have static cost
         if (isHullmodBuiltIn(spec, ship.getVariant())) {

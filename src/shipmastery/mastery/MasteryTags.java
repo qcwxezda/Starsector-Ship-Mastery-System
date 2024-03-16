@@ -44,4 +44,8 @@ public interface MasteryTags {
 
     /** If NPCs with this mastery need to be re-inflated due to increase hangar bays, changed OP costs, etc. */
     String TRIGGERS_AUTOFIT = "triggers_autofit";
+
+    /** Allows the same mastery to be randomly selected as both options at the same level, e.g. if different instances of this
+     *  mastery effect can have different effects due to taking additional params. */
+    String VARYING = "varying";
 }

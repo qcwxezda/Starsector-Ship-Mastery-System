@@ -17,6 +17,7 @@ public class ReplacementRateRegen extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
+        if (spec.getFighterBays() <= 0) return null;
         return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2, false);
     }
 }

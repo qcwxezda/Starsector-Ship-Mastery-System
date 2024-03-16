@@ -19,8 +19,7 @@ import java.util.*;
 public class IgnoreNoBuildIn extends BaseMasteryEffect {
     final Set<String> hullmodIds = new TreeSet<>();
     @Override
-    public MasteryEffect init(String... args) {
-        super.init(args);
+    public MasteryEffect postInit(String... args) {
         hullmodIds.addAll(Arrays.asList(args).subList(1, args.length));
         return this;
     }
@@ -66,13 +65,17 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
         WeightedRandomPicker<String> wrp = new WeightedRandomPicker<>();
         wrp.setRandom(new Random(seed));
-        if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) && !spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) {
+        Set<String> seenArgs = new HashSet<>();
+        for (String[] args : getAllUsedArgs()) {
+            seenArgs.addAll(Arrays.asList(args).subList(1, args.length));
+        }
+        if (!seenArgs.contains(HullMods.SAFETYOVERRIDES) && !ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) && !spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) {
             wrp.add(HullMods.SAFETYOVERRIDES);
         }
-        if (spec.isPhase() && !spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) {
+        if (!seenArgs.contains(HullMods.PHASE_ANCHOR) && spec.isPhase() && !spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) {
             wrp.add(HullMods.PHASE_ANCHOR);
         }
-        if (spec.isBuiltInMod(HullMods.AUTOMATED) && !spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR)) {
+        if (!seenArgs.contains(HullMods.NEURAL_INTEGRATOR) && spec.isBuiltInMod(HullMods.AUTOMATED) && !spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR)) {
             wrp.add(HullMods.NEURAL_INTEGRATOR);
         }
         if (wrp.isEmpty()) return null;

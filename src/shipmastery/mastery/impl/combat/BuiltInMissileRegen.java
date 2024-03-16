@@ -1,9 +1,11 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -33,9 +35,13 @@ public class BuiltInMissileRegen extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + wsc.mm + wsc.lm;
-        if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 3f, false);
+        if (spec.getBuiltInWeapons() == null) return null;
+        for (String id : spec.getBuiltInWeapons().values()) {
+            WeaponSpecAPI wSpec = Global.getSettings().getWeaponSpec(id);
+            if (WeaponAPI.WeaponType.MISSILE.equals(wSpec.getType())) {
+                return 1f;
+            }
+        }
+        return null;
     }
 }

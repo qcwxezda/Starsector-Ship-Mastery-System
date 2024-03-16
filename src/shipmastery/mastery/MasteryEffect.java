@@ -124,4 +124,6 @@ public interface MasteryEffect {
      *  Return null to indicate a failure and that this effect should not be selected.
      *  Don't include effect strength as an argument. */
     List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed);
+
+    String[] getArgs();
 }

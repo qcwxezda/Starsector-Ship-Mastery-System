@@ -17,10 +17,12 @@ import shipmastery.mastery.MasteryTags;
 import java.util.*;
 
 public class RandomMastery extends BaseMasteryEffect {
-    public MasteryEffect init(String... args) {
+
+    @Override
+    public MasteryEffect postInit(String... args) {
         long seed = makeSeed();
         try {
-            return init(seed, args);
+            return postInit(seed, args);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -36,9 +38,8 @@ public class RandomMastery extends BaseMasteryEffect {
         return null;
     }
 
-    protected final MasteryEffect init(long seed, String... args)
+    protected final MasteryEffect postInit(long seed, String... args)
             throws InstantiationException, IllegalAccessException {
-        super.init(args);
         ShipHullSpecAPI spec = getHullSpec();
         Set<Class<?>> uniqueDontRepeat = new HashSet<>();
         int maxTier = args.length >= 2 ? Integer.parseInt(args[1]) : 1;
@@ -47,7 +48,7 @@ public class RandomMastery extends BaseMasteryEffect {
             effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
             for (MasteryEffect effect : effects) {
                 // Don't want same effects in a single level even if not unique
-                if (effect != null && (effect.hasTag(MasteryTags.UNIQUE) || i == level)) {
+                if (effect != null && (effect.hasTag(MasteryTags.UNIQUE) || (i == level && !effect.hasTag(MasteryTags.VARYING)))) {
                     uniqueDontRepeat.add(effect.getClass());
                 }
             }
@@ -55,8 +56,8 @@ public class RandomMastery extends BaseMasteryEffect {
             List<MasteryGenerator> generators = new ArrayList<>(ShipMastery.getGenerators(spec, i, false));
             generators.addAll(ShipMastery.getGenerators(spec, i ,true));
             for (MasteryGenerator generator : generators) {
-                Set<String> tags = new HashSet<>(Arrays.asList(generator.tags));
-                if (i == level || tags.contains(MasteryTags.UNIQUE)) {
+                Set<String> tags = generator.tags;
+                if ((i == level && !tags.contains(MasteryTags.VARYING)) || tags.contains(MasteryTags.UNIQUE)) {
                     uniqueDontRepeat.add(generator.effectClass);
                 }
             }
@@ -68,6 +69,7 @@ public class RandomMastery extends BaseMasteryEffect {
             MasteryInfo info = ShipMastery.getMasteryInfo(str);
             if (uniqueDontRepeat.contains(info.effectClass)) continue;
             if (info.tier > maxTier) continue;
+            if (info.tags.contains(MasteryTags.COMBAT) && spec.isCivilianNonCarrier()) continue;
             // TODO: optimize this by storing selection weights in a map somewhere
             MasteryGenerator dummyGenerator = new MasteryGenerator(
                     info.effectClass,
@@ -79,7 +81,8 @@ public class RandomMastery extends BaseMasteryEffect {
             MasteryEffect dummy = dummyGenerator.generateDontInit(spec, level, index, false);
             Float weight = dummy.getSelectionWeight(spec);
             if (weight != null && weight > 0f) {
-                effectPicker.add(info, dummy.getSelectionWeight(spec));
+                // try to prioritize higher tier masteries, if they are applicable
+                effectPicker.add(info, dummy.getSelectionWeight(spec) * info.tier);
             }
         }
 
@@ -90,6 +93,7 @@ public class RandomMastery extends BaseMasteryEffect {
         do {
             MasteryInfo selected = effectPicker.pickAndRemove();
 
+            params.clear();
             params.add("" + getStrength((PersonAPI) null) * selected.defaultStrength);
 
             MasteryGenerator generator = new MasteryGenerator(
@@ -108,6 +112,10 @@ public class RandomMastery extends BaseMasteryEffect {
     }
 
     long makeSeed() {
-        return (getId() + "_" + level + "_" + index + "_" + getHullSpec().getHullId() + "_" + Global.getSector().getPlayerPerson().getId()).hashCode();
+        return (getId() + "_" +
+                level + "_" +
+                index + "_" +
+                isOption2() + "_" +
+                getHullSpec().getHullId() + "_" + Global.getSector().getPlayerPerson().getId()).hashCode();
     }
 }

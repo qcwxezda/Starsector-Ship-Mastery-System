@@ -29,11 +29,19 @@ public abstract class Utils {
     public static final DecimalFormat twoDecimalPlaceFormat = new DecimalFormat("0.##");
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
+    public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
 
     static {
         for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {
             wingVariantToIdMap.put(spec.getVariantId(), spec.getId());
         }
+        for (HullModSpecAPI spec : Global.getSettings().getAllHullModSpecs()) {
+            hullmodIdToNameMap.put(spec.getId(), spec.getDisplayName());
+        }
+    }
+
+    public static String getHullmodName(String hullmodId) {
+        return hullmodIdToNameMap.get(hullmodId);
     }
 
     public static String getFighterWingId(String variantId) {
@@ -452,10 +460,27 @@ public abstract class Utils {
         else return getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
     }
 
-    public static class IntRef {
-        public Integer value;
-        public IntRef(Integer i) {
-            this.value = i;
+    public static Set<WeaponAPI.WeaponType> getDominantWeaponTypes(ShipHullSpecAPI spec) {
+        WeaponSlotCount count = countWeaponSlots(spec);
+        Set<WeaponAPI.WeaponType> dominantTypes = new HashSet<>();
+        int maxLarge = Math.max(count.le, Math.max(count.lm, count.lb));
+        if (maxLarge >= 1) {
+            if (count.le == maxLarge) dominantTypes.add(WeaponAPI.WeaponType.ENERGY);
+            if (count.lb == maxLarge) dominantTypes.add(WeaponAPI.WeaponType.BALLISTIC);
+            if (count.lm == maxLarge) dominantTypes.add(WeaponAPI.WeaponType.MISSILE);
+            return dominantTypes;
         }
+        int maxMedium = Math.max(count.me, Math.max(count.mm, count.mb));
+        if (maxMedium >= 1) {
+            if (count.me == maxMedium) dominantTypes.add(WeaponAPI.WeaponType.ENERGY);
+            if (count.mb == maxMedium) dominantTypes.add(WeaponAPI.WeaponType.BALLISTIC);
+            if (count.mm == maxMedium) dominantTypes.add(WeaponAPI.WeaponType.MISSILE);
+            return dominantTypes;
+        }
+        int maxSmall = Math.max(count.se, Math.max(count.sm, count.sb));
+        if (count.se == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.ENERGY);
+        if (count.sb == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.BALLISTIC);
+        if (count.sm == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.MISSILE);
+        return dominantTypes;
     }
 }
