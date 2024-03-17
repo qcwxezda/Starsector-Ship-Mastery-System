@@ -1,0 +1,2 @@
+name,id,tags,tech/manufacturer,rarity,base price,stack size,cargo space,baseRaidDanger,icon,sound id,sound id drop,plugin,plugin params,desc,order
+Knowledge Construct,sms_construct,,,,10000,1000,1,,graphics/icons/cargo/sms_knowledge_construct.png,ui_chip_pickup,ui_ship_bp_drop,shipmastery.campaign.items.KnowledgeConstructPlugin,,Contains data from millions of battle simulations involving ships of the designated hull class. Can be integrated to your person to gain specialized piloting expertise.,500

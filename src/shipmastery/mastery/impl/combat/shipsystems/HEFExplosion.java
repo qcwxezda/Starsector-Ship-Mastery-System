@@ -176,4 +176,11 @@ public class HEFExplosion extends ShipSystemEffect {
             return null;
         }
     }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
+        if (count.le <= 0) return null;
+        return super.getSelectionWeight(spec);
+    }
 }

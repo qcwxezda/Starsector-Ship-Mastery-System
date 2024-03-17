@@ -54,8 +54,10 @@ public interface Strings {
     String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
     String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
     String EXCESS_OP_WARNING = Utils.getString("sms_misc", "excessOPWarning");
-    String gainedMPSingle = Utils.getString("sms_messages", "gainedMPSingle");
-    String gainedMPMultiple = Utils.getString("sms_messages", "gainedMPMultiple");
+    String GAINED_MP_SINGLE = Utils.getString("sms_messages", "gainedMPSingle");
+    String GAINED_MP_MULTIPLE = Utils.getString("sms_messages", "gainedMPMultiple");
+    String KNOWLEDGE_CONSTRUCT = Utils.getString("sms_items", "knowledgeConstruct");
+    String KNOWLEDGE_CONSTRUCT_RIGHT_CLICK = Utils.getString("sms_items", "knowledgeConstructRightClick");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");

@@ -8,7 +8,7 @@
     ],
     "description": "Gain mastery in ship hulls to unlock s-mod slots and additional bonuses.",
     "gameVersion": "0.97a-RC11",
-    "jars": ["jars/Ship Mastery System.jar"],
+    "jars": ["jars/ShipMasterySystem.jar"],
     "modPlugin": "shipmastery.plugin.ModPlugin",
     "replace": [
         "data/characters/skills/best_of_the_best.skill"

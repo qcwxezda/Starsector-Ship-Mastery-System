@@ -13,6 +13,7 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.plugin.ModPlugin;
 
 import java.util.*;
 
@@ -71,18 +72,14 @@ public class RandomMastery extends BaseMasteryEffect {
             if (info.tier > maxTier) continue;
             if (info.tags.contains(MasteryTags.COMBAT) && spec.isCivilianNonCarrier()) continue;
             // TODO: optimize this by storing selection weights in a map somewhere
-            MasteryGenerator dummyGenerator = new MasteryGenerator(
-                    info.effectClass,
-                    null,
-                    info.tags,
-                    info.defaultStrength,
-                    info.priority
-            );
+            MasteryGenerator dummyGenerator = new MasteryGenerator(info,null);
             MasteryEffect dummy = dummyGenerator.generateDontInit(spec, level, index, false);
             Float weight = dummy.getSelectionWeight(spec);
-            if (weight != null && weight > 0f) {
+
+            boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier masteries, if they are applicable
-                effectPicker.add(info, dummy.getSelectionWeight(spec) * info.tier);
+                effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * info.tier);
             }
         }
 
@@ -96,12 +93,7 @@ public class RandomMastery extends BaseMasteryEffect {
             params.clear();
             params.add("" + getStrength((PersonAPI) null) * selected.defaultStrength);
 
-            MasteryGenerator generator = new MasteryGenerator(
-                    selected.effectClass,
-                    null,
-                    selected.tags,
-                    selected.defaultStrength,
-                    selected.priority);
+            MasteryGenerator generator = new MasteryGenerator(selected, null);
             effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), isOption2());
             additionalParams = effect.generateRandomArgs(getHullSpec(), maxTier, makeSeed());
         } while (additionalParams == null);

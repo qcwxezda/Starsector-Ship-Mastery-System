@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.stats;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -10,6 +11,7 @@ import shipmastery.config.Settings;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.plugin.ModPlugin;
 import shipmastery.stats.ShipStat;
 import shipmastery.stats.StatTags;
 import shipmastery.util.Strings;
@@ -119,9 +121,10 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             }
 
             Float weight = stat.getSelectionWeight(spec);
-            if (weight != null && weight > 0f) {
+            boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier stats, if applicable
-                picker.add(stat, weight * stat.tier);
+                picker.add(stat, randomMode ? Math.max(1f, weight) : weight * stat.tier);
             }
         }
 

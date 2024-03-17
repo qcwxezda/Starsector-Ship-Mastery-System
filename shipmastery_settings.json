@@ -8,5 +8,6 @@
   "npcMasteryFlagshipBonus": 2,
   "npcSmodQualityMod": -0.7,
 
-  "enablePlayerShipGraveyards": true
+  "enablePlayerShipGraveyards": true,
+  "enableRandomMode": false
 }

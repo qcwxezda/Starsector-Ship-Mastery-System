@@ -15,19 +15,16 @@ public class MasteryGenerator {
     public int priority;
 
     public MasteryGenerator(
-            Class<? extends MasteryEffect> effectClass,
-            String[] params,
-            Set<String> tags,
-            float defaultStrength,
-            int priority) {
-        this.effectClass = effectClass;
+            MasteryInfo info,
+            String[] params) {
+        effectClass = info.effectClass;
         this.params = params;
+        tags = info.tags;
+        priority = info.priority;
+        defaultStrength = info.defaultStrength;
         if (this.params == null || this.params.length == 0) {
             this.params = new String[] {"" + defaultStrength};
         }
-        this.tags = tags;
-        this.priority = priority;
-        this.defaultStrength = defaultStrength;
     }
 
     public MasteryEffect generateDontInit(ShipHullSpecAPI spec, int level, int index, boolean isOption2)

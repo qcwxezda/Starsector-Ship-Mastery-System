@@ -354,8 +354,13 @@
   },
 
   "sms_messages": {
-    "gainedMPSingle": "Gained %1$s MP for %2$s ships.",
+    "gainedMPSingle": "Gained %1$s MP for %2$s-class ships.",
     "gainedMPMultiple": "Gained %1$s MP across %2$s ship hull types."
+  },
+
+  "sms_items": {
+    "knowledgeConstruct": "Knowledge Construct",
+    "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points"
   },
 
   "sms_misc": {

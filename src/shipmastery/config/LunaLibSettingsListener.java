@@ -33,7 +33,8 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         Settings.NPC_SMOD_QUALITY_MOD = LunaSettings.getFloat("shipmasterysystem", "difficulty_SModMod");
 
         Settings.ENABLE_PLAYER_SHIP_GRAVEYARDS =
-                LunaSettings.getBoolean("shipmasterysystem", "general_PlayerShipGraveyards");
+                LunaSettings.getBoolean("shipmasterysystem", "misc_PlayerShipGraveyards");
+        Settings.ENABLE_RANDOM_MODE = LunaSettings.getBoolean("shipmasterysystem", "misc_RandomMode");
 
         FleetHandler.NPC_MASTERY_CACHE.clear();
     }

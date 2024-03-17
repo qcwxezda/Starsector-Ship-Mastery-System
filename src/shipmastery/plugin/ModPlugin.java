@@ -4,26 +4,30 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import org.json.JSONException;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.procgen.Generator;
 import shipmastery.util.VariantLookup;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
 
-    public static String lastSaveId = null;
+    private static String lastSaveId = null;
+    public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     private static ReflectionEnabledClassLoader classLoader = null;
 
     @Override
     public void onApplicationLoad() throws Exception {
-        ShipMastery.loadMasteryData();
-
+        ShipMastery.loadMasteries();
+        ShipMastery.loadStats();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
             LunaLibSettingsListener.init();
         }
@@ -34,16 +38,26 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        Boolean randomMode = (Boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
+        // Added to a game for the first time
+        if (randomMode == null) {
+            randomMode = Settings.ENABLE_RANDOM_MODE;
+            Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
+            Generator.generate(100);
+        }
+
         ShipMastery.loadMasteryTable();
         // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
         String id = Global.getSector().getPlayerPerson().getId();
         if (!id.equals(lastSaveId)) {
             lastSaveId = id;
-
             try {
+                ShipMastery.initMasteries(randomMode);
                 ShipMastery.generateMasteries();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException("Failed to generate mastery effects", e);
+            } catch (JSONException | IOException e) {
+                throw new RuntimeException("Failed to initialize mastery effects", e);
             }
         }
 
@@ -69,7 +83,7 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
 
-        PlayerXPTracker xpTracker = new PlayerXPTracker(false);
+        PlayerMPHandler xpTracker = new PlayerMPHandler(false);
         Global.getSector().addTransientScript(xpTracker);
         Global.getSector().addTransientListener(xpTracker);
 

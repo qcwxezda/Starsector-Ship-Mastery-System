@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.plugin.ModPlugin;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -169,8 +168,8 @@ public abstract class ShipMastery {
         return masteryData.getDataForLevel(level);
     }
 
-    static void loadStats() throws JSONException, InstantiationException, IllegalAccessException,
-                                   ClassNotFoundException, IOException {
+    public static void loadStats() throws JSONException, InstantiationException, IllegalAccessException,
+                                          ClassNotFoundException, IOException {
         JSONArray statsList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/stats_list.csv");
         for (int i = 0; i < statsList.length(); i++) {
             JSONObject item = statsList.getJSONObject(i);
@@ -187,14 +186,6 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void loadMasteryData()
-            throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-        loadMasteries();
-        loadStats();
-        initMasteries();
-    }
-
     public static MasteryGenerator makeGenerator(String rawString) {
         String[] strList = rawString.trim().split("\\s+");
         String id = strList[0];
@@ -203,7 +194,7 @@ public abstract class ShipMastery {
         if (info == null) {
             throw new RuntimeException("Unknown mastery effect: " + id);
         }
-        return new MasteryGenerator(info.effectClass, params, info.tags, info.defaultStrength, info.priority);
+        return new MasteryGenerator(info, params);
     }
 
     public static void processLevelData(Object generator, MasteryLevelData data, boolean isOption2)
@@ -303,26 +294,64 @@ public abstract class ShipMastery {
     }
 
 
-    public static void initMasteries() throws JSONException, IOException {
+    public static void initMasteries(boolean randomMode) throws JSONException, IOException {
         masteryMap.clear();
-        masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
-        JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
-        Iterator<String> itr = presets.keys();
-        while (itr.hasNext()) {
-            String name = itr.next();
-            masteryAssignments.put(name, presets.getJSONObject(name));
-        }
 
-        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
-            spec = Utils.getRestoredHullSpec(spec);
-            String id = spec.getHullId();
-            if (!masteryMap.containsKey(id)) {
-                initMasteries(id, new HashSet<String>());
+        JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
+        if (!randomMode) {
+            masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
+            Iterator<String> itr = presets.keys();
+            while (itr.hasNext()) {
+                String name = itr.next();
+                masteryAssignments.put(name, presets.getJSONObject(name));
+            }
+
+            for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+                spec = Utils.getRestoredHullSpec(spec);
+                String id = spec.getHullId();
+                if (!masteryMap.containsKey(id)) {
+                    initMasteries(id, new HashSet<String>());
+                }
+            }
+        }
+        else {
+            JSONObject defaultPreset = presets.getJSONObject(DEFAULT_PRESET_NAME);
+            int maxLevel = defaultPreset.getInt("maxLevel");
+            List<Integer> allLevels = new ArrayList<>();
+            for (int i = 1; i <= maxLevel; i++) {
+                allLevels.add(i);
+            }
+            MasteryInfo sModCapacityInfo = getMasteryInfo("SModCapacity");
+            MasteryInfo randomInfo = getMasteryInfo("RandomMastery");
+            for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+                spec = Utils.getRestoredHullSpec(spec);
+                String id = spec.getHullId();
+                if (!masteryMap.containsKey(id)) {
+                    HullMasteryData data = new HullMasteryData(id, maxLevel);
+                    Collections.shuffle(allLevels);
+                    Set<Integer> sModLevels = new HashSet<>();
+                    for (int i = 0; i < Math.min(3, maxLevel); i++) {
+                        sModLevels.add(allLevels.get(i));
+                    }
+                    for (int i = 1; i <= maxLevel; i++) {
+                        MasteryLevelData levelData = new MasteryLevelData(id, i);
+                        MasteryGenerator generator;
+                        if (sModLevels.contains(i)) {
+                            generator = new MasteryGenerator(sModCapacityInfo, null);
+                        }
+                        else {
+                            generator = new MasteryGenerator(randomInfo, new String[] {"1", "9999999"});
+                        }
+                        levelData.addGeneratorToOption1(generator);
+                        data.setLevelData(i, levelData);
+                    }
+                    masteryMap.put(id, data);
+                }
             }
         }
     }
 
-    static void loadMasteries() throws JSONException, IOException, ClassNotFoundException {
+    public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException {
         JSONArray masteryList =
                 Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
         for (int i = 0; i < masteryList.length(); i++) {
@@ -358,7 +387,8 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void generateMasteries() throws InstantiationException, IllegalAccessException {
+    public static void generateMasteries()
+            throws InstantiationException, IllegalAccessException, JSONException, IOException {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
