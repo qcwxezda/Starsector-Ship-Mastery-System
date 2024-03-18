@@ -62,6 +62,9 @@ public class SpeedHullLevel extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
+                ship.removeListener(this);
+            }
             checkerInterval.advance(amount);
 
             float hullLevel = ship.getHullLevel();

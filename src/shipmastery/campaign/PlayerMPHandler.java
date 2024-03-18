@@ -43,7 +43,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     @Override
     public boolean runWhilePaused() {
-        return false;
+        return true;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     public void gainMPFromBattle(long xpGained, Set<FleetMemberAPI> deployed) {
         WeightedRandomPicker<ShipHullSpecAPI> picker =
-                makePicker(deployed, true, true, true);
+                makePicker(deployed, false, true, true);
         gainMP(xpGained, picker);
     }
 
@@ -168,19 +168,28 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     public void showMasteryPointGainMessage(Map<ShipHullSpecAPI, Integer> amounts) {
         if (amounts.isEmpty()) return;
+        InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
+        String message;
+        String highlight;
         if (amounts.size() == 1) {
             ShipHullSpecAPI spec = amounts.keySet().iterator().next();
             int amount = amounts.get(spec);
-            Global.getSector().getCampaignUI().addMessage(
-                    String.format(Strings.GAINED_MP_SINGLE, amount, spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+            message = String.format(Strings.GAINED_MP_SINGLE, amount + " MP", spec.getHullNameWithDashClass());
+            highlight = amount + " MP";
         }
         else {
             int sum = 0;
             for (int amount : amounts.values()) {
                 sum += amount;
             }
-            Global.getSector().getCampaignUI().addMessage(
-                    String.format(Strings.GAINED_MP_MULTIPLE, sum, amounts.size()), Settings.MASTERY_COLOR);
+            message = String.format(Strings.GAINED_MP_MULTIPLE, sum + " MP", amounts.size());
+            highlight = sum + " MP";
+        }
+        Global.getSector().getCampaignUI().addMessage(message, Settings.MASTERY_COLOR);
+        if (dialog != null) {
+            dialog.getTextPanel().setFontSmallInsignia();
+            dialog.getTextPanel().addPara(message, Misc.getTextColor(), Settings.MASTERY_COLOR, highlight);
+            dialog.getTextPanel().setFontInsignia();
         }
     }
 

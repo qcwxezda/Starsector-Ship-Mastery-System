@@ -12,18 +12,31 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.deferred.Action;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
 public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
+    public static final String SMS_USED_KEY = "$sms_ConcealedStationUsed";
+    public static final String SMS_SHIP_NAME_KEY = "$sms_ShipName";
+    public static final String SMS_COLOR_KEY = "$sms_TextColor";
+
     @Override
     public boolean execute(final String ruleId, final InteractionDialogAPI dialog, final List<Misc.Token> params,
                            final Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
+        List<FleetMemberAPI> selectable = new ArrayList<>();
+        for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+            if (!fm.getVariant().hasHullMod("sms_randomModification")) {
+                selectable.add(fm);
+            }
+        }
         dialog.showFleetMemberPickerDialog(
                 Strings.SELECT_A_SHIP,
                 Strings.CONFIRM_STR,
@@ -33,7 +46,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                 80f,
                 true,
                 false,
-                Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy(),
+                selectable,
                 new FleetMemberPickerListener() {
                     @Override
                     public void cancelledFleetMemberPicking() {
@@ -44,9 +57,11 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                             return;
                         }
                         FleetMemberAPI picked = fleetMembers.get(0);
-                        picked.getVariant().addPermaMod("sms_randomOverloadVenting");
+                        picked.getVariant().addPermaMod("sms_randomModification");
                         picked.getRepairTracker().setCR(0);
-                        memoryMap.get(MemKeys.LOCAL).set("$sms_ConcealedStationUsed", true);
+                        memoryMap.get(MemKeys.LOCAL).set(SMS_USED_KEY, true);
+                        memoryMap.get(MemKeys.LOCAL).set(SMS_SHIP_NAME_KEY, picked.getShipName());
+                        memoryMap.get(MemKeys.LOCAL).set(SMS_COLOR_KEY, Misc.getNegativeHighlightColor());
                         if (dialog.getInteractionTarget() != null) {
                             CargoAPI cargo = Global.getFactory().createCargo(true);
                             cargo.addSpecial(
@@ -54,6 +69,14 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                                     3 + Misc.random.nextInt(3)); // 3-5
                             BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);
                         }
+                        Global.getSoundPlayer().setSuspendDefaultMusicPlayback(true);
+                        Global.getSoundPlayer().pauseMusic();
+                        DeferredActionPlugin.performOnUnpause(new Action() {
+                            @Override
+                            public void perform() {
+                                Global.getSoundPlayer().setSuspendDefaultMusicPlayback(false);
+                            }
+                        });
                         FireBest.fire(null, dialog, memoryMap, "sms_tConcealedStationDocked");
                     }
                 });

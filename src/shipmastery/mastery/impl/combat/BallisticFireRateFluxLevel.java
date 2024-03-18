@@ -61,6 +61,9 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
+                ship.removeListener(this);
+            }
             checkerInterval.advance(amount);
 
             float effectMult = Math.min(1f, ship.getFluxLevel() / maxFluxLevel);

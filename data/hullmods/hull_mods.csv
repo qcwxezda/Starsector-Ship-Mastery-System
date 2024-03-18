@@ -1,6 +1,8 @@
 name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hiddenEverywhere,cost_frigate,cost_dest,cost_cruiser,cost_capital,script,desc,short,sprite
 Ship Mastery Handler,sms_masteryHandler,,,,,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.MasteryHullmod,Handles mastery effects,Handles mastery effects,graphics/hullmods/generic_mod.png
-Unknown Modification,sms_randomOverloadVenting,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.MasteryHullmod,This ship has been modified by an unknown mechanism. May affect combat performance.,Unknown effect,graphics/hullmods/generic_mod.png
+Extradimensional Rearrangement,sms_randomModification,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.RandomModification,"This ship has been altered by an unknown mechanism. A number of its stats have been altered slightly but permanently.
+
+Time flow permanently multiplied by a factor of %s.",Ship altered by unknown mechanism,graphics/hullmods/sms_random_modification.png
 Mastery - Level 1,sms_npcIndicator1,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
 Mastery - Level 2,sms_npcIndicator2,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
 Mastery - Level 3,sms_npcIndicator3,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png

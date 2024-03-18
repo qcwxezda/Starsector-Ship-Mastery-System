@@ -59,6 +59,9 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
+                ship.removeListener(this);
+            }
             checkerInterval.advance(amount);
 
             float hullLevel = ship.getHullLevel();
@@ -84,7 +87,7 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
                         String.format(Strings.Descriptions.BallisticFireRateHullLevelDesc2, Utils.asPercentNoDecimal(effectLevel)),
                         false);
                 outlineEmitter.alphaMult = effectMult * 0.4f;
-                outlineEmitter.widthGrowth = effectMult * 20f;
+                outlineEmitter.widthGrowth = effectMult * 10f;
                 outlineInterval.advance(amount);
                 if (outlineInterval.intervalElapsed()) {
                     Particles.burst(outlineEmitter, 6);

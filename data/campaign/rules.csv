@@ -10,7 +10,8 @@ sms_oConcealedStationSalvage:Salvage the station
 sms_oConcealedStationLeave:Leave
 ",
 sms_ConcealedStationDock,DialogOptionSelected,$option == sms_oConcealedStationDock,sms_ConcealedStationInteraction,,,
-sms_ConcealedStationDocked,sms_tConcealedStationDocked,,SetShortcut sms_oConcealedStationLeave ESCAPE,"You order the ship to be immediately docked at the mysterious hangar. As it lowers itself onto the glowing platform, a blinding veil of light encapsulates it.
+sms_ConcealedStationDocked,sms_tConcealedStationDocked,,"SetShortcut sms_oConcealedStationLeave ESCAPE
+AddTextSmall ""$sms_ShipName lost 100% combat readiness"" $sms_TextColor","You order the ship to dock at the mysterious hangar. As it lowers itself onto the glowing platform, a blinding veil of light encapsulates it.
 
 Before you can change your mind, the light subsides, and the platform lies dormant.
 

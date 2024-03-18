@@ -10,12 +10,20 @@ import java.util.Queue;
 public class DeferredActionPlugin implements EveryFrameScript {
 
     final Queue<DeferredAction> actionList = new PriorityQueue<>();
+    final Queue<Action> actionListOnUnpause = new PriorityQueue<>();
     public static final String INSTANCE_KEY = "$shipmastery_DeferredActionPlugin";
 
     public static void performLater(Action action, float delay) {
         DeferredActionPlugin instance = getInstance();
         if (instance != null) {
             instance.actionList.add(new DeferredAction(action, System.currentTimeMillis() + (long) (1000f*delay)));
+        }
+    }
+
+    public static void performOnUnpause(Action action) {
+        DeferredActionPlugin instance = getInstance();
+        if (instance != null) {
+            instance.actionListOnUnpause.add(action);
         }
     }
 
@@ -41,6 +49,11 @@ public class DeferredActionPlugin implements EveryFrameScript {
             firstItem.action.perform();
         }
 
+        if (!Global.getSector().isPaused()) {
+            while (!actionListOnUnpause.isEmpty()) {
+                actionListOnUnpause.poll().perform();
+            }
+        }
     }
 
 }

@@ -354,8 +354,8 @@
   },
 
   "sms_messages": {
-    "gainedMPSingle": "Gained %1$s MP for %2$s-class ships.",
-    "gainedMPMultiple": "Gained %1$s MP across %2$s ship hull types."
+    "gainedMPSingle": "Gained %1$s for %2$s ships.",
+    "gainedMPMultiple": "Gained %1$s across %2$s ship hull types."
   },
 
   "sms_items": {
