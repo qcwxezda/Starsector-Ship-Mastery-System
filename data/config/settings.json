@@ -1,6 +1,10 @@
 {
   "maxPermanentHullmods":0,
 
+  "ruleCommandPackages":[
+    "shipmastery.campaign.rulecmd"
+  ],
+
   "plugins": {
     "sms_CombatListenerManager": "shipmastery.combat.CombatListenerManager",
     "sms_CombatDeferredActionPlugin": "shipmastery.deferred.CombatDeferredActionPlugin"

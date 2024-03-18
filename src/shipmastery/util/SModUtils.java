@@ -22,22 +22,20 @@ public abstract class SModUtils {
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
+        // No MP cost to build in on civilian ships
+        if (Utils.getRestoredHullSpec(ship.getHullSpec()).isCivilianNonCarrier()) {
+            return 0;
+        }
         ShipVariantAPI variant = ship.getVariant();
-
         int nSMods = variant.getSMods().size();
-
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
         float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
-
         float cost = 1 + (int) (dp / DP_PER_EXTRA_MP);
-
         // Built-in mods always have static cost
         if (isHullmodBuiltIn(spec, ship.getVariant())) {
             return (int) cost;
         }
-
         cost += ADDITIONAL_MP_PER_SMOD * nSMods;
-
         // Exponentially increasing MP cost for each S-mod over the limit
         if (TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() >= 1) {
             for (int i = Misc.getMaxPermanentMods(ship); i <= nSMods; i++) {
@@ -46,10 +44,8 @@ public abstract class SModUtils {
                 cost = Math.min(cost, MP_HARD_CAP);
             }
         }
-
         cost -= TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.getModifiedInt();
         cost = Math.max(1, cost);
-
         return (int) Math.min(cost, MP_HARD_CAP);
     }
 

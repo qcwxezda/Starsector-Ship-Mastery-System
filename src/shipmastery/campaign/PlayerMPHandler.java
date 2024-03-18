@@ -22,8 +22,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 50000f;
-    public static final long MAX_XP_PER_INSTANCE = 1000000;
+    public static final float XP_PER_HALF_MP = 25000f;
+    public static final long MAX_XP_PER_INSTANCE = 500000;
     /** Ship hulls types at max mastery level start receiving fewer MP for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.9f;
     private long prevXP;

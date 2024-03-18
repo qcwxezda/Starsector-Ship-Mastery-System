@@ -1,5 +1,5 @@
 id,rating,detection_range,type,autoXP,xpDiscover,xpSalvage,tags,drop_value,drop_random,defFaction,defQuality,probDefenders,minStr,maxStr,minSize,maxSize,probStation,stationRole
-sms_mysterious_station,0,1200,DISCOVERABLE,2000,1000,5000,,basic:10000,"
+sms_concealed_station,0,50,DISCOVERABLE,2000,1000,5000,,basic:10000,"
 weapons2:30,
 rare_tech_low:2,
 sms_construct:50

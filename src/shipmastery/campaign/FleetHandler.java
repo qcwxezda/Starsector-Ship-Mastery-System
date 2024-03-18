@@ -30,6 +30,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
+    /** Can be used to set custom mastery levels. Expects a Map<String, Map<Integer, Boolean>>
+     *  hull spec id -> level -> which option is activated */
+    public static final String CUSTOM_MASTERIES_KEY = "$sms_CustomMasteryData";
     public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
 
     public FleetHandler(boolean permaRegister) {
@@ -161,6 +164,14 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 if (variant.getUnusedOP(commander == null ? null : commander.getStats()) > 0f && canAutofit) {
                     auto.doFit(variant, variant.clone(), 0, (AutofitPlugin.AutofitPluginDelegate) inflater);
                 }
+
+                // Adjust CR if mastery effects affected that
+                // TODO: figure out if this causes unwanted spontaneous repairs...
+                fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+//                float diff = fm.getRepairTracker().getMaxCR() - crBeforeModification;
+//                if (diff > 0f) {
+//                    fm.getRepairTracker().setCR(Math.min(fm.getRepairTracker().getMaxCR(), fm.getRepairTracker().getCR() + diff));
+//                }
             }
 
             if (!masteries.isEmpty()) {
@@ -224,8 +235,18 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         if (cachedMasteries != null) return cachedMasteries;
 
         spec = Utils.getRestoredHullSpec(spec);
+        NavigableMap<Integer, Boolean> map = new TreeMap<>();
+        if (commander.getMemoryWithoutUpdate().contains(CUSTOM_MASTERIES_KEY)) {
+            //noinspection unchecked
+            Map<String, Map<Integer, Boolean>> custom =
+                    (Map<String, Map<Integer, Boolean>>) commander.getMemoryWithoutUpdate().get(CUSTOM_MASTERIES_KEY);
+            if (custom.containsKey(spec.getHullId())) {
+                map.putAll(custom.get(spec.getHullId()));
+            }
+        }
+
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
-        if (random.nextFloat() > Settings.NPC_MASTERY_DENSITY) return new TreeMap<>();
+        if (random.nextFloat() > Settings.NPC_MASTERY_DENSITY) return map;
 
         int maxLevel = commander.getStats().getLevel() + Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER;
 
@@ -235,11 +256,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         int level = 0, cap = ShipMastery.getMaxMasteryLevel(spec);
-        NavigableMap<Integer, Boolean> map = new TreeMap<>();
 
         for (int i = 0; i < maxLevel; i++) {
             if (i == 0 || random.nextFloat() <= Settings.NPC_MASTERY_QUALITY) {
                 level++;
+
+                // Mapping might already exist due to custom masteries
+                if (map.containsKey(level)) continue;
 
                 boolean isOption2 = random.nextBoolean();
                 if (!isOption2) {

@@ -3,6 +3,7 @@ package shipmastery.plugin;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import org.json.JSONException;
 import shipmastery.ShipMastery;
@@ -11,6 +12,7 @@ import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.procgen.Generator;
+import shipmastery.procgen.StationDefenderPlugin;
 import shipmastery.util.VariantLookup;
 
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class ModPlugin extends BaseModPlugin {
         if (randomMode == null) {
             randomMode = Settings.ENABLE_RANDOM_MODE;
             Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
-            Generator.generate(100);
+            Generator.generate();
         }
 
         ShipMastery.loadMasteryTable();
@@ -96,6 +98,11 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener(fleetHandler, true);
         Global.getSector().addTransientListener(fleetHandler);
         listeners.addListener(new PlayerFleetHandler(), true);
+
+        GenericPluginManagerAPI plugins = Global.getSector().getGenericPlugins();
+        if (!plugins.hasPlugin(StationDefenderPlugin.class)) {
+            plugins.addPlugin(new StationDefenderPlugin(), true);
+        }
 
         // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
         // for some reason, which is too late as the UID tags aren't in the clones,

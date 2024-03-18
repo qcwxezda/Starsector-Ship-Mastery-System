@@ -58,6 +58,7 @@ public interface Strings {
     String GAINED_MP_MULTIPLE = Utils.getString("sms_messages", "gainedMPMultiple");
     String KNOWLEDGE_CONSTRUCT = Utils.getString("sms_items", "knowledgeConstruct");
     String KNOWLEDGE_CONSTRUCT_RIGHT_CLICK = Utils.getString("sms_items", "knowledgeConstructRightClick");
+    String SELECT_A_SHIP = Utils.getString("sms_misc", "selectAShip");
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");

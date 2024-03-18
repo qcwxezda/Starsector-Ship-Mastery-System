@@ -1,0 +1,25 @@
+id,trigger,conditions,script,text,options,notes
+sms_ConcealedStation,BeginSalvage,"$customType == sms_concealed_station
+!$sms_ConcealedStationUsed score:10000",SetShortcut sms_oConcealedStationLeave ESCAPE,"During your preliminary survey of the station, you notice that one of its modules is nearly barren, save for a single hangar that appears to be some sort of experimental construction.
+
+At a glance it seems incomplete, lacking any wires, monitoring devices, or tools of the sort one would expect to find in an orbital hangar. Nonetheless, the transparent landing plate is glowing, practically humming with some sort of arcane energy.
+
+You could try to dock one of your ships here -- it's large enough to accommodate any ship in your fleet -- or you could leave it well alone and scrap the entire station for valuables.","
+sms_oConcealedStationDock:Dock at the hangar
+sms_oConcealedStationSalvage:Salvage the station
+sms_oConcealedStationLeave:Leave
+",
+sms_ConcealedStationDock,DialogOptionSelected,$option == sms_oConcealedStationDock,sms_ConcealedStationInteraction,,,
+sms_ConcealedStationDocked,sms_tConcealedStationDocked,,SetShortcut sms_oConcealedStationLeave ESCAPE,"You order the ship to be immediately docked at the mysterious hangar. As it lowers itself onto the glowing platform, a blinding veil of light encapsulates it.
+
+Before you can change your mind, the light subsides, and the platform lies dormant.
+
+There doesn't seem to be any external damage to your ship, but internal systems have gone haywire. Its scanners are picking up dozens of hostile ships at a distance of less than 10 meters, weapons are offline, engines are randomly stalling.
+
+Your engineers reassure you that they will be able to get the ship back into working order, but it will take some time. It's unclear if your stunt caused any lasting damage or changes to the ship's operating capability.","
+sms_oConcealedStationSalvage:Salvage the station
+sms_oConcealedStationLeave:Leave
+",
+sms_ConcealedStationSalvage,DialogOptionSelected,$option == sms_oConcealedStationSalvage,"SalvageEntity showCost
+FireAll PopulateSalvageOptions2",,,
+sms_ConcealedStationLeave,DialogOptionSelected,$option == sms_oConcealedStationLeave,DismissDialog,,,

@@ -6,7 +6,9 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.procgen.DefenderDataOverride;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 
@@ -15,20 +17,22 @@ import java.util.Random;
 import java.util.Set;
 
 public abstract class Generator {
-    public static float systemWeightPenaltyPerStation = 0.9f;
+    public final static float WEIGHT_PENALTY_PER_STATION = 0.9f;
+    public final static float STARS_PER_STATION = 15;
     public static final Set<String> tagsToSkip = new HashSet<>();
     static {
         tagsToSkip.add(Tags.THEME_CORE);
         tagsToSkip.add(Tags.THEME_HIDDEN);
     }
 
-    public static void generate(int numStations) {
+    public static void generate() {
         WeightedRandomPicker<StarSystemAPI> picker = getSystemPicker(Misc.random);
+        float numStations = picker.getItems().size() / STARS_PER_STATION;
         for (int i = 0; i < numStations; i++) {
             if (picker.isEmpty()) return;
             StarSystemAPI system = picker.pickAndRemove();
             BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickHiddenLocationNotNearStar(Misc.random, system, 100f, null);
-            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_mysterious_station",
+            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_concealed_station",
                                                              Factions.NEUTRAL);
             SectorEntityToken focus = added.entity.getOrbitFocus();
             if (focus instanceof PlanetAPI) {
@@ -38,6 +42,9 @@ public abstract class Generator {
                     BaseThemeGenerator.convertOrbitPointingDown(added.entity);
                 }
             }
+            DefenderDataOverride ddo = new DefenderDataOverride(Factions.REMNANTS, 1f, 120f, 180f, 1000);
+            Misc.setDefenderOverride(added.entity, ddo);
+            SalvageSpecialAssigner.assignSpecials(added.entity);
         }
     }
 
@@ -82,7 +89,7 @@ public abstract class Generator {
             for (SectorEntityToken entity : system.getCustomEntities()) {
                 String id = entity.getCustomEntitySpec().getId();
                 if ("station_research".equals(id) || "station_research_remnant".equals(id)) {
-                    weight *= (1f - systemWeightPenaltyPerStation);
+                    weight *= (1f - WEIGHT_PENALTY_PER_STATION);
                 }
             }
 
@@ -95,12 +102,23 @@ public abstract class Generator {
     }
 
     public static void findStations() {
+        int count1 = 0, count2 = 0, stars = 0;
         for (StarSystemAPI system : Global.getSector().getStarSystems()) {
+            if (!system.hasTag(Tags.THEME_HIDDEN) && !system.hasTag(Tags.THEME_CORE)) stars++;
             for (SectorEntityToken entity : system.getAllEntities()) {
-                if (entity.getCustomEntitySpec() != null && "sms_mysterious_station".equals(entity.getCustomEntitySpec().getId())) {
+                if (entity.getCustomEntitySpec() != null && "sms_concealed_station".equals(entity.getCustomEntitySpec().getId())) {
                     System.out.println(system.getName() + ": " + entity.getLocation());
+                }
+                if (entity.getCustomEntitySpec() != null && "station_research_remnant".equals(entity.getCustomEntitySpec().getId())) {
+                    count1++;
+                }
+                if (entity.getCustomEntitySpec() != null && "station_research".equals(entity.getCustomEntitySpec().getId())) {
+                    count2++;
                 }
             }
         }
+        System.out.println("station_research_remnant:" + count1 + ", " + ((float) count1/stars));
+        System.out.println("station_research:" + count2 + ", " + ((float) count2/stars));
+        System.out.println("number stars:" + stars);
     }
 }

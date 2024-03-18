@@ -376,6 +376,7 @@
     "bestOfTheBestScope2": "all capital ships with officers, including flagship",
     "bestOfTheBestDesc2": "+%1$s maximum combat readiness, +%2$s hull integrity*, and +%3$s flux capacity*",
     "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors.",
-    "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow"
+    "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow",
+    "selectAShip": "Select a ship"
   }
 }
