@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -95,6 +96,7 @@ public class FlareLauncherWhileVenting extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) return null;
         for (String id : spec.getBuiltInWeapons().values()) {
             WeaponSpecAPI wSpec = Global.getSettings().getWeaponSpec(id);
             Object pSpec = wSpec.getProjectileSpec();

@@ -3,6 +3,8 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
+import com.fs.starfarer.api.impl.campaign.plog.SModRecord;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -68,6 +70,12 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
                     else {
                         variant.addPermaMod(rowData.hullModSpecId, true);
+                        if (module.getFleetMember() != null) {
+                            SModRecord record = new SModRecord(module.getFleetMember());
+                            record.getSMods().add(rowData.hullModSpecId);
+                            record.setSPSpent(0);
+                            PlaythroughLog.getInstance().getSModsInstalled().add(record);
+                        }
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_STR + name, Settings.MASTERY_COLOR);
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);

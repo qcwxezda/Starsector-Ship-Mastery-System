@@ -367,7 +367,6 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         Pair<ShipAPI, ShipAPI> moduleAndRoot = getSelectedShip();
         final ShipAPI module = moduleAndRoot.one;
         ShipAPI root = moduleAndRoot.two;
-        ShipInfo newShipInfo = new ShipInfo(module, root);
 
         if (module != null) {
             // bypass the arbitrary checks in removeMod since we're adding it back anyway
@@ -380,9 +379,12 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             // This call does nothing except set variant.hasOpAffectingMods = null, which
             // triggers the variant to refresh its statsForOpCosts
             module.getVariant().addPermaMod("sms_masteryHandler");
-            Utils.fixVariantInconsistencies(module.getMutableStats());
+            if (Utils.fixVariantInconsistencies(module.getMutableStats())) {
+                syncRefitScreenWithVariant(false);
+            }
         }
 
+        ShipInfo newShipInfo = new ShipInfo(module, root);
         if (!Objects.equals(currentShipInfo, newShipInfo)) {
             System.out.println(
                     "Refit ship changed: " + (

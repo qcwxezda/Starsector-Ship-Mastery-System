@@ -3,7 +3,6 @@ package shipmastery.stats.logistics;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
-import shipmastery.util.ReflectionUtils;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

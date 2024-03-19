@@ -22,7 +22,10 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
 public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     public static final int NUM_POINTS_GAINED = 5;

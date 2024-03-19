@@ -2,7 +2,9 @@ package shipmastery.campaign;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
@@ -22,8 +24,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 25000f;
-    public static final long MAX_XP_PER_INSTANCE = 500000;
+    public static final float XP_PER_HALF_MP = 10000f;
+    public static final float XP_PER_HALF_MP_CIV = 4000f;
+    public static final float MULT_PER_MP = 1.1f;
     /** Ship hulls types at max mastery level start receiving fewer MP for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.9f;
     private long prevXP;
@@ -101,10 +104,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             xpGained = curXP - prevXP
                     + (plugin.getXPForLevel(maxLevel + 1) - plugin.getXPForLevel(maxLevel))
                     * ((curXP > prevXP ? 0 : 1) + (curSP - prevSP) / plugin.getStoryPointsPerLevel());
-            xpGained = Math.min(xpGained, MAX_XP_PER_INSTANCE);
         }
         else {
-            xpGained = Math.min(curXP - prevXP, MAX_XP_PER_INSTANCE);
+            xpGained = curXP - prevXP;
         }
         return xpGained;
     }
@@ -114,6 +116,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             boolean allowCombat,
             boolean allowDuplicates) {
         WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>();
+        picker.setRandom(Misc.random);
         Map<ShipHullSpecAPI, Integer> counts = new HashMap<>();
         for (FleetMemberAPI fm : toConsider) {
             if (fm.isCivilian() && !allowCivilian) continue;
@@ -135,30 +138,32 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public void gainMPFromBattle(long xpGained, Set<FleetMemberAPI> deployed) {
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(deployed, false, true, true);
-        gainMP(xpGained, picker);
+        gainMP(xpGained, picker, false);
     }
 
     public void gainMPFromAutoPursuit(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true, false);
-        gainMP(xpGained, picker);
+        gainMP(xpGained, picker, false);
     }
 
     public void gainMPFromOther(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, true, false, false);
-        gainMP(xpGained, picker);
+        gainMP(xpGained, picker, true);
     }
 
-    private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker) {
+    private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker, boolean isCivilian) {
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
-        while (xp > 0 && Misc.random.nextFloat() < xp / (XP_PER_HALF_MP + xp)) {
+        float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
+        while (xp > 0 && Misc.random.nextFloat() < xp / (xpPer + xp)) {
             ShipHullSpecAPI spec = picker.pick();
             Integer amount = amounts.get(spec);
             amounts.put(spec, amount == null ? 1 : 1 + amount);
-            xp -= XP_PER_HALF_MP;
+            xp -= xpPer;
+            xpPer *= MULT_PER_MP;
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
             ShipMastery.addPlayerMasteryPoints(entry.getKey(), entry.getValue());

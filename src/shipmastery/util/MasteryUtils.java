@@ -13,9 +13,6 @@ import java.util.*;
 public abstract class MasteryUtils {
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
-        if (Utils.getRestoredHullSpec(spec).isCivilianNonCarrier()) {
-            return 1;
-        }
         int level = ShipMastery.getPlayerMasteryLevel(spec);
         return 2 + level;
     }

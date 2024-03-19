@@ -32,7 +32,7 @@ public interface MasteryEffect {
      *    - "effectId 0.5" will set the effect strength to 0.5 upon generation <br>
      *    - "effectId 0.5 hello 3" will result in calling {@code init("0.5", "hello", "3")} <br>
      *  If passing args, effect strength must be the first argument.
-     *  Returns the mastery effect to be added, which is generally itself. <br><br>
+     *  Returns the mastery effect to be added, which is generally itself. <br>
      *  {@link shipmastery.mastery.impl.random.RandomMastery} is the exception.
      *  */
     MasteryEffect init(String... args);
@@ -59,7 +59,7 @@ public interface MasteryEffect {
      * The likelihood of the mastery being generated when randomly selected.
      * Return 0 (or less) to indicate that this mastery should not be normally selected.
      * Return {@code null} to indicate that this mastery is not applicable at all and should not be selected
-     * even in randomizer mode.
+     * even in random mode.
      * This is called before the effect is initialized -- therefore, before the effect's hull spec is set.
      */
     Float getSelectionWeight(ShipHullSpecAPI spec);
@@ -68,7 +68,7 @@ public interface MasteryEffect {
     void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 
     /** Adds a tooltip that shows upon hovering over the effect.
-     *  {@link MasteryTags#HAS_TOOLTIP} must be added as a tag in @{code mastery_list.csv}. */
+     *  {@link MasteryTags#HAS_TOOLTIP} must be added as a tag in {@code mastery_list.csv}. */
     void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
@@ -85,10 +85,10 @@ public interface MasteryEffect {
      *  Effects are reverted in descending order of mastery level. */
     void onEndRefit(ShipVariantAPI selectedVariant, boolean isModule);
 
-    /** Called whenever the mastery is activated by the player. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    /** Called whenever the mastery is activated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
     void onActivate(PersonAPI commander);
 
-    /** Called whenever the mastery is deactivated by the player. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
+    /** Called whenever the mastery is deactivated. Will be called for unique effects even if they are otherwise hidden by a stronger one. */
     void onDeactivate(PersonAPI commander);
 
     /** If {@code ship} is null, the game is not actually in combat and {@code stats} should be modified for display purposes only.

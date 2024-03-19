@@ -3,9 +3,11 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.util.IntervalUtil;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -70,5 +72,11 @@ public class CanisterFlakWhileVenting extends ShipSystemEffect {
                 }
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        if (spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) return null;
+        return super.getSelectionWeight(spec);
     }
 }

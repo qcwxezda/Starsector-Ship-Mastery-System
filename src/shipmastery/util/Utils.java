@@ -11,7 +11,6 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
-import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
@@ -44,10 +43,6 @@ public abstract class Utils {
         return hullmodIdToNameMap.get(hullmodId);
     }
 
-    public static String getFighterWingId(String variantId) {
-        return wingVariantToIdMap.get(variantId);
-    }
-
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
@@ -62,48 +57,6 @@ public abstract class Utils {
 
     public static String getRestoredHullSpecId(ShipHullSpecAPI spec) {
         return getRestoredHullSpec(spec).getHullId();
-    }
-
-    public static class ListPairMapMap<T, U extends Comparable<U>, V> extends HashMap<T, SortedMap<U, Pair<List<V>, List<V>>>> {
-
-        Pair<List<V>, List<V>> getPair(T key1, U key2, boolean addIfNotPresent) {
-            SortedMap<U, Pair<List<V>, List<V>>> inner = get(key1);
-            if (inner == null) {
-                if (addIfNotPresent) {
-                    inner = new TreeMap<>();
-                    put(key1, inner);
-                } else {
-                    return null;
-                }
-
-            }
-            Pair<List<V>, List<V>> pair = inner.get(key2);
-            if (pair == null && addIfNotPresent) {
-                pair = new Pair<List<V>, List<V>>(new ArrayList<V>(), new ArrayList<V>());
-                inner.put(key2, pair);
-            }
-            return pair;
-        }
-
-        public List<V> get1(T key1, U key2) {
-            Pair<List<V>, List<V>> pair = getPair(key1, key2, false);
-            return pair == null ? null : pair.one;
-        }
-
-        public List<V> get2(T key1, U key2) {
-            Pair<List<V>, List<V>> pair = getPair(key1, key2, false);
-            return pair == null ? null : pair.two;
-        }
-
-        public void add1(T key1, U key2, V value) {
-            Pair<List<V>, List<V>> pair = getPair(key1, key2, true);
-            pair.one.add(value);
-        }
-
-        public void add2(T key1, U key2, V value) {
-            Pair<List<V>, List<V>> pair = getPair(key1, key2, true);
-            pair.two.add(value);
-        }
     }
 
     public static String shortenText(String text, String font, float limit) {
@@ -141,14 +94,6 @@ public abstract class Utils {
             default:
                 return 0;
         }
-    }
-
-    public static String getLastHullModId(ShipVariantAPI variant) {
-        String last = null;
-        for (String str : variant.getHullMods()) {
-            last = str;
-        }
-        return last;
     }
 
     public static Object[] interleaveArrays(Object[] arr1, Object[] arr2) {
@@ -331,7 +276,7 @@ public abstract class Utils {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 
-    public static void fixVariantInconsistencies(MutableShipStatsAPI stats) {
+    public static boolean fixVariantInconsistencies(MutableShipStatsAPI stats) {
         ShipVariantAPI variant = stats.getVariant();
         List<String> wingIds = variant.getWings();
         if (wingIds != null && !wingIds.isEmpty()) {
@@ -342,15 +287,18 @@ public abstract class Utils {
         if (clampOP(variant, Global.getSector().getPlayerStats())) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.EXCESS_OP_WARNING,
                                                                               Misc.getNegativeHighlightColor());
+            return true;
         }
+        return false;
     }
 
     public static void fixPlayerFleetInconsistencies() {
         for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
+            ShipVariantAPI variant = fm.getVariant();
             // This just sets hasOpAffectingMods to null, forcing the variant to
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
-            fm.getVariant().addPermaMod("sms_masteryHandler");
+            variant.addPermaMod("sms_masteryHandler");
             Utils.fixVariantInconsistencies(fm.getStats());
         }
     }
@@ -414,7 +362,7 @@ public abstract class Utils {
     /** Adapted from SkillsChangeRemoveExcessOPEffect */
     public static boolean clampOP(ShipVariantAPI variant, MutableCharacterStatsAPI stats) {
         int maxOP = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), stats);
-        int op = variant .computeOPCost(stats);
+        int op = variant.computeOPCost(stats);
         int remove = op - maxOP;
         if (remove > 0) {
             int caps = variant.getNumFluxCapacitors();

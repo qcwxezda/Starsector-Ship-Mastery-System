@@ -22,10 +22,6 @@ public abstract class SModUtils {
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
-        // No MP cost to build in on civilian ships
-        if (Utils.getRestoredHullSpec(ship.getHullSpec()).isCivilianNonCarrier()) {
-            return 0;
-        }
         ShipVariantAPI variant = ship.getVariant();
         int nSMods = variant.getSMods().size();
         ShipHullSpecAPI hullSpec = ship.getHullSpec();

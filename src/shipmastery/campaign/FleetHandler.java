@@ -60,6 +60,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
         if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
             variant = variant.clone();
+            variant.setGoalVariant(false);
             variant.setSource(VariantSource.REFIT);
         }
         VariantLookup.addVariantInfo(variant, root, fleet);
