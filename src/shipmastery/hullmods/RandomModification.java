@@ -17,7 +17,8 @@ public class RandomModification extends BaseHullMod {
         if (stats.getFleetMember() == null) return;
         Random random = new Random(stats.getFleetMember().getId().hashCode());
         List<Float> randoms = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        randoms.add(random.nextFloat() * 0.05f);
+        for (int i = 0; i < 9; i++) {
             randoms.add(random.nextFloat() * 0.2f - 0.1f);
         }
         stats.getTimeMult().modifyMult(id, 1f + randoms.get(0));
@@ -40,7 +41,7 @@ public class RandomModification extends BaseHullMod {
     public String getDescriptionParam(int index, ShipAPI.HullSize hullSize, ShipAPI ship) {
         if (index == 0 && ship.getFleetMemberId() != null) {
             Random random = new Random(ship.getFleetMemberId().hashCode());
-            return Utils.asFloatTwoDecimals(random.nextFloat() * 0.2f + 0.9f);
+            return Utils.asFloatTwoDecimals(1.05f + random.nextFloat() * 0.05f);
         }
         return null;
     }

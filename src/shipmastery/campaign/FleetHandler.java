@@ -220,7 +220,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         // commander.getFleet() can be null, so have to use stats.getFleet
         if (stats == null) return null;
         CampaignFleetAPI fleet = stats.getFleet();
-        if (fleet == null) return null;
+        if (fleet == null || fleet.getFleetData() == null || fleet.getFleetData().getMembersListCopy().isEmpty()) return null;
         return fleet.getFlagship();
     }
 

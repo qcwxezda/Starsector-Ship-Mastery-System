@@ -24,12 +24,13 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 10000f;
-    public static final float XP_PER_HALF_MP_CIV = 4000f;
+    public static final float XP_PER_HALF_MP = 6000f;
+    public static final float XP_PER_HALF_MP_CIV = 2500f;
     public static final float MULT_PER_MP = 1.1f;
     /** Ship hulls types at max mastery level start receiving fewer MP for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.9f;
     private long prevXP;
+    private long prevBonusXP;
     private int prevSP;
     private final Set<FleetMemberAPI> deployedInLastBattle = new HashSet<>();
     private boolean lastXPGainWasBattle = false;
@@ -89,12 +90,13 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             lastXPGainWasBattle = false;
         }
         prevXP = curXP;
+        prevBonusXP = playerStats.getBonusXp();
         prevSP = curSP;
     }
 
     private long getXpGained(long curXP, int curSP, MutableCharacterStatsAPI playerStats) {
         long xpGained;
-        // Known issue: if gained an exact multiple of 4,000,000 XP at max level, won't gain any SP.
+        // Known issue: if gained an exact multiple of 4,000,000 XP at max level, won't gain any MP.
         if (curXP == prevXP) return 0;
         LevelupPlugin plugin = Global.getSettings().getLevelupPlugin();
         int maxLevel = plugin.getMaxLevel();
@@ -108,6 +110,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         else {
             xpGained = curXP - prevXP;
         }
+        // Don't count bonus XP
+        xpGained -= Math.min(xpGained / 2, prevBonusXP);
         return xpGained;
     }
     private WeightedRandomPicker<ShipHullSpecAPI> makePicker(
@@ -119,9 +123,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         picker.setRandom(Misc.random);
         Map<ShipHullSpecAPI, Integer> counts = new HashMap<>();
         for (FleetMemberAPI fm : toConsider) {
-            if (fm.isCivilian() && !allowCivilian) continue;
-            if (!fm.isCivilian() && !allowCombat) continue;
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
+            if (spec.isCivilianNonCarrier() && !allowCivilian) continue;
+            if (!spec.isCivilianNonCarrier() && !allowCombat) continue;
             if (picker.getWeight(spec) > 0f && !allowDuplicates) continue;
             Integer count = counts.get(spec);
             if (count == null) count = 0;
@@ -156,6 +160,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     }
 
     private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker, boolean isCivilian) {
+        if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
         while (xp > 0 && Misc.random.nextFloat() < xp / (xpPer + xp)) {

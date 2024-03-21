@@ -3,14 +3,13 @@ package shipmastery.deferred;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 /** Uses system time because game time seems to run faster inside a market dialog */
 public class DeferredActionPlugin implements EveryFrameScript {
 
     final Queue<DeferredAction> actionList = new PriorityQueue<>();
-    final Queue<Action> actionListOnUnpause = new PriorityQueue<>();
+    final List<Action> actionListOnUnpause = new ArrayList<>();
     public static final String INSTANCE_KEY = "$shipmastery_DeferredActionPlugin";
 
     public static void performLater(Action action, float delay) {
@@ -50,10 +49,10 @@ public class DeferredActionPlugin implements EveryFrameScript {
         }
 
         if (!Global.getSector().isPaused()) {
-            while (!actionListOnUnpause.isEmpty()) {
-                actionListOnUnpause.poll().perform();
+            for (Action action : actionListOnUnpause) {
+                action.perform();
             }
+            actionListOnUnpause.clear();
         }
     }
-
 }
