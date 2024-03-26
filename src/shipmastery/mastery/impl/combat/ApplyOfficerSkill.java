@@ -133,6 +133,6 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 3f;
+        return 4f;
     }
 }

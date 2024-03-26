@@ -16,25 +16,20 @@ public class RandomModification extends BaseHullMod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         if (stats.getFleetMember() == null) return;
         Random random = new Random(stats.getFleetMember().getId().hashCode());
-        List<Float> randoms = new ArrayList<>();
-        randoms.add(random.nextFloat() * 0.05f);
-        for (int i = 0; i < 9; i++) {
-            randoms.add(random.nextFloat() * 0.2f - 0.1f);
-        }
-        stats.getTimeMult().modifyMult(id, 1f + randoms.get(0));
-        stats.getMaxSpeed().modifyMult(id, 1f + randoms.get(1));
-        stats.getMaxTurnRate().modifyMult(id, 1f + randoms.get(1));
-        stats.getAcceleration().modifyMult(id, 1f + randoms.get(1));
-        stats.getDeceleration().modifyMult(id, 1f + randoms.get(1));
-        stats.getTurnAcceleration().modifyMult(id, 1f + randoms.get(1));
-        stats.getFluxDissipation().modifyMult(id, 1f + randoms.get(2));
-        stats.getFluxCapacity().modifyMult(id, 1f + randoms.get(3));
-        stats.getShieldDamageTakenMult().modifyMult(id, 1f + randoms.get(4));
-        stats.getHullBonus().modifyMult(id, 1f + randoms.get(5));
-        stats.getArmorBonus().modifyMult(id, 1f + randoms.get(6));
-        stats.getSensorProfile().modifyMult(id, 1f + randoms.get(7));
-        stats.getSensorStrength().modifyMult(id, 1f + randoms.get(8));
-        stats.getPeakCRDuration().modifyMult(id, 1f + randoms.get(9));
+        stats.getTimeMult().modifyMult(id, 1.05f + random.nextFloat() * 0.05f);
+        stats.getMaxSpeed().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getMaxTurnRate().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getAcceleration().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getDeceleration().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getTurnAcceleration().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getFluxDissipation().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getFluxCapacity().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getShieldDamageTakenMult().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getHullBonus().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getArmorBonus().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getSensorProfile().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getSensorStrength().modifyPercent(id, -10f + random.nextFloat() * 15f);
+        stats.getPeakCRDuration().modifyPercent(id, -10f + random.nextFloat() * 15f);
     }
 
     @Override

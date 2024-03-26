@@ -11,7 +11,9 @@ import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
+import shipmastery.deferred.DeferredAction;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.mastery.impl.logistics.SModsOverCapacity;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.*;
 
@@ -69,6 +71,15 @@ public class SModTableRowPressed extends TriggerableProxy {
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.ENHANCE_STR + name, Settings.MASTERY_COLOR);
                     }
                     else {
+                        final int cur = module.getVariant().getSMods().size(), limit = SModUtils.getMaxSMods(module.getMutableStats());
+                        if (module.getFleetMember() != null && cur >= limit) {
+                            DeferredActionPlugin.performLater(new Action() {
+                                @Override
+                                public void perform() {
+                                    SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit);
+                                }
+                            }, 0f);
+                        }
                         variant.addPermaMod(rowData.hullModSpecId, true);
                         if (module.getFleetMember() != null) {
                             SModRecord record = new SModRecord(module.getFleetMember());

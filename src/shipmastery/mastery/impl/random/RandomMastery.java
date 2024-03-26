@@ -79,7 +79,7 @@ public class RandomMastery extends BaseMasteryEffect {
             boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier masteries, if they are applicable
-                effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * info.tier);
+                effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * info.tier * info.tier);
             }
         }
 

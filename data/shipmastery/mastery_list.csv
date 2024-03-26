@@ -106,7 +106,7 @@ AAFRangeDamage,4,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems
 ManeuveringJetsBoost,4,combat unique doesnt_affect_modules,,25,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
 ManeuveringJetsDR,4,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
 ManeuveringJetsMobility,4,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
-HEFExplosion,4,combat unique prefix_flagship_only,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
+HEFExplosion,4,combat unique prefix_flagship_only,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
 HEFRangeRoF,4,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFRangeRoF
 HEFMissileBoost,4,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.HEFMissileBoost
 HEFShieldEfficiency,4,combat unique,,0.25,shipmastery.mastery.impl.combat.shipsystems.HEFShieldEfficiency

@@ -3,7 +3,8 @@ package shipmastery.util;
 public interface Strings {
     String MASTERY_BUTTON_STR = Utils.getString("sms_refitScreen", "masteryButton");
     String MASTERY_LABEL_STR = Utils.getString("sms_refitScreen", "masteryLabel");
-
+    String S_MOD_AUTOFIT_NAME = Utils.getString("sms_refitScreen", "sModAutofitName");
+    String S_MOD_AUTOFIT_DESC = Utils.getString("sms_refitScreen", "sModAutofitDesc");
     String MUST_BE_DOCKED_HULLMODS = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
     String MUST_BE_DOCKED_MASTERIES = Utils.getString("sms_masteryPanel", "mustBeDockedMasteries");
     String MASTERY_TAB_STR = Utils.getString("sms_masteryPanel", "masteryTab");

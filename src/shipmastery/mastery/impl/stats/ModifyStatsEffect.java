@@ -124,7 +124,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier stats, if applicable
-                picker.add(stat, randomMode ? Math.max(1f, weight) : weight * stat.tier);
+                picker.add(stat, randomMode ? Math.max(1f, weight) : weight * stat.tier * stat.tier);
             }
         }
 

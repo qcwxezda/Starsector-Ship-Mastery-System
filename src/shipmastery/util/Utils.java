@@ -2,6 +2,7 @@ package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
 import com.fs.starfarer.api.combat.*;
@@ -308,9 +309,18 @@ public abstract class Utils {
     }
 
     public static List<FleetMember> getMembersNoSync(CampaignFleetAPI fleet) {
-        FleetData data = (FleetData) fleet.getFleetData();
-        if (data == null) return new ArrayList<>();
-        return ((FleetData) fleet.getFleetData()).getMembersNoSync();
+        if (fleet == null) return new ArrayList<>();
+        return getMembersNoSync(fleet.getFleetData());
+    }
+
+    public static List<FleetMember> getMembersNoSync(FleetDataAPI fleetData) {
+        if (fleetData == null) return new ArrayList<>();
+        // Don't use getMembersNoSync because that also includes NULL spacer members (when dragging stuff around)
+        boolean wasNoSync = fleetData.isForceNoSync();
+        fleetData.setForceNoSync(true);
+        List<FleetMember> members = ((FleetData) fleetData).getMembers();
+        fleetData.setForceNoSync(wasNoSync);
+        return members == null ? new ArrayList<FleetMember>() : members;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

@@ -63,11 +63,6 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
     }
 
     @Override
-    public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 0.5f;
-    }
-
-    @Override
     public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
         return super.generateRandomArgs(spec, maxTier, seed, true);
     }

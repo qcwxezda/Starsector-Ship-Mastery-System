@@ -21,6 +21,7 @@ import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.plugin.SModAutofitCampaignPlugin;
 import shipmastery.ui.triggers.ActionListener;
 import shipmastery.ui.triggers.MasteryButtonPressed;
 import shipmastery.util.MasteryUtils;
@@ -45,6 +46,11 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
     ShipInfo currentShipInfo = new ShipInfo(null, null);
 
     private ShipAPI lastSelectedRealShip;
+
+    public RefitHandler() {
+        Global.getSector().registerPlugin(new SModAutofitCampaignPlugin(this));
+    }
+
     /** (Currently selected module, last selected ship with a fleet member attached)
      *  (null, null) if not inside the refit screen */
     public Pair<ShipAPI, ShipAPI> getSelectedShip() {

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import shipmastery.mastery.MasteryDescription;
@@ -34,7 +35,7 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         FleetDataAPI fleetData = fm.getFleetData();
         if (fleetData == null) return;
         int count = 0;
-        for (FleetMemberAPI member : ((FleetData) fleetData).getMembersNoSync()) {
+        for (FleetMemberAPI member : Utils.getMembersNoSync(fleetData)) {
             if (thisHullId.equals(Utils.getRestoredHullSpecId(member.getHullSpec()))) {
                 count++;
                 if (count > 1) return;

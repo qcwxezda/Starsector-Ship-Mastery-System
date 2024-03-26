@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import shipmastery.config.Settings;
@@ -39,7 +40,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
         FleetDataAPI fleetData = fm.getFleetData();
         if (fleetData == null) return;
         int count = -1;
-        for (FleetMemberAPI member : ((FleetData) fleetData).getMembersNoSync()) {
+        for (FleetMemberAPI member : Utils.getMembersNoSync(fleetData)) {
             if (thisHullId.equals(Utils.getRestoredHullSpecId(member.getHullSpec()))) {
                 count++;
             }

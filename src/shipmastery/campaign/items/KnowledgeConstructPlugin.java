@@ -113,7 +113,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     @Override
     public int getPrice(MarketAPI market, SubmarketAPI submarket) {
         if (spec == null) return 0;
-        return (int) (spec.getBaseValue() * 0.25f);
+        return (int) Math.min(100000f, spec.getBaseValue() * 0.25f);
     }
 
     @Override

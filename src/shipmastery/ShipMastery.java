@@ -95,6 +95,16 @@ public abstract class ShipMastery {
         }
     }
 
+    public static void setPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
+        String id = Utils.getRestoredHullSpecId(spec);
+        SaveData data = SAVE_DATA_TABLE.get(id);
+        if (data == null) {
+            SAVE_DATA_TABLE.put(id, new SaveData(amount, 0));
+        } else {
+            data.points = amount;
+        }
+    }
+
     public static void spendPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
@@ -387,15 +397,17 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void generateMasteries()
+    public static void generateAndApplyMasteries(boolean shouldGenerate)
             throws InstantiationException, IllegalAccessException, JSONException, IOException {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
 
-            generateMasteries(spec);
-            clearInvalidActiveLevels(spec);
+            if (shouldGenerate) {
+                generateMasteries(spec);
+            }
 
+            clearInvalidActiveLevels(spec);
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
                         @Override

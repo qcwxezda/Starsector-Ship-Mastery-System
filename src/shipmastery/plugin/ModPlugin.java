@@ -5,7 +5,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
-import org.json.JSONException;
+import com.fs.starfarer.campaign.CampaignEngine;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
 import shipmastery.config.LunaLibSettingsListener;
@@ -15,7 +15,6 @@ import shipmastery.procgen.Generator;
 import shipmastery.procgen.StationDefenderPlugin;
 import shipmastery.util.VariantLookup;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -51,25 +50,24 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryTable();
         // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
         String id = Global.getSector().getPlayerPerson().getId();
-        if (!id.equals(lastSaveId)) {
-            lastSaveId = id;
-            try {
+        try {
+            if (!id.equals(lastSaveId)) {
+                lastSaveId = id;
                 ShipMastery.initMasteries(randomMode);
-                ShipMastery.generateMasteries();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("Failed to generate mastery effects", e);
-            } catch (JSONException | IOException e) {
-                throw new RuntimeException("Failed to initialize mastery effects", e);
+                ShipMastery.generateAndApplyMasteries(true);
+            } else {
+                ShipMastery.generateAndApplyMasteries(false);
             }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         ClassLoader classLoader = getClassLoader();
         try {
             Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
-            if (!listeners.hasListenerOfClass(RefitHandler.class)) {
-                listeners.addListener(refitModifier, true);
-            }
+            listeners.addListener(refitModifier, true);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add refit tab modifier", e);
         }
@@ -80,6 +78,15 @@ public class ModPlugin extends BaseModPlugin {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add initializer", e);
         }
+//
+//        try {
+//            // Note: getting the RefitHandler listeners requires that the calling class and RefitHandler are using the
+//            // same classloader, hence using the custom classloader here
+//            SModAutofitCampaignPlugin plugin = (SModAutofitCampaignPlugin) classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPlugin").newInstance();
+//            Global.getSector().registerPlugin(plugin);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to add campaign plugin", e);
+//        }
 
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addTransientScript(deferredActionPlugin);
@@ -113,6 +120,8 @@ public class ModPlugin extends BaseModPlugin {
     private static final String[] reflectionWhitelist = new String[] {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.campaign.Initializer",
+            "shipmastery.campaign.CoreAutofitPluginExt",
+            "shipmastery.plugin.SModAutofitCampaignPlugin",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",
