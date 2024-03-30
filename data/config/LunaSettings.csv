@@ -17,5 +17,6 @@ difficulty_SModMod,S-Mod Modifier,Double,-0.7,,"Acts as a [flat modifier] to the
 ,,,,,,,,
 ,,,,,,,,
 misc_Header,Miscellaneous,Header,Miscellaneous,,,,,
-misc_PlayerShipGraveyards,Enable Player Ship Graveyards,Boolean,true,,"If enabled, player ships that are lost due defeat in battle will be spawned as derelicts should they otherwise have been recoverable.",,,
 misc_RandomMode,Enable Random Mode (requires new game),Boolean,false,,"If enabled, all masteries are randomized except for the guaranteed 3 S-mod capacity masteries, which may appear at any level. Disables tier requirements from mastery selection criteria and removes the option to select between two different masteries at certain levels.",,,
+misc_PlayerShipGraveyards,Enable Player Ship Graveyards,Boolean,true,,"If enabled, player ships that are lost in battle but not recovered will be spawned as derelicts. When losing or disengaging from a battle, ships that would have been recoverable if the player had decisively won are spawned as derelicts.",,,
+misc_SModAutofitOption,Add S-Mod Autofit Option,Boolean,true,,"If enabled, adds a checkbox to the autofit window that, when checked, will attempt to copy installed S-mods from the goal variant during the autofit process. May conflict with other mods that modify the refit screen autofit behavior.",,,

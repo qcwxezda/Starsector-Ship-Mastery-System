@@ -5,11 +5,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.plugins.LevelupPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
@@ -24,10 +26,10 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 5000f;
-    public static final float XP_PER_HALF_MP_CIV = 2500f;
-    public static final float MULT_PER_MP = 1.2f;
-    /** Ship hulls types at max mastery level start receiving fewer MP for each MP they have over the max. */
+    public static final float XP_PER_HALF_MP = 4000f;
+    public static final float XP_PER_HALF_MP_CIV = 3000f;
+    public static final float MULT_PER_MP = 1.175f;
+    /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.9f;
     private long prevXP;
     private long prevBonusXP;
@@ -73,7 +75,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         long curXP = playerStats.getXP();
         int curSP = playerStats.getStoryPoints();
-        long xpGained = getXpGained(curXP, curSP, playerStats);
+        long curBonusXP = playerStats.getBonusXp();
+        long xpGained = getXpGained(curXP, curBonusXP, curSP, playerStats);
 
         if (xpGained > 0) {
             if (!deployedInLastBattle.isEmpty()) {
@@ -91,11 +94,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             lastXPGainWasBattle = false;
         }
         prevXP = curXP;
-        prevBonusXP = playerStats.getBonusXp();
+        prevBonusXP = curBonusXP;
         prevSP = curSP;
     }
 
-    private long getXpGained(long curXP, int curSP, MutableCharacterStatsAPI playerStats) {
+    private long getXpGained(long curXP, long curBonusXP, int curSP, MutableCharacterStatsAPI playerStats) {
         long xpGained;
         // Known issue: if gained an exact multiple of 4,000,000 XP at max level, won't gain any MP.
         if (curXP == prevXP) return 0;
@@ -112,7 +115,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             xpGained = curXP - prevXP;
         }
         // Don't count bonus XP
-        xpGained -= Math.min(xpGained / 2, prevBonusXP);
+        xpGained -= Math.max(0L, prevBonusXP - curBonusXP);
         return xpGained;
     }
     private WeightedRandomPicker<ShipHullSpecAPI> makePicker(
@@ -166,11 +169,15 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
-        // Penalize combat MP gains if using fewer than 4 types of ships
+        // Scale MP gains to number of ships deployed
         if (!isCivilian) {
-            if (uniques.size() == 1) xpPer *= 2;
-            else if (uniques.size() == 2) xpPer *= 1.5f;
-            else if (uniques.size() == 3) xpPer *= 1.25f;
+            if (uniques.size() == 1) xpPer *= 1.5f;
+            else if (uniques.size() == 2) xpPer *= 1.3f;
+            else if (uniques.size() == 3) xpPer *= 1.1f;
+            else if (uniques.size() == 5) xpPer *= 0.9f;
+            else if (uniques.size() == 6) xpPer *= 0.7f;
+            else if (uniques.size() == 7) xpPer *= 0.6f;
+            else if (uniques.size() >= 8) xpPer *= 0.5f;
         }
         while (xp > 0 && random.nextFloat() < xp / (xpPer + xp)) {
             ShipHullSpecAPI spec = picker.pick();
@@ -215,6 +222,18 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     @Override
     public void reportPlayerEngagement(EngagementResultAPI result) {
         EngagementResultForFleetAPI playerResult = result.getLoserResult().isPlayer() ? result.getLoserResult() : result.getWinnerResult();
+        EngagementResultForFleetAPI enemyResult = result.getLoserResult().isPlayer() ? result.getWinnerResult() : result.getLoserResult();
+
+        if (enemyResult.getDestroyed().isEmpty() && enemyResult.getDisabled().isEmpty()) return;
+
+        InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
+        if (dialog != null) {
+            InteractionDialogPlugin plugin = dialog.getPlugin();
+            if (plugin != null && plugin.getContext() instanceof FleetEncounterContext) {
+                if (((FleetEncounterContext) plugin.getContext()).computePlayerContribFraction() <= 0f) return;
+            }
+        }
+
         lastXPGainWasBattle = true;
         // pursuit, no deployed data
         if (playerResult.getAllEverDeployedCopy() == null) return;

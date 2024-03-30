@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import shipmastery.campaign.CoreAutofitPluginExt;
 import shipmastery.campaign.RefitHandler;
+import shipmastery.config.Settings;
 
 public class SModAutofitCampaignPlugin extends BaseCampaignPlugin {
     private final RefitHandler refitHandler;
@@ -16,6 +17,7 @@ public class SModAutofitCampaignPlugin extends BaseCampaignPlugin {
 
     @Override
     public PluginPick<AutofitPlugin> pickAutofitPlugin(FleetMemberAPI member) {
+        if (!Settings.ADD_SMOD_AUTOFIT_OPTION) return null;
         PersonAPI commander = null;
         if (member != null) {
             commander = member.getFleetCommanderForStats();

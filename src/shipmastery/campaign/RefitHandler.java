@@ -254,6 +254,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                 CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
 
                 TooltipMakerAPI tooltipMaker = custom.createUIElement(w, h, false);
+                tooltipMaker.setParaFontColor(Settings.MASTERY_COLOR);
                 for (int i = 0; i < sortedButtonList.size(); i++) {
                     // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
                     if (!(sortedButtonList.get(i) instanceof ButtonAPI)) continue;
@@ -266,12 +267,18 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                         int maxMastery = ShipMastery.getMaxMasteryLevel(spec);
                         boolean padded = false;
                         if (currentMastery < maxMastery) {
-                            tooltipMaker.addPara(Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery), Settings.MASTERY_COLOR, 10f).setAlignment(Alignment.LMID);
+                            boolean canLevelUp = ShipMastery.getPlayerMasteryPoints(spec) >= MasteryUtils.getUpgradeCost(spec);
+                            String canLevelUpStr = "+";
+                            tooltipMaker.addPara(
+                                    Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery) + " " + (canLevelUp ? canLevelUpStr : ""),
+                                    10f,
+                                    Settings.POSITIVE_HIGHLIGHT_COLOR,
+                                    canLevelUpStr).setAlignment(Alignment.LMID);
                             padded = true;
                         }
                         int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
                         if (mp > 0) {
-                            tooltipMaker.addPara(mp + " MP", Settings.MASTERY_COLOR, padded ? 0f : 10f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(mp + " MP", padded ? 0f : 10f).setAlignment(Alignment.LMID);
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;

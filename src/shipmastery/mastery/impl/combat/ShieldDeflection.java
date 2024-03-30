@@ -183,6 +183,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
+        if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return 0f;
         return Utils.getSelectionWeightScaledByValue(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.6f, true);
     }
 }

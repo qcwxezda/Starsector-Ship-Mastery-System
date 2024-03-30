@@ -46,6 +46,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     private void updateShipList() {
         for (ShipAPI ship : engine.getShips()) {
+            if (!ship.isAlive()) continue;
             // Note: DamageListener listens for damage taken only
             if (!ship.hasListenerOfClass(ShipDamageTracker.class)) {
                 ship.addListener(new ShipDamageTracker());

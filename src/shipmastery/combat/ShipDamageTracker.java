@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.EMPEmitterDamageListener;
 import shipmastery.combat.listeners.ShipDestroyedListener;
+import shipmastery.util.EngineUtils;
 
 public class ShipDamageTracker implements DamageTakenModifier {
 //    @Override
@@ -39,16 +40,19 @@ public class ShipDamageTracker implements DamageTakenModifier {
         if (damage.getStats() == null) return null;
         Object source = damage.getStats().getEntity();
         if (!(source instanceof ShipAPI) || !(target instanceof ShipAPI)) return null;
-        ShipAPI sourceShip = (ShipAPI) source;
+        ShipAPI sourceShip = EngineUtils.getBaseShip((ShipAPI) source);
+        if (sourceShip == null) return null;
         ShipAPI targetShip = (ShipAPI) target;
         if ("EMP_SHIP_SYSTEM_PARAM".equals(targetShip.getParamAboutToApplyDamage())) {
             for (EMPEmitterDamageListener listener : sourceShip.getListeners(EMPEmitterDamageListener.class)) {
                 listener.reportEMPEmitterHit(targetShip, damage, pt, shieldHit);
             }
         }
+
+        if (targetShip.isStationModule()) return null;
         if (target.getHitpoints() <= 0f) {
             // CombatListenerUtil in base game copies the listener list when calling reportDamageApplied, so this is safe
-            targetShip.removeListener(this);
+            targetShip.removeListenerOfClass(ShipDamageTracker.class);
             for (ShipAPI ship : Global.getCombatEngine().getShips()) {
                 if (ship.hasListenerOfClass(ShipDestroyedListener.class)) {
                     for (ShipDestroyedListener listener : ship.getListeners(ShipDestroyedListener.class)) {

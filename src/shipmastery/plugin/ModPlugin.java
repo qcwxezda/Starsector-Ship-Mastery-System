@@ -5,7 +5,6 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
-import com.fs.starfarer.campaign.CampaignEngine;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
 import shipmastery.config.LunaLibSettingsListener;
@@ -99,7 +98,10 @@ public class ModPlugin extends BaseModPlugin {
         VariantLookup variantLookup = new VariantLookup(false);
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
-        Global.getSector().addTransientListener(new ShipGraveyardSpawner());
+        ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
+        Global.getSector().addTransientListener(graveyardSpawner);
+        Global.getSector().addTransientScript(graveyardSpawner);
+        listeners.addListener(graveyardSpawner);
 
         FleetHandler fleetHandler = new FleetHandler(false);
         listeners.addListener(fleetHandler, true);

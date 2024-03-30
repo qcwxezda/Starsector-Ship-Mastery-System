@@ -11,7 +11,6 @@ import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
 import java.util.List;
@@ -53,7 +52,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
     }
 
     public static void addMasteryHandlerToPlayerFleet() {
-        for (FleetMemberAPI fm : Utils.getMembersNoSync(Global.getSector().getPlayerFleet())) {
+        for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
             ShipVariantAPI variant = fm.getVariant();
             if (!variant.hasHullMod("sms_masteryHandler")
                     || VariantLookup.getVariantInfo(variant) == null

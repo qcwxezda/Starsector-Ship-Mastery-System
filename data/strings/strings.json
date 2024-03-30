@@ -3,7 +3,7 @@
     "masteryButton": "Mastery",
     "masteryLabel": "L: ",
     "sModAutofitName": "Include S-mods in fit",
-    "sModAutofitDesc": "Attempts to copy S-mods installed from the selected goal variant.\n\nPrioritizes enhancing built-ins, followed by S-modding modular hullmods. Hullmods are selected in descending order of credits cost. This step is performed prior to any other autofit step.\n\nIf S-mods are installed, the autofit cannot be undone."
+    "sModAutofitDesc": "Attempts to copy S-mods installed from the selected goal variant.\n\nPrioritizes enhancing built-ins, followed by S-modding modular hullmods. This step is performed prior to any other autofit step.\n\nIf S-mods are installed, the autofit cannot be undone."
   },
 
   "sms_masteryPanel": {
