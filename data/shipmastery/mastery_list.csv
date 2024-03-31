@@ -12,7 +12,7 @@ SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
 SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
 ScaleOtherMasteries,4,negative_strength_allowed unique logistic,-1,0.4,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
-IgnoreNoBuildIn,3,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+IgnoreNoBuildIn,4,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
 EfficiencyOverhaulBoost,3,unique logistic,1,0.3,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
 ExpandedCargoBoost,4,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
 ExpandedFuelBoost,4,unique logistic,1,0.4,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
@@ -23,10 +23,10 @@ GroundSupportBoost,4,unique logistic,1,100,shipmastery.mastery.impl.logistics.Gr
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
 # ModifyStatsMult <strength> <statId1> [amount1] [ statId2 [amount2] ] [...]
-ModifyStatsMult,,varying negative_strength_allowed,,1,shipmastery.mastery.impl.stats.ModifyStatsMult
+ModifyStatsMult,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsMult
 # If amounts aren't specified, the default_amount from stats_list.csv is used
 # ModifyStatsFlat <strength> <statId1> [amount1] [ statId2 [amount2] ] [...]
-ModifyStatsFlat,,varying negative_strength_allowed,,1,shipmastery.mastery.impl.stats.ModifyStatsFlat
+ModifyStatsFlat,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsFlat
 #### COMBAT ####
 ApplyOfficerSkill,2,varying combat,,1,shipmastery.mastery.impl.combat.ApplyOfficerSkill
 ShieldHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
@@ -73,9 +73,9 @@ LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,60,shipmastery.ma
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.4,shipmastery.mastery.impl.combat.PhasedCRDegradation
 RangeNoNearbyEnemies,3,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
 EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
-RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
-SystemRegenOnKill,3,combat unique,,5,shipmastery.mastery.impl.combat.SystemRegenOnKill
-MissileRegenOnKill,3,combat unique,,0.06,shipmastery.mastery.impl.combat.MissileRegenOnKill
+RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.4,shipmastery.mastery.impl.combat.RandomBeamIntensity
+SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRegenOnKill
+MissileRegenOnKill,3,combat unique,,0.3,shipmastery.mastery.impl.combat.MissileRegenOnKill
 SafetyOverridesPPT,2,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT
 DEMBoost,4,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
 RegroupReplacement,2,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
