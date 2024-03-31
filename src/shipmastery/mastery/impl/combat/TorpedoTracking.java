@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import particleengine.Particles;
 import shipmastery.combat.ai.LOSMissileAI;
 import shipmastery.config.Settings;
@@ -26,12 +27,13 @@ import java.util.Set;
 public class TorpedoTracking extends BaseMasteryEffect {
 
     public static final float SPEED_MULT = 0.8f;
+    public static final float AMMO_GAIN = 1f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.TorpedoTracking)
-                                 .params(Utils.asPercent(getStrengthForPlayer() / 16f), Utils.asPercent(1f - SPEED_MULT))
-                                 .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR);
+                                 .params(Utils.asPercent(AMMO_GAIN), Utils.asPercent(getStrengthForPlayer() / 16f), Utils.asPercent(1f - SPEED_MULT))
+                                 .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
@@ -68,6 +70,11 @@ public class TorpedoTracking extends BaseMasteryEffect {
                     String name = ((MissileSpecAPI) spec).getHullSpec().getHullId();
                     if ("reaper_torp".equals(name) || "hammer_torp".equals(name)) {
                         reaperWeapons.add(weapon);
+                        int baseAmmo = weapon.getSpec().getMaxAmmo();
+                        int additionalAmmo = (int) (AMMO_GAIN * baseAmmo);
+                        int newAmmo = weapon.getMaxAmmo() + additionalAmmo;
+                        weapon.setMaxAmmo(newAmmo);
+                        weapon.setAmmo(newAmmo);
                     }
                 }
             }

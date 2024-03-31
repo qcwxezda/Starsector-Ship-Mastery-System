@@ -17,6 +17,7 @@ import shipmastery.combat.listeners.ShipDestroyedListener;
 import shipmastery.config.Settings;
 import shipmastery.fx.JitterEmitter;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -135,7 +136,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         @Override
         public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
             if (timeLeft <= 0f) return;
-            if ((source == ship || (source.isFighter() && source.getWing() != null && source.getWing().getSourceShip() == ship)) && !target.isFighter()) {
+            if (EngineUtils.shipIsOwnedBy(source, ship) && !target.isFighter()) {
                 int size = Utils.hullSizeToInt(target.getHullSize());
                 float amount = (size + 1f) * basePPTAmount;
                 MutableStat.StatMod current = ship.getMutableStats().getPeakCRDuration().getFlatBonus(id);

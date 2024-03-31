@@ -140,6 +140,14 @@ public abstract class EngineUtils {
         return Misc.getDistance(location, entity.getLocation()) - (considerRadius ? entity.getCollisionRadius() : 0f);
     }
 
+    /** Returns true iff {@code ship} is equal to {@code owner}, is a fighter launched by {@code owner}, or is a drone with mothership {@code owner}. */
+    public static boolean shipIsOwnedBy(ShipAPI ship, ShipAPI owner) {
+        if (ship == owner) return true;
+        if (ship.isFighter() && ship.getWing() != null && ship.getWing().getSourceShip() == owner) return true;
+        return ship.getAIFlags() != null &&
+                ship.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP) == owner;
+    }
+
     /** If the argument is a ship, returns that ship.
      *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */

@@ -43,7 +43,7 @@ public class FlagshipTracker implements EndOfCombatListener {
     }
 
     void onFlagshipChanged(final PersonAPI commander, final ShipAPI newFlagship) {
-        System.out.println("Flagship changed for " + commander.getNameString() + ", to " + newFlagship);
+        //System.out.println("Flagship changed for " + commander.getNameString() + ", to " + newFlagship);
 
         commanderToShipMap.put(commander, newFlagship);
         List<EffectActivationRecord> effects = activationRecordMap.get(commander);

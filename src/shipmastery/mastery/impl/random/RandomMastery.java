@@ -79,7 +79,11 @@ public class RandomMastery extends BaseMasteryEffect {
             boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier masteries, if they are applicable
-                effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * info.tier * info.tier);
+                float tier = info.tags.contains(MasteryTags.SCALE_SELECTION_WEIGHT) ? maxTier : info.tier;
+                float tierMult = tier * tier;
+                // strongly avoid low-tier stuff
+                if (maxTier - tier >= 2) tierMult = Float.MIN_NORMAL;
+                effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }
 
@@ -88,6 +92,12 @@ public class RandomMastery extends BaseMasteryEffect {
         List<String> params = new ArrayList<>();
 
         do {
+            // Fallback if there's literally nothing to pick
+            if (effectPicker.isEmpty()) {
+                MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
+                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2());
+            }
+
             MasteryInfo selected = effectPicker.pickAndRemove();
 
             params.clear();

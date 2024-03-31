@@ -24,12 +24,13 @@ import java.awt.Color;
 import java.util.Iterator;
 
 public class ShieldDeflection extends BaseMasteryEffect {
-    static final float damageTakenMult = 0.5f;
-    static final float unfoldRateMult = 0.5f;
+    public static final float DAMAGE_TAKEN_MULT = 0.5f;
+    public static final float UNFOLD_RATE_MULT = 0.5f;
+    public static final float[] TIME_MULT = new float[] {0.375f, 0.5f, 0.75f, 1f};
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        stats.getShieldUnfoldRateMult().modifyMult(id, unfoldRateMult);
+        stats.getShieldUnfoldRateMult().modifyMult(id, UNFOLD_RATE_MULT);
         if (ship != null
                 && ship.getShield() != null
                 && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
@@ -48,23 +49,21 @@ public class ShieldDeflection extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                Utils.asFloatOneDecimal(getPlayerMaxTime()),
-                Utils.absValueAsPercent(1f - unfoldRateMult)).colors(
+                Utils.asFloatOneDecimal(getMaxTime(selectedModule)),
+                Utils.absValueAsPercent(1f - UNFOLD_RATE_MULT)).colors(
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
-    float getPlayerMaxTime() {return getStrengthForPlayer();}
-
     float getMaxTime(ShipAPI ship) {
-        return getStrength(ship);
+        return TIME_MULT[Utils.hullSizeToInt(ship.getHullSize())] * getStrength(ship);
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Utils.absValueAsPercent(damageTakenMult));
+                        Utils.absValueAsPercent(DAMAGE_TAKEN_MULT));
     }
 
     public static class ShieldDeflectionScript implements AdvanceableListener {
@@ -97,7 +96,8 @@ public class ShieldDeflection extends BaseMasteryEffect {
                     this,
                     "graphics/icons/hullsys/fortress_shield.png",
                     Strings.Descriptions.ShieldDeflectionStatusTitle,
-                    String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercentNoDecimal(1f - damageTakenMult)),
+                    String.format(Strings.Descriptions.ShieldDeflectionStatusDesc, Utils.asPercentNoDecimal(1f -
+                                                                                                                    DAMAGE_TAKEN_MULT)),
                     false);
             activatedTime += amount;
             if (emitter == null) {
@@ -157,7 +157,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                             proj,
                             ship,
                             pt,
-                            proj.getDamageAmount() * damageTakenMult,
+                            proj.getDamageAmount() * DAMAGE_TAKEN_MULT,
                             proj.getDamageType(),
                             proj.getEmpAmount(),
                             false,

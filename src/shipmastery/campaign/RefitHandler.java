@@ -399,10 +399,10 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         ShipInfo newShipInfo = new ShipInfo(module, root);
         if (!Objects.equals(currentShipInfo, newShipInfo)) {
-            System.out.println(
-                    "Refit ship changed: " + (
-                            (currentShipInfo.rootSpec == null ? "null" : currentShipInfo.rootSpec.getHullId()) + ", " + (currentShipInfo.moduleVariant == null ? "null" :currentShipInfo.moduleVariant.getHullVariantId())) + " -> " +
-                            (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
+//            System.out.println(
+//                    "Refit ship changed: " + (
+//                            (currentShipInfo.rootSpec == null ? "null" : currentShipInfo.rootSpec.getHullId()) + ", " + (currentShipInfo.moduleVariant == null ? "null" :currentShipInfo.moduleVariant.getHullVariantId())) + " -> " +
+//                            (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
             onRefitScreenShipChanged(newShipInfo);
             currentShipInfo = newShipInfo;
         }

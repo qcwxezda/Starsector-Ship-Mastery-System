@@ -330,6 +330,7 @@ public interface Strings {
         String MakeshiftShieldBoost = Utils.getString( "sms_descriptions", "MakeshiftShieldBoost");
         String DecoyFlareBoost = Utils.getString( "sms_descriptions", "DecoyFlareBoost");
         String MinimumCR = Utils.getString( "sms_descriptions", "MinimumCR");
+        String MinimumCRPost = Utils.getString( "sms_descriptions", "MinimumCRPost");
         String PhaseTeleporterTimeFlow = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlow");
         String PhaseTeleporterTimeFlowPost = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlowPost");
         String PhaseTeleporterTimeFlowTitle = Utils.getString( "sms_descriptions", "PhaseTeleporterTimeFlowTitle");

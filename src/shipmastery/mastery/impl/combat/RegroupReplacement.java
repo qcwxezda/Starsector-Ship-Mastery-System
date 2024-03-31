@@ -52,6 +52,6 @@ public class RegroupReplacement extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getFighterBays() <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2f, false);
+        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 1f, false);
     }
 }

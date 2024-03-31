@@ -19,7 +19,7 @@ import java.awt.Color;
 
 public class RangeNoNearbyEnemies extends BaseMasteryEffect {
 
-    public static final float MAX_RANGE = 1000f;
+    public static final float[] MAX_RANGE = new float[] {500f, 600f, 800f, 1000f};
 
     float getIncreaseRate(ShipAPI ship) {
         return getStrength(ship) / 10f;
@@ -42,7 +42,7 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
                 Strings.Descriptions.RangeNoNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asInt(MAX_RANGE),
+                Utils.asInt(MAX_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())]),
                 Utils.asPercent(getIncreaseRate(selectedModule)),
                 Utils.asPercent(getDecayRate(selectedModule)));
     }
@@ -81,7 +81,7 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
                 // probably faster than using quadtree for big ranges
                 for (ShipAPI otherShip : Global.getCombatEngine().getShips()) {
                     if (otherShip.getHitpoints() <= 0f || otherShip.isFighter() || otherShip.getOwner() == ship.getOwner()) continue;
-                    if (MathUtils.dist(ship.getLocation(), otherShip.getLocation()) <= MAX_RANGE + ship.getCollisionRadius() + otherShip.getCollisionRadius()) {
+                    if (MathUtils.dist(ship.getLocation(), otherShip.getLocation()) <= MAX_RANGE[Utils.hullSizeToInt(ship.getHullSize())] + ship.getCollisionRadius() + otherShip.getCollisionRadius()) {
                         enemyShipNearby = true;
                         break;
                     }

@@ -58,7 +58,7 @@ public class ShieldEfficiencyHardFlux extends BaseMasteryEffect {
 
             if (strength > 0f) {
                 ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - strength);
-                ship.getShield().setInnerColor(Utils.mixColor(origShieldColor, ship.getShield().getRingColor(), 0.33f * strength / maxStrength));
+                //ship.getShield().setInnerColor(Utils.mixColor(origShieldColor, ship.getShield().getRingColor(), 0.33f * strength / maxStrength));
                 Utils.maintainStatusForPlayerShip(
                         ship,
                         id,
@@ -69,7 +69,7 @@ public class ShieldEfficiencyHardFlux extends BaseMasteryEffect {
             }
             else {
                 ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
-                ship.getShield().setInnerColor(origShieldColor);
+                //ship.getShield().setInnerColor(origShieldColor);
             }
         }
     }

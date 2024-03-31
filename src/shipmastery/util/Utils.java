@@ -252,6 +252,54 @@ public abstract class Utils {
         return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
     }
 
+    public static WeaponSlotCount countWeaponSlotsStrict(ShipHullSpecAPI spec) {
+        int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
+        for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
+            switch (slot.getSlotSize()) {
+                case SMALL:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            sb++;
+                            break;
+                        case ENERGY:
+                            se++;
+                            break;
+                        case MISSILE:
+                            sm++;
+                            break;
+                    }
+                    break;
+                case MEDIUM:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            mb++;
+                            break;
+                        case ENERGY:
+                            me++;
+                            break;
+                        case MISSILE:
+                            mm++;
+                            break;
+                    }
+                    break;
+                case LARGE:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            lb++;
+                            break;
+                        case ENERGY:
+                            le++;
+                            break;
+                        case MISSILE:
+                            lm++;
+                            break;
+                    }
+                    break;
+            }
+        }
+        return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
+    }
+
     public static String joinStringList(List<String> strings) {
         switch (strings.size()) {
             case 0: return "";

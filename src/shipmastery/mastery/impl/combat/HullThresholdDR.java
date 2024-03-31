@@ -89,6 +89,11 @@ public class HullThresholdDR extends BaseMasteryEffect {
             emitter.alphaMult = 0.2f;
             emitter.jitterRadius = 10f;
             emitter.enableDynamicAnchoring();
+
+            // In case ship starts with less than full health
+            while (timesActivated < maxActivations && ship.getHullLevel() <= 1f - thresholdPerActivation * (timesActivated + 1)) {
+                timesActivated++;
+            }
         }
 
         @Override

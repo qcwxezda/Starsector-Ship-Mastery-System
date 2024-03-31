@@ -2,11 +2,11 @@
 {
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
-  "npcMasteryDensity": 0.5,
+  "npcMasteryDensity": 0.65,
   "npcMasteryQuality": 0.5,
-  "npcMasteryMaxLevelModifier": -3,
-  "npcMasteryFlagshipBonus": 2,
-  "npcSmodQualityMod": -0.7,
+  "npcMasteryMaxLevelModifier": -2,
+  "npcMasteryFlagshipBonus": 4,
+  "npcSmodQualityMod": -0.6,
 
   "enableRandomMode": false,
   "enablePlayerShipGraveyards": true,

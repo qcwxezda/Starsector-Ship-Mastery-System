@@ -49,7 +49,7 @@ public class HEFShieldEfficiency extends ShipSystemEffect {
 
             if (mult > 0f) {
                 ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - mult);
-                ship.getShield().setInnerColor(Utils.mixColor(originalColor, ship.getShield().getRingColor(), 0.33f * mult / strength));
+                //ship.getShield().setInnerColor(Utils.mixColor(originalColor, ship.getShield().getRingColor(), 0.33f * mult / strength));
                 Utils.maintainStatusForPlayerShip(
                         ship,
                         id,
@@ -61,7 +61,7 @@ public class HEFShieldEfficiency extends ShipSystemEffect {
             }
             else {
                 ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
-                ship.getShield().setInnerColor(originalColor);
+                //ship.getShield().setInnerColor(originalColor);
             }
         }
     }

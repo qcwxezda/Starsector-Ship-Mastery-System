@@ -48,4 +48,8 @@ public interface MasteryTags {
     /** Allows the same mastery to be randomly selected as both options at the same level, e.g. if different instances of this
      *  mastery effect can have different effects due to taking additional params. */
     String VARYING = "varying";
+
+    /** Normally, when random masteries are selected at a high tier, high-tier effects are preferred. This tag allows normally low-tier effects
+     *  to be selected with a weight as if they were high tier. */
+    String SCALE_SELECTION_WEIGHT = "scale_selection_weight";
 }

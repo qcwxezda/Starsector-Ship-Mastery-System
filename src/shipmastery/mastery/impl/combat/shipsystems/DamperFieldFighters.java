@@ -115,6 +115,6 @@ public class DamperFieldFighters extends ShipSystemEffect {
         if (mult == null) return null;
         int n = spec.getFighterBays();
         if (n <= 0) return null;
-        return mult * Utils.getSelectionWeightScaledByValue(n, 2f, false);
+        return mult * Utils.getSelectionWeightScaledByValue(n, 1f, false);
     }
 }

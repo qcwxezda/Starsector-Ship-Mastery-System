@@ -42,7 +42,7 @@ public class MissileAutoloaderCapacity extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlotsStrict(spec);
         float count = wsc.sm;
         if (count == 0) return null;
         return Utils.getSelectionWeightScaledByValue(count, 3, true);

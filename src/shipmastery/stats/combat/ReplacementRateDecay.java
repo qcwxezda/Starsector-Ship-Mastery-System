@@ -18,6 +18,6 @@ public class ReplacementRateDecay extends ShipStat {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getFighterBays() <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2, false);
+        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 1, false);
     }
 }

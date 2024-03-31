@@ -58,7 +58,7 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
         if ((ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) || spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) &&
                 (!spec.isPhase() || spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) &&
                 (!spec.isBuiltInMod(HullMods.AUTOMATED) || spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR))) return null;
-        return 0f;
+        return 0.75f;
     }
 
     @Override

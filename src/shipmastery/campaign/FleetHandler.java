@@ -90,13 +90,11 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
             if (fm.isStation()) continue;
-
-            final ShipVariantAPI variant = fm.getVariant();
-            ShipHullSpecAPI spec = variant.getHullSpec();
-            variant.addPermaMod("sms_masteryHandler", false);
+            ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
             MutableShipStatsAPI stats = fm.getStats();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
-            fm.setVariant(addHandlerMod(variant, variant, fleet), false, false);
+            fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fleet), false, false);
+            final ShipVariantAPI variant = fm.getVariant();
 
             boolean repeatAutofit = false;
             for (Map.Entry<Integer, Boolean> entry : masteries.entrySet()) {
@@ -169,6 +167,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 // Adjust CR if mastery effects affected that
                 // TODO: figure out if this causes unwanted spontaneous repairs...
                 fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+                // Do this again just to make sure mastery handler is at bottom of hullmod list=
+                fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fleet), false, false);
+
 //                float diff = fm.getRepairTracker().getMaxCR() - crBeforeModification;
 //                if (diff > 0f) {
 //                    fm.getRepairTracker().setCR(Math.min(fm.getRepairTracker().getMaxCR(), fm.getRepairTracker().getCR() + diff));

@@ -13,6 +13,7 @@ import shipmastery.config.Settings;
 import shipmastery.fx.OverlayEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -21,25 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MissileRegenOnKill extends BaseMasteryEffect {
-
-    static final float[] AMMO_PER_KILL_MULTIPLIER = new float[] {1f, 2f, 3f, 4f};
     public static final float DAMAGE_MULT = 0.8f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
-        String frigate = Utils.asPercent(AMMO_PER_KILL_MULTIPLIER[0] * strength);
-        String destroyer = Utils.asPercent(AMMO_PER_KILL_MULTIPLIER[1] * strength);
-        String cruiser = Utils.asPercent(AMMO_PER_KILL_MULTIPLIER[2] * strength);
-        String capital = Utils.asPercent(AMMO_PER_KILL_MULTIPLIER[3] * strength);
         return MasteryDescription
                 .init(Strings.Descriptions.MissileRegenOnKill)
-                .params(frigate, destroyer, cruiser, capital, Utils.asPercent(1f - DAMAGE_MULT))
-                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Settings.NEGATIVE_HIGHLIGHT_COLOR);
+                .params(Misc.getHullSizeStr(selectedModule.getHullSize()), Utils.asPercent(getStrength(selectedModule)), Utils.asPercent(1f - DAMAGE_MULT))
+                .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
@@ -82,10 +72,11 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
 
         @Override
         public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
-            if ((source == ship || (source.isFighter() && source.getWing() != null && source.getWing().getSourceShip() == ship)) && !target.isFighter()) {
-                float reloadFrac = AMMO_PER_KILL_MULTIPLIER[Utils.hullSizeToInt(target.getHullSize())] * strength;
+            if (EngineUtils.shipIsOwnedBy(source, ship)) {
+                if (target.isFighter() || Utils.hullSizeToInt(target.getHullSize()) < Utils.hullSizeToInt(ship.getHullSize())) return;
+
                 for (WeaponAPI weapon : missileWeapons) {
-                    float reloadAmount = weapon.getSpec().getMaxAmmo() * reloadFrac;
+                    float reloadAmount = weapon.getSpec().getMaxAmmo() * strength;
                     int intReloadAmount = (int) reloadAmount;
                     float frac = reloadAmount - intReloadAmount;
                     if (Misc.random.nextFloat() <= frac) {

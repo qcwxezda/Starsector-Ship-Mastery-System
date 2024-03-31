@@ -62,6 +62,6 @@ public class ModifyStatsMult extends ModifyStatsEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 5f;
+        return 3f;
     }
 }

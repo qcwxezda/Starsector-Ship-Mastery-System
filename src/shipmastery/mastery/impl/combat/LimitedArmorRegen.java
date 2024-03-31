@@ -19,10 +19,15 @@ import java.util.Map;
 public class LimitedArmorRegen extends BaseMasteryEffect {
 
     public static final float REGEN_RATE = 3f;
+    public static final float[] HULL_SIZE_MULT = new float[] {2f, 1.5f, 1f, 1f};
+
+    public float getRegenAmount(ShipAPI ship) {
+        return Math.min(1f, HULL_SIZE_MULT[Utils.hullSizeToInt(ship.getHullSize())] * getStrength(ship));
+    }
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LimitedArmorRegen).params(Utils.asPercent(getStrength(selectedModule)));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LimitedArmorRegen).params(Utils.asPercent(getRegenAmount(selectedModule)));
     }
 
     @Override
@@ -34,7 +39,7 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(LimitedArmorRegenScript.class)) {
-            ship.addListener(new LimitedArmorRegenScript(ship, getStrength(ship)));
+            ship.addListener(new LimitedArmorRegenScript(ship, getRegenAmount(ship)));
         }
     }
 
