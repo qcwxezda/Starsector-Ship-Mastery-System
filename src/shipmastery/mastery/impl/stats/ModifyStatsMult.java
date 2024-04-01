@@ -34,7 +34,7 @@ public class ModifyStatsMult extends ModifyStatsEffect {
         float mult = Math.max(0f, 1f + amount);
         if (statOrList instanceof StatBonus) {
             if (mult > 1) {
-                ((StatBonus) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
+                ((StatBonus) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.Misc.shipMasteryEffect);
             }
             else {
                 ((StatBonus) statOrList).modifyMult(id, mult);
@@ -42,7 +42,7 @@ public class ModifyStatsMult extends ModifyStatsEffect {
         }
         else if (statOrList instanceof MutableStat) {
             if (mult > 1) {
-                ((MutableStat) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.SHIP_MASTERY_EFFECT);
+                ((MutableStat) statOrList).modifyPercent(id, (mult - 1f) * 100f, Strings.Misc.shipMasteryEffect);
             }
             else {
                 ((MutableStat) statOrList).modifyMult(id, mult);

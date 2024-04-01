@@ -18,6 +18,7 @@ public class HullMasteryData {
     }
 
     public MasteryLevelData getDataForLevel(int level) {
+        if (level - 1 >= levels.size()) return null;
         return levels.get(level - 1);
     }
 

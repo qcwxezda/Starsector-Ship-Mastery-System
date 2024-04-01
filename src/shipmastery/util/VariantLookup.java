@@ -17,8 +17,8 @@ public class VariantLookup extends BaseCampaignEventListener {
     public static final String UID_INDICATOR_TAG = "shipmastery_has_uid";
     public static final String INSTANCE_KEY = "$shipmastery_VariantLookup";
 
-    public VariantLookup(boolean permaRegister) {
-        super(permaRegister);
+    public VariantLookup() {
+        super(false);
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
-import shipmastery.deferred.DeferredAction;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.impl.logistics.SModsOverCapacity;
 import shipmastery.ui.MasteryPanel;
@@ -48,7 +47,7 @@ public class SModTableRowPressed extends TriggerableProxy {
 
 
                 if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats())) {
-                    Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_OVER_MAX_WARNING, Misc.getNegativeHighlightColor());
+                    Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
                 }
 
                 DeferredActionPlugin.performLater(new Action() {
@@ -68,7 +67,8 @@ public class SModTableRowPressed extends TriggerableProxy {
                     String name = spec.getDisplayName();
                     if (SModUtils.isHullmodBuiltIn(spec, variant)) {
                         variant.getSModdedBuiltIns().add(rowData.hullModSpecId);
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.ENHANCE_STR + name, Settings.MASTERY_COLOR);
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+                                Strings.MasteryPanel.enhanceConfirm + name, Settings.MASTERY_COLOR);
                     }
                     else {
                         final int cur = module.getVariant().getSMods().size(), limit = SModUtils.getMaxSMods(module.getMutableStats());
@@ -87,7 +87,8 @@ public class SModTableRowPressed extends TriggerableProxy {
                             record.setSPSpent(0);
                             PlaythroughLog.getInstance().getSModsInstalled().add(record);
                         }
-                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.BUILD_IN_STR + name, Settings.MASTERY_COLOR);
+                        Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+                                Strings.MasteryPanel.builtInConfirm + name, Settings.MASTERY_COLOR);
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 

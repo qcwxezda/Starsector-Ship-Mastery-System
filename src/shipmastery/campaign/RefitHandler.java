@@ -208,7 +208,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
         Pair<ButtonAPI, CustomPanelAPI> masteryButtonPair = ReflectionUtils.makeButton(
-                Strings.MASTERY_BUTTON_STR, new MasteryButtonPressed(this),
+                Strings.RefitScreen.masteryButton, new MasteryButtonPressed(this),
                 Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM,
                 permButton.getPosition().getWidth(), permButton.getPosition().getHeight(), Keyboard.KEY_Q);
         ButtonAPI masteryButton = masteryButtonPair.one;
@@ -270,7 +270,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                             boolean canLevelUp = ShipMastery.getPlayerMasteryPoints(spec) >= MasteryUtils.getUpgradeCost(spec);
                             String canLevelUpStr = "+";
                             tooltipMaker.addPara(
-                                    Strings.MASTERY_LABEL_STR + String.format("%s/%s", currentMastery, maxMastery) + " " + (canLevelUp ? canLevelUpStr : ""),
+                                    Strings.RefitScreen.masteryLabel + String.format("%s/%s", currentMastery, maxMastery) + " " + (canLevelUp ? canLevelUpStr : ""),
                                     10f,
                                     Settings.POSITIVE_HIGHLIGHT_COLOR,
                                     canLevelUpStr).setAlignment(Alignment.LMID);

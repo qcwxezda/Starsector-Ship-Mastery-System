@@ -56,7 +56,7 @@ public class MasteryEffectButtonPressed extends ActionListener {
                     if (!MasteryUtils.canDisable(effect)) {
                         button.setChecked(false);
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                                Strings.EFFECT_CANT_DEACTIVATE,
+                                Strings.Misc.effectCantBeDeactivated,
                                 Misc.getNegativeHighlightColor());
                         Global.getSoundPlayer().playUISound("ui_button_disabled_pressed", 1f, 1f);
                         return;
@@ -70,7 +70,7 @@ public class MasteryEffectButtonPressed extends ActionListener {
 
             if (!canDeactivate) {
                 Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                        Strings.EFFECT_CANT_DEACTIVATE_WARNING,
+                        Strings.Misc.effectCantBeDeactivatedWarning,
                         Misc.getNegativeHighlightColor());
             }
         }
@@ -78,7 +78,7 @@ public class MasteryEffectButtonPressed extends ActionListener {
             if ((Boolean) isOption2 == activeMasteries.get(level) && !canDeactivate) {
                 button.setChecked(true);
                 Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                        Strings.EFFECT_CANT_DEACTIVATE,
+                        Strings.Misc.effectCantBeDeactivated,
                         Misc.getNegativeHighlightColor());
                 Global.getSoundPlayer().playUISound("ui_button_disabled_pressed", 1f, 1f);
             }

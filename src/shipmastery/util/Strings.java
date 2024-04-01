@@ -1,65 +1,88 @@
 package shipmastery.util;
 
 public interface Strings {
-    String MASTERY_BUTTON_STR = Utils.getString("sms_refitScreen", "masteryButton");
-    String MASTERY_LABEL_STR = Utils.getString("sms_refitScreen", "masteryLabel");
-    String S_MOD_AUTOFIT_NAME = Utils.getString("sms_refitScreen", "sModAutofitName");
-    String S_MOD_AUTOFIT_DESC = Utils.getString("sms_refitScreen", "sModAutofitDesc");
-    String MUST_BE_DOCKED_HULLMODS = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
-    String MUST_BE_DOCKED_MASTERIES = Utils.getString("sms_masteryPanel", "mustBeDockedMasteries");
-    String MASTERY_TAB_STR = Utils.getString("sms_masteryPanel", "masteryTab");
-    String CREDITS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "creditsDisplay");
-    String MASTERY_POINTS_DISPLAY_STR = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
-    String HULLMODS_EMPTY_STR = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
-    String CLEAR_BUTTON_STR = Utils.getString("sms_masteryPanel", "clearButton");
-    String BUILTIN_DISPLAY_STR = Utils.getString("sms_masteryPanel", "builtInDisplay");
-    String DOUBLE_CLICK_HINT_STR = Utils.getString("sms_masteryPanel", "doubleClickHint");
-    String YES_STR = Utils.getString("sms_masteryPanel", "yes");
-    String NO_STR = Utils.getString("sms_masteryPanel", "no");
-    String CANT_BUILD_IN_STR = Utils.getString("sms_masteryPanel", "cantBuildIn");
-    String LIMIT_REACHED_STR = Utils.getString("sms_masteryPanel", "limitReached");
-    String CREDITS_SHORTFALL_STR = Utils.getString("sms_masteryPanel", "notEnoughCredits");
-    String MASTERY_POINTS_SHORTFALL_STR = Utils.getString("sms_masteryPanel", "notEnoughMasteryPoints");
-    String DISMISS_WINDOW_STR = Utils.getString("sms_masteryPanel", "dismissWindow");
-    String HULLMODS_TAB_STR = Utils.getString("sms_masteryPanel", "hullmodsTab");
-    String UNKNOWN_EFFECT_STR = Utils.getString("sms_masteryPanel", "unknownMastery");
-    String ADVANCE_MASTERY_STR = Utils.getString("sms_masteryPanel", "levelUpMastery");
-    String CONFIRM_STR = Utils.getString("sms_masteryPanel", "confirmText2");
-    String CANCEL_STR = Utils.getString("sms_masteryPanel", "cancelText");
-    String UPGRADE_CONFIRMED_STR = Utils.getString("sms_masteryPanel", "upgradeConfirm");
-    String UPGRADE_ASK_STR = Utils.getString("sms_masteryPanel", "confirmText");
-    String ENHANCE_STR = Utils.getString("sms_masteryPanel", "enhanceConfirm");
-    String BUILD_IN_STR = Utils.getString("sms_masteryPanel", "builtInConfirm");
-    String CLEAR_CONFIRMED_STR = Utils.getString("sms_masteryPanel", "clearConfirm");
-    String CLEAR_ASK_STR = Utils.getString("sms_masteryPanel", "confirmText");
-    String CHANGES_PENDING = Utils.getString("sms_masteryPanel", "changesPending");
-    String BUILD_IN_OVER_MAX_WARNING = Utils.getString("sms_masteryPanel", "buildInOverMaxWarning");
-    String CANT_OPEN_PANEL = Utils.getString("sms_masteryPanel", "cantOpenPanel");
-    String ICON_HEADER = Utils.getString("sms_masteryPanel", "iconHeader");
-    String HULLMOD_HEADER = Utils.getString("sms_masteryPanel", "hullmodHeader");
-    String DESIGN_TYPE_HEADER = Utils.getString("sms_masteryPanel", "designTypeHeader");
-    String ORDNANCE_POINTS_HEADER = Utils.getString("sms_masteryPanel", "ordnancePointsHeader");
-    String MASTERY_POINTS_HEADER = Utils.getString("sms_masteryPanel", "masteryPointsHeader");
-    String CREDITS_HEADER = Utils.getString("sms_masteryPanel", "creditsHeader");
-    String MODULAR_HEADER = Utils.getString("sms_masteryPanel", "modularHeader");
-    String EFFECT_CANT_DEACTIVATE = Utils.getString("sms_misc", "effectCantBeDeactivated");
-    String EFFECT_CANT_DEACTIVATE_WARNING = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
-    String SHIP_MASTERY_EFFECT = Utils.getString("sms_misc", "shipMasteryEffect");
-    String AND_STR = Utils.getString("sms_misc", "and");
-    String DOESNT_AFFECT_MODULES = Utils.getString("sms_misc", "doesntAffectModules");
-    String FAILED_TO_GENERATE_MASTERIES = Utils.getString("sms_misc", "failedToGenerateMasteries");
-    String FLAGSHIP_ONLY = Utils.getString("sms_misc", "flagshipOnly");
-    String BEST_OF_THE_BEST_DESC = Utils.getString("sms_misc", "bestOfTheBestDesc");
-    String BEST_OF_THE_BEST_DESC2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
-    String BEST_OF_THE_BEST_DESC3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
-    String BEST_OF_THE_BEST_SCOPE = Utils.getString("sms_misc", "bestOfTheBestScope");
-    String BEST_OF_THE_BEST_SCOPE2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
-    String EXCESS_OP_WARNING = Utils.getString("sms_misc", "excessOPWarning");
-    String GAINED_MP_SINGLE = Utils.getString("sms_messages", "gainedMPSingle");
-    String GAINED_MP_MULTIPLE = Utils.getString("sms_messages", "gainedMPMultiple");
-    String KNOWLEDGE_CONSTRUCT = Utils.getString("sms_items", "knowledgeConstruct");
-    String KNOWLEDGE_CONSTRUCT_RIGHT_CLICK = Utils.getString("sms_items", "knowledgeConstructRightClick");
-    String SELECT_A_SHIP = Utils.getString("sms_misc", "selectAShip");
+
+    interface RefitScreen {
+        String masteryButton = Utils.getString("sms_refitScreen", "masteryButton");
+        String masteryLabel = Utils.getString("sms_refitScreen", "masteryLabel");
+        String sModAutofitName = Utils.getString("sms_refitScreen", "sModAutofitName");
+        String sModAutofitDesc = Utils.getString("sms_refitScreen", "sModAutofitDesc");
+    }
+
+    interface MasteryPanel {
+        String mustBeDockedHullmods = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
+        String mustBeDockedMasteries = Utils.getString("sms_masteryPanel", "mustBeDockedMasteries");
+        String masteryTab = Utils.getString("sms_masteryPanel", "masteryTab");
+        String creditsDisplay = Utils.getString("sms_masteryPanel", "creditsDisplay");
+        String masteryPointsDisplay = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
+        String hullmodListsEmptyHint = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
+        String clearButton = Utils.getString("sms_masteryPanel", "clearButton");
+        String builtInDisplay = Utils.getString("sms_masteryPanel", "builtInDisplay");
+        String doubleClickHint = Utils.getString("sms_masteryPanel", "doubleClickHint");
+        String yes = Utils.getString("sms_masteryPanel", "yes");
+        String no = Utils.getString("sms_masteryPanel", "no");
+        String cantBuildIn = Utils.getString("sms_masteryPanel", "cantBuildIn");
+        String limitReached = Utils.getString("sms_masteryPanel", "limitReached");
+        String notEnoughCredits = Utils.getString("sms_masteryPanel", "notEnoughCredits");
+        String notEnoughMasteryPoints = Utils.getString("sms_masteryPanel", "notEnoughMasteryPoints");
+        String dismissWindow = Utils.getString("sms_masteryPanel", "dismissWindow");
+        String hullmodsTab = Utils.getString("sms_masteryPanel", "hullmodsTab");
+        String unknownMastery = Utils.getString("sms_masteryPanel", "unknownMastery");
+        String levelUpMastery = Utils.getString("sms_masteryPanel", "levelUpMastery");
+        String confirmText2 = Utils.getString("sms_masteryPanel", "confirmText2");
+        String cancelText = Utils.getString("sms_masteryPanel", "cancelText");
+        String upgradeConfirm = Utils.getString("sms_masteryPanel", "upgradeConfirm");
+        String confirmText = Utils.getString("sms_masteryPanel", "confirmText");
+        String enhanceConfirm = Utils.getString("sms_masteryPanel", "enhanceConfirm");
+        String builtInConfirm = Utils.getString("sms_masteryPanel", "builtInConfirm");
+        String clearConfirm = Utils.getString("sms_masteryPanel", "clearConfirm");
+        String changesPending = Utils.getString("sms_masteryPanel", "changesPending");
+        String buildInOverMaxWarning = Utils.getString("sms_masteryPanel", "buildInOverMaxWarning");
+        String cantOpenPanel = Utils.getString("sms_masteryPanel", "cantOpenPanel");
+        String iconHeader = Utils.getString("sms_masteryPanel", "iconHeader");
+        String hullmodHeader = Utils.getString("sms_masteryPanel", "hullmodHeader");
+        String designTypeHeader = Utils.getString("sms_masteryPanel", "designTypeHeader");
+        String ordnancePointsHeader = Utils.getString("sms_masteryPanel", "ordnancePointsHeader");
+        String masteryPointsHeader = Utils.getString("sms_masteryPanel", "masteryPointsHeader");
+        String creditsHeader = Utils.getString("sms_masteryPanel", "creditsHeader");
+        String modularHeader = Utils.getString("sms_masteryPanel", "modularHeader");
+    }
+
+    interface Misc {
+
+        String effectCantBeDeactivated = Utils.getString("sms_misc", "effectCantBeDeactivated");
+        String effectCantBeDeactivatedWarning = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
+        String shipMasteryEffect = Utils.getString("sms_misc", "shipMasteryEffect");
+        String and = Utils.getString("sms_misc", "and");
+        String doesntAffectModules = Utils.getString("sms_misc", "doesntAffectModules");
+        String failedToGenerateMasteries = Utils.getString("sms_misc", "failedToGenerateMasteries");
+        String flagshipOnly = Utils.getString("sms_misc", "flagshipOnly");
+        String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
+        String bestOfTheBestDesc2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
+        String bestOfTheBestDesc3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
+        String bestOfTheBestScope = Utils.getString("sms_misc", "bestOfTheBestScope");
+        String bestOfTheBestScope2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
+        String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
+        String selectAShip = Utils.getString("sms_misc", "selectAShip");
+    }
+
+    interface Messages {
+        String gainedMPSingle = Utils.getString("sms_messages", "gainedMPSingle");
+        String gainedMPMultiple = Utils.getString("sms_messages", "gainedMPMultiple");
+    }
+
+    interface Items {
+        String knowledgeConstruct = Utils.getString("sms_items", "knowledgeConstruct");
+        String knowledgeConstructRightClick = Utils.getString("sms_items", "knowledgeConstructRightClick");
+    }
+
+    interface Graveyard {
+        String intelTitle = Utils.getString("sms_graveyard", "intelTitle");
+        String intelPara1 = Utils.getString("sms_graveyard", "intelPara1");
+        String intelPara2 = Utils.getString("sms_graveyard", "intelPara2");
+        String intelPara2Single = Utils.getString("sms_graveyard", "intelPara2Single");
+        String intelAfterDays = Utils.getString("sms_graveyard", "intelAfterDays");
+    }
 
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");

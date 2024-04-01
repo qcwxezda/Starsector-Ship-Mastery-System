@@ -137,7 +137,7 @@ public class MasteryDisplay implements CustomUIElement {
             MasteryDescription effectDescription = effect.getDescription(selectedModule, rootFleetMember);
             if (effectDescription != null) {
                 if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
-                    effectDescription.addLabelWithPrefix(tooltip, Strings.FLAGSHIP_ONLY, Misc.getBasePlayerColor());
+                    effectDescription.addLabelWithPrefix(tooltip, Strings.Misc.flagshipOnly, Misc.getBasePlayerColor());
                 } else {
                     effectDescription.addLabel(tooltip);
                 }
@@ -147,7 +147,7 @@ public class MasteryDisplay implements CustomUIElement {
             effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
             if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
                     MasteryTags.DOESNT_AFFECT_MODULES)) {
-                tooltip.addPara(Strings.DOESNT_AFFECT_MODULES, Settings.NEGATIVE_HIGHLIGHT_COLOR, 5f);
+                tooltip.addPara(Strings.Misc.doesntAffectModules, Settings.NEGATIVE_HIGHLIGHT_COLOR, 5f);
             }
             tooltip.addSpacer(i == effects.size() - 1 ? 20f : 5f);
         }
@@ -177,7 +177,7 @@ public class MasteryDisplay implements CustomUIElement {
         innerPanel.getPosition().setSize(w - 15f, descH);
 
         TooltipMakerAPI descriptionButton = innerPanel.createUIElement(w, descH, false);
-        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.UNKNOWN_EFFECT_STR : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.MasteryPanel.unknownMastery : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                                                   Misc.getGrayColor(), w - 5f, descH, 0f);
         descOutline.setClickable(level <= currentMastery);
         descOutline.setGlowBrightness(level <= currentMastery ? 0.8f : 0.15f);

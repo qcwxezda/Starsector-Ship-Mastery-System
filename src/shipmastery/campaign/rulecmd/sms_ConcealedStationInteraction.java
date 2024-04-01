@@ -38,9 +38,9 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
             }
         }
         dialog.showFleetMemberPickerDialog(
-                Strings.SELECT_A_SHIP,
-                Strings.CONFIRM_STR,
-                Strings.CANCEL_STR,
+                Strings.Misc.selectAShip,
+                Strings.MasteryPanel.confirmText2,
+                Strings.MasteryPanel.cancelText,
                 4,
                 6,
                 80f,

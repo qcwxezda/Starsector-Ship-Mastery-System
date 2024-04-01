@@ -30,7 +30,7 @@ public class UpgradeButtonPressed extends ActionListener {
             ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
             ShipMastery.advancePlayerMasteryLevel(spec);
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                    Strings.UPGRADE_CONFIRMED_STR + ShipMastery.getPlayerMasteryLevel(spec), Settings.MASTERY_COLOR);
+                    Strings.MasteryPanel.upgradeConfirm + ShipMastery.getPlayerMasteryLevel(spec), Settings.MASTERY_COLOR);
             Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
             masteryPanel.forceRefresh(true, false, false);
 
@@ -49,7 +49,7 @@ public class UpgradeButtonPressed extends ActionListener {
 
     void beginConfirm(ButtonAPI button) {
         button.setCustomData(true);
-        button.setText(Strings.UPGRADE_ASK_STR);
+        button.setText(Strings.MasteryPanel.confirmText);
     }
 
     void endConfirm(ButtonAPI button) {

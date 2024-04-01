@@ -1,4 +1,4 @@
-package shipmastery.campaign;
+package shipmastery.campaign.graveyard;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
@@ -9,9 +9,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.loading.specs.HullVariantSpec;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.config.Settings;
@@ -49,28 +51,29 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
             if (recoverable == null) recoverable = new ArrayList<>();
             if (storyRecoverable == null) storyRecoverable = new ArrayList<>();
 
-            Set<String> seenIds = new HashSet<>();
+            int lastNoStoryPoint = recoverable.size();
+            recoverable.addAll(storyRecoverable);
 
-            for (FleetMemberAPI member : recoverable) {
+            Set<String> seenIds = new HashSet<>();
+            List<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo = new ArrayList<>();
+
+            for (int i = 0; i < recoverable.size(); i++) {
+                FleetMemberAPI member = recoverable.get(i);
                 if (!recoveredShips.contains(member) &&
                         members.contains(member) &&
                         !seenIds.contains(member.getId())) {
-                    addDerelict(member, false);
+                    lostInfo.add(new Pair<>(member, addDerelict(member, i >= lastNoStoryPoint)));
                     seenIds.add(member.getId());
                 }
             }
-            for (FleetMemberAPI member : storyRecoverable) {
-                if (!recoveredShips.contains(member) &&
-                        members.contains(member) &&
-                        !seenIds.contains(member.getId())) {
-                    addDerelict(member, true);
-                    seenIds.add(member.getId());
-                }
+
+            if (!lostInfo.isEmpty()) {
+                Global.getSector().getIntelManager().addIntel(new ShipGraveyardIntel(lostInfo));
             }
         }
     }
 
-    public void addDerelict(FleetMemberAPI fm, boolean storyPointRecovery) {
+    public SectorEntityToken addDerelict(FleetMemberAPI fm, boolean storyPointRecovery) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         DerelictShipEntityPlugin.DerelictShipData params =
                 DerelictShipEntityPlugin.createVariant(null, Misc.random, 0f);
@@ -87,11 +90,13 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
             }
         }
         params.ship.variant = variant;
+        params.ship.addDmods = false;
         params.ship.nameAlwaysKnown = true;
         params.ship.pruneWeapons = false;
+        params.canHaveExtraCargo = false;
         SectorEntityToken entity =
-                BaseThemeGenerator.addSalvageEntity(Misc.random, playerFleet.getContainingLocation(), "wreck",
-                                                    "neutral", params);
+                BaseThemeGenerator.addSalvageEntity(Misc.random, playerFleet.getContainingLocation(), Entities.WRECK,
+                                                    Global.getSector().getPlayerFaction().getId(), params);
         entity.setSensorProfile(null);
         entity.setDiscoverable(null);
         Vector2f loc = MathUtils.randomPointInCircle(playerFleet.getLocation(), 300f);
@@ -105,6 +110,7 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
                 data.storyPointRecovery = true;
             }
         }
+        return entity;
     }
 
     @Override

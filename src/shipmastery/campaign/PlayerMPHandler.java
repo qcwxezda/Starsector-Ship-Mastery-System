@@ -38,8 +38,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private boolean lastXPGainWasBattle = false;
     private final Random random = new Random(90706904117206L);
 
-    public PlayerMPHandler(boolean permaRegister) {
-        super(permaRegister);
+    public PlayerMPHandler() {
+        super(false);
         prevXP = Global.getSector().getPlayerPerson().getStats().getXP();
     }
 
@@ -200,7 +200,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (amounts.size() == 1) {
             ShipHullSpecAPI spec = amounts.keySet().iterator().next();
             int amount = amounts.get(spec);
-            message = String.format(Strings.GAINED_MP_SINGLE, amount + " MP", spec.getHullNameWithDashClass());
+            message = String.format(Strings.Messages.gainedMPSingle, amount + " MP", spec.getHullNameWithDashClass());
             highlight = amount + " MP";
         }
         else {
@@ -208,7 +208,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             for (int amount : amounts.values()) {
                 sum += amount;
             }
-            message = String.format(Strings.GAINED_MP_MULTIPLE, sum + " MP", amounts.size());
+            message = String.format(Strings.Messages.gainedMPMultiple, sum + " MP", amounts.size());
             highlight = sum + " MP";
         }
         Global.getSector().getCampaignUI().addMessage(message, Settings.MASTERY_COLOR);

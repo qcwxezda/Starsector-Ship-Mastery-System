@@ -32,9 +32,9 @@ public class CoreAutofitPluginExt extends CoreAutofitPlugin {
         this.refitHandler = refitHandler;
         options.add(new AutofitOption(
                 COPY_S_MODS,
-                Strings.S_MOD_AUTOFIT_NAME,
+                Strings.RefitScreen.sModAutofitName,
                 false,
-                Strings.S_MOD_AUTOFIT_DESC));
+                Strings.RefitScreen.sModAutofitDesc));
     }
 
     @Override

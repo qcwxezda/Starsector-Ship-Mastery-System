@@ -24,11 +24,11 @@ public class ConfirmOrCancelDisplay implements CustomUIElement {
     @Override
     public void create(TooltipMakerAPI tooltip) {
         tooltip.setParaFont(Fonts.ORBITRON_16);
-        tooltip.addPara(Strings.CHANGES_PENDING, 10f).setAlignment(Alignment.MID);
+        tooltip.addPara(Strings.MasteryPanel.changesPending, 10f).setAlignment(Alignment.MID);
         tooltip.setButtonFontOrbitron20();
-        confirmButton = tooltip.addButton(Strings.CONFIRM_STR, null, 100f, 25f, 20f);
+        confirmButton = tooltip.addButton(Strings.MasteryPanel.confirmText2, null, 100f, 25f, 20f);
         ReflectionUtils.setButtonListener(confirmButton, onConfirm);
-        cancelButton = tooltip.addButton(Strings.CANCEL_STR, null, 100f, 25f, -25f);
+        cancelButton = tooltip.addButton(Strings.MasteryPanel.cancelText, null, 100f, 25f, -25f);
         cancelButton.getPosition().setXAlignOffset(120f);
         ReflectionUtils.setButtonListener(cancelButton, onCancel);
     }

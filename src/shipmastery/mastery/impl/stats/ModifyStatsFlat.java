@@ -50,10 +50,10 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
 
     void modify(Object stat, String id, float amount) {
         if (stat instanceof StatBonus) {
-            ((StatBonus) stat).modifyFlat(id, amount, Strings.SHIP_MASTERY_EFFECT);
+            ((StatBonus) stat).modifyFlat(id, amount, Strings.Misc.shipMasteryEffect);
         }
         else if (stat instanceof MutableStat) {
-            ((MutableStat) stat).modifyFlat(id, amount, Strings.SHIP_MASTERY_EFFECT);
+            ((MutableStat) stat).modifyFlat(id, amount, Strings.Misc.shipMasteryEffect);
         }
         else {
             for (Object o : (Object[]) stat) {

@@ -3,10 +3,12 @@ package shipmastery.plugin;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignEventListener;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
+import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
@@ -77,6 +79,23 @@ public class ModPlugin extends BaseModPlugin {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add initializer", e);
         }
+
+        if (Global.getSettings().getModManager().isModEnabled("nexerelin")) {
+            try {
+                Class<?> cls = classLoader.loadClass("shipmastery.campaign.graveyard.InsuranceFraudDetector");
+                for (Object listener : Global.getSector().getAllListeners()) {
+                    if (listener.getClass().getSimpleName().startsWith("InsuranceFraud")) {
+                        System.out.println("Found");
+                    }
+                }
+                if (!Global.getSector().getListenerManager().hasListenerOfClass(cls)) {
+                    CampaignEventListener fraudDetector = (CampaignEventListener) cls.newInstance();
+                    listeners.addListener(fraudDetector, false);
+                }
+            } catch (Exception ignore) {
+                // Not critical, just means won't catch insurance fraud
+            }
+        }
 //
 //        try {
 //            // Note: getting the RefitHandler listeners requires that the calling class and RefitHandler are using the
@@ -87,23 +106,26 @@ public class ModPlugin extends BaseModPlugin {
 //            throw new RuntimeException("Failed to add campaign plugin", e);
 //        }
 
-        DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
-        Global.getSector().addTransientScript(deferredActionPlugin);
-        Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+        if (!Global.getSector().hasScript(DeferredActionPlugin.class)) {
+            // Not transient in case player saves while action queue isn't empty
+            DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
+            Global.getSector().addScript(deferredActionPlugin);
+            Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+        }
 
-        PlayerMPHandler xpTracker = new PlayerMPHandler(false);
+        PlayerMPHandler xpTracker = new PlayerMPHandler();
         Global.getSector().addTransientScript(xpTracker);
         Global.getSector().addTransientListener(xpTracker);
 
-        VariantLookup variantLookup = new VariantLookup(false);
+        VariantLookup variantLookup = new VariantLookup();
         Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
         Global.getSector().addTransientListener(variantLookup);
         ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
         Global.getSector().addTransientListener(graveyardSpawner);
         Global.getSector().addTransientScript(graveyardSpawner);
-        listeners.addListener(graveyardSpawner);
+        listeners.addListener(graveyardSpawner, true);
 
-        FleetHandler fleetHandler = new FleetHandler(false);
+        FleetHandler fleetHandler = new FleetHandler();
         listeners.addListener(fleetHandler, true);
         Global.getSector().addTransientListener(fleetHandler);
         listeners.addListener(new PlayerFleetHandler(), true);
@@ -123,6 +145,7 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.campaign.Initializer",
             "shipmastery.campaign.CoreAutofitPluginExt",
+            "shipmastery.campaign.graveyard.InsuranceFraudDetector",
             "shipmastery.plugin.SModAutofitCampaignPlugin",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",

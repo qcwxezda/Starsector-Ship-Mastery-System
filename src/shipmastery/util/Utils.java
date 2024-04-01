@@ -304,7 +304,7 @@ public abstract class Utils {
         switch (strings.size()) {
             case 0: return "";
             case 1: return strings.get(0);
-            case 2: return strings.get(0) + " " + Strings.AND_STR + strings.get(1);
+            case 2: return strings.get(0) + " " + Strings.Misc.and + strings.get(1);
             default:
                 StringBuilder join = new StringBuilder();
                 for (int i = 0; i < strings.size(); i++) {
@@ -313,7 +313,7 @@ public abstract class Utils {
                         join.append(", ");
                     }
                     if (i == strings.size() - 2) {
-                        join.append(Strings.AND_STR);
+                        join.append(Strings.Misc.and);
                     }
                 }
                 return join.toString();
@@ -334,8 +334,9 @@ public abstract class Utils {
             }
         }
         if (clampOP(variant, Global.getSector().getPlayerStats())) {
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.EXCESS_OP_WARNING,
-                                                                              Misc.getNegativeHighlightColor());
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+                    Strings.Misc.excessOPWarning,
+                    Misc.getNegativeHighlightColor());
             return true;
         }
         return false;

@@ -35,8 +35,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     public static final String CUSTOM_MASTERIES_KEY = "$sms_CustomMasteryData";
     public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
 
-    public FleetHandler(boolean permaRegister) {
-        super(permaRegister);
+    public FleetHandler() {
+        super(false);
     }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, Boolean> levels) {
@@ -262,6 +262,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         for (int i = 0; i < maxLevel; i++) {
             if (i == 0 || random.nextFloat() <= Settings.NPC_MASTERY_QUALITY) {
                 level++;
+                if (level > cap) break;
 
                 // Mapping might already exist due to custom masteries
                 if (map.containsKey(level)) continue;
@@ -274,8 +275,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     List<MasteryEffect> option2 = ShipMastery.getMasteryEffects(spec, level, true);
                     map.put(level, !option2.isEmpty());
                 }
-
-                if (level >= cap) break;
             }
         }
 

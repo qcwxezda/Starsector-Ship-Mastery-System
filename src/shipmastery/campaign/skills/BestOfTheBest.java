@@ -17,7 +17,7 @@ public class BestOfTheBest {
 
     public static class Level0 implements DescriptionSkillEffect {
         public String getString() {
-            return Strings.BEST_OF_THE_BEST_DESC3;
+            return Strings.Misc.bestOfTheBestDesc3;
         }
         public Color[] getHighlightColors() {
             return null;
@@ -34,7 +34,7 @@ public class BestOfTheBest {
     public static class Level1 implements CharacterStatsSkillEffect {
         @Override
         public String getEffectDescription(float level) {
-            return String.format(Strings.BEST_OF_THE_BEST_DESC, Utils.asPercent(MASTERY_BONUS));
+            return String.format(Strings.Misc.bestOfTheBestDesc, Utils.asPercent(MASTERY_BONUS));
         }
 
         @Override
@@ -98,9 +98,9 @@ public class BestOfTheBest {
             init(stats, skill);
             float opad = 10f;
 			Color c = Misc.getBasePlayerColor();
-            info.addPara(Strings.BEST_OF_THE_BEST_SCOPE, opad + 5f, Misc.getGrayColor(), c, Strings.BEST_OF_THE_BEST_SCOPE2);
+            info.addPara(Strings.Misc.bestOfTheBestScope, opad + 5f, Misc.getGrayColor(), c, Strings.Misc.bestOfTheBestScope2);
 			info.addSpacer(opad);
-            info.addPara(Strings.BEST_OF_THE_BEST_DESC2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
+            info.addPara(Strings.Misc.bestOfTheBestDesc2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
         }
 
         @Override

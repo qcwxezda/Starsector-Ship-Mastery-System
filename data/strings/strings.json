@@ -366,6 +366,14 @@
     "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points"
   },
 
+  "sms_graveyard": {
+    "intelTitle": "Ships Lost",
+    "intelPara1": "A recent battle has caused the loss of one or more ships in your fleet. However, reports indicate that wrecks of the following ships are in recoverable condition: ",
+    "intelPara2": "Should the wrecks not be recovered within %1$s days, their conditions will deteriorate irreversibly, and they will be lost forever.",
+    "intelPara2Single": "Should the wrecks not be recovered within %1$s day, their conditions will deteriorate irreversibly, and they will be lost forever.",
+    "intelAfterDays": "ago."
+  },
+
   "sms_misc": {
     "failedToGenerateMasteries": "Failed to generate mastery effects! Check stack trace for details",
     "doesntAffectModules": "This effect doesn't apply to modules.",

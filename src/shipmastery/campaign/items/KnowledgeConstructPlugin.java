@@ -119,7 +119,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     @Override
     public String getName() {
         if (spec == null) return super.getName();
-        return spec.getHullNameWithDashClass() + " " + Strings.KNOWLEDGE_CONSTRUCT;
+        return spec.getHullNameWithDashClass() + " " + Strings.Items.knowledgeConstruct;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         }
         tooltip.addPara(prefix + desc.getText1FirstPara(), opad);
         this.addCostLabel(tooltip, opad, transferHandler, stackSource);
-        tooltip.addPara(String.format(Strings.KNOWLEDGE_CONSTRUCT_RIGHT_CLICK, NUM_POINTS_GAINED), b, opad);
+        tooltip.addPara(String.format(Strings.Items.knowledgeConstructRightClick, NUM_POINTS_GAINED), b, opad);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             ShipMastery.addPlayerMasteryPoints(spec, NUM_POINTS_GAINED);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             Global.getSector().getCampaignUI().getMessageDisplay()
-                  .addMessage(String.format(Strings.GAINED_MP_SINGLE, NUM_POINTS_GAINED, spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+                  .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED, spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
         }
     }

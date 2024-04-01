@@ -34,13 +34,13 @@ public class MasteryPanel {
     public final static Float[] columnWidths = new Float[]{50f, 350f, 150f, 75f, 75f, 150f, 100f};
     public final static String[] columnNames =
             new String[]{
-                    Strings.ICON_HEADER,
-                    Strings.HULLMOD_HEADER,
-                    Strings.DESIGN_TYPE_HEADER,
-                    Strings.ORDNANCE_POINTS_HEADER,
-                    Strings.MASTERY_POINTS_HEADER,
-                    Strings.CREDITS_HEADER,
-                    Strings.MODULAR_HEADER};
+                    Strings.MasteryPanel.iconHeader,
+                    Strings.MasteryPanel.hullmodHeader,
+                    Strings.MasteryPanel.designTypeHeader,
+                    Strings.MasteryPanel.ordnancePointsHeader,
+                    Strings.MasteryPanel.masteryPointsHeader,
+                    Strings.MasteryPanel.creditsHeader,
+                    Strings.MasteryPanel.modularHeader};
     public static final float tableEntryHeight = 38f;
 
 
@@ -57,9 +57,9 @@ public class MasteryPanel {
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", Strings.DISMISS_WINDOW_STR, 1000f, 600f);
+                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, 1000f, 600f);
         if (dialogData == null) {
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CANT_OPEN_PANEL, Settings.NEGATIVE_HIGHLIGHT_COLOR);
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.cantOpenPanel, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
         }
 
@@ -141,7 +141,7 @@ public class MasteryPanel {
         CustomPanelAPI tabsPanel = Global.getSettings().createCustom(2 * w + pad, h, null);
         TooltipMakerAPI thisShipTab = tabsPanel.createUIElement(w, h, false);
         thisShipTab.setAreaCheckboxFont(checkboxFont);
-        sModButton = thisShipTab.addAreaCheckbox(Strings.HULLMODS_TAB_STR, null, Misc.getBasePlayerColor(),
+        sModButton = thisShipTab.addAreaCheckbox(Strings.MasteryPanel.hullmodsTab, null, Misc.getBasePlayerColor(),
                                                  Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
         sModButton.setShortcut(Keyboard.KEY_1, false);
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
@@ -163,7 +163,7 @@ public class MasteryPanel {
                 @Override
                 public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                     tooltip.setParaSmallInsignia();
-                    tooltip.addPara(Strings.MUST_BE_DOCKED_HULLMODS, 0f);
+                    tooltip.addPara(Strings.MasteryPanel.mustBeDockedHullmods, 0f);
                 }
             }, TooltipMakerAPI.TooltipLocation.BELOW, false);
         }
@@ -171,7 +171,7 @@ public class MasteryPanel {
         TooltipMakerAPI hullTypeTab = tabsPanel.createUIElement(w, h, false);
         hullTypeTab.setAreaCheckboxFont(checkboxFont);
         masteryButton =
-                hullTypeTab.addAreaCheckbox(Strings.MASTERY_TAB_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                hullTypeTab.addAreaCheckbox(Strings.MasteryPanel.masteryTab, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                             Misc.getBrightPlayerColor(), w, h, 0f);
         masteryButton.setShortcut(Keyboard.KEY_2, false);
         ReflectionUtils.setButtonListener(masteryButton, tabButtonListener);
@@ -188,7 +188,7 @@ public class MasteryPanel {
 
         int creditsAmt = (int) Utils.getPlayerCredits().get();
         String creditsAmtFmt = Misc.getFormat().format(creditsAmt);
-        String creditsString = Strings.CREDITS_DISPLAY_STR + creditsAmtFmt;
+        String creditsString = Strings.MasteryPanel.creditsDisplay + creditsAmtFmt;
         float creditsStringWidth =
                 Global.getSettings().computeStringWidth(creditsString + 10f, "graphics/fonts/orbitron20aabold.fnt");
 
@@ -200,7 +200,7 @@ public class MasteryPanel {
         creditsLabel.setHighlightColor(Misc.getHighlightColor());
 
         int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
-        String masteryPointsString = Strings.MASTERY_POINTS_DISPLAY_STR + masteryPointsAmt;
+        String masteryPointsString = Strings.MasteryPanel.masteryPointsDisplay + masteryPointsAmt;
         float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
 
@@ -272,7 +272,7 @@ public class MasteryPanel {
             buildInList.addImage(spec.getSpriteName(), 50f, tableEntryHeight - 6f, 6f);
         }
 
-        buildInList.addTable(Strings.HULLMODS_EMPTY_STR, -1, -buildInList.getHeightSoFar() + 10f);
+        buildInList.addTable(Strings.MasteryPanel.hullmodListsEmptyHint, -1, -buildInList.getHeightSoFar() + 10f);
         if (table.getRows().size() < 10) {
             table.autoSizeToRows(10);
         }
@@ -281,9 +281,9 @@ public class MasteryPanel {
         TooltipMakerAPI resetButtonTTM = thisShipPanel.createUIElement(resetButtonW, resetButtonH, false);
         resetButtonTTM.setButtonFontOrbitron20();
         ButtonAPI resetButton =
-                resetButtonTTM.addButton(Strings.CLEAR_BUTTON_STR, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                resetButtonTTM.addButton(Strings.MasteryPanel.clearButton, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                          Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
-        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, Strings.CLEAR_BUTTON_STR));
+        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, Strings.MasteryPanel.clearButton));
         if (moduleVariant.getSMods().isEmpty()) {
             resetButton.setEnabled(false);
         }
@@ -298,7 +298,7 @@ public class MasteryPanel {
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
         modularCountTTM.setParaOrbitronVeryLarge();
         LabelAPI modularCount = modularCountTTM.addPara(
-                Strings.BUILTIN_DISPLAY_STR + String.format("%s/%s", nSMods, sModLimit),
+                Strings.MasteryPanel.builtInDisplay + String.format("%s/%s", nSMods, sModLimit),
                 Misc.getBrightPlayerColor(), 0f);
         modularCount.setAlignment(Alignment.RMID);
         modularCount.setHighlight("" + nSMods, "" + sModLimit);
@@ -306,7 +306,7 @@ public class MasteryPanel {
 
         float hintTextW = 200f, hintTextH = 40f;
         TooltipMakerAPI hintTextTTM = thisShipPanel.createUIElement(hintTextW, hintTextH, false);
-        hintTextTTM.addPara(Strings.DOUBLE_CLICK_HINT_STR, Misc.getBasePlayerColor(), 0f);
+        hintTextTTM.addPara(Strings.MasteryPanel.doubleClickHint, Misc.getBasePlayerColor(), 0f);
 
         thisShipPanel.addUIElement(buildInList).inTMid(37f);
         thisShipPanel.addUIElement(buildInListHeader).inTMid(20f);
@@ -409,7 +409,7 @@ public class MasteryPanel {
         String mpCostStr = "" + mpCost;
         int creditsCost = SModUtils.getCreditsCost(spec, module);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
-        String modularString = modular ? Strings.YES_STR : Strings.NO_STR;
+        String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
         Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
         String cantBuildInReason = getCantBuildInReason(spec, modular, mpCost, creditsCost);
@@ -472,18 +472,18 @@ public class MasteryPanel {
      */
     @Nullable String getCantBuildInReason(HullModSpecAPI spec, boolean modular, int mpCost, int creditsCost) {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
-            return spec.getDisplayName() + Strings.CANT_BUILD_IN_STR;
+            return spec.getDisplayName() + Strings.MasteryPanel.cantBuildIn;
         }
         if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
                 + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() && modular) {
-            return Strings.LIMIT_REACHED_STR;
+            return Strings.MasteryPanel.limitReached;
         }
 
         int credits = (int) Utils.getPlayerCredits().get();
         int mp = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
 
-        String notEnoughCredits = Strings.CREDITS_SHORTFALL_STR;
-        String notEnoughMasteryPoints = Strings.MASTERY_POINTS_SHORTFALL_STR;
+        String notEnoughCredits = Strings.MasteryPanel.notEnoughCredits;
+        String notEnoughMasteryPoints = Strings.MasteryPanel.notEnoughMasteryPoints;
         if (mpCost > mp && creditsCost > credits) return notEnoughMasteryPoints + ", " + notEnoughCredits;
         if (mpCost > mp) return notEnoughMasteryPoints;
         if (creditsCost > credits) return notEnoughCredits;

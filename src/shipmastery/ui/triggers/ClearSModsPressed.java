@@ -44,7 +44,7 @@ public class ClearSModsPressed extends ActionListener {
                 return;
             }
 
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.CLEAR_CONFIRMED_STR, Misc.getStoryBrightColor());
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.clearConfirm, Misc.getStoryBrightColor());
             Global.getSoundPlayer().playUISound("sms_clear_smods", 1f, 1f);
             masteryPanel.forceRefresh(true, true, true);
 
@@ -78,7 +78,7 @@ public class ClearSModsPressed extends ActionListener {
 
     void beginConfirm(ButtonAPI button) {
         button.setCustomData(true);
-        button.setText(Strings.CLEAR_ASK_STR);
+        button.setText(Strings.MasteryPanel.confirmText);
     }
 
     void endConfirm(ButtonAPI button) {

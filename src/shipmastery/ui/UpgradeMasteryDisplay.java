@@ -23,7 +23,7 @@ public class UpgradeMasteryDisplay implements CustomUIElement {
     public void create(TooltipMakerAPI tooltip) {
         tooltip.setParaOrbitronLarge();
         tooltip.setButtonFontOrbitron20();
-        LabelAPI upgradeLabel = tooltip.addPara(Strings.ADVANCE_MASTERY_STR, 0f);
+        LabelAPI upgradeLabel = tooltip.addPara(Strings.MasteryPanel.levelUpMastery, 0f);
         upgradeLabel.setAlignment(Alignment.MID);
         upgradeLabel.getPosition().setXAlignOffset(5f);
         int cost = MasteryUtils.getUpgradeCost(spec);
