@@ -24,3 +24,27 @@ sms_oConcealedStationLeave:Leave
 sms_ConcealedStationSalvage,DialogOptionSelected,$option == sms_oConcealedStationSalvage,"SalvageEntity showCost
 FireAll PopulateSalvageOptions2",,,
 sms_ConcealedStationLeave,DialogOptionSelected,$option == sms_oConcealedStationLeave,DismissDialog,,,
+sms_InsuranceFleetBegin,BeginFleetEncounter,"$sms_InsuranceFleet score:1000
+!$ignorePlayerCommRequests","AddText ""You're being hailed by the $faction $otherShipOrFleet."" $faction.baseColor
+$hailing = true 0",,,
+sms_InsuranceFleetComms,OpenCommLink,"$entity.sms_InsuranceFleet score:1000
+!$entity.ignorePlayerCommRequests", "$entity.ignorePlayerCommRequests = true
+SetShortcut cutCommLinkNoText ""ESCAPE""","""Greetings, captain $player.name,"" the bounty hunter begins. ""How are you enjoying your recent insurance payout?""
+
+Before you can reply, $heOrShe continues, ""As you are well aware, Section 37.4 of the Unified FeBSure Insurance Terms states very clearly that under the protection of plan 3A -- that would be the Comprehensive Coverage Package -- you are to receive immediate and full compensation for any ship deemed a 'total loss' in exchange for the complete forfeiture of salvage rights.""
+
+$HeOrShe pauses for a moment, perhaps searching for the right words, or perhaps wondering about the probability of a peaceful resolution.
+
+""This clause would preclude you from recovering and continuing to operate intact wrecks that have already been filed as a 'total loss,' which, judging by my data here, seems not to have been the case.""","sms_oNeverRead:""I was never given any contract to read.""
+sms_oSoWhatNow:""So what now?""
+cutCommLinkNoText:Cut the comms link and power up weapons",
+sms_InsuranceFleetNeverRead,DialogOptionSelected,$option == sms_oNeverRead,,"""Well, I guess that's unfortunate,"" $heOrShe responds almost instantly, and in such a manner that you feel that this might not be the first time $heOrShe's used those exact words.",sms_oInsuranceContinue:Continue,
+sms_InsuranceFleetSoWhatNow,DialogOptionSelected,$option == sms_oSoWhatNow,,"""Well, now I've come to collect.""",sms_oInsuranceContinue:Continue,
+sms_InsuranceFleetCollect,DialogOptionSelected,$option == sms_oInsuranceContinue,"SetShortcut cutCommLinkNoText ""ESCAPE""
+sms_InsuranceFraudListShips","""Here is a list of ships currently in your fleet on which you've claimed an insurance payout under the category 'total loss.'""
+
+An image appears on your comms visual:","sms_oInsuranceForfeit:Forfeit the recovered ships
+sms_oInsuranceRefuse:""No deal.""
+cutCommLinkNoText:Cut the comms link and power up weapons",
+sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_InsuranceFraudForfeit,"""Ah, I knew you'd see reason."" You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
+sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,

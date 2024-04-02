@@ -82,6 +82,19 @@ public interface Strings {
         String intelPara2 = Utils.getString("sms_graveyard", "intelPara2");
         String intelPara2Single = Utils.getString("sms_graveyard", "intelPara2Single");
         String intelAfterDays = Utils.getString("sms_graveyard", "intelAfterDays");
+        String insuranceFleetName = Utils.getString("sms_graveyard", "insuranceFleetName");
+        String insuranceListShips1 = Utils.getString("sms_graveyard", "insuranceListShips1");
+        String insuranceListShips2 = Utils.getString("sms_graveyard", "insuranceListShips2");
+        String insuranceForfeitConfirm = Utils.getString("sms_graveyard", "insuranceForfeitConfirm");
+        String insuranceForfeitConfirm2 = Utils.getString("sms_graveyard", "insuranceForfeitConfirm2");
+        String insuranceDiscrepancy1Plural = Utils.getString("sms_graveyard", "insuranceDiscrepancy1Plural");
+        String insuranceDiscrepancy1Single = Utils.getString("sms_graveyard", "insuranceDiscrepancy1Single");
+        String insuranceDiscrepancy2 = Utils.getString("sms_graveyard", "insuranceDiscrepancy2");
+        String insuranceDiscrepancy3 = Utils.getString("sms_graveyard", "insuranceDiscrepancy3");
+        String insuranceLostShip = Utils.getString("sms_graveyard", "insuranceLostShip");
+        String insuranceLostCredits = Utils.getString("sms_graveyard", "insuranceLostCredits");
+        String insuranceNotEnoughCredits = Utils.getString("sms_graveyard", "insuranceNotEnoughCredits");
+        String intelDespawnWarning = Utils.getString("sms_graveyard", "intelDespawnWarning");
     }
 
     interface Descriptions {

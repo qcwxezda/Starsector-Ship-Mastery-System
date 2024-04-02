@@ -3,11 +3,11 @@ package shipmastery.plugin;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignEventListener;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
+import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
@@ -21,10 +21,14 @@ import java.net.URLClassLoader;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
-
     private static String lastSaveId = null;
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
-    private static ReflectionEnabledClassLoader classLoader = null;
+    public static final ReflectionEnabledClassLoader classLoader;
+
+    static {
+        URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
+        classLoader = new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
+    }
 
     @Override
     public void onApplicationLoad() throws Exception {
@@ -39,17 +43,26 @@ public class ModPlugin extends BaseModPlugin {
     }
 
     @Override
+    public void onEnabled(boolean wasEnabledBefore) {
+        if (wasEnabledBefore) return;
+
+        boolean randomMode = Settings.ENABLE_RANDOM_MODE;
+        Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
+        Generator.generate();
+
+        // Not transient in case player saves while action queue isn't empty
+        DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
+        Global.getSector().addScript(deferredActionPlugin);
+        Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+    }
+
+    @Override
     public void onGameLoad(boolean newGame) {
-        Boolean randomMode = (Boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
-        // Added to a game for the first time
-        if (randomMode == null) {
-            randomMode = Settings.ENABLE_RANDOM_MODE;
-            Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
-            Generator.generate();
-        }
+        boolean randomMode = (boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
 
         ShipMastery.loadMasteryTable();
         // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
+        // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
         String id = Global.getSector().getPlayerPerson().getId();
         try {
             if (!id.equals(lastSaveId)) {
@@ -65,7 +78,6 @@ public class ModPlugin extends BaseModPlugin {
         }
 
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
-        ClassLoader classLoader = getClassLoader();
         try {
             Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
             listeners.addListener(refitModifier, true);
@@ -80,46 +92,21 @@ public class ModPlugin extends BaseModPlugin {
             throw new RuntimeException("Failed to add initializer", e);
         }
 
-        if (Global.getSettings().getModManager().isModEnabled("nexerelin")) {
-            try {
-                Class<?> cls = classLoader.loadClass("shipmastery.campaign.graveyard.InsuranceFraudDetector");
-                for (Object listener : Global.getSector().getAllListeners()) {
-                    if (listener.getClass().getSimpleName().startsWith("InsuranceFraud")) {
-                        System.out.println("Found");
-                    }
-                }
-                if (!Global.getSector().getListenerManager().hasListenerOfClass(cls)) {
-                    CampaignEventListener fraudDetector = (CampaignEventListener) cls.newInstance();
-                    listeners.addListener(fraudDetector, false);
-                }
-            } catch (Exception ignore) {
-                // Not critical, just means won't catch insurance fraud
-            }
+        if (Global.getSettings().getModManager().isModEnabled("nexerelin") &&
+                !listeners.hasListenerOfClass(InsuranceFraudDetector.class)) {
+            listeners.addListener(new InsuranceFraudDetector(), false);
         }
-//
-//        try {
-//            // Note: getting the RefitHandler listeners requires that the calling class and RefitHandler are using the
-//            // same classloader, hence using the custom classloader here
-//            SModAutofitCampaignPlugin plugin = (SModAutofitCampaignPlugin) classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPlugin").newInstance();
-//            Global.getSector().registerPlugin(plugin);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to add campaign plugin", e);
-//        }
 
-        if (!Global.getSector().hasScript(DeferredActionPlugin.class)) {
-            // Not transient in case player saves while action queue isn't empty
-            DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
-            Global.getSector().addScript(deferredActionPlugin);
-            Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
-        }
+        // May need to be permanent if NPC fleets can stay inflated through game loads
+        // But this doesn't seem to be the case
+        VariantLookup variantLookup = new VariantLookup();
+        Global.getSector().addTransientListener(variantLookup);
+        Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
 
         PlayerMPHandler xpTracker = new PlayerMPHandler();
         Global.getSector().addTransientScript(xpTracker);
         Global.getSector().addTransientListener(xpTracker);
 
-        VariantLookup variantLookup = new VariantLookup();
-        Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
-        Global.getSector().addTransientListener(variantLookup);
         ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
         Global.getSector().addTransientListener(graveyardSpawner);
         Global.getSector().addTransientScript(graveyardSpawner);
@@ -145,18 +132,12 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.campaign.Initializer",
             "shipmastery.campaign.CoreAutofitPluginExt",
-            "shipmastery.campaign.graveyard.InsuranceFraudDetector",
+            "shipmastery.campaign.graveyard.ClaimsHistoryGetter",
             "shipmastery.plugin.SModAutofitCampaignPlugin",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",
     };
-
-    public static ReflectionEnabledClassLoader getClassLoader() {
-        if (classLoader != null) return classLoader;
-        URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
-        return classLoader = new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
-    }
 
     public static class ReflectionEnabledClassLoader extends URLClassLoader {
 

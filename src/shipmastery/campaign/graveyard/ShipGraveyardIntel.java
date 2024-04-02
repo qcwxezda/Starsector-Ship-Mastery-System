@@ -11,24 +11,19 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.*;
 
 public class ShipGraveyardIntel extends BaseIntelPlugin {
-    public static final int MAX_DAYS = 730;
+    public static final int MAX_DAYS = 365;
     protected final Set<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo = new TreeSet<>(
             new Comparator<Pair<FleetMemberAPI, SectorEntityToken>>() {
                 @Override
                 public int compare(Pair<FleetMemberAPI, SectorEntityToken> p1,
                                    Pair<FleetMemberAPI, SectorEntityToken> p2) {
-                    float dp1 = p1.one.getHullSpec().getSuppliesToRecover();
-                    float dp2 = p2.one.getHullSpec().getSuppliesToRecover();
-                    int dpDiff = (int) (dp2 - dp1);
-                    if (dpDiff != 0) return dpDiff;
-                    int specDiff = p1.one.getHullId().compareTo(p2.one.getHullId());
-                    if (specDiff != 0) return specDiff;
-                    return p1.one.getId().compareTo(p2.one.getId());
+                    return Utils.byDPComparator.compare(p1.one, p2.one);
                 }
             });
     protected final SectorEntityToken entityToShow;
@@ -40,7 +35,13 @@ public class ShipGraveyardIntel extends BaseIntelPlugin {
         Global.getSector().addScript(this);
     }
 
-
+    @Override
+    protected void createDeleteConfirmationPrompt(TooltipMakerAPI prompt) {
+        super.createDeleteConfirmationPrompt(prompt);
+        prompt.addPara(Strings.Graveyard.intelDespawnWarning,
+                       Misc.getNegativeHighlightColor(),
+                       10f);
+    }
 
     @Override
     public void advanceImpl(float amount) {
@@ -60,7 +61,7 @@ public class ShipGraveyardIntel extends BaseIntelPlugin {
     @Override
     protected void notifyEnded() {
         for (Pair<FleetMemberAPI, SectorEntityToken> pair : lostInfo) {
-            pair.two.setExpired(true);
+            Misc.fadeAndExpire(pair.two, 1f);
         }
         Global.getSector().removeScript(this);
     }
@@ -82,7 +83,7 @@ public class ShipGraveyardIntel extends BaseIntelPlugin {
 
     @Override
     public Set<String> getIntelTags(SectorMapAPI map) {
-        return Collections.singleton(Tags.INTEL_FLEET_LOG);
+        return new HashSet<>(Collections.singleton(Tags.INTEL_FLEET_LOG));
     }
 
     @Override

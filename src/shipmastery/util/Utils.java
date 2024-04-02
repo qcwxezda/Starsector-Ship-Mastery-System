@@ -27,9 +27,22 @@ public abstract class Utils {
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
     public static final DecimalFormat integerFormat = new DecimalFormat("0");
     public static final DecimalFormat twoDecimalPlaceFormat = new DecimalFormat("0.##");
+    public static Comparator<FleetMemberAPI> byDPComparator = new Comparator<FleetMemberAPI>() {
+        @Override
+        public int compare(FleetMemberAPI m1, FleetMemberAPI m2) {
+            float dp1 = m1.getHullSpec().getSuppliesToRecover();
+            float dp2 = m2.getHullSpec().getSuppliesToRecover();
+            int dpDiff = (int) (dp2 - dp1);
+            if (dpDiff != 0) return dpDiff;
+            int specDiff = m1.getHullId().compareTo(m2.getHullId());
+            if (specDiff != 0) return specDiff;
+            return m1.getId().compareTo(m2.getId());
+        }
+    };
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
+
 
     static {
         for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {

@@ -28,6 +28,8 @@ public class VariantLookup extends BaseCampaignEventListener {
         }
     }
 
+
+
     private void untrackVariant(ShipVariantAPI variant) {
         variantInfoMap.remove(getUID(variant));
         for (String id : variant.getModuleSlots()) {

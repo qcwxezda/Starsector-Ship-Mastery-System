@@ -371,7 +371,20 @@
     "intelPara1": "A recent battle has caused the loss of one or more ships in your fleet. However, reports indicate that wrecks of the following ships are in recoverable condition: ",
     "intelPara2": "Should the wrecks not be recovered within %1$s days, their conditions will deteriorate irreversibly, and they will be lost forever.",
     "intelPara2Single": "Should the wrecks not be recovered within %1$s day, their conditions will deteriorate irreversibly, and they will be lost forever.",
-    "intelAfterDays": "ago."
+    "intelAfterDays": "ago.",
+    "intelDespawnWarning": "Warning: deleting this log entry will immediately despawn the derelicts listed here.",
+    "insuranceFleetName": "FeBSure Collections Detachment",
+    "insuranceListShips1": "\"By signing the insurance contracts and collecting their full-value claims, you forfeited your ownership of these ships. Naturally, I've come to collect them, as they are presently property of FeBSure. I hope you understand.\"",
+    "insuranceListShips2": "The bounty hunter lets out a tired sigh. \"Let's do this the easy way, yeah? I'd hate to have to reduce your fleet to space debris.\"",
+    "insuranceForfeitConfirm": "Are you sure? The listed ships will be permanently lost.",
+    "insuranceForfeitConfirm2": "Are you sure? The listed ships will be permanently lost, and you will have to pay an additional %1$s.",
+    "insuranceDiscrepancy1Plural": "\"... Now hold on, that won't do. The manifest doesn't match your fleet composition. There are %1$s ships on this list that are no longer in your fleet, and they *were* in your fleet very recently.\"",
+    "insuranceDiscrepancy1Single": "\"... Now hold on, that won't do. The manifest doesn't match your fleet composition. There is %1$s ship on this list that is no longer in your fleet, and it *was* in your fleet very recently.\"",
+    "insuranceDiscrepancy2": "You hear a faint scoff. \"You thought you could get away with that? No, you'll have to pay back however much the insurance claims on those mysteriously-disappeared ships awarded, in addition to forfeiting the claimed ships still in your fleet.\"",
+    "insuranceDiscrepancy3": "\"That'd be a total of %1$s.\"",
+    "insuranceLostShip": "Removed %1$s from fleet",
+    "insuranceLostCredits": "Lost %1$s",
+    "insuranceNotEnoughCredits": "Not enough credits."
   },
 
   "sms_misc": {

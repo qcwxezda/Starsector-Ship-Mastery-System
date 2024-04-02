@@ -248,7 +248,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
-        if (random.nextFloat() > Settings.NPC_MASTERY_DENSITY) return map;
 
         int maxLevel = commander.getStats().getLevel() + Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER;
 
@@ -256,6 +255,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {
             maxLevel += Settings.NPC_MASTERY_FLAGSHIP_BONUS;
         }
+        else if (random.nextFloat() > Settings.NPC_MASTERY_DENSITY) return map;
+
 
         int level = 0, cap = ShipMastery.getMaxMasteryLevel(spec);
 
