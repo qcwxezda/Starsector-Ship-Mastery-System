@@ -61,6 +61,7 @@ public class sms_InsuranceFraudForfeit extends BaseCommandPlugin {
 
             for (FleetMemberAPI member : members) {
                 member.getRepairTracker().setMothballed(true);
+                member.setCaptain(null);
                 fleet.getFleetData().addFleetMember(member);
             }
 
