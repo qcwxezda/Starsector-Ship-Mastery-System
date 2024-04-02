@@ -9,6 +9,7 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.*;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
+import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
@@ -121,6 +122,8 @@ public class ModPlugin extends BaseModPlugin {
         if (!plugins.hasPlugin(StationDefenderPlugin.class)) {
             plugins.addPlugin(new StationDefenderPlugin(), true);
         }
+
+        CyberneticAugmentation.refreshPlayerMasteredCount();
 
         // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
         // for some reason, which is too late as the UID tags aren't in the clones,

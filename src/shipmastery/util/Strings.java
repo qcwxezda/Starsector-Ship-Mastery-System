@@ -60,10 +60,16 @@ public interface Strings {
         String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
         String bestOfTheBestDesc2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
         String bestOfTheBestDesc3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
+        String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
         String bestOfTheBestScope = Utils.getString("sms_misc", "bestOfTheBestScope");
-        String bestOfTheBestScope2 = Utils.getString("sms_misc", "bestOfTheBestScope2");
         String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
         String selectAShip = Utils.getString("sms_misc", "selectAShip");
+        String cyberneticAugmentationDesc = Utils.getString("sms_misc", "cyberneticAugmentationDesc");
+        String cyberneticAugmentationDesc2 = Utils.getString("sms_misc", "cyberneticAugmentationDesc2");
+        String cyberneticAugmentationDesc3 = Utils.getString("sms_misc", "cyberneticAugmentationDesc3");
+        String cyberneticAugmentationScope = Utils.getString("sms_misc", "cyberneticAugmentationScope");
+
+
     }
 
     interface Messages {

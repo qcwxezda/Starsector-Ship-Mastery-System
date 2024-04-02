@@ -6,6 +6,7 @@ import com.fs.starfarer.api.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.stats.ShipStat;
@@ -75,6 +76,10 @@ public abstract class ShipMastery {
             if (autoActivate) {
                 activatePlayerMastery(spec, data.level, false);
             }
+        }
+
+        if (getPlayerMasteryLevel(spec) >= getMaxMasteryLevel(spec)) {
+            CyberneticAugmentation.refreshPlayerMasteredCount();
         }
     }
 

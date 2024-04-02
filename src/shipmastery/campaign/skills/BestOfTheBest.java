@@ -98,7 +98,7 @@ public class BestOfTheBest {
             init(stats, skill);
             float opad = 10f;
 			Color c = Misc.getBasePlayerColor();
-            info.addPara(Strings.Misc.bestOfTheBestScope, opad + 5f, Misc.getGrayColor(), c, Strings.Misc.bestOfTheBestScope2);
+            info.addPara(Strings.Misc.scopePrefix, opad + 5f, Misc.getGrayColor(), c, Strings.Misc.bestOfTheBestScope);
 			info.addSpacer(opad);
             info.addPara(Strings.Misc.bestOfTheBestDesc2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
         }

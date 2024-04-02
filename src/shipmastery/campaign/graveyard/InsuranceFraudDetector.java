@@ -39,6 +39,7 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
     public static final float MIN_MONTHS_DELAY = 3f;
     public static final float CHANCE_PER_MONTH = 0.15f;
     public static final String FLEET_MEMORY_KEY = "$sms_InsuranceFleet";
+    public static final String FLEET_PAID_KEY = "$sms_InsuranceFleetPaid";
 
 
     /**
@@ -146,12 +147,29 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
         }
     }
 
-    public void clearHistory() {
-        paidAmounts.clear();
-        seenClaimHashes.clear();
+    @Override
+    public void reportFleetDespawned(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
+        if (fleet == null || fleet.getMemoryWithoutUpdate() == null) return;
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        Boolean insuranceFleet = (Boolean) memory.get(FLEET_MEMORY_KEY);
+        if (insuranceFleet != null && insuranceFleet) {
+             Boolean wasPaid = (Boolean) memory.get(FLEET_PAID_KEY);
+            if (wasPaid == null) wasPaid = false;
+            boolean wasDestroyed = reason == FleetDespawnReason.DESTROYED_BY_BATTLE;
+            resolveSpawnedFleet(wasPaid || wasDestroyed);
+        }
     }
 
-    public class InsuranceFleetSpawner implements EveryFrameScript {
+    public void resolveSpawnedFleet(boolean paidOrDestroyed) {
+        if (paidOrDestroyed) {
+            paidAmounts.clear();
+            seenClaimHashes.clear();
+        }
+        currentMonthsDelay = 0f;
+        paused = false;
+    }
+
+    public static class InsuranceFleetSpawner implements EveryFrameScript {
         private final float fleetStrength;
         private boolean spawned = false;
         private float daysInSystem = 0f;
@@ -201,9 +219,9 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
                 }
 
                 FleetParamsV3 params =
-                        new FleetParamsV3(null, playerFleet.getLocationInHyperspace(), Factions.INDEPENDENT, 2f,
+                        new FleetParamsV3(null, playerFleet.getLocationInHyperspace(), Factions.INDEPENDENT, 1f,
                                           FleetTypes.MERC_BOUNTY_HUNTER, fleetStrength, 0f, fleetStrength * 0.1f, 0f,
-                                          0f, 0f, 0f);
+                                          0f, 0f, 1f);
 
                 params.officerNumberBonus = 5;
                 params.officerLevelBonus = 5;
@@ -238,8 +256,6 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
                 if (eb != null) eb.activate();
 
                 spawned = true;
-                paused = false;
-                currentMonthsDelay = 0f;
             }
         }
     }

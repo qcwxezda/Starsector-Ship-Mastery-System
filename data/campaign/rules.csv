@@ -35,7 +35,7 @@ Before you can reply, $heOrShe continues, ""As you are well aware, Section 37.4 
 
 $HeOrShe pauses for a moment, perhaps searching for the right words, or perhaps wondering about the probability of a peaceful resolution.
 
-""This clause should have precluded you from recovering and continuing to operate intact wrecks that have already been filed as a 'total loss,' though, judging by my data here, that seems not to be the case.""","sms_oNeverRead:""I was never given any contract to read.""
+""This clause should have precluded you from recovering and continuing to operate intact wrecks that were already filed as a 'total loss,' though, judging by my data here, that seems not to have been the case.""","sms_oNeverRead:""I was never given any contract to read.""
 sms_oSoWhatNow:""So what now?""
 cutCommLinkNoText:Cut the comms link and power up weapons",
 sms_InsuranceFleetNeverRead,DialogOptionSelected,$option == sms_oNeverRead,,"""Well, I guess that's unfortunate,"" $heOrShe responds almost instantly, and in such a manner that you feel that this might not be the first time $heOrShe's used those exact words.",sms_oInsuranceContinue:Continue,

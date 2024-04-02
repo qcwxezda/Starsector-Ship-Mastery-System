@@ -47,17 +47,13 @@ public class sms_InsuranceFraudForfeit extends BaseCommandPlugin {
 
         dialog.getTextPanel().setFontInsignia();
 
-        for (InsuranceFraudDetector detector : Global.getSector().getListenerManager().getListeners(
-                InsuranceFraudDetector.class)) {
-            detector.clearHistory();
-        }
-
         SectorEntityToken target = dialog.getInteractionTarget();
         if (target instanceof CampaignFleetAPI) {
             CampaignFleetAPI fleet = (CampaignFleetAPI) target;
             MemoryAPI memory = fleet.getMemory();
             memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, false);
             memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, false);
+            memory.set(InsuranceFraudDetector.FLEET_PAID_KEY, true);
 
             for (FleetMemberAPI member : members) {
                 member.getRepairTracker().setMothballed(true);
