@@ -1,3 +1,11 @@
-0.8
+0.8.1
+-----------
+- Reduce modified Cybernetic Augmentation base OP bonus from 5% to 2%, max from 15% to 12%
+- Clean up unused stuff
+- Fix bad direct download and changelog links
+- Fix typo in README
+- Fix a hash function always being a multiple of 31
+
+0.8.0
 -----------
 Initial release

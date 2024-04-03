@@ -14,7 +14,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
     - Each ship type (a.k.a. hull spec) has its own MP pool that is shared between all ships of that type.
     - Mastery level and mastery selections (for levels that have more than one option) are also shared between all ships of
       a ship type.
-- Advancing your mastery of a ship class type its performance in a variety of ways. Some mastery levels have randomized
+- Advancing your mastery of a ship type improves its performance in a variety of ways. Some mastery levels have randomized
   bonuses, while others' are fixed.
 
 ## Revamped S-mod System

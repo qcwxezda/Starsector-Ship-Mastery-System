@@ -88,19 +88,19 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
     }
 
     public int makeClaimHash(InsuranceIntelV2.InsuranceClaim claim) {
-        int hash = 31;
-        hash += claim.premium * 31 + 31;
-        hash += (int) (claim.payment * 31 + 31);
+        int hash = 17;
+        hash += claim.premium * 31 + 17;
+        hash += (int) (claim.payment * 31 + 17);
         if (claim.member != null) {
-            hash += claim.member.getId().hashCode() * 31 + 31;
+            hash += claim.member.getId().hashCode() * 31 + 17;
         }
         if (claim.officer != null) {
-            hash += claim.officer.getPerson().getId().hashCode() * 31 + 31;
+            hash += claim.officer.getPerson().getId().hashCode() * 31 + 17;
         }
         int[] date = claim.date;
-        hash += date[0] * 31 + 31;
-        hash += date[1] * 31 + 31;
-        hash += date[2] * 31 + 31;
+        hash += date[0] * 31 + 17;
+        hash += date[1] * 31 + 17;
+        hash += date[2] * 31 + 17;
         return hash;
     }
 

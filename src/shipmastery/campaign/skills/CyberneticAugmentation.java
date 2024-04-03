@@ -17,11 +17,11 @@ import java.awt.Color;
 public class CyberneticAugmentation {
 
     public static final String MASTERED_COUNT_KEY = "$sms_MasteredCountKey";
-    public static final float NPC_OP_BONUS = 0.1f;
-    public static final float BASE_BONUS = 0.05f;
+    public static final float NPC_OP_BONUS = 0.05f;
+    public static final float BASE_BONUS = 0.02f;
     public static final float BONUS_PER_MASTERED_CLUSTER = 0.01f;
     public static final int MASTERIES_PER_CLUSTER = 3;
-    public static final float MAX_BONUS = 0.15f;
+    public static final float MAX_BONUS = 0.12f;
 
     public static class Level0 implements DescriptionSkillEffect {
         public String getString() {
