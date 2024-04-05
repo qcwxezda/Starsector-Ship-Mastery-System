@@ -404,6 +404,7 @@
     "selectAShip": "Select a ship",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, up to a maximum of %5$s).",
     "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
+    "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. You have mastered %1$s ship type.",
     "cyberneticAugmentationDesc3": "*Master a ship type by reaching its maximum mastery level. You have mastered %1$s ship types.",
     "cyberneticAugmentationScope": "ship loadouts"
   }

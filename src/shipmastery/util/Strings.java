@@ -67,6 +67,7 @@ public interface Strings {
         String cyberneticAugmentationDesc = Utils.getString("sms_misc", "cyberneticAugmentationDesc");
         String cyberneticAugmentationDesc2 = Utils.getString("sms_misc", "cyberneticAugmentationDesc2");
         String cyberneticAugmentationDesc3 = Utils.getString("sms_misc", "cyberneticAugmentationDesc3");
+        String cyberneticAugmentationDesc3Singular = Utils.getString("sms_misc", "cyberneticAugmentationDesc3Singular");
         String cyberneticAugmentationScope = Utils.getString("sms_misc", "cyberneticAugmentationScope");
 
 

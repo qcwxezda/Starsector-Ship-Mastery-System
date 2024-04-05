@@ -1,10 +1,19 @@
+0.8.2
+-----------
+- Building in hullmods now costs more MP for ships with greater base DP; the cost is 1 plus an additional 1 for every 25 DP.
+  Enhancing pre-built-in hullmods still always costs 1 MP.
+- Renamed LunaSettings field IDs to include a mod prefix. This will reset settings to default if you've changed them.
+- Fixed rare crash bug relating to a specific stat
+- Fixed safety overrides mastery effects showing up for ships with built-in flux shunt
+- Fixed some typos, add some clarifications
+
 0.8.1
 -----------
-- Reduce modified Cybernetic Augmentation base OP bonus from 5% to 2%, max from 15% to 12%
-- Clean up unused stuff
-- Fix bad direct download and changelog links
-- Fix typo in README
-- Fix a hash function always being a multiple of 31
+- Reduced modified Cybernetic Augmentation base OP bonus from 5% to 2%, max from 15% to 12%
+- Cleaned up unused stuff
+- Fixed bad direct download and changelog links
+- Fixed typo in README
+- Fixed a hash function always being a multiple of 31
 
 0.8.0
 -----------

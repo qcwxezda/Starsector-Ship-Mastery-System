@@ -33,6 +33,7 @@ public class SafetyOverridesBoost extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return null;
+        if (spec.getBuiltInMods().contains(HullMods.FLUX_SHUNT)) return null;
         return 1.5f - 0.5f * Utils.hullSizeToInt(spec.getHullSize());
     }
 }

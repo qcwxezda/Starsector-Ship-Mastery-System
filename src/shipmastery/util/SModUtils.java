@@ -18,19 +18,21 @@ public abstract class SModUtils {
     public static final int MP_HARD_CAP = 99;
 
     public static final int ADDITIONAL_MP_PER_SMOD = 0;
-    public static final float DP_PER_EXTRA_MP = 1000000f;
+    public static final float DP_PER_EXTRA_MP = 25f;
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
         ShipVariantAPI variant = ship.getVariant();
+        // Built-in mods always have static cost
+        if (isHullmodBuiltIn(spec, ship.getVariant())) {
+            return 1;
+        }
+
         int nSMods = variant.getSMods().size();
         ShipHullSpecAPI hullSpec = ship.getHullSpec();
         float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
         float cost = 1 + (int) (dp / DP_PER_EXTRA_MP);
-        // Built-in mods always have static cost
-        if (isHullmodBuiltIn(spec, ship.getVariant())) {
-            return (int) cost;
-        }
+
         cost += ADDITIONAL_MP_PER_SMOD * nSMods;
         // Exponentially increasing MP cost for each S-mod over the limit
         if (TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() >= 1) {

@@ -27,7 +27,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 
 - Best of the Best:
 ![Best of the Best](screenshots/best_of_the_best.png)
-  - Removed the additional S-mod from Best of the Best; default cap is now 3 regardless of skills.
+  - Removed the additional S-mod from Best of the Best; default cap is now 3 (at max mastery) regardless of skills.
   - Added effect: +20% effectiveness of all mastery bonuses.
   - Added effect: +15% CR, +10% hull and flux capacity for capital ships with officers.
 

@@ -12,7 +12,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-/** Note: will just give a flat 10% OP bonus for characters that aren't the player, if for some reason
+/** Note: will just give a flat 5% OP bonus for characters that aren't the player, if for some reason
  *  an NPC manages to have this skill. */
 public class CyberneticAugmentation {
 
@@ -28,7 +28,8 @@ public class CyberneticAugmentation {
             int base = Global.getSettings().getInt("officerMaxEliteSkills");
             Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
             if (count == null) count = 0;
-            return String.format(Strings.Misc.cyberneticAugmentationDesc2, base) + "\n" + String.format(Strings.Misc.cyberneticAugmentationDesc3, count);
+            String masterDesc = count == 1 ? Strings.Misc.cyberneticAugmentationDesc3Singular : Strings.Misc.cyberneticAugmentationDesc3;
+            return String.format(Strings.Misc.cyberneticAugmentationDesc2, base) + "\n" + String.format(masterDesc, count);
         }
         public Color[] getHighlightColors() {
             Color h = Misc.getHighlightColor();
