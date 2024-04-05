@@ -5,7 +5,7 @@
 - Renamed LunaSettings field IDs to include a mod prefix. This will reset settings to default if you've changed them.
 - Fixed rare crash bug relating to a specific stat
 - Fixed safety overrides mastery effects showing up for ships with built-in flux shunt
-- Fixed some typos, add some clarifications
+- Fixed some typos, added some clarifications
 
 0.8.1
 -----------
