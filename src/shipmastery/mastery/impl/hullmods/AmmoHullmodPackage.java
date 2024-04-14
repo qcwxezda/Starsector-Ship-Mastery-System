@@ -38,9 +38,9 @@ public class AmmoHullmodPackage extends HullmodPackage {
     @Override
     protected void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         float strength = getStrength(stats);
-        stats.getBallisticAmmoBonus().modifyPercent(id, 100f * strength);
-        stats.getEnergyAmmoBonus().modifyPercent(id, 100f * strength);
-        stats.getMissileAmmoBonus().modifyPercent(id, 100f * strength);
+        stats.getBallisticAmmoBonus().modifyMult(id, 1f + strength);
+        stats.getEnergyAmmoBonus().modifyMult(id, 1f + strength);
+        stats.getMissileAmmoBonus().modifyMult(id, 1f + strength);
     }
 
     @Override

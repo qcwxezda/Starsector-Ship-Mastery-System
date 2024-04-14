@@ -3,12 +3,20 @@ package shipmastery.plugin;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
+import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.*;
+import shipmastery.campaign.FleetHandler;
+import shipmastery.campaign.PlayerFleetHandler;
+import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
+import shipmastery.campaign.recentbattles.RecentBattlesIntel;
+import shipmastery.campaign.recentbattles.RecentBattlesTracker;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
@@ -19,10 +27,12 @@ import shipmastery.util.VariantLookup;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     private static String lastSaveId = null;
+    private static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     public static final ReflectionEnabledClassLoader classLoader;
 
@@ -62,29 +72,7 @@ public class ModPlugin extends BaseModPlugin {
         boolean randomMode = (boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
 
         ShipMastery.loadMasteryTable();
-        // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
-        // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
-        String id = Global.getSector().getPlayerPerson().getId();
-        try {
-            if (!id.equals(lastSaveId)) {
-                lastSaveId = id;
-                ShipMastery.initMasteries(randomMode);
-                ShipMastery.generateAndApplyMasteries(true);
-            } else {
-                ShipMastery.generateAndApplyMasteries(false);
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
-        try {
-            Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
-            listeners.addListener(refitModifier, true);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add refit tab modifier", e);
-        }
 
         try {
             EveryFrameScript initializer = (EveryFrameScript) classLoader.loadClass("shipmastery.campaign.Initializer").newInstance();
@@ -98,44 +86,90 @@ public class ModPlugin extends BaseModPlugin {
             listeners.addListener(new InsuranceFraudDetector(), false);
         }
 
-        // May need to be permanent if NPC fleets can stay inflated through game loads
-        // But this doesn't seem to be the case
-        VariantLookup variantLookup = new VariantLookup();
-        Global.getSector().addTransientListener(variantLookup);
-        Global.getSector().getMemoryWithoutUpdate().set(VariantLookup.INSTANCE_KEY, variantLookup);
+        if (!Settings.DISABLE_MAIN_FEATURES) {
+            Misc.MAX_PERMA_MODS = 0;
+            Global.getSettings().setFloat("maxPermanentHullmods", 0f);
+            // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
+            // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
+            String id = Global.getSector().getPlayerPerson().getId();
+            try {
+                if (!id.equals(lastSaveId)) {
+                    lastSaveId = id;
+                    ShipMastery.initMasteries(randomMode);
+                    ShipMastery.generateAndApplyMasteries(true);
+                } else {
+                    ShipMastery.generateAndApplyMasteries(false);
+                }
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
-        PlayerMPHandler xpTracker = new PlayerMPHandler();
-        Global.getSector().addTransientScript(xpTracker);
-        Global.getSector().addTransientListener(xpTracker);
+            try {
+                Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
+                listeners.addListener(refitModifier, true);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to add refit tab modifier", e);
+            }
 
-        ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
-        Global.getSector().addTransientListener(graveyardSpawner);
-        Global.getSector().addTransientScript(graveyardSpawner);
-        listeners.addListener(graveyardSpawner, true);
+            // May need to be permanent if NPC fleets can stay inflated through game loads
+            // But this doesn't seem to be the case
+            VariantLookup variantLookup = new VariantLookup();
+            Global.getSector().addTransientListener(variantLookup);
+            // Temporary, remove deprecated object if it still exists
+            Global.getSector().getMemoryWithoutUpdate().unset("$shipmastery_VariantLookup");
 
-        FleetHandler fleetHandler = new FleetHandler();
-        listeners.addListener(fleetHandler, true);
-        Global.getSector().addTransientListener(fleetHandler);
-        listeners.addListener(new PlayerFleetHandler(), true);
+            PlayerMPHandler xpTracker = new PlayerMPHandler();
+            Global.getSector().addTransientScript(xpTracker);
+            Global.getSector().addTransientListener(xpTracker);
+
+            ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
+            Global.getSector().addTransientListener(graveyardSpawner);
+            Global.getSector().addTransientScript(graveyardSpawner);
+            listeners.addListener(graveyardSpawner, true);
+
+            FleetHandler fleetHandler = new FleetHandler();
+            listeners.addListener(fleetHandler, true);
+            Global.getSector().addTransientListener(fleetHandler);
+            listeners.addListener(new PlayerFleetHandler(), true);
+
+            CyberneticAugmentation.refreshPlayerMasteredCount();
+
+            // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
+            // for some reason, which is too late as the UID tags aren't in the clones,
+            // so we need to add the mastery handler when the game loads as well
+            PlayerFleetHandler.addMasteryHandlerToPlayerFleet();
+        } else {
+            Misc.MAX_PERMA_MODS = originalMaxPermaMods;
+            Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
+            try {
+                CampaignPlugin autofitPlugin = (CampaignPlugin) classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP").newInstance();
+                Global.getSector().registerPlugin(autofitPlugin);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to add refit autofit plugin", e);
+            }
+        }
+
+        Global.getSector().addTransientListener(new RecentBattlesTracker());
+        if (!Settings.ENABLE_RECENT_BATTLES) {
+            IntelManagerAPI intelManager = Global.getSector().getIntelManager();
+            for (IntelInfoPlugin intel : new ArrayList<>(intelManager.getIntel(RecentBattlesIntel.class))) {
+                intelManager.removeIntel(intel);
+            }
+        }
 
         GenericPluginManagerAPI plugins = Global.getSector().getGenericPlugins();
         if (!plugins.hasPlugin(StationDefenderPlugin.class)) {
             plugins.addPlugin(new StationDefenderPlugin(), true);
         }
-
-        CyberneticAugmentation.refreshPlayerMasteredCount();
-
-        // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
-        // for some reason, which is too late as the UID tags aren't in the clones,
-        // so we need to add the mastery handler when the game loads as well
-        PlayerFleetHandler.addMasteryHandlerToPlayerFleet();
     }
 
     private static final String[] reflectionWhitelist = new String[] {
             "shipmastery.campaign.RefitHandler",
             "shipmastery.campaign.Initializer",
-            "shipmastery.campaign.CoreAutofitPluginExt",
+            "shipmastery.campaign.AutofitPluginSModOption",
             "shipmastery.campaign.graveyard.ClaimsHistoryGetter",
+            "shipmastery.campaign.recentbattles.RecentBattlesReplay",
             "shipmastery.plugin.SModAutofitCampaignPlugin",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",

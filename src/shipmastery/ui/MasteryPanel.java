@@ -263,7 +263,7 @@ public class MasteryPanel {
                                                          columnData);
         ReflectionUtils.invokeMethodExtWithClasses(table, "setRowClickDelegate", false,
                                                    new Class[]{ClassRefs.uiTableDelegateClass},
-                                                   new SModTableRowPressed(this, module).getProxy());
+                                                   new SModTableRowPressed(this, module, root).getProxy());
 
         buildInList.addSpacer(7f);
 

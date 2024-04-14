@@ -7,6 +7,18 @@ public interface Strings {
         String masteryLabel = Utils.getString("sms_refitScreen", "masteryLabel");
         String sModAutofitName = Utils.getString("sms_refitScreen", "sModAutofitName");
         String sModAutofitDesc = Utils.getString("sms_refitScreen", "sModAutofitDesc");
+        String sModAutofitSPText = Utils.getString("sms_refitScreen", "sModAutofitSPText");
+    }
+
+    interface RecentBattles {
+        String tagName = Utils.getString("sms_recentBattles", "tagName");
+        String title = Utils.getString("sms_recentBattles", "title");
+        String replayButton = Utils.getString("sms_recentBattles", "replayButton");
+        String pinButton = Utils.getString("sms_recentBattles", "pinButton");
+        String unpinButton = Utils.getString("sms_recentBattles", "unpinButton");
+        String pinDesc = Utils.getString("sms_recentBattles", "pinDesc");
+        String exitReplay = Utils.getString("sms_recentBattles", "exitReplay");
+        String confirmExitReplay = Utils.getString("sms_recentBattles", "confirmExitReplay");
     }
 
     interface MasteryPanel {

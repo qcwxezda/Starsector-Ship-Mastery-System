@@ -43,7 +43,7 @@ RangeIfNoBonuses,2,negative_strength_allowed unique combat,1,0.3,shipmastery.mas
 EmptyMountsReduceFlux,3,unique combat,,0.01,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
 # Doesn't work
 # MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
-DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.4,shipmastery.mastery.impl.combat.DPIfOnlyShip
+DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.3,shipmastery.mastery.impl.combat.DPIfOnlyShip
 PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,4,combat unique doesnt_affect_modules prefix_flagship_only,,8,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,4,combat unique doesnt_affect_modules,,4,shipmastery.mastery.impl.combat.PhaseCloakResidue

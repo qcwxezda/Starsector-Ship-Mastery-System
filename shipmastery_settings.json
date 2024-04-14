@@ -8,7 +8,12 @@
   "npcMasteryFlagshipBonus": 4,
   "npcSmodQualityMod": -0.6,
 
+  # Will not undo skill changes due to modding API limitations. This must be done manually; see LunaLib settings
+  # for instructions.
+  "disableMainFeatures":false,
   "enableRandomMode": false,
   "enablePlayerShipGraveyards": true,
+  "enableRecentBattles": true,
+  "recentBattlesPreciseMode": false,
   "addSModAutofitOption": true
 }

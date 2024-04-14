@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
-import shipmastery.campaign.CoreAutofitPluginExt;
+import shipmastery.campaign.AutofitPluginSModOption;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 
@@ -17,14 +17,19 @@ public class SModAutofitCampaignPlugin extends BaseCampaignPlugin {
 
     @Override
     public PluginPick<AutofitPlugin> pickAutofitPlugin(FleetMemberAPI member) {
-        if (!Settings.ADD_SMOD_AUTOFIT_OPTION) return null;
+        if (isNotPlayerAndChangeAutofitEnabled(member)) return null;
+        if (Settings.DISABLE_MAIN_FEATURES) return null;
+        return new PluginPick<AutofitPlugin>(new AutofitPluginSModOption(refitHandler, false), PickPriority.MOD_GENERAL);
+    }
+
+    public static boolean isNotPlayerAndChangeAutofitEnabled(FleetMemberAPI member) {
+        if (!Settings.ADD_SMOD_AUTOFIT_OPTION) return true;
         PersonAPI commander = null;
         if (member != null) {
             commander = member.getFleetCommanderForStats();
             if (commander == null) commander = member.getFleetCommander();
         }
         // Only affects player, as S-mod selection on NPC fleets is different
-        if (commander == null || !commander.isPlayer()) return null;
-        return new PluginPick<AutofitPlugin>(new CoreAutofitPluginExt(commander, refitHandler), PickPriority.MOD_GENERAL);
+        return commander == null || !commander.isPlayer();
     }
 }

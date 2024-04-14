@@ -1,6 +1,4 @@
 {
-  "maxPermanentHullmods":0,
-
   "ruleCommandPackages":[
     "shipmastery.campaign.rulecmd"
   ],

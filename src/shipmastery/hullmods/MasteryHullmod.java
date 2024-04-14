@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
@@ -21,14 +22,14 @@ public class MasteryHullmod extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats,
                                                final String id) {
-        FleetMemberAPI fm = stats.getFleetMember();
-        final PersonAPI captain = fm == null ? null : fm.getCaptain();
         applyEffects(stats.getVariant(), new HullmodAction() {
             @Override
             public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
                 if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                     effect.applyEffectsBeforeShipCreation(hullSize, stats);
                     // For display purposes only
+                    FleetMemberAPI fm = stats.getFleetMember();
+                    final PersonAPI captain = fm == null ? null : fm.getCaptain();
                     if (commander != null && Objects.equals(commander, captain)) {
                         effect.onFlagshipStatusGained(commander, stats, null);
                     }
@@ -39,13 +40,13 @@ public class MasteryHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsAfterShipCreation(final ShipAPI ship, final String id) {
-        final PersonAPI captain = ship.getCaptain();
         applyEffects(ship.getVariant(), new HullmodAction() {
             @Override
             public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
                 if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                     effect.applyEffectsAfterShipCreation(ship);
                     // For display purposes only
+                    final PersonAPI captain = ship.getCaptain();
                     if (commander != null && Objects.equals(commander, captain)) {
                         effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
                     }
@@ -69,7 +70,7 @@ public class MasteryHullmod extends BaseHullMod {
     // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.
     boolean noRecurse = false;
     private void applyEffects(final ShipVariantAPI variant, final HullmodAction action) {
-        if (variant == null || noRecurse) {
+        if (variant == null || noRecurse || Settings.DISABLE_MAIN_FEATURES) {
             return;
         }
 

@@ -19,25 +19,34 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
     public void settingsChanged(@NotNull String modId) {
         if (!id.equals(modId)) return;
 
-        Settings.MASTERY_COLOR = LunaSettings.getColor(id, "sms_generalMasteryColor");
+        Settings.MASTERY_COLOR = LunaSettings.getColor(id, "sms_MasteryColor");
         Settings.POSITIVE_HIGHLIGHT_COLOR =
-                LunaSettings.getColor(id, "sms_generalPositiveHighlightColor");
+                LunaSettings.getColor(id, "sms_PositiveHighlightColor");
         Settings.NEGATIVE_HIGHLIGHT_COLOR =
-                LunaSettings.getColor(id, "sms_generalNegativeHighlightColor");
-        Settings.DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat(id, "sms_generalDoubleClickInterval");
+                LunaSettings.getColor(id, "sms_NegativeHighlightColor");
+        Settings.DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat(id, "sms_DoubleClickInterval");
         Settings.SHOW_MP_AND_LEVEL_IN_REFIT =
-                LunaSettings.getBoolean(id, "sms_generalRefitScreenDisplay");
+                LunaSettings.getBoolean(id, "sms_RefitScreenDisplay");
 
-        Settings.NPC_MASTERY_DENSITY = LunaSettings.getFloat(id, "sms_difficultyDensity");
-        Settings.NPC_MASTERY_QUALITY = LunaSettings.getFloat(id, "sms_difficultyQuality");
-        Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_difficultyMaxLevelMod");
-        Settings.NPC_MASTERY_FLAGSHIP_BONUS = LunaSettings.getInt(id, "sms_difficultyFlagshipBonus");
-        Settings.NPC_SMOD_QUALITY_MOD = LunaSettings.getFloat(id, "sms_difficultySModMod");
+        Settings.NPC_MASTERY_DENSITY = LunaSettings.getFloat(id, "sms_DifficultyDensity");
+        Settings.NPC_MASTERY_QUALITY = LunaSettings.getFloat(id, "sms_DifficultyQuality");
+        Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyMaxLevelMod");
+        Settings.NPC_MASTERY_FLAGSHIP_BONUS = LunaSettings.getInt(id, "sms_DifficultyFlagshipBonus");
+        Settings.NPC_SMOD_QUALITY_MOD = LunaSettings.getFloat(id, "sms_DifficultySModMod");
 
         Settings.ENABLE_PLAYER_SHIP_GRAVEYARDS =
-                LunaSettings.getBoolean(id, "sms_miscPlayerShipGraveyards");
-        Settings.ENABLE_RANDOM_MODE = LunaSettings.getBoolean(id, "sms_miscRandomMode");
-        Settings.ADD_SMOD_AUTOFIT_OPTION = LunaSettings.getBoolean(id, "sms_miscSModAutofitOption");
+                LunaSettings.getBoolean(id, "sms_PlayerShipGraveyards");
+        Settings.ENABLE_RANDOM_MODE = LunaSettings.getBoolean(id, "sms_RandomMode");
+        Settings.ADD_SMOD_AUTOFIT_OPTION = LunaSettings.getBoolean(id, "sms_SModAutofitOption");
+        String recentBattlesParam = LunaSettings.getString(id, "sms_RecentBattles");
+        if ("Off".equals(recentBattlesParam)) {
+            Settings.ENABLE_RECENT_BATTLES = false;
+        }
+        else {
+            Settings.ENABLE_RECENT_BATTLES = true;
+            Settings.RECENT_BATTLES_PRECISE_MODE = "Precise".equals(recentBattlesParam);
+        }
+        Settings.DISABLE_MAIN_FEATURES = LunaSettings.getBoolean(id, "sms_DisableMainFeatures");
 
         FleetHandler.NPC_MASTERY_CACHE.clear();
     }

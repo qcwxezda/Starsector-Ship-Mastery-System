@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.ListMap;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.AdditiveMasteryEffect;

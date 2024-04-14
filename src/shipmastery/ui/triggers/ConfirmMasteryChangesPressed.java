@@ -22,6 +22,7 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
+
         Map<Integer, Boolean> activeSet = ShipMastery.getPlayerActiveMasteriesCopy(spec);
         Map<Integer, Boolean> newSet = masteryPanel.getSelectedMasteryButtons();
         NavigableMap<Integer, Boolean> toActivate = new TreeMap<>();

@@ -47,6 +47,10 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
 
     boolean checkForBonusIn(Collection<MutableStat.StatMod> mods, float threshold) {
         for (MutableStat.StatMod mod : mods) {
+            if (mod.getSource() != null) {
+                if (mod.getSource().startsWith("gunnery_implants")) continue;
+                if (mod.getSource().startsWith("ballistic_mastery")) continue;
+            }
             if (mod.getValue() > threshold) {
                 return true;
             }

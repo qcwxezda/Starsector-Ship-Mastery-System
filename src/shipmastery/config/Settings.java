@@ -32,8 +32,12 @@ public class Settings {
 
     /** If the player loses a battle, ships that would otherwise be recoverable are spawned as derelicts */
     public static Boolean ENABLE_PLAYER_SHIP_GRAVEYARDS;
+    public static Boolean DISABLE_MAIN_FEATURES;
     public static Boolean ENABLE_RANDOM_MODE;
+    public static Boolean ENABLE_RECENT_BATTLES;
+    public static Boolean RECENT_BATTLES_PRECISE_MODE;
     public static Boolean ADD_SMOD_AUTOFIT_OPTION;
+
 
     public static void loadSettingsFromJson() throws JSONException, IOException {
         JSONObject json = Global.getSettings().loadJSON("shipmastery_settings.json", "shipmasterysystem");
@@ -46,6 +50,9 @@ public class Settings {
         SHOW_MP_AND_LEVEL_IN_REFIT = json.getBoolean("showMpAndLevelInRefit");
         ENABLE_PLAYER_SHIP_GRAVEYARDS = json.getBoolean("enablePlayerShipGraveyards");
         ENABLE_RANDOM_MODE = json.getBoolean("enableRandomMode");
+        ENABLE_RECENT_BATTLES = json.getBoolean("enableRecentBattles");
+        RECENT_BATTLES_PRECISE_MODE = json.getBoolean("recentBattlesPreciseMode");
         ADD_SMOD_AUTOFIT_OPTION = json.getBoolean("addSModAutofitOption");
+        DISABLE_MAIN_FEATURES = json.getBoolean("disableMainFeatures");
     }
 }

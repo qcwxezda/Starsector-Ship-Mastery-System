@@ -6,8 +6,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.deferred.Action;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -37,29 +35,30 @@ public class MinimumCR extends BaseMasteryEffect {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(MinimumCRScript.class)) {
-            ship.addListener(new MinimumCRScript(ship, getStrength(ship)));
+            ship.addListener(new MinimumCRScript(ship, getStrength(ship), id));
         }
     }
 
     static class MinimumCRScript implements AdvanceableListener {
         final ShipAPI ship;
         final float minimum;
-        MinimumCRScript(final ShipAPI ship, float minimum) {
+        final String id;
+
+        MinimumCRScript(final ShipAPI ship, float minimum, String id) {
             this.ship = ship;
             this.minimum = minimum;
-            // Hack to prevent LowCRShipDamageSequence from being activated (doesn't happen if controls are locked)
-            ship.setControlsLocked(true);
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    ship.setControlsLocked(false);
-                }
-            }, 0f);
+            this.id  = id;
         }
 
         @Override
         public void advance(float amount) {
             ship.setCurrentCR(Math.min(ship.getCRAtDeployment(), Math.max(ship.getCurrentCR(), minimum)));
+            if (ship.getCurrentCR() <= 0f) {
+                ship.getMutableStats().getCriticalMalfunctionChance().unmodify(id);
+                ship.getMutableStats().getWeaponMalfunctionChance().unmodify(id);
+                ship.getMutableStats().getEngineMalfunctionChance().unmodify(id);
+                ship.getMutableStats().getShieldMalfunctionChance().unmodify(id);
+            }
         }
     }
 

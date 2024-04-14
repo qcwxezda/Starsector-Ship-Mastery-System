@@ -30,7 +30,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public static final float XP_PER_HALF_MP_CIV = 3000f;
     public static final float MULT_PER_MP = 1.175f;
     /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
-    public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.9f;
+    public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.97f;
     private long prevXP;
     private long prevBonusXP;
     private int prevSP;

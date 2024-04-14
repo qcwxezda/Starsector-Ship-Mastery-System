@@ -85,7 +85,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
         PersonAPI commander = fleet.getCommander();
         CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
-        Random random = new Random(fleet.getId().hashCode());
+        Random random = new Random(commander.getId().hashCode());
         auto.setRandom(random);
 
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
@@ -119,6 +119,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 float sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
                 if (sModsToAdd > 0) {
                     WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
+                    picker.setRandom(random);
 
                     for (String hullmod : variant.getNonBuiltInHullmods()) {
                         picker.add(hullmod, EXISTING_HULLMOD_WEIGHT);
@@ -160,7 +161,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 }
 
                 // If s-modding granted additional OP, do another fit
-                if (variant.getUnusedOP(commander == null ? null : commander.getStats()) > 0f && canAutofit) {
+                if (variant.getUnusedOP(commander.getStats()) > 0f && canAutofit) {
                     auto.doFit(variant, variant.clone(), 0, (AutofitPlugin.AutofitPluginDelegate) inflater);
                 }
 

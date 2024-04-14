@@ -3,7 +3,10 @@ package shipmastery.deferred;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /** Uses system time because game time seems to run faster inside a market dialog */
 public class DeferredActionPlugin implements EveryFrameScript {

@@ -8,7 +8,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.MasteryDescription;
-import shipmastery.util.*;
+import shipmastery.util.EngineUtils;
+import shipmastery.util.Strings;
+import shipmastery.util.TargetChecker;
+import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Collection;

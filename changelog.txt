@@ -1,8 +1,24 @@
+0.9.0 (dev)
+-----------
+- Added "Replay Battle" feature
+- Added option to disable mod's main features
+- Removed VariantLookup stuff from save file
+- Improved consistency of post-inflation sequence, everything is now seeded based on the commander's id
+- Refactored LunaLib settings, this will reset them if you modified them
+- Reduced the effectiveness of the "less DP if only ship of that type in fleet" mastery effect for frigates, destroyers, and cruisers
+- Greatly increased the chance that a mastered ship with lots of MP will still gain MP when competing with other ship types for MP
+- Mastery effect that grants range if no other bonuses are affecting range now works with ballistic mastery and gunnery implants
+- Mastery effect that grants additional ammo if EMR and expanded magazines are both installed is now multiplicative
+- Fixed minimum CR mastery effect causing auto-retreat when deployed
+- Fixed converted hangar effects being randomly selected for phase ships
+- Fixed adding S-mods to modules not subtracting MP
+- Minor optimizations
+
 0.8.2
 -----------
-- Building in hullmods now costs more MP for ships with greater base DP; the cost is 1 plus an additional 1 for every 25 DP.
-  Enhancing pre-built-in hullmods still always costs 1 MP.
-- Renamed LunaSettings field IDs to include a mod prefix. This will reset settings to default if you've changed them.
+- Building in hullmods now costs more MP for ships with greater base DP; the cost is 1 plus an additional 1 for every 25 DP
+  Enhancing pre-built-in hullmods still always costs 1 MP
+- Renamed LunaSettings field IDs to include a mod prefix. This will reset settings to default if you've changed them
 - Fixed rare crash bug relating to a specific stat
 - Fixed safety overrides mastery effects showing up for ships with built-in flux shunt
 - Fixed some typos, added some clarifications

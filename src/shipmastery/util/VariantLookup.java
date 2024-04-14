@@ -1,6 +1,5 @@
 package shipmastery.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -15,10 +14,11 @@ public class VariantLookup extends BaseCampaignEventListener {
     private final Map<String, VariantInfo> variantInfoMap = new HashMap<>();
     public static final String UID_TAG = "shipmastery_uid_";
     public static final String UID_INDICATOR_TAG = "shipmastery_has_uid";
-    public static final String INSTANCE_KEY = "$shipmastery_VariantLookup";
+    private static VariantLookup instance;
 
     public VariantLookup() {
         super(false);
+        instance = this;
     }
 
     @Override
@@ -27,8 +27,6 @@ public class VariantLookup extends BaseCampaignEventListener {
             untrackVariant(fm.getVariant());
         }
     }
-
-
 
     private void untrackVariant(ShipVariantAPI variant) {
         variantInfoMap.remove(getUID(variant));
@@ -69,7 +67,7 @@ public class VariantLookup extends BaseCampaignEventListener {
     }
 
     public static VariantLookup getInstance() {
-        return (VariantLookup) Global.getSector().getMemoryWithoutUpdate().get(INSTANCE_KEY);
+        return instance;
     }
 
     public static void addVariantInfo(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {

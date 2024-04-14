@@ -3,7 +3,19 @@
     "masteryButton": "Mastery",
     "masteryLabel": "L: ",
     "sModAutofitName": "Include S-mods in fit",
-    "sModAutofitDesc": "Attempts to copy S-mods installed from the selected goal variant.\n\nPrioritizes enhancing built-ins, followed by S-modding modular hullmods. This step is performed prior to any other autofit step.\n\nIf S-mods are installed, the autofit cannot be undone."
+    "sModAutofitDesc": "Attempts to copy S-mods installed from the selected goal variant.\n\nPrioritizes enhancing built-ins, followed by S-modding modular hullmods. This step is performed prior to any other autofit step.\n\nIf S-mods are installed, the autofit cannot be undone.",
+    "sModAutofitSPText": "Built-in hullmods on %s (%s): %s"
+  },
+
+  "sms_recentBattles": {
+    "tagName": "Recent battles",
+    "title": "Fought %s on %s in %s",
+    "replayButton": "Replay battle",
+    "pinButton": "Pin battle",
+    "unpinButton": "Unpin battle",
+    "pinDesc": "Only the %s most recent unpinned battles are available for replay. Pin this battle to make it permanently available.",
+    "exitReplay": "End Simulation",
+    "confirmExitReplay": "Exit the simulation?"
   },
 
   "sms_masteryPanel": {
@@ -70,7 +82,7 @@
     "FluxByShieldUpkeepPost": "No effect if the ship has no shields.",
     "RangeIfNoBonuses": "Increases base ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
     "RangeIfNoBonusesNeg": "Reduces base ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
-    "RangeIfNoBonusesPost": "Only counts base range bonuses. Conditional bonuses such as those occurring past a threshold do not negate this effect.",
+    "RangeIfNoBonusesPost": "Only counts base range bonuses. Bonuses granted by Ballistic Mastery and Gunnery Implants are exempt. Conditional bonuses such as those occurring past a threshold do not negate this effect. ",
     "MaxOPForHull": "Increases ordnance points by %1$s. Each %2$s of OP used past the base limit reduces hull integrity by %3$s.",
     "MaxOPForHullPost": "Hull reduction applied by this effect has a floor of %1$s and a cap of %2$s.",
     "DPIfOnlyShip": "If this is the only %1$s-class ship in your fleet, its DP cost is increased by %2$s.",
@@ -318,7 +330,7 @@
     "DamperFieldDissipationDesc1": "x%1$s dissipation",
     "MakeshiftShieldBoost": "If %1$s is installed, extends shield arc by %2$s, reduces shield damage taken by %3$s, and negates the hullmod's speed penalty.",
     "DecoyFlareBoost": "Extends the lifetime and durability of flares launched by %1$s by %2$s.",
-    "MinimumCR": "Combat readiness will never fall below %1$s during combat. Grants immunity to malfunctions.",
+    "MinimumCR": "Combat readiness will never fall below %1$s during combat. Grants immunity to most malfunctions as long as combat readiness is above 0%%.",
     "MinimumCRPost": "Will not increase combat readiness if deployed below the threshold.",
     "PhaseTeleporterTimeFlow": "After activating %1$s, time flow is increased by %2$s, decaying over %3$s seconds.",
     "PhaseTeleporterTimeFlowPost": "Destroying an enemy frigate/destroyer/cruiser/capital ship while this effect is active adds an additional %1$s/%2$s/%3$s/%4$s seconds to peak performance time.",

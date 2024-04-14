@@ -7,8 +7,6 @@ import shipmastery.config.Settings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class RandomModification extends BaseHullMod {

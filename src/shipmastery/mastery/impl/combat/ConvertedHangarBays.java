@@ -58,6 +58,7 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         if (ShipAPI.HullSize.FRIGATE.equals(spec.getHullSize())) return null;
         if (spec.getFighterBays() > 0) return null;
+        if (spec.isPhase()) return null;
         // Don't normally allow this on anything smaller than a cruiser
         if (ShipAPI.HullSize.DESTROYER.equals(spec.getHullSize())) return 0f;
         return 1f;

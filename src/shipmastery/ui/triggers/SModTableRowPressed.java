@@ -22,12 +22,14 @@ public class SModTableRowPressed extends TriggerableProxy {
 
     final MasteryPanel masteryPanel;
     final ShipAPI module;
+    final ShipAPI root;
     long lastClickTime = 0;
 
 
-    public SModTableRowPressed(MasteryPanel masteryPanel, ShipAPI module) {
+    public SModTableRowPressed(MasteryPanel masteryPanel, ShipAPI module, ShipAPI root) {
         super(ClassRefs.uiTableDelegateClass, ClassRefs.uiTableDelegateMethodName);
         this.masteryPanel = masteryPanel;
+        this.root = root;
         this.module = module;
     }
 
@@ -45,7 +47,6 @@ public class SModTableRowPressed extends TriggerableProxy {
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
-
                 if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats())) {
                     Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
                 }
@@ -62,7 +63,8 @@ public class SModTableRowPressed extends TriggerableProxy {
                 button.unhighlight();
             } else {
                 ShipVariantAPI variant = module.getVariant();
-                if (variant != null) {
+                ShipVariantAPI rootVariant = root.getVariant();
+                if (variant != null && rootVariant != null) {
                     HullModSpecAPI spec = Global.getSettings().getHullModSpec(rowData.hullModSpecId);
                     String name = spec.getDisplayName();
                     if (SModUtils.isHullmodBuiltIn(spec, variant)) {
@@ -92,7 +94,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
 
-                    ShipMastery.spendPlayerMasteryPoints(variant.getHullSpec(), rowData.mpCost);
+                    ShipMastery.spendPlayerMasteryPoints(rootVariant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true, true, true);
                 }

@@ -74,11 +74,11 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         return new Pair<>(ship, lastSelectedRealShip);
     }
 
-    void syncRefitScreenWithVariant(boolean saveVariant) {
+    public static void syncRefitScreenWithVariant(boolean saveVariant) {
         try {
             // This is necessary if allowing mastery panel to be open while in the menu for adding hullmods
             // ((ModWidget) getModsPanel()).syncWithCurrentVariant((HullVariantSpec) getSelectedShip().one);
-            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI.get(), "getCurrentTab");
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(ReflectionUtils.getCoreUI(), "getCurrentTab");
             Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
 
             Boolean isEditedSinceSave = (Boolean) ReflectionUtils.invokeMethodNoCatch(refitPanel, "isEditedSinceSave");

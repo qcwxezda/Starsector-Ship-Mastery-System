@@ -7,9 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import com.fs.starfarer.campaign.fleet.FleetData;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
@@ -55,9 +53,9 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
 
     public float adjustForHullSize(float amount, ShipAPI.HullSize hullSize) {
         switch (Utils.hullSizeToInt(hullSize)) {
-            case 1: amount *= 0.75f; break;
+            case 1: amount *= 0.66666667f; break;
             case 2: amount *= 0.5f; break;
-            case 3: amount *= 0.25f; break;
+            case 3: amount *= 0.33333333f; break;
         }
         return Math.max(amount, -1f);
     }
