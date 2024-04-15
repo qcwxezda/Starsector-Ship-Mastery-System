@@ -5,12 +5,11 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
+import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.campaign.fleet.CargoData;
-import com.fs.starfarer.campaign.fleet.FleetData;
 import org.apache.log4j.Logger;
 import shipmastery.plugin.ModPlugin;
 import shipmastery.util.Strings;
@@ -30,32 +29,25 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
     private static MethodHandle replayBattle;
     private static MethodHandle addSkillsTooltip;
-
-    private final FleetDataAPI fleetData;
-    private final boolean isStationMode;
-    private final String name;
-    private final FactionAPI faction;
-    private final LocationAPI location;
+    /** Contains all information about the context, except both playerFleet and otherFleet should be null */
+    private final BattleCreationContext bccStub;
+    /** The primary fleet should be the first item in the list */
+    private final List<CampaignFleetAPI> fleets = new ArrayList<>();
+    private final LocationAPI foughtLocation;
     private final String dateString;
-    private final Object fleetInflaterParams;
     private final boolean preciseMode;
-    private transient CampaignFleetAPI fleet;
 
-    public RecentBattlesIntel(boolean preciseMode, CampaignFleetAPI fleet, Object fleetInflaterParams, LocationAPI location) {
+    public RecentBattlesIntel(boolean preciseMode, List<CampaignFleetAPI> enemyFleets, BattleCreationContext bccStub, LocationAPI location) {
         this.preciseMode = preciseMode;
-        fleetData = fleet.getFleetData();
-        // Cargo is written to save, so clear it as it's not needed
-        ((FleetData) fleetData).setCargo(new CargoData(false));
-        isStationMode = fleet.isStationMode();
-        name = fleet.getNameWithFactionKeepCase();
-        faction = fleet.getFaction();
-        this.fleetInflaterParams = fleetInflaterParams;
-        this.location = location;
+        fleets.addAll(enemyFleets);
+        this.bccStub = bccStub;
+        this.foughtLocation = location;
         CampaignClockAPI clock = Global.getSector().getClock();
         dateString = clock.getShortDate();
     }
 
-    public FleetDataAPI getFleetData() {return fleetData;}
+    public PersonAPI getCombinedCommander() {return fleets.get(0).getCommander();}
+
     @Override
     public Set<String> getIntelTags(SectorMapAPI map) {
         return new HashSet<>(Collections.singleton(Strings.RecentBattles.tagName));
@@ -63,18 +55,22 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
 
     @Override
     public String getIcon() {
-        return faction.getCrest();
+        return fleets.get(0).getFaction().getCrest();
     }
 
     @Override
     public void createIntelInfo(TooltipMakerAPI info, ListInfoMode mode) {
         info.addPara(Strings.RecentBattles.title, 0f,
-                     new Color[] {faction.getBaseUIColor(), getTitleColor(mode), getTitleColor(mode)},
-                     getName(), dateString, location.getName());
+                     new Color[] {fleets.get(0).getFaction().getBaseUIColor(), getTitleColor(mode), getTitleColor(mode)},
+                     getName(), dateString, foughtLocation.getName());
     }
 
     @Override
     public String getName() {
+        String name = fleets.get(0).getNameWithFactionKeepCase();
+        if (fleets.size() > 1) {
+            name += Strings.RecentBattles.alliesSuffix;
+        }
         return name;
     }
 
@@ -99,22 +95,12 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
     @Override
     public void reportPlayerClickedOn() {
         super.reportPlayerClickedOn();
-        // TODO: What if a retreating fleet merges with a larger one, causing two different recent battle intel entries
-        // to have the same officer? Is cloning officers necessary due to this?
-        if (fleet == null) {
-            fleet = Global.getFactory().createEmptyFleet(faction.getId(), name, true);
-            for (FleetMemberAPI fm : fleetData.getMembersListCopy()) {
-                fleet.getFleetData().addFleetMember(fm);
-                if (fm.getCaptain() != null && !fm.getCaptain().isDefault()) {
-                    fleet.getFleetData().addOfficer(fm.getCaptain());
-                }
+        repairFleets();
+        if (preciseMode) return;
+        for (CampaignFleetAPI fleet : fleets) {
+            if (!fleet.isInflated() && fleet.getInflater() != null) {
+                fleet.inflateIfNeeded();
             }
-            fleet.setCommander(fleetData.getCommander());
-            fleet.setStationMode(isStationMode);
-        }
-        if (!preciseMode && !fleet.isInflated()) {
-            fleet.setInflater(Misc.getInflater(fleet, fleetInflaterParams));
-            fleet.inflateIfNeeded();
         }
     }
 
@@ -155,63 +141,72 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
 
     @Override
     public void createLargeDescription(CustomPanelAPI panel, float width, float height) {
+        FactionAPI faction = fleets.get(0).getFaction();
         float shipsPanelWidth = width - 350f;
         CustomPanelAPI shipsPanel = panel.createCustomPanel(shipsPanelWidth, height, null);
-        TooltipMakerAPI membersList = shipsPanel.createUIElement(shipsPanelWidth, height, true);
-        List<FleetMemberAPI> members = fleetData.getMembersListCopy();
+        TooltipMakerAPI membersList = shipsPanel.createUIElement(shipsPanelWidth, height/2f, true);
+        List<FleetMemberAPI> members = new ArrayList<>();
+        for (CampaignFleetAPI fleet : fleets) {
+            members.addAll(fleet.getFleetData().getMembersListCopy());
+        }
         Collections.sort(members, Utils.byDPComparator);
         float size = 60f;
         int numPerRow = Math.max(1, (int) ((shipsPanelWidth / size)));
         membersList.addSectionHeading(Strings.RecentBattles.fleetDataHeader, Alignment.MID, 0f);
         membersList.addShipList(numPerRow, (members.size() + numPerRow - 1) / numPerRow, size, faction.getBaseUIColor(), members, 10f);
+        shipsPanel.addUIElement(membersList).inTL(0f, 0f);
 
+        TooltipMakerAPI officersList = shipsPanel.createUIElement(shipsPanelWidth, height/2f, true);
         boolean addedOfficerHeading = false;
         for (final FleetMemberAPI member : members) {
             PersonAPI captain = member.getCaptain();
             if (captain.isDefault()) continue;
-            boolean isCommanderWithAdmiralSkills = captain == fleetData.getCommander() && hasAdmiralSkill(captain);
+            boolean isCommanderWithAdmiralSkills = captain == getCombinedCommander() && hasAdmiralSkill(captain);
 
             if (!addedOfficerHeading) {
-                membersList.addSectionHeading(Strings.RecentBattles.officerDataHeader, Alignment.MID, 0f);
+                officersList.addSectionHeading(Strings.RecentBattles.officerDataHeader, Alignment.MID, 0f);
+                officersList.addSpacer(10f);
                 addedOfficerHeading = true;
             }
 
             List<FleetMemberAPI> singleton = Collections.singletonList(member);
-            membersList.addShipList(1, 1, 80f, faction.getBaseUIColor(), singleton, 10f);
+            officersList.addShipList(1, 1, 80f, faction.getBaseUIColor(), singleton, 0f);
             float totalOffset = 0f, offset = 42f, centerOffset = isCommanderWithAdmiralSkills ? 40f : 24f;
-            membersList.addSpacer(-centerOffset).getPosition().setXAlignOffset(offset);
+            officersList.addSpacer(-centerOffset).getPosition().setXAlignOffset(offset);
             totalOffset += offset;
             for (String id : Global.getSettings().getSortedSkillIds()) {
                 SkillSpecAPI skillSpec = Global.getSettings().getSkillSpec(id);
                 if (captain.getStats().getSkillLevel(id) <= 0f) continue;
                 if (!skillSpec.isCombatOfficerSkill()) continue;
-                totalOffset += addSkillImageWithTooltip(membersList, skillSpec, captain, 36f, offset-36f);
+                totalOffset += addSkillImageWithTooltip(officersList, skillSpec, captain, 36f, offset-36f);
                 totalOffset += offset;
             }
             if (isCommanderWithAdmiralSkills) {
-                membersList.addSpacer(offset).getPosition().setXAlignOffset(-totalOffset + offset);
+                officersList.addSpacer(offset).getPosition().setXAlignOffset(-totalOffset + offset);
                 float totalCommanderOffset = 0f;
                 for (String id : Global.getSettings().getSortedSkillIds()) {
                     SkillSpecAPI skillSpec = Global.getSettings().getSkillSpec(id);
                     if (captain.getStats().getSkillLevel(id) <= 0f) continue;
                     if (!skillSpec.isAdmiralSkill()) continue;
-                    totalOffset += addSkillImageWithTooltip(membersList, skillSpec, captain, 36f, offset-36f);
+                    totalOffset += addSkillImageWithTooltip(officersList, skillSpec, captain, 36f, offset-36f);
                     totalCommanderOffset += offset;
                 }
-                membersList.addSpacer(-offset).getPosition().setXAlignOffset(totalOffset - totalCommanderOffset - offset);
+                officersList.addSpacer(-offset).getPosition().setXAlignOffset(totalOffset - totalCommanderOffset - offset);
             }
-            membersList.addSpacer(centerOffset).getPosition().setXAlignOffset(-totalOffset);
+            officersList.addSpacer(centerOffset).getPosition().setXAlignOffset(-totalOffset);
         }
 
-        shipsPanel.addUIElement(membersList).inMid();
-        panel.addComponent(shipsPanel).inLMid(10f);
+        shipsPanel.addUIElement(officersList).inBL(0f, 0f);
+        panel.addComponent(shipsPanel).inLMid(0f);
 
         CustomPanelAPI buttonsPanel = panel.createCustomPanel(350f, height, null);
 
-        float fleetPoints = fleetData.getFleetPointsUsed();
-        float deployPoints = 0f;
-        for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            deployPoints += member.getDeploymentPointsCost();
+        float fleetPoints = 0, deployPoints = 0;
+        for (CampaignFleetAPI fleet : fleets) {
+            fleetPoints += fleet.getFleetPoints();
+            for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+                deployPoints += member.getDeploymentPointsCost();
+            }
         }
 
         TooltipMakerAPI buttons = buttonsPanel.createUIElement(325f, height, false);
@@ -235,9 +230,16 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
                 if (replayBattle == null) {
                     Class<?> cls =
                             ModPlugin.classLoader.loadClass("shipmastery.campaign.recentbattles.RecentBattlesReplay");
-                    replayBattle = lookup.findStatic(cls, "replayBattle", MethodType.methodType(void.class, CampaignFleetAPI.class));
+                    replayBattle = lookup.findStatic(cls, "replayBattle", MethodType.methodType(void.class, BattleCreationContext.class));
                 }
-                replayBattle.invoke(fleet);
+                BattleAPI battle = Global.getFactory().createBattle(Global.getSector().getPlayerFleet(), fleets.get(0));
+                for (int i = 1; i < fleets.size(); i++) {
+                    battle.join(fleets.get(i), BattleAPI.BattleSide.TWO);
+                }
+                // Fleet is not alive (location is null), so battle will see it as empty
+                battle.genCombinedDoNotRemoveEmpty();
+                replayBattle.invoke(RecentBattlesTracker.cloneContext(bccStub, Global.getSector().getPlayerFleet(), battle.getNonPlayerCombined()));
+                battle.finish(null, false);
             }
             catch (Throwable e) {
                 logger.error("Failed to replay battle: ", e);
@@ -246,6 +248,16 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
         else if (SAVE_BUTTON_ID.equals(buttonId)) {
             setImportant(!isImportant());
             ui.updateUIForItem(this);
+        }
+    }
+
+    private void repairFleets() {
+        for (CampaignFleetAPI fleet : fleets) {
+            for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+                fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+                fm.getStatus().repairFully();
+                fm.getStatus().resetDamageTaken();
+            }
         }
     }
 }

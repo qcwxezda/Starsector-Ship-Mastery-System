@@ -22,7 +22,8 @@
     "summaryHeader": "Summary",
     "battleOptionsHeader": "Battle Options",
     "fleetPoints": "Fleet points: %s",
-    "deployPoints": "Deployment points: %s"
+    "deployPoints": "Deployment points: %s",
+    "alliesSuffix": " (with allies)"
   },
 
   "sms_masteryPanel": {

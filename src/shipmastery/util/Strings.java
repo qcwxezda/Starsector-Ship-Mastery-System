@@ -26,6 +26,7 @@ public interface Strings {
         String battleOptionsHeader = Utils.getString("sms_recentBattles", "battleOptionsHeader");
         String fleetPoints = Utils.getString("sms_recentBattles", "fleetPoints");
         String deployPoints = Utils.getString("sms_recentBattles", "deployPoints");
+        String alliesSuffix = Utils.getString("sms_recentBattles", "alliesSuffix");
     }
 
     interface MasteryPanel {

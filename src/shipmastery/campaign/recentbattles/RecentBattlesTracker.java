@@ -1,28 +1,36 @@
 package shipmastery.campaign.recentbattles;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
-import com.fs.starfarer.api.campaign.BattleAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetGoal;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.loading.specs.HullVariantSpec;
+import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.Settings;
+import shipmastery.util.SizeLimitedMap;
 
 import java.util.*;
 
-public class RecentBattlesTracker extends BaseCampaignEventListener {
+public class RecentBattlesTracker extends BaseCampaignEventListener implements FleetInflationListener {
 
     private final Map<FleetMemberAPI, ShipVariantAPI> originalVariantMap = new HashMap<>();
     private final Map<FleetMemberAPI, PersonAPI> captainMap = new HashMap<>();
+
+    /** Necessary to keep track of inflaters because some inflaters aren't persistent are deleted immediately upon inflation. *
+     *  Also don't want to blindly set removeAfterInflating to false on every fleet, as that would add lots of unnecessary
+     *  inflaters to the save file. */
+    private final SizeLimitedMap<CampaignFleetAPI, FleetInflater> inflaterMap =
+            new SizeLimitedMap<>(1000);
     private boolean battleIsAutoPursuit = true;
 
     public RecentBattlesTracker() {
@@ -59,18 +67,28 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
 
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
+        // TODO: What if a retreating fleet merges with a larger one, causing two different recent battle intel entries
+        // to have the same officer? Is cloning officers necessary due to this?
+        BattleCreationContext lastContext = CombatListenerManager.getLastBattleCreationContext();
+        if (lastContext != null && !lastContext.getOtherGoal().equals(FleetGoal.ATTACK)) return;
         if (!battle.isPlayerInvolved()) return;
         if (shouldSaveBattle(primaryWinner)) {
-            List<CampaignFleetAPI> snapshot = battle.getNonPlayerSideSnapshot();
+            List<CampaignFleetAPI> snapshot = new ArrayList<>(battle.getNonPlayerSideSnapshot());
             CampaignFleetAPI primary = battle.getPrimary(snapshot);
-            if (primary == null || battle.getNonPlayerCombined() == null) return;
+            if (primary == null) return;
+            // Ensure that the primary fleet is first in the snapshot list
+            if (snapshot.remove(primary)) {
+                snapshot.add(0, primary);
+            }
 
-            CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(primary.getFaction().getId(),
-                                                                          battle.getNonPlayerCombined()
-                                                                                .getNameWithFactionKeepCase(), true);
-            fleet.setName(primary.getName());
-            for (CampaignFleetAPI origFleet : snapshot) {
-                for (FleetMemberAPI fm : origFleet.getFleetData().getSnapshot()) {
+            List<CampaignFleetAPI> fleetsCopy = new ArrayList<>();
+            for (CampaignFleetAPI fleetToCopy : snapshot) {
+                CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(
+                        fleetToCopy.getFaction().getId(),
+                        fleetToCopy.getNameWithFactionKeepCase(),
+                        true);
+                fleet.setName(fleetToCopy.getName());
+                for (FleetMemberAPI fm : fleetToCopy.getFleetData().getSnapshot()) {
                     HullVariantSpec variant = (HullVariantSpec) originalVariantMap.get(fm);
                     if (variant == null) variant = (HullVariantSpec) fm.getVariant().clone();
 
@@ -98,11 +116,26 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
                     }
                     copy.getRepairTracker().setCR(copy.getRepairTracker().getMaxCR());
                 }
+                fleet.setCommander(fleetToCopy.getCommander());
+                fleet.setStationMode(fleetToCopy.isStationMode());
+                if (!Settings.RECENT_BATTLES_PRECISE_MODE) {
+                    FleetInflater inflater = fleetToCopy.getInflater();
+                    if (inflater == null) inflater = inflaterMap.get(fleetToCopy);
+                    if (inflater != null) {
+                        inflater.setRemoveAfterInflating(false);
+                    }
+                    fleet.setInflater(inflater);
+                }
+                fleet.setDoNotAdvanceAI(true);
+                fleet.setMemory(fleetToCopy.getMemoryWithoutUpdate());
+                fleetsCopy.add(fleet);
             }
-            fleet.setCommander(primary.getCommander());
-            fleet.setStationMode(primary.isStationMode());
 
-            addBattleIntel(fleet, Settings.RECENT_BATTLES_PRECISE_MODE || primary.getInflater() == null ? null : primary.getInflater().getParams());
+            BattleCreationContext bccStub = cloneContext(lastContext, null, null);
+            if (bccStub == null) {
+                bccStub = new BattleCreationContext(null, FleetGoal.ATTACK, null, FleetGoal.ATTACK);
+            }
+            addBattleIntel(bccStub, fleetsCopy);
         }
 
         originalVariantMap.clear();
@@ -110,7 +143,7 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
         battleIsAutoPursuit = true;
     }
 
-    private void addBattleIntel(CampaignFleetAPI fleet, Object fleetInflaterParams) {
+    private void addBattleIntel(BattleCreationContext bcc, List<CampaignFleetAPI> fleets) {
         IntelManagerAPI intelManager = Global.getSector().getIntelManager();
 
         List<IntelInfoPlugin> intelList = intelManager.getIntel(RecentBattlesIntel.class);
@@ -121,18 +154,19 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
                 nonImportant.add(intel);
             }
             if (intel instanceof RecentBattlesIntel) {
-                seenCommanderIds.add(((RecentBattlesIntel) intel).getFleetData().getCommander().getId());
+                seenCommanderIds.add(((RecentBattlesIntel) intel).getCombinedCommander().getId());
             }
         }
 
-        if (seenCommanderIds.contains(fleet.getCommander().getId())) {
+        CampaignFleetAPI primary = fleets.get(0);
+        if (seenCommanderIds.contains(primary.getCommander().getId())) {
             return;
         }
 
         RecentBattlesIntel newIntel = new RecentBattlesIntel(
                 Settings.RECENT_BATTLES_PRECISE_MODE,
-                fleet,
-                fleetInflaterParams,
+                fleets,
+                bcc,
                 Global.getSector().getPlayerFleet().getContainingLocation());
         intelManager.addIntel(newIntel);
         nonImportant.add(newIntel);
@@ -153,5 +187,35 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
                 }
             }
         }
+    }
+
+    @Override
+    public void reportFleetDespawned(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
+        inflaterMap.remove(fleet);
+    }
+
+    @Override
+    public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
+        inflaterMap.put(fleet, inflater);
+    }
+
+    public static BattleCreationContext cloneContext(BattleCreationContext clone, CampaignFleetAPI newPlayerFleet, CampaignFleetAPI newEnemyFleet) {
+        if (clone == null) return null;
+        BattleCreationContext newContext = new BattleCreationContext(newPlayerFleet, clone.getPlayerGoal(), newEnemyFleet, clone.getOtherGoal());
+        newContext.setPlayerCommandPoints(clone.getPlayerCommandPoints());
+        newContext.setPursuitRangeModifier(clone.getPursuitRangeModifier());
+        newContext.setEscapeDeploymentBurnDuration(clone.getEscapeDeploymentBurnDuration());
+        newContext.setFlankDeploymentDistance(clone.getFlankDeploymentDistance());
+        newContext.setInitialEscapeRange(clone.getInitialEscapeRange());
+        newContext.setInitialNumSteps(clone.getInitialNumSteps());
+        newContext.setStandoffRange(clone.getStandoffRange());
+        newContext.setNormalDeploymentBurnDuration(clone.getNormalDeploymentBurnDuration());
+        newContext.setInitialDeploymentBurnDuration(clone.getInitialDeploymentBurnDuration());
+        newContext.setInitialStepSize(clone.getInitialStepSize());
+        newContext.objectivesAllowed = clone.objectivesAllowed;
+        newContext.aiRetreatAllowed = clone.aiRetreatAllowed;
+        newContext.enemyDeployAll = clone.enemyDeployAll;
+        newContext.fightToTheLast = clone.fightToTheLast;
+        return newContext;
     }
 }

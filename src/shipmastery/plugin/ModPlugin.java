@@ -149,8 +149,10 @@ public class ModPlugin extends BaseModPlugin {
                 throw new RuntimeException("Failed to add refit autofit plugin", e);
             }
         }
+        RecentBattlesTracker recentBattlesTracker = new RecentBattlesTracker();
+        Global.getSector().addTransientListener(recentBattlesTracker);
+        listeners.addListener(recentBattlesTracker, true);
 
-        Global.getSector().addTransientListener(new RecentBattlesTracker());
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();
             for (IntelInfoPlugin intel : new ArrayList<>(intelManager.getIntel(RecentBattlesIntel.class))) {

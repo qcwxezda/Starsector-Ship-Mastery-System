@@ -1,6 +1,7 @@
 package shipmastery.combat;
 
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
+import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -14,9 +15,14 @@ import java.util.List;
 public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     private CombatEngineAPI engine;
+    private static BattleCreationContext lastBattleCreationContext = null;
     private final ShipSystemTracker shipSystemTracker = new ShipSystemTracker();
     private final FlagshipTracker flagshipTracker = new FlagshipTracker();
     private final IntervalUtil updateInterval = new IntervalUtil(2f, 3f);
+
+    public static BattleCreationContext getLastBattleCreationContext() {
+        return lastBattleCreationContext;
+    }
 
     @Override
     public void init(CombatEngineAPI engine) {
@@ -24,6 +30,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         // (possibly all ships with modules?)
         this.engine = engine;
         engine.getListenerManager().addListener(flagshipTracker);
+        lastBattleCreationContext = engine.getContext();
     }
 
     @Override

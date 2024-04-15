@@ -12,7 +12,7 @@ sms_PlayerShipGraveyards,Enable Player Ship Graveyards,Boolean,true,,"If enabled
 sms_RecentBattles,Recent Battle Replay,Radio,On,"Off,On,Precise","If enabled, saves the 10 most recent player battles, allowing them to be replayed at any time with your current fleet. Battles can also be pinned, saving them permanently.
 
 If precise mode is enabled, exact ship variants will be saved to file, ensuring that the same ships that were fought in the field are fought in replay, but this may make your save file noticeably larger.
-Otherwise, only fleet inflater params will be saved, meaning variations in ship loadouts may occur due to setting changes, or poorly-seeded or unseeded inflaters.",,,General
+Otherwise, only the fleets' inflaters will be saved, meaning variations in ship loadouts may occur due to setting changes, or poorly-seeded or unseeded inflaters.",,,General
 sms_SModAutofitOption,Add S-Mod Autofit Option,Boolean,true,,"If enabled, adds a checkbox to the autofit window that, when checked, will attempt to copy installed S-mods from the goal variant during the autofit process. May conflict with other mods that modify the refit screen autofit behavior.",,,General
 ,,,,,,,,
 ,,,,,,,,

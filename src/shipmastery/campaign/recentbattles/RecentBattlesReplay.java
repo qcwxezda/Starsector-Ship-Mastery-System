@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.fleet.FleetGoal;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.campaign.CampaignState;
@@ -27,20 +26,13 @@ public abstract class RecentBattlesReplay {
     public static final String isReplayKey = "shipmastery_IsBattleReplay";
 
     @SuppressWarnings("unused")
-    public static void replayBattle(final CampaignFleetAPI fleet) {
-        repairFleet(fleet);
+    public static void replayBattle(BattleCreationContext bcc) {
+        final CampaignFleetAPI fleet = bcc.getOtherFleet();
         try {
             // avoid NPE
             final Field dialogTypeField = CampaignState.class.getDeclaredField("dialogType");
             dialogTypeField.setAccessible(true);
             dialogTypeField.set(Global.getSector().getCampaignUI(), null);
-            BattleCreationContext bcc = new BattleCreationContext(
-                    Global.getSector().getPlayerFleet(), FleetGoal.ATTACK, fleet, FleetGoal.ATTACK
-            );
-            bcc.setPlayerCommandPoints((int) Global.getSector().getPlayerFleet().getCommanderStats().getCommandPoints().getModifiedValue());
-            if (fleet.isStationMode()) {
-                bcc.objectivesAllowed = false;
-            }
             Global.getSector().getCampaignUI().startBattle(bcc);
             final CombatEngine engine = CombatEngine.getInstance();
             engine.getCustomData().put(isReplayKey, true);
@@ -85,8 +77,6 @@ public abstract class RecentBattlesReplay {
                         // Necessary, otherwise game might think it's a campaign battle result after the next simulation,
                         // look for the encounter dialog plugin, and throw an NPE
                         ui.getSession().remove("campaign battle result");
-                        // Repair all enemy ships
-                        repairFleet(fleet);
                         try {
                             // set all player ships to their original states
                             for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
@@ -112,14 +102,6 @@ public abstract class RecentBattlesReplay {
         }
         catch (Exception e) {
             logger.error("Replay battle failed: ", e);
-        }
-    }
-
-    public static void repairFleet(CampaignFleetAPI fleet) {
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
-            fm.getStatus().repairFully();
-            fm.getStatus().resetDamageTaken();
         }
     }
 }
