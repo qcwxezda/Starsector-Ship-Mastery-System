@@ -16,9 +16,16 @@ public interface Strings {
         String replayButton = Utils.getString("sms_recentBattles", "replayButton");
         String pinButton = Utils.getString("sms_recentBattles", "pinButton");
         String unpinButton = Utils.getString("sms_recentBattles", "unpinButton");
+        String replayDesc = Utils.getString("sms_recentBattles", "replayDesc");
         String pinDesc = Utils.getString("sms_recentBattles", "pinDesc");
         String exitReplay = Utils.getString("sms_recentBattles", "exitReplay");
         String confirmExitReplay = Utils.getString("sms_recentBattles", "confirmExitReplay");
+        String fleetDataHeader = Utils.getString("sms_recentBattles", "fleetDataHeader");
+        String officerDataHeader = Utils.getString("sms_recentBattles", "officerDataHeader");
+        String summaryHeader = Utils.getString("sms_recentBattles", "summaryHeader");
+        String battleOptionsHeader = Utils.getString("sms_recentBattles", "battleOptionsHeader");
+        String fleetPoints = Utils.getString("sms_recentBattles", "fleetPoints");
+        String deployPoints = Utils.getString("sms_recentBattles", "deployPoints");
     }
 
     interface MasteryPanel {

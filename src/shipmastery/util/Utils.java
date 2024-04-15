@@ -16,6 +16,8 @@ import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -43,6 +45,20 @@ public abstract class Utils {
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
 
+    /** Map from skill aptitudes to their elite icons */
+    public static final Map<String, String> eliteSkillIcons = new HashMap<>();
+
+    static {
+        try {
+            JSONArray array = Global.getSettings().getMergedSpreadsheetData("id", "data/characters/skills/aptitude_data.csv");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject json = array.getJSONObject(i);
+                eliteSkillIcons.put(json.getString("id"), json.optString("elite_overlay", null));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load data/characters/skills/aptitude_data.csv from the base game");
+        }
+    }
 
     static {
         for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {

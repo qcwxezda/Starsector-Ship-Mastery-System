@@ -14,7 +14,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.loading.specs.HullVariantSpec;
 import shipmastery.config.Settings;
 
@@ -52,53 +51,63 @@ public class RecentBattlesTracker extends BaseCampaignEventListener {
         battleIsAutoPursuit &= playerResult.getAllEverDeployedCopy() == null;
     }
 
+    private boolean shouldSaveBattle(CampaignFleetAPI primaryWinner) {
+        if (!Misc.isPlayerOrCombinedContainingPlayer(primaryWinner)) return false;
+        if (battleIsAutoPursuit) return false;
+        return Settings.ENABLE_RECENT_BATTLES;
+    }
+
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
-        if (!Misc.isPlayerOrCombinedContainingPlayer(primaryWinner)) return;
-        if (battleIsAutoPursuit) return;
-        if (!Settings.ENABLE_RECENT_BATTLES) return;
+        if (!battle.isPlayerInvolved()) return;
+        if (shouldSaveBattle(primaryWinner)) {
+            List<CampaignFleetAPI> snapshot = battle.getNonPlayerSideSnapshot();
+            CampaignFleetAPI primary = battle.getPrimary(snapshot);
+            if (primary == null || battle.getNonPlayerCombined() == null) return;
 
-        List<CampaignFleetAPI> snapshot = battle.getNonPlayerSideSnapshot();
-        CampaignFleetAPI primary = battle.getPrimary(snapshot);
-        if (primary == null || battle.getNonPlayerCombined() == null) return;
+            CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(primary.getFaction().getId(),
+                                                                          battle.getNonPlayerCombined()
+                                                                                .getNameWithFactionKeepCase(), true);
+            fleet.setName(primary.getName());
+            for (CampaignFleetAPI origFleet : snapshot) {
+                for (FleetMemberAPI fm : origFleet.getFleetData().getSnapshot()) {
+                    HullVariantSpec variant = (HullVariantSpec) originalVariantMap.get(fm);
+                    if (variant == null) variant = (HullVariantSpec) fm.getVariant().clone();
 
-        CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(primary.getFaction().getId(), battle.getNonPlayerCombined().getNameWithFactionKeepCase(), true);
-        fleet.setName(primary.getName());
-        for (CampaignFleetAPI origFleet : snapshot) {
-            for (FleetMemberAPI fm : origFleet.getFleetData().getSnapshot()) {
-                HullVariantSpec variant = (HullVariantSpec) originalVariantMap.get(fm);
-                if (variant == null) variant = (HullVariantSpec) fm.getVariant().clone();
-
-                if (Settings.RECENT_BATTLES_PRECISE_MODE) {
-                    // So that the variant gets saved to file
-                    variant.setSource(VariantSource.REFIT);
-                    for (String id : variant.getModuleSlots()) {
-                        ShipVariantAPI moduleVariant = variant.getModuleVariant(id).clone();
-                        moduleVariant.setSource(VariantSource.REFIT);
-                        variant.setModuleVariant(id, moduleVariant);
+                    if (Settings.RECENT_BATTLES_PRECISE_MODE) {
+                        // So that the variant gets saved to file
+                        variant.setSource(VariantSource.REFIT);
+                        for (String id : variant.getModuleSlots()) {
+                            ShipVariantAPI moduleVariant = variant.getModuleVariant(id).clone();
+                            moduleVariant.setSource(VariantSource.REFIT);
+                            variant.setModuleVariant(id, moduleVariant);
+                        }
+                        // Prevent deflation on save
+                        variant.setOriginalVariant(null);
                     }
-                    // Prevent deflation on save
-                    variant.setOriginalVariant(null);
+
+                    FleetMemberAPI copy = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
+                    PersonAPI captain = captainMap.get(fm);
+                    if (captain == null) captain = fm.getCaptain();
+                    copy.setCaptain(captain);
+                    copy.setShipName(fm.getShipName());
+
+                    fleet.getFleetData().addFleetMember(copy);
+                    if (captain != null && !captain.isDefault()) {
+                        fleet.getFleetData().addOfficer(captain);
+                    }
+                    copy.getRepairTracker().setCR(copy.getRepairTracker().getMaxCR());
                 }
-
-                FleetMemberAPI copy = new FleetMember(1, variant, FleetMemberType.SHIP);
-                PersonAPI captain = captainMap.get(fm);
-                if (captain == null) captain = fm.getCaptain();
-                copy.setCaptain(captain);
-                copy.setShipName(fm.getShipName());
-
-                fleet.getFleetData().addFleetMember(copy);
-                copy.getRepairTracker().setCR(copy.getRepairTracker().getMaxCR());
             }
+            fleet.setCommander(primary.getCommander());
+            fleet.setStationMode(primary.isStationMode());
+
+            addBattleIntel(fleet, Settings.RECENT_BATTLES_PRECISE_MODE || primary.getInflater() == null ? null : primary.getInflater().getParams());
         }
-        fleet.setCommander(primary.getCommander());
-        fleet.setStationMode(primary.isStationMode());
 
         originalVariantMap.clear();
         captainMap.clear();
         battleIsAutoPursuit = true;
-
-        addBattleIntel(fleet, Settings.RECENT_BATTLES_PRECISE_MODE || primary.getInflater() == null ? null : primary.getInflater().getParams());
     }
 
     private void addBattleIntel(CampaignFleetAPI fleet, Object fleetInflaterParams) {

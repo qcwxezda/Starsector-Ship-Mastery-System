@@ -9,13 +9,20 @@
 
   "sms_recentBattles": {
     "tagName": "Recent battles",
-    "title": "Fought %s on %s in %s",
+    "title": "Defeated %s on %s in %s",
     "replayButton": "Replay battle",
     "pinButton": "Pin battle",
     "unpinButton": "Unpin battle",
+    "replayDesc": "You can replay this battle in a no-stakes simulation environment at any time. Your ships will start with hull and armor fully repaired regardless of their current status in your fleet.",
     "pinDesc": "Only the %s most recent unpinned battles are available for replay. Pin this battle to make it permanently available.",
     "exitReplay": "End Simulation",
-    "confirmExitReplay": "Exit the simulation?"
+    "confirmExitReplay": "Exit the simulation?",
+    "fleetDataHeader": "Fleet Data",
+    "officerDataHeader": "Officer Data",
+    "summaryHeader": "Summary",
+    "battleOptionsHeader": "Battle Options",
+    "fleetPoints": "Fleet points: %s",
+    "deployPoints": "Deployment points: %s"
   },
 
   "sms_masteryPanel": {
