@@ -172,7 +172,7 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.AutofitPluginSModOption",
             "shipmastery.campaign.graveyard.ClaimsHistoryGetter",
             "shipmastery.campaign.recentbattles.RecentBattlesReplay",
-            "shipmastery.campaign.recentbattles.SkillTooltipCreator",
+            "shipmastery.campaign.recentbattles.TooltipCreator",
             "shipmastery.plugin.SModAutofitCampaignPlugin",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",

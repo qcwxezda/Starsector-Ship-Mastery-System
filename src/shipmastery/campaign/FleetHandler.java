@@ -168,7 +168,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 // Adjust CR if mastery effects affected that
                 // TODO: figure out if this causes unwanted spontaneous repairs...
                 fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
-                // Do this again just to make sure mastery handler is at bottom of hullmod list=
+                // Do this again just to make sure mastery handler is at bottom of hullmod list
                 fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fleet), false, false);
 
 //                float diff = fm.getRepairTracker().getMaxCR() - crBeforeModification;

@@ -2,11 +2,17 @@ package shipmastery.campaign.recentbattles;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.IntelUIAPI;
 import com.fs.starfarer.campaign.CampaignState;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.campaign.fleet.FleetMemberStatus;
@@ -14,26 +20,164 @@ import com.fs.starfarer.combat.CombatEngine;
 import org.apache.log4j.Logger;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class RecentBattlesReplay {
+    public static Class<?> encounterDialogClass;
+    public static Constructor<?> encounterDialogConstructor;
     public static final Logger logger = Logger.getLogger(RecentBattlesReplay.class);
     public static final String isReplayKey = "shipmastery_IsBattleReplay";
 
     @SuppressWarnings("unused")
-    public static void replayBattle(BattleCreationContext bcc) {
+    public static void findInteractionDialogClassIfNeeded(IntelUIAPI intelUI) {
+        if (encounterDialogClass != null) return;
+        intelUI.showDialog(null, "dummy string");
+        try {
+            Object coreUI = ReflectionUtils.getCoreUI();
+            List<?> childrenNonCopy = (List<?>) ReflectionUtils.invokeMethodNoCatch(coreUI, "getChildrenNonCopy");
+            if (childrenNonCopy == null) return;
+            for (int i = childrenNonCopy.size() - 1; i >= 0; i--) {
+                Object child = childrenNonCopy.get(i);
+                if (child instanceof InteractionDialogAPI) {
+                    for (Constructor<?> cons : child.getClass().getConstructors()) {
+                        if (cons.getParameterTypes().length == 4) {
+                            encounterDialogClass = child.getClass();
+                            encounterDialogConstructor = cons;
+                            ((InteractionDialogAPI) child).dismiss();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.error("Failed to extract interaction dialog", e);
+        }
+    }
+
+    private static void makeAndSetTempBattleDialog(final CampaignState campaignState, final Action onBackFromEngagement)
+            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        final Map<FleetMember, FleetMemberStatus> savedStatuses = new HashMap<>();
+        final Map<FleetMember, Float> savedCR = new HashMap<>();
+        final Field fleetMemberStatusField;
+        final Field enemyFleetForBattleField;
+        final long lastPlayerBattleTimestamp = Global.getSector().getLastPlayerBattleTimestamp();
+        final boolean lastPlayerBattleWon = Global.getSector().isLastPlayerBattleWon();
+        final Object previousEncounterDialog = campaignState.getCurrentInteractionDialog();
+
+        try {
+            fleetMemberStatusField = FleetMember.class.getDeclaredField("status");
+            fleetMemberStatusField.setAccessible(true);
+            enemyFleetForBattleField = CampaignState.class.getDeclaredField("enemyFleetForBattle");
+            enemyFleetForBattleField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        final Map<FleetMemberAPI, PersonAPI> origCaptains = new HashMap<>();
+        for (FleetMemberAPI member : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+            origCaptains.put(member, member.getCaptain());
+        }
+
+        InteractionDialogPlugin battlePlugin = new InteractionDialogPlugin() {
+            private void setFleetMemberStatus(FleetMember fm, FleetMemberStatus status) {
+                try {
+                    fleetMemberStatusField.set(fm, status);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            private void unsetEnemyFleetForBattle(CampaignState campaignState) {
+                try {
+                    enemyFleetForBattleField.set(campaignState, null);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void init(InteractionDialogAPI dialog) {
+                for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+                    FleetMember member = (FleetMember) fm;
+                    savedStatuses.put(member, member.getStatus());
+                    setFleetMemberStatus(member, new FleetMemberStatus(member));
+                    // Phase anchor modifies CR, so track CR as well
+                    savedCR.put(member, member.getRepairTracker().getCR());
+                }
+            }
+            @Override
+            public void optionSelected(String optionText, Object optionData) {}
+            @Override
+            public void optionMousedOver(String optionText, Object optionData) {}
+            @Override
+            public void advance(float amount) {}
+            @Override
+            public void backFromEngagement(EngagementResultAPI battleResult) {
+                // Restore original captains
+                for (FleetMemberAPI member : origCaptains.keySet()) {
+                    PersonAPI captain = origCaptains.get(member);
+                    if (captain != null) {
+                        member.setCaptain(captain);
+                    }
+                }
+                // Note: no need to call previous dialog's backFromEngagement, this is a fake engagement
+                // and shouldn't count anyway
+                // Also, battleResult is malformed; battleResult.getBattle() is null
+                // Discard this dialog and plugin, set campaign dialog to previous dialog
+                ReflectionUtils.invokeMethodExtWithClasses(
+                        campaignState,
+                        "setEncounterDialog",
+                        false,
+                        new Class<?>[] {encounterDialogClass},
+                        previousEncounterDialog);
+                // Set enemy fleet to null to prevent music change
+                unsetEnemyFleetForBattle(campaignState);
+                // Set all player ships to their original states
+                for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+                    FleetMember member = (FleetMember) fm;
+                    setFleetMemberStatus(member, savedStatuses.get(member));
+                    Float cr = savedCR.get(member);
+                    member.getRepairTracker().setCR(cr == null ? member.getRepairTracker().getMaxCR() : cr);
+                }
+                // Reset last player battle timestamp and whether last battle was a player win,
+                // as this fight shouldn't count.
+                // Do it outside the current call stack, as CampaignState.prepare sets the values after calling backFromEngagement
+                DeferredActionPlugin.performLater(new Action() {
+                    @Override
+                    public void perform() {
+                        Global.getSector().setLastPlayerBattleTimestamp(lastPlayerBattleTimestamp);
+                        Global.getSector().setLastPlayerBattleWon(lastPlayerBattleWon);
+                        onBackFromEngagement.perform();
+                    }
+                }, 0f);
+            }
+            @Override
+            public Object getContext() {return null;}
+            @Override
+            public Map<String, MemoryAPI> getMemoryMap() {return null;}
+        };
+
+        Object newDialog = encounterDialogConstructor.newInstance(null, battlePlugin, null, null);
+        ReflectionUtils.invokeMethodNoCatch(campaignState, "setEncounterDialog", newDialog);
+    }
+
+
+    @SuppressWarnings("unused")
+    public static void replayBattle(BattleCreationContext bcc, Action onBackFromEngagement) {
         final CampaignFleetAPI fleet = bcc.getOtherFleet();
         try {
-            // avoid NPE
-            final Field dialogTypeField = CampaignState.class.getDeclaredField("dialogType");
-            dialogTypeField.setAccessible(true);
-            dialogTypeField.set(Global.getSector().getCampaignUI(), null);
-            Global.getSector().getCampaignUI().startBattle(bcc);
+            final CampaignState campaignState = (CampaignState) Global.getSector().getCampaignUI();
+            makeAndSetTempBattleDialog(campaignState, onBackFromEngagement);
+            campaignState.startBattle(bcc);
             final CombatEngine engine = CombatEngine.getInstance();
             engine.getCustomData().put(isReplayKey, true);
             engine.addPlugin(new BaseEveryFrameCombatPlugin() {
@@ -50,55 +194,6 @@ public abstract class RecentBattlesReplay {
                     engine.setCustomExit(Strings.RecentBattles.exitReplay, Strings.RecentBattles.confirmExitReplay);
                 }
             });
-
-            final Map<FleetMember, FleetMemberStatus> savedStatuses = new HashMap<>();
-            final Map<FleetMember, Float> savedCR = new HashMap<>();
-            final Field fleetMemberStatusField = FleetMember.class.getDeclaredField("status");
-            fleetMemberStatusField.setAccessible(true);
-            for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
-                FleetMember member = (FleetMember) fm;
-                savedStatuses.put(member, member.getStatus());
-                fleetMemberStatusField.set(member, new FleetMemberStatus(member));
-                // Phase anchor modifies CR, so track CR as well
-                savedCR.put(member, member.getRepairTracker().getCR());
-            }
-            // now manually do what CampaignState.prepare() would have done after combat is over
-            // and campaign scripts start running again
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    CampaignState ui = (CampaignState) Global.getSector().getCampaignUI();
-                    if (ui.isTransitioningToNextState()) {
-                        DeferredActionPlugin.performLater(this, 0.5f);
-                    }
-                    else {
-                        CombatEngine.destroyInstance();
-                        CombatEngine.getInstance();
-                        // Necessary, otherwise game might think it's a campaign battle result after the next simulation,
-                        // look for the encounter dialog plugin, and throw an NPE
-                        ui.getSession().remove("campaign battle result");
-                        try {
-                            // set all player ships to their original states
-                            for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
-                                FleetMember member = (FleetMember) fm;
-                                fleetMemberStatusField.set(member, savedStatuses.get(member));
-                                Float cr = savedCR.get(member);
-                                member.getRepairTracker().setCR(cr == null ? member.getRepairTracker().getMaxCR() : cr);
-                            }
-                            Field playerFleetForBattleField =
-                                    CampaignState.class.getDeclaredField("playerFleetForBattle");
-                            Field enemyFleetForBattleField =
-                                    CampaignState.class.getDeclaredField("enemyFleetForBattle");
-                            playerFleetForBattleField.setAccessible(true);
-                            enemyFleetForBattleField.setAccessible(true);
-                            playerFleetForBattleField.set(ui, null);
-                            enemyFleetForBattleField.set(ui, null);
-                        } catch (Exception e) {
-                            logger.error("Replay battle cleanup failed: ", e);
-                        }
-                    }
-                }
-            }, 0f);
         }
         catch (Exception e) {
             logger.error("Replay battle failed: ", e);

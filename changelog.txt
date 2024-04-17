@@ -12,6 +12,7 @@
 - Fixed minimum CR mastery effect causing auto-retreat when deployed
 - Fixed converted hangar effects being randomly selected for phase ships
 - Fixed adding S-mods to modules not subtracting MP
+- Fixed issue where recovered ships would maintain enemy commander's mastery levels and selections until game load
 - Minor optimizations
 
 0.8.2

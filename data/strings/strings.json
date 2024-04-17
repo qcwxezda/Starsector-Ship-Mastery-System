@@ -18,12 +18,19 @@
     "exitReplay": "End Simulation",
     "confirmExitReplay": "Exit the simulation?",
     "fleetDataHeader": "Fleet Data",
-    "officerDataHeader": "Officer Data",
     "summaryHeader": "Summary",
     "battleOptionsHeader": "Battle Options",
     "fleetPoints": "Fleet points: %s",
     "deployPoints": "Deployment points: %s",
-    "alliesSuffix": " (with allies)"
+    "alliesSuffix": " (with allies)",
+    "officerDataTitle": "Officer Data",
+    "officerDataTitleWithName": "Officer Data: %s",
+    "admiralSkillsTitle": "Admiral Skills",
+    "combatSkillsTitle": "Combat Skills",
+    "deleteButton": "Delete battle",
+    "deleteConfirm": "Are you sure you want to permanently delete this battle entry?",
+    "soloReplayButton": "Solo replay",
+    "soloReplayDesc": "Battle only the selected ship in a simulation environment."
   },
 
   "sms_masteryPanel": {

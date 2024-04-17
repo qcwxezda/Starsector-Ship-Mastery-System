@@ -21,12 +21,19 @@ public interface Strings {
         String exitReplay = Utils.getString("sms_recentBattles", "exitReplay");
         String confirmExitReplay = Utils.getString("sms_recentBattles", "confirmExitReplay");
         String fleetDataHeader = Utils.getString("sms_recentBattles", "fleetDataHeader");
-        String officerDataHeader = Utils.getString("sms_recentBattles", "officerDataHeader");
         String summaryHeader = Utils.getString("sms_recentBattles", "summaryHeader");
         String battleOptionsHeader = Utils.getString("sms_recentBattles", "battleOptionsHeader");
         String fleetPoints = Utils.getString("sms_recentBattles", "fleetPoints");
         String deployPoints = Utils.getString("sms_recentBattles", "deployPoints");
         String alliesSuffix = Utils.getString("sms_recentBattles", "alliesSuffix");
+        String officerDataTitle = Utils.getString("sms_recentBattles", "officerDataTitle");
+        String officerDataTitleWithName = Utils.getString("sms_recentBattles", "officerDataTitleWithName");
+        String combatSkillsTitle = Utils.getString("sms_recentBattles", "combatSkillsTitle");
+        String admiralSkillsTitle = Utils.getString("sms_recentBattles", "admiralSkillsTitle");
+        String deleteButton = Utils.getString("sms_recentBattles", "deleteButton");
+        String deleteConfirm = Utils.getString("sms_recentBattles", "deleteConfirm");
+        String soloReplayButton = Utils.getString("sms_recentBattles", "soloReplayButton");
+        String soloReplayDesc = Utils.getString("sms_recentBattles", "soloReplayDesc");
     }
 
     interface MasteryPanel {

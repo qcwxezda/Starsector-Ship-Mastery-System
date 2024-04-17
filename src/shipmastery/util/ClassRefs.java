@@ -58,8 +58,8 @@ public abstract class ClassRefs {
         CampaignUIAPI campaignUI = Global.getSector().getCampaignUI();
         // If we don't know the confirmation dialog class, try to create a confirmation dialog in order to access it
         try {
+            boolean isPaused = Global.getSector().isPaused();
             if (confirmDialogClass == null && campaignUI.showConfirmDialog("", "", "", null, null)) {
-                boolean isPaused = Global.getSector().isPaused();
                 Object screenPanel = ReflectionUtils.getField(campaignUI, "screenPanel");
                 List<?> children = (List<?>) ReflectionUtils.invokeMethod(screenPanel, "getChildrenNonCopy");
                 // the confirm dialog will be the last child

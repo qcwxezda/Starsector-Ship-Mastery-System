@@ -59,9 +59,10 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - Adds an option to the refit screen autofit menu to include S-mods from the goal variant:
 ![S-mods in Autofit](screenshots/smods_in_fit.png)
   - This will attempt to copy S-mods, automatically spending the required credits and mastery points.
-- Adds the ability to replay recent battles:
+- Adds the ability to view and replay recent battles:
 ![Recent Battles Intel](screenshots/recent_battles_intel.png)
-  - Keeps track of the 10 most recent fleets you've defeated. Displays fleet statistics as well as the skills of each officer in the fleet.
+  - Keeps track of the 10 most recent battles you've won, displaying detailed enemy fleet and officer data.
   - Replay battles in a simulation-like environment -- quit anytime, gain nothing, and lose nothing.
+  - Solo replay allows fighting against individual ships from recorded battles.
   - Pin notable battles to keep them in the intel log permanently, allowing you to replay limited boss battles at any time.
 - Adds a small amount of exploration content.
