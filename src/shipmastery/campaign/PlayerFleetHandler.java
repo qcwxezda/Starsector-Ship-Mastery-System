@@ -59,7 +59,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
                     || variantInfo == null
                     || variantInfo.fleet != Global.getSector().getPlayerFleet()
                     || variant.isStockVariant() || variant.isGoalVariant()) {
-                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, Global.getSector().getPlayerFleet()), false, false);
+                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, fm), false, false);
             }
         }
     }

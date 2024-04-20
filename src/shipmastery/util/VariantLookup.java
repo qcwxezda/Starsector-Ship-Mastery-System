@@ -36,6 +36,7 @@ public class VariantLookup extends BaseCampaignEventListener {
     }
 
     private String getUID(ShipVariantAPI variant) {
+        if (variant == null) return null;
         if (!variant.hasTag(UID_INDICATOR_TAG)) {
             return null;
         }
@@ -70,16 +71,25 @@ public class VariantLookup extends BaseCampaignEventListener {
         return instance;
     }
 
-    public static void addVariantInfo(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
+    public static void addVariantInfo(ShipVariantAPI variant, ShipVariantAPI root, FleetMemberAPI member) {
         VariantLookup instance = getInstance();
         if (instance == null) return;
-        instance.variantInfoMap.put(instance.getUIDGenerateIfNull(variant), new VariantInfo(instance, variant, root, fleet));
+        instance.variantInfoMap.put(instance.getUIDGenerateIfNull(variant), new VariantInfo(instance, variant, root, member));
     }
 
     public static VariantInfo getVariantInfo(ShipVariantAPI variant) {
+        if (variant == null) return null;
         VariantLookup instance = getInstance();
         if (instance == null) return null;
         return instance.variantInfoMap.get(instance.getUID(variant));
+    }
+
+    public static String getVariantUID(ShipVariantAPI variant) {
+        VariantLookup instance = getInstance();
+        if (instance == null) return null;
+        VariantInfo info = instance.variantInfoMap.get(instance.getUID(variant));
+        if (info == null) return null;
+        return info.uid;
     }
 
     public static class VariantInfo {
@@ -88,18 +98,24 @@ public class VariantLookup extends BaseCampaignEventListener {
 
         /** Root module in the module tree */
         public final ShipVariantAPI root;
+        public final FleetMemberAPI rootMember;
         public final String rootUid;
 
         public final PersonAPI commander;
         public final CampaignFleetAPI fleet;
 
-        private VariantInfo(VariantLookup lookup, ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
+        private VariantInfo(
+                VariantLookup lookup,
+                ShipVariantAPI variant,
+                ShipVariantAPI root,
+                FleetMemberAPI member) {
             this.variant = variant;
             uid = lookup.getUID(variant);
             this.root = root;
             rootUid = lookup.getUID(root);
+            rootMember = member;
+            this.fleet = member.getFleetData().getFleet();
             this.commander = fleet.getCommander();
-            this.fleet = fleet;
         }
     }
 }

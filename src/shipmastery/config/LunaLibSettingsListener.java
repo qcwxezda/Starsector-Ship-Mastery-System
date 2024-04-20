@@ -19,6 +19,10 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
     public void settingsChanged(@NotNull String modId) {
         if (!id.equals(modId)) return;
 
+        Settings.CLEAR_SMODS_ALWAYS_ENABLED = LunaSettings.getBoolean(id, "sms_ClearSModsAlwaysEnabled");
+        Settings.CLEAR_SMODS_REFUND_FRACTION = LunaSettings.getFloat(id, "sms_ClearSModsRefundFraction");
+        Settings.MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_MPGainMultiplier");
+        Settings.BUILD_IN_CREDITS_COST_MULTIPLIER = LunaSettings.getFloat(id, "sms_SModCreditCostMultiplier");
         Settings.MASTERY_COLOR = LunaSettings.getColor(id, "sms_MasteryColor");
         Settings.POSITIVE_HIGHLIGHT_COLOR =
                 LunaSettings.getColor(id, "sms_PositiveHighlightColor");

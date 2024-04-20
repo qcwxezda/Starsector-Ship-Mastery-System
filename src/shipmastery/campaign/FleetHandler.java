@@ -57,13 +57,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     /** Modifies and returns the given variant if it's not a stock, goal, or empty variant
      *  (those can be duplicated across multiple ships).
      *  Otherwise, returns a modified copy of that variant. */
-    public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, CampaignFleetAPI fleet) {
+    public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, FleetMemberAPI member) {
         if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
             variant = variant.clone();
             variant.setGoalVariant(false);
             variant.setSource(VariantSource.REFIT);
         }
-        VariantLookup.addVariantInfo(variant, root, fleet);
+        VariantLookup.addVariantInfo(variant, root, member);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway
         // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
         variant.getHullMods().remove("sms_masteryHandler");
@@ -74,7 +74,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         variant.addPermaMod("sms_masteryHandler");
         // Add the tracker to any modules as well
         for (String id : variant.getModuleSlots()) {
-            variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, fleet));
+            variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, member));
         }
         return variant;
     }
@@ -93,7 +93,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
             MutableShipStatsAPI stats = fm.getStats();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
-            fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fleet), false, false);
+            fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
             final ShipVariantAPI variant = fm.getVariant();
 
             boolean repeatAutofit = false;
@@ -169,7 +169,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 // TODO: figure out if this causes unwanted spontaneous repairs...
                 fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
                 // Do this again just to make sure mastery handler is at bottom of hullmod list
-                fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fleet), false, false);
+                fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
 
 //                float diff = fm.getRepairTracker().getMaxCR() - crBeforeModification;
 //                if (diff > 0f) {

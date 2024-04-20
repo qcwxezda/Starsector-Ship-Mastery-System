@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 
 public abstract class SModUtils {
@@ -63,6 +64,7 @@ public abstract class SModUtils {
         }
 
         cost *= TransientSettings.SMOD_CREDITS_COST_MULT.getModifiedValue();
+        cost *= Settings.BUILD_IN_CREDITS_COST_MULTIPLIER;
 
         // Hard cap at 10 million credits
         return (int) (Math.min(cost, CREDITS_HARD_CAP));

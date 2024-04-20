@@ -179,12 +179,21 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             else if (uniques.size() == 7) xpPer *= 0.6f;
             else if (uniques.size() >= 8) xpPer *= 0.5f;
         }
+        float totalMPGained = 0f;
         while (xp > 0 && random.nextFloat() < xp / (xpPer + xp)) {
+            totalMPGained++;
+            xp -= xpPer;
+            xpPer *= MULT_PER_MP;
+        }
+        totalMPGained *= Settings.MP_GAIN_MULTIPLIER;
+        float fractionalPart = totalMPGained - (int) totalMPGained;
+        if (random.nextFloat() > fractionalPart) {
+            totalMPGained++;
+        }
+        for (int i = 0; i < totalMPGained; i++) {
             ShipHullSpecAPI spec = picker.pick();
             Integer amount = amounts.get(spec);
             amounts.put(spec, amount == null ? 1 : 1 + amount);
-            xp -= xpPer;
-            xpPer *= MULT_PER_MP;
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
             ShipMastery.addPlayerMasteryPoints(entry.getKey(), entry.getValue());

@@ -79,7 +79,7 @@ public class BestOfTheBest {
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             if (isCapitalAndOfficer(stats)) {
 
-                stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, "Best of the Best skill");
+                stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, Strings.Misc.bestOfTheBestCRDesc);
                 stats.getHullBonus().modifyMult(id, 1f + STATS_BONUS);
                 stats.getFluxCapacity().modifyMult(id, 1f + STATS_BONUS);
             }

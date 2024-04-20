@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
-import com.fs.starfarer.api.impl.campaign.plog.SModRecord;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -47,7 +46,7 @@ public class SModTableRowPressed extends TriggerableProxy {
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
-                if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats())) {
+                if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats()) && !Global.getSettings().isDevMode()) {
                     Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
                 }
 
@@ -84,9 +83,11 @@ public class SModTableRowPressed extends TriggerableProxy {
                         }
                         variant.addPermaMod(rowData.hullModSpecId, true);
                         if (module.getFleetMember() != null) {
-                            SModRecord record = new SModRecord(module.getFleetMember());
+                            ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
                             record.getSMods().add(rowData.hullModSpecId);
                             record.setSPSpent(0);
+                            record.setMPSpent(rowData.mpCost);
+                            record.setCreditsSpent(rowData.creditsCost);
                             PlaythroughLog.getInstance().getSModsInstalled().add(record);
                         }
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(

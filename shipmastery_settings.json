@@ -1,5 +1,10 @@
 # If LunaLib is enabled, LunaLib settings will override the settings here
 {
+  "clearSModsAlwaysEnabled": false,
+  "clearSModsRefundFraction": 0,
+  "mpGainMultiplier":1,
+  "buildInCreditsCostMultiplier":1,
+
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
   "npcMasteryDensity": 0.65,

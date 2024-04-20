@@ -9,6 +9,9 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class BuiltInNeuralIntegrator extends HullmodPackage {
+
+    public static final float CR_BONUS = 0.15f;
+
     @Override
     protected String getDescriptionString() {
         return Strings.Descriptions.BuiltInNeuralIntegrator;
@@ -37,6 +40,7 @@ public class BuiltInNeuralIntegrator extends HullmodPackage {
     protected void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).unmodify(HullMods.NEURAL_INTEGRATOR);
         stats.getSuppliesToRecover().unmodify(HullMods.NEURAL_INTEGRATOR);
+        stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, Strings.Descriptions.BuiltInNeuralIntegratorCRDesc);
     }
 
     @Override

@@ -16,11 +16,19 @@ Otherwise, only the fleets' inflaters will be saved, meaning variations in ship 
 sms_SModAutofitOption,Add S-Mod Autofit Option,Boolean,true,,"If enabled, adds a checkbox to the autofit window that, when checked, will attempt to copy installed S-mods from the goal variant during the autofit process. May conflict with other mods that modify the refit screen autofit behavior.",,,General
 ,,,,,,,,
 ,,,,,,,,
-sms_DoubleClickInterval,Double-Click Interval,Double,0.75,,"For options that require a double-click to confirm, sets the time window for a subsequent click to register as a double-click.",0.1,5,Mastery UI
-sms_RefitScreenDisplay,Refit Screen Display,Boolean,true,,"If enabled, displays current mastery points and level next to each ship while in the refit screen.",,,Mastery UI
-sms_MasteryColor,Mastery Color,Color,#60c0ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,Mastery UI
-sms_PositiveHighlightColor,Positive Highlight Color,Color,#ffd200,,Sets the highlight color for general highlighted text and positive effects in the mastery selection panel.,,,Mastery UI
-sms_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the highlight color for negative effects in the mastery selection panel.,,,Mastery UI
+sms_HeaderGameplay,Gameplay,Header,Gameplay,,,,,Mastery
+sms_ClearSModsAlwaysEnabled,Always Enable S-Mod Removal,Boolean,false,,"If enabled, the option to clear S-mods from a ship is always enabled. Otherwise, it must be acquired from a mastery effect.",,,Mastery
+sms_ClearSModsRefundFraction,S-Mod Removal Refund Fraction,Double,0,,"Refunds the specified fraction of MP and credits spent when clearing S-mods that were installed by the player using the mastery interface.",0,1,Mastery
+sms_MPGainMultiplier,MP Gain Multiplier,Double,1,,"Multiplies the amount of MP gained from actions that also grant XP by the specified amount.",0,5,Mastery
+sms_SModCreditCostMultiplier,S-Mod Credits Cost Multiplier,Double,1,,"Multiplies the credits cost of building in hullmods by the specified amount.",0,5,Mastery
+,,,,,,,,
+,,,,,,,,
+sms_HeaderUI,Interface,Header,Interface,,,,,Mastery
+sms_DoubleClickInterval,Double-Click Interval,Double,0.75,,"For options that require a double-click to confirm, sets the time window for a subsequent click to register as a double-click.",0.1,5,Mastery
+sms_RefitScreenDisplay,Refit Screen Display,Boolean,true,,"If enabled, displays current mastery points and level next to each ship while in the refit screen.",,,Mastery
+sms_MasteryColor,Mastery Color,Color,#60c0ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,Mastery
+sms_PositiveHighlightColor,Positive Highlight Color,Color,#ffd200,,Sets the highlight color for general highlighted text and positive effects in the mastery selection panel.,,,Mastery
+sms_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the highlight color for negative effects in the mastery selection panel.,,,Mastery
 ,,,,,,,,
 ,,,,,,,,
 sms_DifficultyText,Difficulty Text,Text,All settings in this category only apply to NPC fleets that have not yet been processed by this mod.,,,,,Difficulty

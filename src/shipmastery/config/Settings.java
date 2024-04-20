@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
 import org.json.JSONException;
 import org.json.JSONObject;
+import shipmastery.util.MathUtils;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -12,6 +13,10 @@ public class Settings {
     public static Color MASTERY_COLOR = new Color(96, 192, 255);
     public static Color POSITIVE_HIGHLIGHT_COLOR = Misc.getHighlightColor();
     public static Color NEGATIVE_HIGHLIGHT_COLOR = Misc.getNegativeHighlightColor();
+    public static Boolean CLEAR_SMODS_ALWAYS_ENABLED;
+    public static Float CLEAR_SMODS_REFUND_FRACTION;
+    public static Float MP_GAIN_MULTIPLIER;
+    public static Float BUILD_IN_CREDITS_COST_MULTIPLIER;
     public static Float DOUBLE_CLICK_INTERVAL;
 
     /** From 0-1, roughly the percentage of ships in NPC fleets that will have masteries */
@@ -54,5 +59,9 @@ public class Settings {
         RECENT_BATTLES_PRECISE_MODE = json.getBoolean("recentBattlesPreciseMode");
         ADD_SMOD_AUTOFIT_OPTION = json.getBoolean("addSModAutofitOption");
         DISABLE_MAIN_FEATURES = json.getBoolean("disableMainFeatures");
+        CLEAR_SMODS_ALWAYS_ENABLED = json.getBoolean("clearSModsAlwaysEnabled");
+        CLEAR_SMODS_REFUND_FRACTION = MathUtils.clamp((float) json.getDouble("clearSModsRefundFraction"), 0f, 1f);
+        MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("mpGainMultiplier"));
+        BUILD_IN_CREDITS_COST_MULTIPLIER = Math.max(0f, (float) json.getDouble("buildInCreditsCostMultiplier"));
     }
 }

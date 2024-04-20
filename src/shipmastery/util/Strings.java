@@ -73,6 +73,8 @@ public interface Strings {
         String masteryPointsHeader = Utils.getString("sms_masteryPanel", "masteryPointsHeader");
         String creditsHeader = Utils.getString("sms_masteryPanel", "creditsHeader");
         String modularHeader = Utils.getString("sms_masteryPanel", "modularHeader");
+        String sModRefundTextCredits = Utils.getString("sms_masteryPanel", "sModRefundTextCredits");
+        String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
     }
 
     interface Misc {
@@ -87,6 +89,7 @@ public interface Strings {
         String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
         String bestOfTheBestDesc2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
         String bestOfTheBestDesc3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
+        String bestOfTheBestCRDesc = Utils.getString("sms_misc", "bestOfTheBestCRDesc");
         String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
         String bestOfTheBestScope = Utils.getString("sms_misc", "bestOfTheBestScope");
         String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
@@ -141,6 +144,7 @@ public interface Strings {
         String RestorationCostNeg = Utils.getString("sms_descriptions", "RestorationCostNeg");
         String SModRemoval = Utils.getString("sms_descriptions", "SModRemoval");
         String SModRemovalPost = Utils.getString("sms_descriptions", "SModRemovalPost");
+        String SModRemovalPostWithRefund = Utils.getString("sms_descriptions", "SModRemovalPostWithRefund");
         String SModsOverCapacitySingle = Utils.getString("sms_descriptions", "SModsOverCapacitySingle");
         String SModsOverCapacityPlural = Utils.getString("sms_descriptions", "SModsOverCapacityPlural");
         String SModsOverCapacityPost = Utils.getString("sms_descriptions", "SModsOverCapacityPost");
@@ -438,6 +442,7 @@ public interface Strings {
         String BuiltInHSA = Utils.getString( "sms_descriptions", "BuiltInHSA");
         String AmmoHullmodPackage = Utils.getString( "sms_descriptions", "AmmoHullmodPackage");
         String BuiltInNeuralIntegrator = Utils.getString( "sms_descriptions", "BuiltInNeuralIntegrator");
+        String BuiltInNeuralIntegratorCRDesc = Utils.getString( "sms_descriptions", "BuiltInNeuralIntegratorCRDesc");
         String EmptyMountsReduceFlux = Utils.getString( "sms_descriptions", "EmptyMountsReduceFlux");
         String EmptyMountsReduceFluxPost = Utils.getString( "sms_descriptions", "EmptyMountsReduceFluxPost");
     }

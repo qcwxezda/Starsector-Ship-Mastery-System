@@ -69,7 +69,9 @@
     "ordnancePointsHeader": "OP",
     "masteryPointsHeader": "MP",
     "creditsHeader": "Credits",
-    "modularHeader": "Modular?"
+    "modularHeader": "Modular?",
+    "sModRefundTextCredits": "Refunded %1$s",
+    "sModRefundTextMP": "Refunded %1$s MP"
   },
 
   "sms_descriptions": {
@@ -81,7 +83,8 @@
     "RestorationCost": "Increases the cost of restoring damaged ships by %1$s.",
     "RestorationCostNeg": "Reduces the cost of restoring damaged ships by %1$s.",
     "SModRemoval": "Grants the ability to clear S-mods from ships.",
-    "SModRemovalPost": "All S-mods must be removed. Costs nothing and refunds nothing.",
+    "SModRemovalPost": "All S-mods are removed. Costs nothing and refunds nothing.",
+    "SModRemovalPostWithRefund": "All S-mods are removed. Costs nothing and refunds %1$s of spent credits and mastery points, rounded down.",
     "SModsOverCapacitySingle": "Grants the ability to bypass the standard S-mod limit, enabling installation of an additional %1$s S-mod.",
     "SModsOverCapacityPlural": "Grants the ability to bypass the standard S-mod limit, enabling installation of an additional %1$s S-mods.",
     "SModsOverCapacityPost": "DP is increased by %1$s for each installed S-mod past the normal limit, rounded up. This penalty only applies to S-mods installed by the player.",
@@ -377,8 +380,9 @@
     "FighterHullmodPackage": "If %1$s and %2$s are installed, reduces fighter replacement time by %3$s.",
     "FluxHullmodPackage": "If %1$s, %2$s, and %3$s are installed, increases flux capacity and flux dissipation by an additional %4$s.",
     "BuiltInHSA": "If %1$s is built in, increases the range of all beam weapons by an additional %2$s su.",
-    "AmmoHullmodPackage": "If %1$s and %2$s are installed, increases ammo of all weapons by an additional %3$s.",
+    "AmmoHullmodPackage": "If %1$s and %2$s are installed, increases ammo of all weapons by an additional %3$s, stacking multiplicatively on top of other ammo bonuses.",
     "BuiltInNeuralIntegrator": "If %1$s is built in, negates its deployment point cost penalty.",
+    "BuiltInNeuralIntegratorCRDesc": "Neural integrator mastery effect",
     "EmptyMountsReduceFlux": "Each small/medium/large weapon mount left empty reduces the flux cost of all weapons by %1$s/%2$s/%3$s.",
     "EmptyMountsReduceFluxPost": "This effect has a hard cap of %1$s total weapon flux reduction."
   },
@@ -427,6 +431,7 @@
     "bestOfTheBestScope": "all capital ships with officers, including flagship",
     "bestOfTheBestDesc2": "+%1$s maximum combat readiness, +%2$s hull integrity*, and +%3$s flux capacity*",
     "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors.",
+    "bestOfTheBestCRDesc": "Best of the Best skill",
     "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow",
     "selectAShip": "Select a ship",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, up to a maximum of %5$s).",

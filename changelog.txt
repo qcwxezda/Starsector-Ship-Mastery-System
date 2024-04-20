@@ -1,3 +1,12 @@
+0.9.1
+-----------
+- Added setting to always enable clearing of S-Mods regardless of if it's been unlocked by a mastery effect.
+- Added setting to enable clearing S-Mods to refund a fraction of credits and MP spent; default is still no refund.
+- Added setting that multiplies all MP gain from actions that also grant XP.
+- Added setting that multiplies the credits cost of building in hullmods.
+- If dev mode is enabled, upgrading mastery level and building in hullmods no longer checks if you have the required resources.
+- Fixed S-Mod autofit option not showing up for modules
+
 0.9.0
 -----------
 - Added "Replay Battle" feature

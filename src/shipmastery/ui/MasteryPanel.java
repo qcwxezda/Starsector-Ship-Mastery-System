@@ -283,12 +283,12 @@ public class MasteryPanel {
         ButtonAPI resetButton =
                 resetButtonTTM.addButton(Strings.MasteryPanel.clearButton, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                          Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
-        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, Strings.MasteryPanel.clearButton));
+        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, root, Strings.MasteryPanel.clearButton));
         if (moduleVariant.getSMods().isEmpty()) {
             resetButton.setEnabled(false);
         }
 
-        if (!TransientSettings.SMOD_REMOVAL_ENABLED) {
+        if (!TransientSettings.SMOD_REMOVAL_ENABLED && !Settings.CLEAR_SMODS_ALWAYS_ENABLED) {
             ReflectionUtils.invokeMethod(resetButton, "setOpacity", 0f);
         }
 
@@ -474,6 +474,7 @@ public class MasteryPanel {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
             return spec.getDisplayName() + Strings.MasteryPanel.cantBuildIn;
         }
+        if (Global.getSettings().isDevMode()) return null;
         if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
                 + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() && modular) {
             return Strings.MasteryPanel.limitReached;
