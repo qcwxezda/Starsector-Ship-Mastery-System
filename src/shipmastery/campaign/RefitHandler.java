@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
@@ -260,7 +261,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                     if (!(sortedButtonList.get(i) instanceof ButtonAPI)) continue;
                     float h2 = tooltipMaker.getHeightSoFar();
                     //noinspection SuspiciousMethodCalls
-                    FleetMember fm = buttonToMemberMap.get(sortedButtonList.get(i));
+                    FleetMemberAPI fm = buttonToMemberMap.get(sortedButtonList.get(i));
                     if (fm != null) {
                         ShipHullSpecAPI spec = fm.getHullSpec();
                         int currentMastery = ShipMastery.getPlayerMasteryLevel(spec);

@@ -1,3 +1,9 @@
+0.9.2
+-----------
+- Fixed crash with FleetMember.getHullSpec when using Linux/Mac
+- (D)(D) hulls now correctly share their mastery pool with non D-hulls.
+- When generating mastery effects for a ship type, built-in weapon slots are no longer considered
+
 0.9.1
 -----------
 - Added setting to always enable clearing of S-Mods regardless of if it's been unlocked by a mastery effect.

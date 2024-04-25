@@ -373,7 +373,7 @@
     "MaxAutomatedCR": "The %1$s skill always grants an additional %2$s maximum combat readiness regardless of the fleet's automated ship points.",
     "ApplyOfficerSkill": "Grants the non-elite effect of %1$s to ships not captained by an officer already possessing that skill.",
     "ShieldHullmodPackage": "If 3 of the following hullmods are installed: %1$s, %2$s, %3$s, and %4$s, negates shield upkeep entirely and reduces shield damage taken by %5$s.",
-    "ArmorHullmodPackage": "If %1$s and %2$s are installed, increases armor by an additional %3$s",
+    "ArmorHullmodPackage": "If %1$s and %2$s are installed, increases armor by an additional %3$s.",
     "ArmorHullmodPackagePost": "Effect stacks multiplicatively on top of other armor modifiers.",
     "HullHullmodPackage": "If %1$s and %2$s are installed, reduces hull and armor damage taken by %3$s.",
     "EngineHullmodPackage": "If %1$s, %2$s, and %3$s are installed, negates the range and fighter replacement time penalties of %4$s.",

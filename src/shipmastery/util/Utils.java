@@ -73,7 +73,7 @@ public abstract class Utils {
         return hullmodIdToNameMap.get(hullmodId);
     }
 
-    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
+    public static ShipHullSpecAPI getRestoredHullSpecOneStep(ShipHullSpecAPI spec) {
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
             dParentHull = spec;
@@ -83,6 +83,15 @@ public abstract class Utils {
         }
 
         return dParentHull == null ? spec : dParentHull;
+    }
+
+    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
+        ShipHullSpecAPI prevSpec = null;
+        while (spec != prevSpec) {
+            prevSpec = spec;
+            spec = getRestoredHullSpecOneStep(spec);
+        }
+        return spec;
     }
 
     public static String getRestoredHullSpecId(ShipHullSpecAPI spec) {
@@ -200,6 +209,7 @@ public abstract class Utils {
     public static WeaponSlotCount countWeaponSlots(ShipHullSpecAPI spec) {
         int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
         for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
+            if (slot.isBuiltIn()) continue;
             switch (slot.getSlotSize()) {
                 case SMALL:
                     switch (slot.getWeaponType()) {
@@ -284,6 +294,7 @@ public abstract class Utils {
     public static WeaponSlotCount countWeaponSlotsStrict(ShipHullSpecAPI spec) {
         int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
         for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
+            if (slot.isBuiltIn()) continue;
             switch (slot.getSlotSize()) {
                 case SMALL:
                     switch (slot.getWeaponType()) {
