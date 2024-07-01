@@ -78,7 +78,7 @@ public class CyberneticAugmentation {
 
             PersonAPI player = Global.getSector().getPlayerPerson();
             Integer masteredCount = (Integer) player.getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
-            if (masteredCount == null || masteredCount <= 0) return;
+            if (masteredCount == null || masteredCount < 0) return;
 
             int clusters = masteredCount / MASTERIES_PER_CLUSTER;
             float bonus = Math.min(MAX_BONUS, BASE_BONUS + clusters * BONUS_PER_MASTERED_CLUSTER);
