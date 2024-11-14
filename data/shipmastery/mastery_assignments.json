@@ -98,14 +98,6 @@
     }
   },
 
-  "defender": {
-    "preset": "derelict_drone"
-  },
-
-  "dram": {
-    "preset": "logistic_fuel"
-  },
-
   "gremlin": {
     "levels": {
       "9": {
@@ -131,10 +123,6 @@
         "B": "HammerLingeringDamage"
       }
     }
-  },
-
-  "hermes": {
-    "preset": "logistic_cargo"
   },
 
   "hound": {
@@ -281,10 +269,6 @@
     }
   },
 
-  "mercury": {
-    "preset": "logistic_crew"
-  },
-
   "monitor": {
     "levels": {
       "9": {
@@ -330,10 +314,6 @@
     }
   },
 
-  "picket": {
-    "preset": "derelict_drone"
-  },
-
   "scarab": {
     "levels": {
       "9": {
@@ -341,10 +321,6 @@
         "B": "ModifyStatsFlat 1 AllWeaponOPCost"
       }
     }
-  },
-
-  "sentry": {
-    "preset": "derelict_drone"
   },
 
   "shade": {
@@ -422,10 +398,6 @@
     }
   },
 
-  "warden": {
-    "preset": "derelict_drone"
-  },
-
   "wayfarer": {
     "levels": {
       "9": {
@@ -460,18 +432,6 @@
         "B": "ModifyStatsFlat 1 AllWeaponOPCost"
       }
     }
-  },
-
-  "bastillon": {
-    "preset": "derelict_drone"
-  },
-
-  "berserker": {
-    "preset": "derelict_drone"
-  },
-
-  "buffalo": {
-    "preset": "logistic_cargo"
   },
 
   "buffalo2": {
@@ -637,14 +597,6 @@
     }
   },
 
-  "nebula": {
-    "preset": "logistic_crew"
-  },
-
-  "phaeton": {
-    "preset": "logistic_fuel"
-  },
-
   "phantom": {
     "levels": {
       "9": {
@@ -699,10 +651,6 @@
     }
   },
 
-  "tarsus": {
-    "preset": "logistic_cargo"
-  },
-
   "valkyrie": {
     "levels": {
       "9": {
@@ -713,7 +661,6 @@
   },
 
   "apex": {
-    "preset": "automated",
     "levels": {
       "9": {
         "A": "DroneStrikeRegen",
@@ -741,7 +688,6 @@
   },
 
   "brilliant": {
-    "preset": "automated",
     "levels": {
       "9": {
         "A": "PlasmaBurnEnergyRoF",
@@ -757,10 +703,6 @@
         "B": "RangeNotMoving"
       }
     }
-  },
-
-  "colossus": {
-    "preset": "logistic_cargo"
   },
 
   "colossus2": {
@@ -800,7 +742,6 @@
   },
 
   "doom": {
-    "preset": "phase",
     "levels": {
       "9": {
         "A": "EnergyMineConversion",
@@ -935,10 +876,6 @@
     }
   },
 
-  "rampart": {
-    "preset": "derelict_drone"
-  },
-
   "revenant": {
     "levels": {
       "9": {
@@ -946,10 +883,6 @@
         "B": "ExpandedFuelBoost"
       }
     }
-  },
-
-  "starliner": {
-    "preset": "logistic_crew"
   },
 
   "tesseract": {
@@ -992,10 +925,6 @@
         "B": "RecallDeviceRegeneration"
       }
     }
-  },
-
-  "atlas": {
-    "preset": "logistic_cargo"
   },
 
   "atlas2": {
@@ -1063,7 +992,6 @@
   },
 
   "nova": {
-    "preset": "automated",
     "levels": {
       "9": {
         "A": "NovaBurstDamage",
@@ -1117,10 +1045,6 @@
     }
   },
 
-  "prometheus": {
-    "preset": "logistic_fuel"
-  },
-
   "prometheus2": {
     "levels": {
       "9": {
@@ -1131,7 +1055,6 @@
   },
 
   "radiant": {
-    "preset": "automated",
     "levels": {
       "9": {
         "A": "FastSkimmer",
@@ -1150,7 +1073,6 @@
   },
 
   "ziggurat": {
-    "preset": "phase",
     "levels": {
       "9": {
         "A": "HighFrequencyMotes",

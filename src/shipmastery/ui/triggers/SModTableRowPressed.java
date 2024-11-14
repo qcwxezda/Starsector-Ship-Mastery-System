@@ -97,7 +97,7 @@ public class SModTableRowPressed extends TriggerableProxy {
 
                     ShipMastery.spendPlayerMasteryPoints(rootVariant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);
-                    masteryPanel.forceRefresh(true, true, true);
+                    masteryPanel.forceRefresh(true, true, true, false);
                 }
                 button.unhighlight();
             }

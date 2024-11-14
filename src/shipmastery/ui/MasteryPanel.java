@@ -51,13 +51,13 @@ public class MasteryPanel {
     boolean isShowingMasteryPanel = false;
     boolean isInRestorableMarket = false;
     MasteryDisplay savedMasteryDisplay;
-    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay;
+    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, rerollMasteryDisplay;
     int currentMastery, maxMastery;
 
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, 1000f, 600f);
+                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, null, 1000f, 600f, null);
         if (dialogData == null) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.cantOpenPanel, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
@@ -66,10 +66,10 @@ public class MasteryPanel {
 
         rootPanel = dialogData.panel;
         this.handler = handler;
-        generateDialog(rootPanel, false, false);
+        generateDialog(rootPanel, false, false, false);
     }
 
-    public void forceRefresh(boolean shouldSync, boolean shouldSaveIfSynced, boolean useSavedScrollerLocation) {
+    public void forceRefresh(boolean shouldSync, boolean shouldSaveIfSynced, boolean useSavedScrollerLocation, boolean scrollToStart) {
         if (rootPanel == null) return;
 
         handler.injectRefitScreen(shouldSync, shouldSaveIfSynced);
@@ -77,7 +77,7 @@ public class MasteryPanel {
             savedMasteryDisplay.saveScrollerHeight();
         }
 
-        generateDialog(rootPanel, true, useSavedScrollerLocation);
+        generateDialog(rootPanel, true, useSavedScrollerLocation, scrollToStart);
     }
 
     public void togglePanelVisibility(ButtonAPI button) {
@@ -96,7 +96,7 @@ public class MasteryPanel {
         }
     }
 
-    void generateDialog(UIPanelAPI panel, boolean isRefresh, boolean useSavedScrollerLocation) {
+    void generateDialog(UIPanelAPI panel, boolean isRefresh, boolean useSavedScrollerLocation, boolean scrollToStart) {
         Pair<ShipAPI, ShipAPI> moduleAndShip = handler.getSelectedShip();
         module = moduleAndShip.one;
         root = moduleAndShip.two;
@@ -124,7 +124,7 @@ public class MasteryPanel {
         UIPanelAPI tabButtons = makeTabButtons(120f, 40f);
         UIPanelAPI currencyPanel = makeCurrencyLabels(w);
         sModPanel = makeThisShipPanel(w, h - 100f);
-        masteryPanel = makeMasteryPanel(w, h - 100f, useSavedScrollerLocation);
+        masteryPanel = makeMasteryPanel(w, h - 100f, useSavedScrollerLocation, scrollToStart);
         togglePanelVisibility(!isInRestorableMarket || isShowingMasteryPanel ? masteryButton : sModButton);
 
         panel.addComponent(tabButtons).inTMid(0f);
@@ -321,10 +321,12 @@ public class MasteryPanel {
     void showUpgradeOrConfirmation() {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
+            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 1f : 0f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
         }
         else {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
         }
     }
@@ -333,7 +335,7 @@ public class MasteryPanel {
         return savedMasteryDisplay == null ? new HashMap<Integer, Boolean>() : savedMasteryDisplay.getSelectedLevels();
     }
 
-    UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation) {
+    UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation, boolean scrollToStart) {
         final ShipHullSpecAPI baseHullSpec = Utils.getRestoredHullSpec(root.getHullSpec());
         currentMastery = ShipMastery.getPlayerMasteryLevel(baseHullSpec);
         maxMastery = ShipMastery.getMaxMasteryLevel(baseHullSpec);
@@ -348,8 +350,16 @@ public class MasteryPanel {
         new UpgradeMasteryDisplay(this, baseHullSpec).create(upgradeMasteryDisplay);
         masteryPanel.addUIElement(upgradeMasteryDisplay).belowMid(shipDisplay, 10f);
 
+        rerollMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
+        new RerollMasteryDisplay(this, baseHullSpec).create(rerollMasteryDisplay);
+        masteryPanel.addUIElement(rerollMasteryDisplay).belowMid(shipDisplay, 10f);
+
         if (currentMastery >= maxMastery) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 1f);
+        } else {
+            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 1f);
         }
 
         confirmOrCancelDisplay = masteryPanel.createUIElement(225f, 100f, false);
@@ -381,8 +391,11 @@ public class MasteryPanel {
         if (savedMasteryDisplay != null && useSavedScrollerLocation) {
             display.scrollToHeight(savedMasteryDisplay.getSavedScrollerHeight());
         }
-        else {
+        else if (!scrollToStart) {
             display.scrollToHeight(Math.max(0f, Math.min(display.getScrollToHeight() - pad, display.getTotalHeight() - containerH - pad)));
+        }
+        else {
+            display.scrollToHeight(0f);
         }
 
         savedMasteryDisplay = display;
@@ -571,6 +584,6 @@ public class MasteryPanel {
             comparator = makeComparator(columnName);
         }
         currentColumnName = columnName;
-        forceRefresh(false, false, true);
+        forceRefresh(false, false, true, false);
     }
 }

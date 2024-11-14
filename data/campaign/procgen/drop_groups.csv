@@ -1,6 +1,8 @@
 commodity,group,freq
-"item_sms_construct:{tags:[!no_drop, !restricted]}",techmining_first_find,20
-"item_sms_construct:{tags:[!no_drop, !restricted]}",blueprints,10
-"item_sms_construct:{tags:[!no_drop, !restricted]}",blueprints_low,40
-"item_sms_construct:{tags:[!no_drop, !restricted]}",sms_construct,20
-nothing,sms_construct,80
+"item_sms_construct:{tags:[!no_drop, !restricted, ~pref_in_fleet]}",techmining_first_find,20
+"item_sms_construct:{tags:[!no_drop, !restricted, ~pref_in_fleet]}",blueprints,10
+"item_sms_construct:{tags:[!no_drop, !restricted, ~pref_in_fleet]}",blueprints_low,40
+"item_sms_construct:{tags:[!no_drop, !restricted]}",sms_construct_random,50
+nothing,sms_construct_random,50
+"item_sms_construct:{tags:[!no_drop, !restricted, ~pref_in_fleet]}",sms_construct_pref_in_fleet,50
+nothing,sms_construct_pref_in_fleet,50

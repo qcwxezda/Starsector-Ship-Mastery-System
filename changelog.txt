@@ -1,3 +1,41 @@
+0.10.0
+-----------
+
+Weakly save compatible with previous version, but mastery level progression and mastery effect generation have been changed,
+ so if you update, your mastery tables will be rearranged and effects may not be the same as before.
+
+The standard mastery progression has been reworked a bit. In summary: reduced possible S-mods at max mastery from 4 to 3,
+removed the DP penalty from the 3rd (previously 4th) S-mod slot. Details:
+- S-mod capacity masteries removed from levels 4 and 6 and replaced with randomized masteries
+- S-mod capacity mastery added to level 5
+- DP-penalizing S-mod capacity mastery removed from level 8, replaced with standard S-mod capacity mastery
+- Level 1 mastery effect strength multiplier 0.6 -> 1, level 2-6 masteries effect strength multiplier 0.8 -> 1
+
+Added the ability to reroll mastery effects upon reaching max mastery level.
+- Costs 15 MP and 2 SP
+- Affects all randomized effects (by default, this is now the effects at levels 1, 3, 4, 6, and 7).
+- Seeded for each ship hull, so it can't be save-scummed, e.g. rerolling a ship hull's masteries for the kth time will
+  always yield the same result
+
+Other changes:
+- Default presets are now assigned according to the ship spec's hints, tags, and/or built-in mods.
+  This should help compatibility with modded civilian ships, remnant ships, etc.
+   - logistic_cargo checks for FREIGHTER hint, logistic_crew checks for LINER hint, logistic_fuel checks for TANKER hint
+   - automated ships check for automated built-in hullmod, derelict drones check for derelict tag
+   - phase ships check for phasefield built-in hullmod
+   - if a single ship hull satisfies multiple conditions, the priority order is hints -> tags -> built-in mods
+- Single actions that grant less than 750 XP no longer give MP to civilian ships
+- Reduced civilian ship MP gain by ~40%
+- Increased combat ship MP gain by ~15%
+- Reduced base credits cost for building in S-mods by 25%
+- Increased mastery leveling costs across the board by 1, except levels beyond 8 which now cost a flat 15 MP.
+- Knowledge constructs now give 10 MP, up from 5.
+- Knowledge constructs now have two drop tables, one table is random as before and the other strongly prefers ships
+  already in the player's fleet. Most drop sources use the non-random table.
+- Knowledge constructs no longer generate for ships with the STATION hint.
+- Fixed an issue with mastery generation that could cause different masteries to be generated with the same seed
+  if a previous set of effects had already been stored into memory.
+
 0.9.3
 -----------
 - Fixed Cybernetic Augmentation not working with 0 mastered ship types

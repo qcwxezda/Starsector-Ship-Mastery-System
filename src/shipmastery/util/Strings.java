@@ -56,6 +56,8 @@ public interface Strings {
         String hullmodsTab = Utils.getString("sms_masteryPanel", "hullmodsTab");
         String unknownMastery = Utils.getString("sms_masteryPanel", "unknownMastery");
         String levelUpMastery = Utils.getString("sms_masteryPanel", "levelUpMastery");
+        String rerollMasteries = Utils.getString("sms_masteryPanel", "rerollMasteries");
+        String rerollConfirm = Utils.getString("sms_masteryPanel", "rerollConfirm");
         String confirmText2 = Utils.getString("sms_masteryPanel", "confirmText2");
         String cancelText = Utils.getString("sms_masteryPanel", "cancelText");
         String upgradeConfirm = Utils.getString("sms_masteryPanel", "upgradeConfirm");
@@ -75,6 +77,7 @@ public interface Strings {
         String modularHeader = Utils.getString("sms_masteryPanel", "modularHeader");
         String sModRefundTextCredits = Utils.getString("sms_masteryPanel", "sModRefundTextCredits");
         String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
+        String rerollMasteryConfirmText = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmText");
     }
 
     interface Misc {

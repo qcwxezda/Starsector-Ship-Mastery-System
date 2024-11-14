@@ -48,6 +48,8 @@ public abstract class Utils {
     /** Map from skill aptitudes to their elite icons */
     public static final Map<String, String> eliteSkillIcons = new HashMap<>();
 
+    public static final Set<String> allHullSpecIds = new HashSet<>();
+
     static {
         try {
             JSONArray array = Global.getSettings().getMergedSpreadsheetData("id", "data/characters/skills/aptitude_data.csv");
@@ -68,6 +70,14 @@ public abstract class Utils {
             hullmodIdToNameMap.put(spec.getId(), spec.getDisplayName());
         }
     }
+
+    static {
+        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+            if (spec != getRestoredHullSpec(spec)) continue;
+            allHullSpecIds.add(spec.getHullId());
+        }
+    }
+
 
     public static String getHullmodName(String hullmodId) {
         return hullmodIdToNameMap.get(hullmodId);

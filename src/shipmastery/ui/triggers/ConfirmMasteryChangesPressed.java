@@ -22,7 +22,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
-
         Map<Integer, Boolean> activeSet = ShipMastery.getPlayerActiveMasteriesCopy(spec);
         Map<Integer, Boolean> newSet = masteryPanel.getSelectedMasteryButtons();
         NavigableMap<Integer, Boolean> toActivate = new TreeMap<>();
@@ -57,6 +56,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
         // bay on ships that filled it
         Utils.fixPlayerFleetInconsistencies();
 
-        masteryPanel.forceRefresh(true, false, true);
+        masteryPanel.forceRefresh(true, false, true, false);
     }
 }

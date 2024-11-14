@@ -2,5 +2,6 @@ id,rating,detection_range,type,autoXP,xpDiscover,xpSalvage,tags,drop_value,drop_
 sms_concealed_station,0,50,DISCOVERABLE,2000,1000,5000,,basic:10000,"
 weapons2:30,
 rare_tech_low:2,
-sms_construct:50
+sms_construct_pref_in_fleet:16,
+sms_construct_random:32
 ",,,,,,,,,
