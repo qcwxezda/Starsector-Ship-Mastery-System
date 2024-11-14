@@ -35,10 +35,15 @@ public class ModPlugin extends BaseModPlugin {
     private static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     public static final ReflectionEnabledClassLoader classLoader;
+    public static boolean rerolledMasteriesThisSave = false;
 
     static {
         URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
         classLoader = new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
+    }
+
+    public static void setRerolledMasteriesThisSave() {
+        rerolledMasteriesThisSave = true;
     }
 
     @Override
@@ -98,8 +103,9 @@ public class ModPlugin extends BaseModPlugin {
                     ShipMastery.initMasteries(randomMode);
                     ShipMastery.generateAndApplyMasteries(true);
                 } else {
-                    ShipMastery.generateAndApplyMasteries(false);
+                    ShipMastery.generateAndApplyMasteries(rerolledMasteriesThisSave);
                 }
+                rerolledMasteriesThisSave = false;
             }
             catch (Exception e) {
                 throw new RuntimeException(e);

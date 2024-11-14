@@ -7,8 +7,10 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Pair;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ui.triggers.ActionListener;
+import shipmastery.ui.triggers.DialogDismissedListener;
 
 import java.awt.Color;
 import java.lang.reflect.Constructor;
@@ -125,11 +127,7 @@ public abstract class ReflectionUtils {
                 argClasses[i] = float.class;
             }
         }
-        Method method = isDeclaredAndHidden ? o.getClass().getDeclaredMethod(methodName, argClasses) : o.getClass().getMethod(methodName, argClasses);
-        if (isDeclaredAndHidden) {
-            method.setAccessible(true);
-        }
-        return method.invoke(o, args);
+        return invokeMethodNoCatchExtWithClasses(o, methodName, isDeclaredAndHidden, argClasses, args);
     }
 
     public static Object invokeMethodNoCatchExtWithClasses(Object o, String methodName, boolean isDeclaredAndHidden, Class<?>[] classes, Object[] args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
@@ -151,9 +149,11 @@ public abstract class ReflectionUtils {
 
     public static GenericDialogData showGenericDialog(
             String text,
-            String dismissText,
+            String confirmText,
+            @Nullable String cancelText,
             float width,
-            float height) {
+            float height,
+            @Nullable DialogDismissedListener listener) {
         try {
             Constructor<?> cons = ClassRefs.confirmDialogClass
                     .getConstructor(
@@ -167,15 +167,16 @@ public abstract class ReflectionUtils {
                     width,
                     height,
                     getField(Global.getSector().getCampaignUI(), "screenPanel"),
-                    null,
+                    listener == null ? null : listener.getProxy(),
                     text,
-                    new String[]{dismissText}
+                    cancelText == null ? new String[]{confirmText} : new String[] {confirmText, cancelText}
             );
             Method show = confirmDialog.getClass().getMethod("show", float.class, float.class);
             show.invoke(confirmDialog, 0.25f, 0.25f);
             LabelAPI label = (LabelAPI) invokeMethod(confirmDialog, "getLabel");
-            ButtonAPI dismissButton = (ButtonAPI) invokeMethod(confirmDialog, "getButton", 0);
-            dismissButton.setShortcut(Keyboard.KEY_G, true);
+            ButtonAPI confirmButton = (ButtonAPI) invokeMethod(confirmDialog, "getButton", 0);
+            // ButtonAPI cancelButton = (ButtonAPI) invokeMethod(confirmDialog, "getButton", 1);
+            confirmButton.setShortcut(Keyboard.KEY_G, true);
             return new GenericDialogData(
                     label,
                     (UIPanelAPI) invokeMethod(confirmDialog, "getInnerPanel"),

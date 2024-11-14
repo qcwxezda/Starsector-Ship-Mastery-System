@@ -12,9 +12,18 @@ import java.util.*;
 
 public abstract class MasteryUtils {
 
+    public static int getRerollMPCost(ShipHullSpecAPI spec) {
+        return 15;
+    }
+
+    public static int getRerollSPCost(ShipHullSpecAPI spec) {
+        return 2;
+    }
+
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
-        return 2 + level;
+        if (level < 8) return 3 + level;
+        return 15;
     }
 
     public static String makeEffectId(MasteryEffect effect, int level, int index) {

@@ -5,8 +5,8 @@
     "modVersion":
     {
         "major":0,
-        "minor":9,
-        "patch":2,
+        "minor":10,
+        "patch":0,
     },
     "directDownloadURL":"https://github.com/qcwxezda/Starsector-Ship-Mastery-System/releases/latest/download/Ship.Mastery.System.zip",
     "changelogURL":"https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/master/changelog.txt"

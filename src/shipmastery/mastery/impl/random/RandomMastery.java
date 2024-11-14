@@ -14,6 +14,7 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
+import shipmastery.ui.RerollMasteryDisplay;
 
 import java.util.*;
 
@@ -114,7 +115,26 @@ public class RandomMastery extends BaseMasteryEffect {
     }
 
     long makeSeed() {
-        return (getId() + "_" +
+        //noinspection unchecked
+        Map<String, Integer> rerollMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(RerollMasteryDisplay.REROLL_MAP);
+        Integer rerollCount;
+        if (rerollMap == null) rerollCount = 0;
+        else {
+            rerollCount = rerollMap.get(getHullSpec().getHullId());
+            if (rerollCount == null) rerollCount = 0;
+        }
+
+        if ("wolf".equals(getHullSpec().getHullId())) {
+            System.out.println(((rerollCount*17) + "_" +
+                    getId() + "_" +
+                    level + "_" +
+                    index + "_" +
+                    isOption2() + "_" +
+                    getHullSpec().getHullId() + "_" + Global.getSector().getPlayerPerson().getId()).hashCode());
+        }
+
+        return ((rerollCount*17) + "_" +
+                getId() + "_" +
                 level + "_" +
                 index + "_" +
                 isOption2() + "_" +

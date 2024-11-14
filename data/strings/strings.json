@@ -57,6 +57,8 @@
     "limitReached": "Build-in limit reached",
     "notEnoughCredits": "Insufficient credits",
     "notEnoughMasteryPoints": "Insufficient mastery points",
+    "rerollMasteries": "Regenerate",
+    "rerollConfirm": "Regenerated mastery effects",
     "levelUpMastery": "Advance",
     "upgradeConfirm": "Advanced mastery to level ",
     "unknownMastery": "Unlock previous tier to reveal",
@@ -71,7 +73,8 @@
     "creditsHeader": "Credits",
     "modularHeader": "Modular?",
     "sModRefundTextCredits": "Refunded %1$s",
-    "sModRefundTextMP": "Refunded %1$s MP"
+    "sModRefundTextMP": "Refunded %1$s MP",
+    "rerollMasteryConfirmText": "This option will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets.\n\nThe following mastery levels will be affected:\n%s.\n\n Costs %s MP and %s SP. You have %s SP."
   },
 
   "sms_descriptions": {

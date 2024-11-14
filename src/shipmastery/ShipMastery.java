@@ -26,6 +26,8 @@ public abstract class ShipMastery {
 
     public static final String MASTERY_KEY = "shipmastery_Mastery";
     public static final String DEFAULT_PRESET_NAME = "_DEFAULT_";
+    public static final String HINT_OR_TAG_KEY = "hint_or_tag";
+    public static final String BUILT_IN_MOD_KEY = "built_in_mod";
     private static SaveDataTable SAVE_DATA_TABLE;
 
 
@@ -34,6 +36,9 @@ public abstract class ShipMastery {
      */
     private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
     private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
+
+    private static final Map<String, String> tagToDefaultPresetMap = new HashMap<>();
+    private static final Map<String, String> builtInModToDefaultPresetMap = new HashMap<>();
 
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
     private static JSONObject masteryAssignments;
@@ -248,6 +253,23 @@ public abstract class ShipMastery {
         }
     }
 
+    public static String getDefaultPreset(ShipHullSpecAPI spec) {
+        for (ShipHullSpecAPI.ShipTypeHints hint : spec.getHints()) {
+            String preset = tagToDefaultPresetMap.get(hint.toString().toLowerCase());
+            if (preset != null) return preset;
+        }
+        for (String tag : spec.getTags()) {
+            String preset = tagToDefaultPresetMap.get(tag.toLowerCase());
+            if (preset != null) return preset;
+        }
+        for (String mod : spec.getBuiltInMods()) {
+            String preset = builtInModToDefaultPresetMap.get(mod.toLowerCase());
+            if (preset != null) return preset;
+        }
+
+        return DEFAULT_PRESET_NAME;
+    }
+
     public static Pair<Integer, Map<Integer, MasteryLevelData>> initMasteries(String name, Set<String> presetChain) throws JSONException {
         Map<Integer, MasteryLevelData> levelDataMap = new HashMap<>();
         Integer maxLevel = null;
@@ -272,7 +294,14 @@ public abstract class ShipMastery {
         }
 
         String preset = json == null ? null : json.optString("preset", null);
-        String defaultPreset = DEFAULT_PRESET_NAME;
+        String defaultPreset;
+        if (Utils.allHullSpecIds.contains(name)) {
+            ShipHullSpecAPI spec = Global.getSettings().getHullSpec(name);
+            defaultPreset = getDefaultPreset(spec);
+        }
+        else {
+            defaultPreset = DEFAULT_PRESET_NAME;
+        }
 
         if (preset == null && !name.equals(defaultPreset)) {
             preset = defaultPreset;
@@ -311,11 +340,32 @@ public abstract class ShipMastery {
 
     public static void initMasteries(boolean randomMode) throws JSONException, IOException {
         masteryMap.clear();
+        tagToDefaultPresetMap.clear();
 
         JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
+
+        // Populate tag and built-ind mod to default presets map
+        Iterator<String> itr = presets.keys();
+        while (itr.hasNext()) {
+            String name = itr.next();
+            JSONObject obj = presets.getJSONObject(name);
+            if (obj.has(HINT_OR_TAG_KEY)) {
+                String[] hints = obj.getString(HINT_OR_TAG_KEY).trim().split("\\s+,\\s+");
+                for (String hint : hints) {
+                    tagToDefaultPresetMap.put(hint.toLowerCase(), name);
+                }
+            }
+            if (obj.has(BUILT_IN_MOD_KEY)) {
+                String[] mods = obj.getString(BUILT_IN_MOD_KEY).trim().split("\\s+,\\s+");
+                for (String mod : mods) {
+                    builtInModToDefaultPresetMap.put(mod.toLowerCase(), name);
+                }
+            }
+        }
+
         if (!randomMode) {
             masteryAssignments = Global.getSettings().getMergedJSON("data/shipmastery/mastery_assignments.json");
-            Iterator<String> itr = presets.keys();
+            itr = presets.keys();
             while (itr.hasNext()) {
                 String name = itr.next();
                 masteryAssignments.put(name, presets.getJSONObject(name));
@@ -397,6 +447,12 @@ public abstract class ShipMastery {
         for (int i = 1; i <= data.getMaxLevel(); i++) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
+                levelData.clear();
+            }
+        }
+        for (int i = 1; i <= data.getMaxLevel(); i++) {
+            MasteryLevelData levelData = data.getDataForLevel(i);
+            if (levelData != null) {
                 levelData.generateEffects();
             }
         }
@@ -429,7 +485,13 @@ public abstract class ShipMastery {
         if (data == null) return;
         Iterator<Map.Entry<Integer, Boolean>> itr = data.activeLevels.entrySet().iterator();
         while (itr.hasNext()) {
-            if (itr.next().getKey() > getMaxMasteryLevel(spec)) {
+            Map.Entry<Integer, Boolean> next = itr.next();
+            if (next.getKey() > getMaxMasteryLevel(spec)) {
+                itr.remove();
+                continue;
+            }
+            // clear nonexistent "option 2" mastery selections
+            if (getMasteryEffects(spec, next.getKey(), true).isEmpty() && next.getValue()) {
                 itr.remove();
             }
         }

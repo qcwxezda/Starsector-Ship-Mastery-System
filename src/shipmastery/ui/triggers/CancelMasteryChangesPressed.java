@@ -12,6 +12,6 @@ public class CancelMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
-        masteryPanel.forceRefresh(false, false, true);
+        masteryPanel.forceRefresh(false, false, true, false);
     }
 }

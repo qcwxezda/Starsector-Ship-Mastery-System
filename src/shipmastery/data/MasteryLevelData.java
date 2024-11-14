@@ -25,7 +25,6 @@ public class MasteryLevelData {
         if (spec == null) {
             throw new RuntimeException(hullOrPresetName + " is a preset; can't generate masteries for a preset");
         }
-        clear();
         for (int i = 0; i < generatorsOption1.size(); i++) {
             effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false));
         }

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -28,7 +29,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
-    public static final int NUM_POINTS_GAINED = 5;
+    public static final int NUM_POINTS_GAINED = 10;
+    public static final String PREF_IN_FLEET_TAG = "~pref_in_fleet";
     private ShipHullSpecAPI spec;
 
     @Override
@@ -39,11 +41,6 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public boolean hasRightClickAction() {
-        return true;
-    }
-
-    @Override
-    public boolean shouldRemoveOnRightClickAction() {
         return true;
     }
 
@@ -174,11 +171,18 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     public static String pickShip(Set<String> tags, Random random) {
         Set<ShipHullSpecAPI> specs = new HashSet<>(Global.getSettings().getAllShipHullSpecs());
+        Set<ShipHullSpecAPI> playerFleetSpecs = new HashSet<>();
+        for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+            playerFleetSpecs.add(Utils.getRestoredHullSpec(fm.getHullSpec()));
+        }
 
         Iterator<ShipHullSpecAPI> iter = specs.iterator();
         while(iter.hasNext()) {
             ShipHullSpecAPI spec = iter.next();
             if (spec != Utils.getRestoredHullSpec(spec)) {
+                iter.remove();
+            }
+            else if (spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION)) {
                 iter.remove();
             }
             else if (spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.UNBOARDABLE)
@@ -195,6 +199,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             while (iter.hasNext()) {
                 ShipHullSpecAPI curr = iter.next();
                 for (String tag : tags) {
+                    if (tag.startsWith("~")) continue;
                     boolean not = tag.startsWith("!");
                     tag = not ? tag.substring(1) : tag;
                     boolean has = curr.hasTag(tag);
@@ -208,7 +213,11 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
         WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>(random);
         for (ShipHullSpecAPI spec : specs) {
-            picker.add(spec, spec.getRarity());
+            float weight = spec.getRarity();
+            if (playerFleetSpecs.contains(spec) && tags.contains(PREF_IN_FLEET_TAG)) {
+                weight *= specs.size();
+            }
+            picker.add(spec, weight);
         }
         ShipHullSpecAPI pick = picker.pick();
         if (pick == null) {
