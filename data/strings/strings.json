@@ -365,7 +365,7 @@
     "OperationsCenterBoost": "If %1$s is installed on the flagship, improves its effect by %2$s.",
     "ReactiveFortressShield": "Whenever %1$s blocks a projectile, there is a %2$s chance that a bolt dealing %3$s energy damage and %4$s EMP damage will strike a nearby enemy ship.",
     "ReactiveFortressShieldPost": "The system will target the nearest ship within %1$s su and within a %2$s degree arc of the hit angle. The range is boosted by ship system range modifiers.",
-    "EMPEmitterFluxBoost": "Whenever %1$s strikes a frigate-sized or larger ship, gain %2$s flux dissipation and dissipate an additional %3$s of hard flux while shield are up.",
+    "EMPEmitterFluxBoost": "Whenever %1$s strikes a frigate-sized or larger ship, gain %2$s flux dissipation and dissipate an additional %3$s of hard flux while shields are up.",
     "EMPEmitterFluxBoostPost": "This effect stacks up to %1$s times, for a maximum dissipation bonus of %2$s, and decays at the rate of %3$s per second.",
     "EMPEmitterFluxBoostTitle": "Flux Grid Overcharge",
     "EMPEmitterFluxBoostDesc1": "+%1$s hard flux dissipation",
