@@ -148,31 +148,31 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public void gainMPFromBattle(long xpGained, Set<FleetMemberAPI> deployed) {
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(deployed, false, true, true);
-        gainMP(xpGained, picker, false);
+        gainMP(xpGained, picker, false, false);
     }
 
     public void gainMPFromAutoPursuit(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true, false);
-        // 50% XP penalty for auto pursuits
-        gainMP(0.5f * xpGained, picker, false);
+        // 65% XP penalty for auto pursuits
+        gainMP(0.35f * xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, true, false, false);
-        gainMP(xpGained, picker, true);
+        gainMP(xpGained, picker, true, false);
     }
 
-    private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker, boolean isCivilian) {
+    private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker, boolean isCivilian, boolean isPursuit) {
         if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
         // Scale MP gains to number of ships deployed
-        if (!isCivilian) {
+        if (!isCivilian && !isPursuit) {
             if (uniques.size() == 1) xpPer *= 1.5f;
             else if (uniques.size() == 2) xpPer *= 1.3f;
             else if (uniques.size() == 3) xpPer *= 1.1f;
@@ -189,7 +189,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         }
         totalMPGained *= Settings.MP_GAIN_MULTIPLIER;
         float fractionalPart = totalMPGained - (int) totalMPGained;
-        if (random.nextFloat() > fractionalPart) {
+        if (random.nextFloat() < fractionalPart) {
             totalMPGained++;
         }
         for (int i = 0; i < totalMPGained; i++) {

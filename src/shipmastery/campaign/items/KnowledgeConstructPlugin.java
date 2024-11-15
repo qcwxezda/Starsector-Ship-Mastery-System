@@ -142,7 +142,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             ShipMastery.addPlayerMasteryPoints(spec, NUM_POINTS_GAINED);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             Global.getSector().getCampaignUI().getMessageDisplay()
-                  .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED, spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+                  .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
         }
     }

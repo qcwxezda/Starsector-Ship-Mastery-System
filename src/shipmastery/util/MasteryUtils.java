@@ -13,11 +13,11 @@ import java.util.*;
 public abstract class MasteryUtils {
 
     public static int getRerollMPCost(ShipHullSpecAPI spec) {
-        return 15;
+        return 20;
     }
 
     public static int getRerollSPCost(ShipHullSpecAPI spec) {
-        return 2;
+        return 1;
     }
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
