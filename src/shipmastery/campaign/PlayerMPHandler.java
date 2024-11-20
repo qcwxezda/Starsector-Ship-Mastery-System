@@ -27,7 +27,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
     public static final float XP_PER_HALF_MP = 3400f;
-    public static final float XP_PER_HALF_MP_CIV = 4200f;
+    public static final float XP_PER_HALF_MP_CIV = 2750f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 750f;
     public static final float MULT_PER_MP = 1.175f;

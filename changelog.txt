@@ -25,7 +25,6 @@ Other changes:
    - phase ships check for phasefield built-in hullmod
    - if a single ship hull satisfies multiple conditions, the priority order is hints -> tags -> built-in mods
 - Single actions that grant less than 750 XP no longer give MP to civilian ships
-- Reduced civilian ship MP gain by ~40%
 - Increased combat ship MP gain by ~15%
 - Reduced auto-pursuit MP gain by ~30%
 - Reduced base credits cost for building in S-mods by 25%
