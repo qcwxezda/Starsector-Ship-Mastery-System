@@ -311,7 +311,7 @@ public abstract class ShipMastery {
         }
         if (preset != null) {
             Pair<Integer, Map<Integer, MasteryLevelData>> presetLevelData = initMasteries(preset, presetChain);
-            maxLevel = maxLevel == null ? presetLevelData.one : Math.max(maxLevel, presetLevelData.one);
+            maxLevel = maxLevel == null ? presetLevelData.one : maxLevel;
             for (Map.Entry<Integer, MasteryLevelData> entry : presetLevelData.two.entrySet()) {
                 int level = entry.getKey();
                 MasteryLevelData levelData = entry.getValue();

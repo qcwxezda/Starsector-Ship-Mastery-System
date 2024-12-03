@@ -279,7 +279,14 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                         }
                         int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
                         if (mp > 0) {
-                            tooltipMaker.addPara(mp + " MP", padded ? 0f : 10f).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(
+                                    mp + " MP",
+                                    padded ? 0f : 10f).setAlignment(Alignment.LMID);
+                        }
+                        int enhanceCount = MasteryUtils.getEnhanceCount(spec);
+                        if (enhanceCount > 0) {
+                            String enhanceStr = "+" + enhanceCount;
+                            tooltipMaker.addPara(enhanceStr, 0f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.LMID);
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;

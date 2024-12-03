@@ -39,7 +39,7 @@
     "built_in_mod": "automated",
     "levels": {
       "8": {
-        "A": ["IgnoreNoBuildIn 1 neural_integrator", "BuiltInNeuralIntegrator"],
+        "A": ["SModCapacity", "IgnoreNoBuildIn 1 neural_integrator", "BuiltInNeuralIntegrator"],
         "B": "ScaleOtherMasteries"
       }
     }
@@ -58,7 +58,7 @@
     "built_in_mod": "phasefield",
     "levels": {
       "8": {
-        "A": "IgnoreNoBuildIn 1 phase_anchor",
+        "A": ["SModCapacity","IgnoreNoBuildIn 1 phase_anchor"],
         "B": "ScaleOtherMasteries"
       }
     }

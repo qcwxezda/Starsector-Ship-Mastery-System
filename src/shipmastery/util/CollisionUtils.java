@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class CollisionUtils {
     public static List<Vector2f> intersectSegmentCircle(Vector2f a, Vector2f b, Vector2f o, float r) {
@@ -103,7 +104,7 @@ public abstract class CollisionUtils {
         // Ignore phased ships
         if (entity instanceof ShipAPI && ((ShipAPI) entity).isPhased()) return false;
         // Always ignore source and source modules
-        if (entity instanceof ShipAPI && EngineUtils.getBaseShip((ShipAPI) entity).equals(EngineUtils.getBaseShip(source))) return false;
+        if (entity instanceof ShipAPI && Objects.equals(EngineUtils.getBaseShip((ShipAPI) entity), EngineUtils.getBaseShip(source))) return false;
         // Always ignore friendly fighters and missiles
         if (entity.getOwner() == owner && (o instanceof MissileAPI || EngineUtils.isFighter(entity))) return false;
         // Ignore all friendlies if friendly fire is off

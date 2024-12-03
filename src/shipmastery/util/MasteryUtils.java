@@ -1,5 +1,6 @@
 package shipmastery.util;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,7 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.ui.EnhanceMasteryDisplay;
 
 import java.util.*;
 
@@ -17,6 +19,26 @@ public abstract class MasteryUtils {
     }
 
     public static int getRerollSPCost(ShipHullSpecAPI spec) {
+        return 1;
+    }
+
+    public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
+        int count = getEnhanceCount(spec);
+        return count < EnhanceMasteryDisplay.MAX_ENHANCES ? 20 + 10*count : Integer.MAX_VALUE;
+    }
+
+    public static int getEnhanceCount(ShipHullSpecAPI spec) {
+        String baseId = Utils.getRestoredHullSpecId(spec);
+        //noinspection unchecked
+        Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(EnhanceMasteryDisplay.ENHANCE_MAP);
+        if (enhanceMap == null) {
+            return 0;
+        }
+        Integer enhanceCount = enhanceMap.get(baseId);
+        return enhanceCount == null ? 0 : enhanceCount;
+    }
+
+    public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
         return 1;
     }
 

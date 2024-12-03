@@ -31,7 +31,7 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
         int option = (int) args[1];
         if (option == 1) return;
 
-        ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
+        ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getRerollMPCost(spec));
         Global.getSector().getPlayerStats().spendStoryPoints(MasteryUtils.getRerollSPCost(spec), false, null, false, 0f, null);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                 Strings.MasteryPanel.rerollConfirm, Settings.MASTERY_COLOR);
