@@ -51,7 +51,7 @@ public class MasteryPanel {
     boolean isShowingMasteryPanel = false;
     boolean isInRestorableMarket = false;
     MasteryDisplay savedMasteryDisplay;
-    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, rerollMasteryDisplay;
+    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, rerollMasteryDisplay, enhanceMasteryDisplay;
     int currentMastery, maxMastery;
 
     public MasteryPanel(RefitHandler handler) {
@@ -318,15 +318,17 @@ public class MasteryPanel {
         return thisShipPanel;
     }
 
-    void showUpgradeOrConfirmation() {
+    void showUpgradeOrConfirmation(boolean canEnhance) {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 1f : 0f);
+            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", currentMastery >= maxMastery && canEnhance ? 1f : 0f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
         }
         else {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
         }
     }
@@ -352,13 +354,21 @@ public class MasteryPanel {
 
         rerollMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
         new RerollMasteryDisplay(this, baseHullSpec).create(rerollMasteryDisplay);
-        masteryPanel.addUIElement(rerollMasteryDisplay).belowMid(shipDisplay, 10f);
+        masteryPanel.addUIElement(rerollMasteryDisplay).belowMid(shipDisplay, 0f);
+
+        final boolean canEnhance = MasteryUtils.getEnhanceCount(baseHullSpec) < EnhanceMasteryDisplay.MAX_ENHANCES;
+
+        enhanceMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
+        new EnhanceMasteryDisplay(this, baseHullSpec).create(enhanceMasteryDisplay);
+        masteryPanel.addUIElement(enhanceMasteryDisplay).belowMid(shipDisplay, 65f);
 
         if (currentMastery >= maxMastery) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 1f);
+            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", canEnhance ? 1f : 0f);
         } else {
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 1f);
         }
 
@@ -381,7 +391,7 @@ public class MasteryPanel {
         MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, new Action() {
             @Override
             public void perform() {
-                showUpgradeOrConfirmation();
+                showUpgradeOrConfirmation(canEnhance);
             }
         });
         display.create(masteryDisplayTTM);

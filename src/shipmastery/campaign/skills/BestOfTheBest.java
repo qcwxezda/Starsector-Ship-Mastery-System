@@ -30,7 +30,7 @@ public class BestOfTheBest {
         }
     }
 
-    public static final float MASTERY_BONUS = 0.2f;
+    public static final float MASTERY_BONUS = 0.3f;
     public static class Level1 implements CharacterStatsSkillEffect {
         @Override
         public String getEffectDescription(float level) {

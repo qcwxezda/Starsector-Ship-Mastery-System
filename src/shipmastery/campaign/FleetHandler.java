@@ -58,11 +58,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  (those can be duplicated across multiple ships).
      *  Otherwise, returns a modified copy of that variant. */
     public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, FleetMemberAPI member) {
+        boolean variantIsRoot = Objects.equals(variant, root);
         if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
             variant = variant.clone();
             variant.setGoalVariant(false);
             variant.setSource(VariantSource.REFIT);
         }
+        if (variantIsRoot) root = variant;
         VariantLookup.addVariantInfo(variant, root, member);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway
         // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
