@@ -18,7 +18,7 @@ Added the ability to reroll mastery effects upon reaching max mastery level.
   always yield the same result.
 
 Added the ability to enhance mastery bonuses upon reaching max mastery level.
-- Costs 20 MP (+10 MP for each previous enhance) and 1 SP.
+- Costs 20 MP (+5 MP for each previous enhance) and 1 SP.
 - Increases mastery strength by 8%, can be done a maximum of 5 times.
 
 Other changes:

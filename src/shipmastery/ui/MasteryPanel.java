@@ -356,7 +356,7 @@ public class MasteryPanel {
         new RerollMasteryDisplay(this, baseHullSpec).create(rerollMasteryDisplay);
         masteryPanel.addUIElement(rerollMasteryDisplay).belowMid(shipDisplay, 0f);
 
-        final boolean canEnhance = MasteryUtils.getEnhanceCount(baseHullSpec) < EnhanceMasteryDisplay.MAX_ENHANCES;
+        final boolean canEnhance = MasteryUtils.getEnhanceCount(baseHullSpec) < Settings.MAX_ENHANCES;
 
         enhanceMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
         new EnhanceMasteryDisplay(this, baseHullSpec).create(enhanceMasteryDisplay);

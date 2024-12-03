@@ -21,8 +21,6 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
 
     public static final String ENHANCE_MAP = "$sms_EnhanceMap";
     public static final String ENHANCE_MODIFIER_ID = "sms_enhancement";
-    public static final float ENHANCE_AMOUNT = 0.08f;
-    public static final int MAX_ENHANCES = 5;
 
     public EnhanceMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;

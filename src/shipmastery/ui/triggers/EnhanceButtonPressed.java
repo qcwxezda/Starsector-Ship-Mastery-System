@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
-import shipmastery.ui.EnhanceMasteryDisplay;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
@@ -29,7 +28,7 @@ public class EnhanceButtonPressed extends ActionListener {
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
         int curSP = Global.getSector().getPlayerStats().getStoryPoints();
 
-        String amountStr = Utils.asPercent(EnhanceMasteryDisplay.ENHANCE_AMOUNT);
+        String amountStr = Utils.asPercent(Settings.ENHANCE_AMOUNT);
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 String.format(Strings.MasteryPanel.enhanceMasteryConfirmText,
                         amountStr,

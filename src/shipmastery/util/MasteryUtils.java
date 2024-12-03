@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.ui.EnhanceMasteryDisplay;
@@ -24,7 +25,7 @@ public abstract class MasteryUtils {
 
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
-        return count < EnhanceMasteryDisplay.MAX_ENHANCES ? 20 + 10*count : Integer.MAX_VALUE;
+        return count < Settings.MAX_ENHANCES ? 20 + 5*count : Integer.MAX_VALUE;
     }
 
     public static int getEnhanceCount(ShipHullSpecAPI spec) {
