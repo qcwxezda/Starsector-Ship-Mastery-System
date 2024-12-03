@@ -48,7 +48,7 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         enhanceMap.put(spec.getHullId(), enhanceCount);
 
         Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
-                .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceCount * EnhanceMasteryDisplay.ENHANCE_AMOUNT);
+                .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceCount * Settings.ENHANCE_AMOUNT);
         Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
 
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar

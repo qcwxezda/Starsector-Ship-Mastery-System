@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.io.IOException;
 
 public class Settings {
+    public static final float ENHANCE_AMOUNT = 0.08f;
+    public static final int MAX_ENHANCES = 5;
     public static Color MASTERY_COLOR = new Color(96, 192, 255);
     public static Color POSITIVE_HIGHLIGHT_COLOR = Misc.getHighlightColor();
     public static Color NEGATIVE_HIGHLIGHT_COLOR = Misc.getNegativeHighlightColor();
