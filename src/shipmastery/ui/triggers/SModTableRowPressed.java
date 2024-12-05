@@ -40,13 +40,33 @@ public class SModTableRowPressed extends TriggerableProxy {
         Object row = args[1];
         MasteryPanel.TableRowData rowData = (MasteryPanel.TableRowData) ReflectionUtils.invokeMethod(row, "getData");
 
+        ShipVariantAPI variant = module.getVariant();
+        ShipVariantAPI rootVariant = root.getVariant();
+        HullModSpecAPI spec = Global.getSettings().getHullModSpec(rowData.hullModSpecId);
+
+        final int cur = variant.getSMods().size();
+        int limit = SModUtils.getMaxSMods(module.getMutableStats());
+
+        // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
+        boolean isLogistic = spec.hasUITag("Logistics");
+        boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.getEnhanceCount(rootVariant.getHullSpec()) >= 3;
+        boolean hasLogistics = false;
+        for (String id : variant.getSMods()) {
+            if (Global.getSettings().getHullModSpec(id).hasUITag("Logistics")) {
+                hasLogistics = true;
+                break;
+            }
+        }
+        boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);
+        if (hasLogisticsBonus && hasLogistics) limit++;
+
         final ButtonAPI button = (ButtonAPI) ReflectionUtils.invokeMethod(row, "getButton");
         if (rowData.cantBuildInReason == null) {
             long newTime = System.currentTimeMillis();
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
-                if (rowData.isModular && module.getVariant().getSMods().size() >= SModUtils.getMaxSMods(module.getMutableStats()) && !Global.getSettings().isDevMode()) {
+                if (rowData.isModular && cur >= limit && !logisticDontTrack && !Global.getSettings().isDevMode()) {
                     Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
                 }
 
@@ -61,10 +81,7 @@ public class SModTableRowPressed extends TriggerableProxy {
             else if (newTime - lastClickTime > (int) (Settings.DOUBLE_CLICK_INTERVAL * 1000f)) {
                 button.unhighlight();
             } else {
-                ShipVariantAPI variant = module.getVariant();
-                ShipVariantAPI rootVariant = root.getVariant();
-                if (variant != null && rootVariant != null) {
-                    HullModSpecAPI spec = Global.getSettings().getHullModSpec(rowData.hullModSpecId);
+                if (rootVariant != null) {
                     String name = spec.getDisplayName();
                     if (SModUtils.isHullmodBuiltIn(spec, variant)) {
                         variant.getSModdedBuiltIns().add(rowData.hullModSpecId);
@@ -72,12 +89,12 @@ public class SModTableRowPressed extends TriggerableProxy {
                                 Strings.MasteryPanel.enhanceConfirm + name, Settings.MASTERY_COLOR);
                     }
                     else {
-                        final int cur = module.getVariant().getSMods().size(), limit = SModUtils.getMaxSMods(module.getMutableStats());
-                        if (module.getFleetMember() != null && cur >= limit) {
+                        if (module.getFleetMember() != null && cur >= limit && !logisticDontTrack) {
+                            final int finalLimit = limit;
                             DeferredActionPlugin.performLater(new Action() {
                                 @Override
                                 public void perform() {
-                                    SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit);
+                                    SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - finalLimit);
                                 }
                             }, 0f);
                         }

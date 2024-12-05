@@ -60,7 +60,7 @@
     "rerollMasteries": "Regenerate",
     "rerollConfirm": "Regenerated mastery effects",
     "enhanceMasteries": "Enhance",
-    "enhanceMasteriesConfirm": "Enhanced mastery effects",
+    "enhanceMasteriesConfirm": "Enhanced mastery",
     "levelUpMastery": "Advance",
     "upgradeConfirm": "Advanced mastery to level ",
     "unknownMastery": "Unlock previous tier to reveal",
@@ -76,8 +76,11 @@
     "modularHeader": "Modular?",
     "sModRefundTextCredits": "Refunded %1$s",
     "sModRefundTextMP": "Refunded %1$s MP",
-    "rerollMasteryConfirmText": "This will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets.\n\nThe following mastery levels will be affected:\n%1$s.\n\n Costs %2$s MP and %3$s SP. You have %4$s SP.",
-    "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\n Costs %2$s MP and %3$s SP. You have %4$s SP."
+    "rerollMasteryConfirmText": "This will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets.\n\nThe following mastery levels will be affected:\n%1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
+    "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
+    "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP. You have %3$s SP.",
+    "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
+    "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP."
   },
 
   "sms_descriptions": {

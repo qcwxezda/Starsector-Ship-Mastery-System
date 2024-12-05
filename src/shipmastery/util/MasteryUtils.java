@@ -40,6 +40,7 @@ public abstract class MasteryUtils {
     }
 
     public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return 0;
         return 1;
     }
 

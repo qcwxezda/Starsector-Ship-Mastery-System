@@ -28,9 +28,17 @@ public class EnhanceButtonPressed extends ActionListener {
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
         int curSP = Global.getSector().getPlayerStats().getStoryPoints();
 
+        boolean isLogisticsBoost = MasteryUtils.getEnhanceCount(spec) == 2;
+        String stringToUse = getConfirmString(spCost, isLogisticsBoost);
+
         String amountStr = Utils.asPercent(Settings.ENHANCE_AMOUNT);
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
-                String.format(Strings.MasteryPanel.enhanceMasteryConfirmText,
+                isLogisticsBoost ?
+                String.format(stringToUse,
+                        mpCost,
+                        spCost,
+                        curSP) :
+                String.format(stringToUse,
                         amountStr,
                         mpCost,
                         spCost,
@@ -44,8 +52,35 @@ public class EnhanceButtonPressed extends ActionListener {
 
         if (dialogData != null) {
             dialogData.textLabel.setAlignment(Alignment.TMID);
-            dialogData.textLabel.setHighlight(amountStr, mpCost + " MP", spCost + " SP", curSP + " SP");
-            dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+            if (isLogisticsBoost) {
+                dialogData.textLabel.setHighlight(mpCost + " MP", spCost + " SP", curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+            }
+            else {
+                dialogData.textLabel.setHighlight(amountStr, mpCost + " MP", spCost + " SP", curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+            }
         }
+    }
+
+    private static String getConfirmString(int spCost, boolean isLogisticsBoost) {
+        String stringToUse;
+        if (spCost > 0) {
+            if (isLogisticsBoost) {
+                stringToUse = Strings.MasteryPanel.enhanceMasteryConfirmText2;
+            }
+            else {
+                stringToUse = Strings.MasteryPanel.enhanceMasteryConfirmText;
+            }
+        }
+        else {
+            if (isLogisticsBoost) {
+                stringToUse = Strings.MasteryPanel.enhanceMasteryConfirmText2NoSP;
+            }
+            else {
+                stringToUse = Strings.MasteryPanel.enhanceMasteryConfirmTextNoSP;
+            }
+        }
+        return stringToUse;
     }
 }

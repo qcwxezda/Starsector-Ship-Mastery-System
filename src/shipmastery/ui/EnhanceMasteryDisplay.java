@@ -36,7 +36,7 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
         upgradeLabel.getPosition().setXAlignOffset(5f);
         int cost = MasteryUtils.getEnhanceMPCost(spec);
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
-        String buttonText = cost + " MP + " + spCost + " SP";
+        String buttonText = spCost > 0 ? cost + " MP + " + spCost + " SP" : cost + " MP";
         ButtonAPI enhanceButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);

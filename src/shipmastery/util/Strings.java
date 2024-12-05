@@ -81,6 +81,9 @@ public interface Strings {
         String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
         String rerollMasteryConfirmText = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmText");
         String enhanceMasteryConfirmText = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText");
+        String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
+        String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");
+        String enhanceMasteryConfirmText2NoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2NoSP");
     }
 
     interface Misc {

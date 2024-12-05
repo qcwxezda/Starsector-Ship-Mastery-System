@@ -53,6 +53,7 @@ public class MasteryPanel {
     MasteryDisplay savedMasteryDisplay;
     TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, rerollMasteryDisplay, enhanceMasteryDisplay;
     int currentMastery, maxMastery;
+    boolean hasLogisticBuiltIn = false, hasLogisticEnhanceBonus = false;
 
     public MasteryPanel(RefitHandler handler) {
 
@@ -105,7 +106,6 @@ public class MasteryPanel {
         }
 
         isInRestorableMarket = ReflectionUtils.isInRestorableMarket(ReflectionUtils.getCoreUI());
-
         if (isRefresh) {
             List<?> children = (List<?>) ReflectionUtils.invokeMethod(panel, "getChildrenNonCopy");
 
@@ -218,6 +218,15 @@ public class MasteryPanel {
 
     UIPanelAPI makeThisShipPanel(float width, float height) {
         ShipVariantAPI moduleVariant = module.getVariant();
+        hasLogisticBuiltIn = false;
+        hasLogisticEnhanceBonus = MasteryUtils.getEnhanceCount(root.getHullSpec()) >= 3;
+        for (String id : moduleVariant.getSMods()) {
+            if (Global.getSettings().getHullModSpec(id).hasUITag("Logistics")) {
+                hasLogisticBuiltIn = true;
+                break;
+            }
+        }
+
         List<HullModSpecAPI> applicableSpecs = new ArrayList<>();
         for (String id : moduleVariant.getHullSpec().getBuiltInMods()) {
             HullModSpecAPI spec = Global.getSettings().getHullModSpec(id);
@@ -295,6 +304,7 @@ public class MasteryPanel {
         float modularCountW = 200f, modularCountH = 40f;
         int nSMods = moduleVariant.getSMods().size();
         int sModLimit = Misc.getMaxPermanentMods(module);
+        if (hasLogisticBuiltIn && hasLogisticEnhanceBonus) sModLimit++;
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
         modularCountTTM.setParaOrbitronVeryLarge();
         LabelAPI modularCount = modularCountTTM.addPara(
@@ -302,7 +312,10 @@ public class MasteryPanel {
                 Misc.getBrightPlayerColor(), 0f);
         modularCount.setAlignment(Alignment.RMID);
         modularCount.setHighlight("" + nSMods, "" + sModLimit);
-        modularCount.setHighlightColor(Misc.getHighlightColor());
+        modularCount.setHighlightColors(Misc.getHighlightColor(),
+                hasLogisticBuiltIn && hasLogisticEnhanceBonus ?
+                        Misc.getStoryBrightColor() :
+                        Misc.getHighlightColor());
 
         float hintTextW = 200f, hintTextH = 40f;
         TooltipMakerAPI hintTextTTM = thisShipPanel.createUIElement(hintTextW, hintTextH, false);
@@ -441,7 +454,8 @@ public class MasteryPanel {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
         }
 
-        tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, nameColor),
+        boolean isExtraLogistics = modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag("Logistics");
+        tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, isExtraLogistics ? Misc.getStoryBrightColor() : nameColor),
                                 Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost,
                                 Alignment.MID, Settings.MASTERY_COLOR, label(mpCostStr, masteryColor), Alignment.MID,
                                 Misc.getHighlightColor(), label(creditsCostStr, creditsColor), Alignment.MID, nameColor,
@@ -498,8 +512,10 @@ public class MasteryPanel {
             return spec.getDisplayName() + Strings.MasteryPanel.cantBuildIn;
         }
         if (Global.getSettings().isDevMode()) return null;
+
+        int logisticsEnhanceBonus = hasLogisticEnhanceBonus && (hasLogisticBuiltIn || spec.hasUITag("Logistics")) ? 1 : 0;
         if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
-                + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() && modular) {
+                + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() + logisticsEnhanceBonus && modular) {
             return Strings.MasteryPanel.limitReached;
         }
 

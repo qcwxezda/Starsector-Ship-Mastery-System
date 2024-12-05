@@ -31,8 +31,9 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         int option = (int) args[1];
         if (option == 1) return;
 
+        int spCost = MasteryUtils.getEnhanceSPCost(spec);
         ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getEnhanceMPCost(spec));
-        Global.getSector().getPlayerStats().spendStoryPoints(MasteryUtils.getEnhanceSPCost(spec), false, null, false, 0f, null);
+        Global.getSector().getPlayerStats().spendStoryPoints(spCost, false, null, false, 0f, null);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                 Strings.MasteryPanel.enhanceMasteriesConfirm, Settings.MASTERY_COLOR);
 
@@ -47,9 +48,15 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         enhanceCount = enhanceCount == null ? 1 : enhanceCount + 1;
         enhanceMap.put(spec.getHullId(), enhanceCount);
 
+        // 3rd enhance does something different, so don't count it
+        if (enhanceCount >= 3) enhanceCount--;
         Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
                 .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceCount * Settings.ENHANCE_AMOUNT);
-        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+
+        if (spCost > 0)
+            Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+        else
+            Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
 
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
         // bay on ships that filled it

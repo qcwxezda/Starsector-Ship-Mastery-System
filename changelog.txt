@@ -1,3 +1,10 @@
+0.10.1
+----------
+- Enhancements now give +10% boost for +1, +2, +4, and +5, totaling 40% as before. The +3 boost now grants a conditional S-mod slot that is usable for logistic hullmods only.
+- Greatly reduced variance in MP gain when gaining large amounts of XP in a single action. This also slightly reduces MP gain from smaller battles and slightly increases MP gain from larger battles; the break even point is about 85000XP (without bonus XP).
+- Reduced prioritization of ship types with fewer MP when assigning MP gain.
+- Enhancing civilian ships no longer costs SP.
+
 0.10.0
 -----------
 
