@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ParticleEngine">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Particle Engine/jars/ParticleEngine.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
