@@ -80,6 +80,7 @@ public interface Strings {
         String sModRefundTextCredits = Utils.getString("sms_masteryPanel", "sModRefundTextCredits");
         String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
         String rerollMasteryConfirmText = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmText");
+        String rerollMasteryNotApplicableText = Utils.getString("sms_masteryPanel", "rerollMasteryNotApplicableText");
         String enhanceMasteryConfirmText = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText");
         String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
         String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");

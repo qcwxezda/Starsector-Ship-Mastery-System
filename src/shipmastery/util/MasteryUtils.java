@@ -15,6 +15,8 @@ import java.util.*;
 
 public abstract class MasteryUtils {
 
+    public static final int bonusLogisticSlotEnhanceNumber = 3;
+
     public static int getRerollMPCost(ShipHullSpecAPI spec) {
         return 20;
     }
@@ -39,6 +41,9 @@ public abstract class MasteryUtils {
         return enhanceCount == null ? 0 : enhanceCount;
     }
 
+    public static boolean hasBonusLogisticSlot(ShipHullSpecAPI spec) {
+        return getEnhanceCount(spec) >= bonusLogisticSlotEnhanceNumber;
+    }
     public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return 0;
         return 1;

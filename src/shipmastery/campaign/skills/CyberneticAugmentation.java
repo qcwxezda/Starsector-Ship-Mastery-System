@@ -11,6 +11,8 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
+import java.util.HashSet;
+import java.util.Set;
 
 /** Note: will just give a flat 5% OP bonus for characters that aren't the player, if for some reason
  *  an NPC manages to have this skill. */
@@ -92,13 +94,17 @@ public class CyberneticAugmentation {
     }
 
     public static void refreshPlayerMasteredCount() {
+        Set<String> countedBaseIds = new HashSet<>();
         int count = 0;
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
+            String baseId = spec.getBaseHullId();
+            if (countedBaseIds.contains(baseId)) continue;
 
             if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
                 count++;
+                countedBaseIds.add(baseId);
             }
         }
         Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().set(MASTERED_COUNT_KEY, count);

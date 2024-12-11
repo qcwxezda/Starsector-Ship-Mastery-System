@@ -19,6 +19,8 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public abstract class ShipMastery {
 
+    public static final String REROLL_SEQUENCE_MAP = "$sms_RerollMapV3";
+
     /**
      * Maps base hull spec ids to structure containing mastery data for that hull spec
      */
@@ -26,6 +28,7 @@ public abstract class ShipMastery {
 
     public static final String MASTERY_KEY = "shipmastery_Mastery";
     public static final String DEFAULT_PRESET_NAME = "_DEFAULT_";
+    public static final String PHASE_PRESET_NAME = "phase";
     public static final String HINT_OR_TAG_KEY = "hint_or_tag";
     public static final String BUILT_IN_MOD_KEY = "built_in_mod";
     private static SaveDataTable SAVE_DATA_TABLE;
@@ -36,6 +39,10 @@ public abstract class ShipMastery {
      */
     private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
     private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
+    private static final Map<String, Map<String, Float>> selectionWeightMap = new HashMap<>();
+
+    /** Keep track of all rerolled ships this save, as their mastery effects must be recreated on game load. */
+    private static final Set<String> rerolledSpecs = new HashSet<>();
 
     private static final Map<String, String> tagToDefaultPresetMap = new HashMap<>();
     private static final Map<String, String> builtInModToDefaultPresetMap = new HashMap<>();
@@ -43,6 +50,14 @@ public abstract class ShipMastery {
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
     private static JSONObject masteryAssignments;
     private static final Map<String, MasteryInfo> masteryInfoMap = new HashMap<>();
+
+    public static void addRerolledSpecThisSave(ShipHullSpecAPI spec) {
+        rerolledSpecs.add(spec.getHullId());
+    }
+
+    public static void clearRerolledSpecsThisSave() {
+        rerolledSpecs.clear();
+    }
 
     public static int getMaxMasteryLevel(ShipHullSpecAPI spec) {
         String id = Utils.getRestoredHullSpecId(spec);
@@ -96,12 +111,28 @@ public abstract class ShipMastery {
     }
 
     public static void addPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getRestoredHullSpecId(spec);
-        SaveData data = SAVE_DATA_TABLE.get(id);
-        if (data == null) {
-            SAVE_DATA_TABLE.put(id, new SaveData(amount, 0));
-        } else {
-            data.points += amount;
+        ShipHullSpecAPI restored = Utils.getRestoredHullSpec(spec);
+        String baseHullId = restored.getBaseHullId();
+        Set<String> allSkins = Utils.baseHullToAllSkinsMap.get(baseHullId);
+
+        String restoredId = restored.getHullId();
+        List<Pair<String, Float>> toAdd = new ArrayList<>();
+        toAdd.add(new Pair<>(restoredId, 1f));
+
+        for (String skinId : allSkins) {
+            if (Objects.equals(restoredId, skinId)) continue;
+            toAdd.add(new Pair<>(skinId, 0.75f));
+        }
+
+        // Gaining mastery points for a ship type also gains mastery points for all skins that share the same
+        // base ship; the other skins will gain half the mastery points.
+        for (Pair<String, Float> elem : toAdd) {
+            SaveData data = SAVE_DATA_TABLE.get(elem.one);
+            if (data == null) {
+                SAVE_DATA_TABLE.put(elem.one, new SaveData(amount * elem.two, 0));
+            } else {
+                data.points += amount * elem.two;
+            }
         }
     }
 
@@ -266,6 +297,9 @@ public abstract class ShipMastery {
             String preset = builtInModToDefaultPresetMap.get(mod.toLowerCase());
             if (preset != null) return preset;
         }
+        if (spec.isPhase() && !spec.isCivilianNonCarrier()) {
+            return PHASE_PRESET_NAME;
+        }
 
         return DEFAULT_PRESET_NAME;
     }
@@ -416,7 +450,7 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException {
+    public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         JSONArray masteryList =
                 Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
         for (int i = 0; i < masteryList.length(); i++) {
@@ -439,32 +473,65 @@ public abstract class ShipMastery {
             info.tags = new HashSet<>();
             info.tags.addAll(Arrays.asList(tags.trim().split("\\s+")));
             masteryInfoMap.put(id, info);
+
+            MasteryGenerator dummyGenerator = new MasteryGenerator(info,null);
+            Map<String, Float> weights = new HashMap<>();
+            for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+                if (spec != Utils.getRestoredHullSpec(spec)) continue;
+
+                MasteryEffect dummy = dummyGenerator.generateDontInit(spec, 1, 0, false);
+                Float weight = dummy.getSelectionWeight(spec);
+                weights.put(spec.getHullId(), weight);
+            }
+            selectionWeightMap.put(id, weights);
         }
     }
 
     public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
+        Set<Integer> levels = new HashSet<>();
         HullMasteryData data = masteryMap.get(spec.getHullId());
         for (int i = 1; i <= data.getMaxLevel(); i++) {
+            levels.add(i);
+        }
+        generateMasteries(spec, levels, 0);
+
+        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(REROLL_SEQUENCE_MAP);
+        if (rerollMap == null) return;
+        List<Set<Integer>> rerollSequence = rerollMap.get(spec.getHullId());
+        if (rerollSequence == null) return;
+        int seedPrefix = 1;
+        for (Set<Integer> levelSet : rerollSequence) {
+            generateMasteries(spec, levelSet, seedPrefix++);
+        }
+    }
+
+    public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix) throws InstantiationException, IllegalAccessException {
+        HullMasteryData data = masteryMap.get(spec.getHullId());
+        for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
                 levelData.clear();
             }
         }
-        for (int i = 1; i <= data.getMaxLevel(); i++) {
+        for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
-                levelData.generateEffects();
+                levelData.generateEffects(seedPrefix);
             }
         }
     }
 
-    public static void generateAndApplyMasteries(boolean shouldGenerate)
+    public static void generateAndApplyMasteries(boolean onlyGenerateRerolled)
             throws InstantiationException, IllegalAccessException, JSONException, IOException {
+
+        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(REROLL_SEQUENCE_MAP);
+        if (rerollMap == null) rerollMap = new HashMap<>();
+
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
 
-            if (shouldGenerate) {
+            if (!onlyGenerateRerolled || rerollMap.containsKey(spec.getHullId()) || rerolledSpecs.contains(spec.getHullId())) {
                 generateMasteries(spec);
             }
 
@@ -509,6 +576,13 @@ public abstract class ShipMastery {
 
     public static String getId(Class<?> effectClass) {
         return effectToIdMap.get(effectClass);
+    }
+
+    public static Float getCachedSelectionWeight(String masteryName, ShipHullSpecAPI spec) {
+        spec = Utils.getRestoredHullSpec(spec);
+        Map<String, Float> weights = selectionWeightMap.get(masteryName);
+        if (weights == null) return null;
+        return weights.get(spec.getHullId());
     }
 
     public static ShipStat getStatParams(String id) {

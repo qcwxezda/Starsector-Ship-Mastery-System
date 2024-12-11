@@ -15,7 +15,9 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RerollButtonPressed extends ActionListener {
     final MasteryPanel masteryPanel;
@@ -31,8 +33,14 @@ public class RerollButtonPressed extends ActionListener {
     @Override
     public void trigger(Object... args) {
 
-        List<String> affectedLevels = new ArrayList<>();
+        Set<Integer> inactiveLevels = new HashSet<>();
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
+            inactiveLevels.add(i);
+        }
+        inactiveLevels.removeAll(ShipMastery.getPlayerActiveMasteriesCopy(spec).keySet());
+
+        List<Integer> randomizedLevels = new ArrayList<>();
+        for (int i  = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
             List<MasteryGenerator> gens = new ArrayList<>(ShipMastery.getGenerators(spec, i, false));
             gens.addAll(ShipMastery.getGenerators(spec, i, true));
             boolean affected = false;
@@ -43,32 +51,46 @@ public class RerollButtonPressed extends ActionListener {
                 }
             }
             if (affected) {
-                affectedLevels.add("" + i);
+                randomizedLevels.add(i);
             }
         }
 
         int mpCost = MasteryUtils.getRerollMPCost(spec);
         int spCost = MasteryUtils.getRerollSPCost(spec);
-        String levelsJoined = Utils.joinStringList(affectedLevels);
+
+        String levelsJoinedA = Utils.joinList(randomizedLevels);
+        randomizedLevels.retainAll(inactiveLevels);
+        String levelsJoinedB = Utils.joinList(randomizedLevels);
+
         int curSP = Global.getSector().getPlayerStats().getStoryPoints();
+        boolean noEffect = randomizedLevels.isEmpty();
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
-                String.format(Strings.MasteryPanel.rerollMasteryConfirmText,
-                        levelsJoined,
+                noEffect ? String.format(Strings.MasteryPanel.rerollMasteryNotApplicableText, levelsJoinedA) :
+                        String.format(Strings.MasteryPanel.rerollMasteryConfirmText,
+                        levelsJoinedA,
+                        levelsJoinedB,
                         mpCost,
                         spCost,
                         curSP),
                 Strings.MasteryPanel.confirmText2,
                 Strings.MasteryPanel.cancelText,
                 500f,
-                250f,
+                noEffect ? 330f : 390f,
                 new ConfirmRerollMasteries(masteryPanel, spec)
         );
 
         if (dialogData != null) {
             dialogData.textLabel.setAlignment(Alignment.TMID);
-            dialogData.textLabel.setHighlight(levelsJoined, mpCost + " MP", spCost + " SP", curSP + " SP");
-            dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+            if (!noEffect) {
+                dialogData.textLabel.setHighlight(levelsJoinedA, levelsJoinedB, mpCost + " MP", spCost + " SP", curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.MASTERY_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+            }
+            else {
+                dialogData.textLabel.setHighlight(levelsJoinedA);
+                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR);
+                dialogData.confirmButton.setEnabled(false);
+            }
         }
     }
 }

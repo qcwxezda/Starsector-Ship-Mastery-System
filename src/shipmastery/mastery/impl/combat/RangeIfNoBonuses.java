@@ -87,6 +87,6 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
         if (spec.isBuiltInMod(HullMods.DEDICATED_TARGETING_CORE) || spec.isBuiltInMod(HullMods.INTEGRATED_TARGETING_UNIT) || spec.isBuiltInMod(HullMods.ADVANCED_TARGETING_CORE)) return null;
         // Works too well with DTC
         if (spec.isBuiltInMod(HullMods.DISTRIBUTED_FIRE_CONTROL)) return 0f;
-        return 1.5f;
+        return 1f;
     }
 }

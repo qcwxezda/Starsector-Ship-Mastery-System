@@ -85,7 +85,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
         if (!positiveAmounts.isEmpty()) {
             sb.append(Strings.Descriptions.StatIncrease);
-            sb.append(Utils.joinStringList(descriptionListPos));
+            sb.append(Utils.joinList(descriptionListPos));
             sb.append(".");
         }
 
@@ -94,7 +94,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
                 sb.append("\n");
             }
             sb.append(Strings.Descriptions.StatDecrease);
-            sb.append(Utils.joinStringList(descriptionListNeg));
+            sb.append(Utils.joinList(descriptionListNeg));
             sb.append(".");
         }
         return MasteryDescription.init(sb.toString()).params(params.toArray(new Object[0])).colors(colors.toArray(new Color[0]));

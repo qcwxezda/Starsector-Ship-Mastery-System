@@ -50,7 +50,7 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
             params[i] = name;
             i++;
         }
-        return Utils.joinStringList(names) + ".";
+        return Utils.joinList(names) + ".";
     }
 
     @Override

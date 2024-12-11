@@ -36,22 +36,22 @@ EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.Engine
 FighterHullmodPackage,2,combat unique,,0.15,shipmastery.mastery.impl.hullmods.FighterHullmodPackage
 FluxHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
 BuiltInHSA,2,combat unique,,150,shipmastery.mastery.impl.hullmods.BuiltInHSA
-AmmoHullmodPackage,2,combat unique,,0.4,shipmastery.mastery.impl.hullmods.AmmoHullmodPackage
+AmmoHullmodPackage,2,combat unique,,0.25,shipmastery.mastery.impl.hullmods.AmmoHullmodPackage
 BuiltInNeuralIntegrator,3,combat unique,,1,shipmastery.mastery.impl.hullmods.BuiltInNeuralIntegrator
 FluxByShieldUpkeep,3,negative_strength_allowed combat,1,0.3,shipmastery.mastery.impl.combat.FluxByShieldUpkeep
 RangeIfNoBonuses,2,negative_strength_allowed unique combat,1,0.3,shipmastery.mastery.impl.combat.RangeIfNoBonuses
 EmptyMountsReduceFlux,3,unique combat,,0.01,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
 # Doesn't work
 # MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
-DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.3,shipmastery.mastery.impl.combat.DPIfOnlyShip
-PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.PeakCRMultipleShips
+DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.2,shipmastery.mastery.impl.combat.DPIfOnlyShip
+PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,4,combat unique doesnt_affect_modules prefix_flagship_only,,7,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,4,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
 ZeroFluxResidue,3,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
 BallisticFireRateHullLevel,4,combat unique,,0.15,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
 BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
 SpeedHullLevel,4,combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.SpeedHullLevel
-HitAngleDR,3,combat unique negative_strength_allowed,,-0.25,shipmastery.mastery.impl.combat.HitAngleDR
+HitAngleDR,3,combat unique negative_strength_allowed,,-0.2,shipmastery.mastery.impl.combat.HitAngleDR
 TPCUpgrade,4,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,4,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
@@ -60,7 +60,7 @@ HullThresholdDR,4,combat unique,,4,shipmastery.mastery.impl.combat.HullThreshold
 BackArmorBoost,2,combat unique,,0.25,shipmastery.mastery.impl.combat.BackArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.25,shipmastery.mastery.impl.combat.VentingSpeedBoost
-RangeNotMoving,3,combat unique,,0.2,shipmastery.mastery.impl.combat.RangeNotMoving
+RangeNotMoving,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNotMoving
 SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 TimeFlowNearbyEnemies,4,combat unique,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
@@ -71,7 +71,7 @@ ExtraFighterPerWing,3,combat unique,1,0.5,shipmastery.mastery.impl.combat.ExtraF
 DamageTakenNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
 LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,60,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.PhasedCRDegradation
-RangeNoNearbyEnemies,3,combat unique,,0.125,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
+RangeNoNearbyEnemies,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
 EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
 RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.4,shipmastery.mastery.impl.combat.RandomBeamIntensity
 SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRegenOnKill

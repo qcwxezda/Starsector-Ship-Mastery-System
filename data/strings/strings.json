@@ -76,7 +76,8 @@
     "modularHeader": "Modular?",
     "sModRefundTextCredits": "Refunded %1$s",
     "sModRefundTextMP": "Refunded %1$s MP",
-    "rerollMasteryConfirmText": "This will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets.\n\nThe following mastery levels will be affected:\n%1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
+    "rerollMasteryConfirmText": "This will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets. Only mastery levels for which the player does not have an effect active will be regenerated. \n\nThe mastery levels containing randomized effects for this hull are: \n-  %1$s.\n\nOf those, the following levels are inactive and will be regenerated:\n-  %2$s.\n\nCosts %3$s MP and %4$s SP. You have %5$s SP.",
+    "rerollMasteryNotApplicableText": "This will generate a fresh set of mastery effects for all levels where the effect is randomized, affecting both player and NPC fleets. Only mastery levels for which the player does not have an effect active will be regenerated. \n\nThe mastery levels containing randomized effects for this hull are: \n-  %1$s. \n\nOf those, all are currently active and ineligible for regeneration.",
     "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
     "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP. You have %3$s SP.",
     "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
@@ -445,8 +446,8 @@
     "selectAShip": "Select a ship",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, up to a maximum of %5$s).",
     "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
-    "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. You have mastered %1$s ship type.",
-    "cyberneticAugmentationDesc3": "*Master a ship type by reaching its maximum mastery level. You have mastered %1$s ship types.",
+    "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s ship type.",
+    "cyberneticAugmentationDesc3": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s ship types.",
     "cyberneticAugmentationScope": "ship loadouts"
   }
 }

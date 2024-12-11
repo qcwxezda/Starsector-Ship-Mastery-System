@@ -23,6 +23,8 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         Settings.CLEAR_SMODS_REFUND_FRACTION = LunaSettings.getFloat(id, "sms_ClearSModsRefundFraction");
         Settings.MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_MPGainMultiplier");
         Settings.BUILD_IN_CREDITS_COST_MULTIPLIER = LunaSettings.getFloat(id, "sms_SModCreditCostMultiplier");
+        Settings.RANDOM_GENERATION_SEED = LunaSettings.getString(id, "sms_RandomMasterySeed");
+
         Settings.MASTERY_COLOR = LunaSettings.getColor(id, "sms_MasteryColor");
         Settings.POSITIVE_HIGHLIGHT_COLOR =
                 LunaSettings.getColor(id, "sms_PositiveHighlightColor");
@@ -31,6 +33,7 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         Settings.DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat(id, "sms_DoubleClickInterval");
         Settings.SHOW_MP_AND_LEVEL_IN_REFIT =
                 LunaSettings.getBoolean(id, "sms_RefitScreenDisplay");
+        Settings.ENABLE_COPY_SEED_BUTTON = LunaSettings.getBoolean(id, "sms_EnableCopySeedButton");
 
         Settings.NPC_MASTERY_DENSITY = LunaSettings.getFloat(id, "sms_DifficultyDensity");
         Settings.NPC_MASTERY_QUALITY = LunaSettings.getFloat(id, "sms_DifficultyQuality");

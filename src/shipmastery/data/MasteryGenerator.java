@@ -3,6 +3,7 @@ package shipmastery.data;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.impl.random.RandomMastery;
 import shipmastery.util.MasteryUtils;
 
 import java.util.Set;
@@ -40,9 +41,14 @@ public class MasteryGenerator {
         return effect;
     }
 
-    public MasteryEffect generate(ShipHullSpecAPI spec, int level, int index, boolean isOption2)
+    public MasteryEffect generate(ShipHullSpecAPI spec, int level, int index, boolean isOption2, int seedPrefix)
             throws InstantiationException, IllegalAccessException {
         MasteryEffect effect = generateDontInit(spec, level, index, isOption2);
+
+        if (effect instanceof RandomMastery) {
+            ((RandomMastery) effect).setSeedPrefix(seedPrefix);
+        }
+
         return effect.init(params);
     }
 }

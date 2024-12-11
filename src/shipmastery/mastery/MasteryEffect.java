@@ -61,6 +61,7 @@ public interface MasteryEffect {
      * Return {@code null} to indicate that this mastery is not applicable at all and should not be selected
      * even in random mode.
      * This is called before the effect is initialized -- therefore, before the effect's hull spec is set.
+     * It also should not depend on the effect's level or index, as the values are populated in a table preemptively using dummy effects.
      */
     Float getSelectionWeight(ShipHullSpecAPI spec);
 

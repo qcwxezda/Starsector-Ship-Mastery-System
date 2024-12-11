@@ -1,3 +1,21 @@
+0.10.2
+----------
+Mastery weights have been changed -- should be save-compatible, but your mastery effects will likely be different after the update.
+Additionally, the reroll system has seen significant under-the-hood changes. Reroll counts have been reset.
+
+- Whenever you gain mastery points for a ship type, you will now gain 75% of those points for all similar hulls. Two ship hulls are similar if one is a skin of the other, or if they are two different skins of the same base hull (e.g. Pegasus and Executor).
+    - Cybernetic augmentation has been modified to reflect this -- now two "ship types" are only distinct for the purposes of the OP bonus if they don't share the same base hull.
+- The "regenerate" option now only rerolls effects for levels where you don't have a mastery already selected. This should alleviate the rare occurrence that you reroll into something that can't be changed/removed, and also allows selective rerolling of specific levels.
+- The seed for random mastery generation can now be directly set in the settings. This is saved on game generation, and changing it requires a new game. Leave empty or whitespace only to use the sector seed, as before.
+- Adjusted some masteries.
+- S-Mod autofit option now properly detects and can apply the free logistics S-Mod slot from enhancing.
+- Fleet post-inflater no longer modifies ships generated for the player via custom production.
+- Fixed padding issue causing enhancement text to overlap repair bar in refit menu.
+- Fixed fighter/bomber OP cost masteries being generated for ships without modular bays.
+- Fixed fighter LPCs getting deleted when deactivating masteries that increase number of fighter bays; now they are added back to the inventory.
+- Removed extraneous debug console output.
+- Removed "phasefield" check for phase preset, instead checks spec.isPhase()
+
 0.10.1
 ----------
 - Enhancements now give +10% boost for +1, +2, +4, and +5, totaling 40% as before. The +3 boost now grants a conditional S-mod slot that is usable for logistic hullmods only.

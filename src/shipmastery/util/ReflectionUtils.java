@@ -180,7 +180,8 @@ public abstract class ReflectionUtils {
             return new GenericDialogData(
                     label,
                     (UIPanelAPI) invokeMethod(confirmDialog, "getInnerPanel"),
-                    (UIPanelAPI) confirmDialog);
+                    (UIPanelAPI) confirmDialog,
+                    confirmButton);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -191,11 +192,13 @@ public abstract class ReflectionUtils {
         public final LabelAPI textLabel;
         public final UIPanelAPI panel;
         public final UIPanelAPI dialog;
+        public final ButtonAPI confirmButton;
 
-        public GenericDialogData(LabelAPI label, UIPanelAPI panel, UIPanelAPI dialog) {
+        public GenericDialogData(LabelAPI label, UIPanelAPI panel, UIPanelAPI dialog, ButtonAPI confirmButton) {
             textLabel = label;
             this.panel = panel;
             this.dialog = dialog;
+            this.confirmButton = confirmButton;
         }
     }
 

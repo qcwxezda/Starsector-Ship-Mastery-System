@@ -44,6 +44,7 @@ public abstract class Utils {
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
+    public static final Map<String, Set<String>> baseHullToAllSkinsMap = new HashMap<>();
 
     /** Map from skill aptitudes to their elite icons */
     public static final Map<String, String> eliteSkillIcons = new HashMap<>();
@@ -75,6 +76,23 @@ public abstract class Utils {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             if (spec != getRestoredHullSpec(spec)) continue;
             allHullSpecIds.add(spec.getHullId());
+        }
+    }
+
+    static {
+        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+            ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
+            if (spec != restoredSpec) continue;
+
+            String id = spec.getHullId();
+            String baseId = spec.getBaseHullId();
+
+            Set<String> skins = baseHullToAllSkinsMap.get(baseId);
+            if (skins == null) {
+                skins = new HashSet<>();
+                baseHullToAllSkinsMap.put(baseId, skins);
+            }
+            skins.add(id);
         }
     }
 
@@ -350,19 +368,19 @@ public abstract class Utils {
         return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
     }
 
-    public static String joinStringList(List<String> strings) {
-        switch (strings.size()) {
+    public static String joinList(List<?> items) {
+        switch (items.size()) {
             case 0: return "";
-            case 1: return strings.get(0);
-            case 2: return strings.get(0) + " " + Strings.Misc.and + strings.get(1);
+            case 1: return items.get(0).toString();
+            case 2: return items.get(0).toString() + " " + Strings.Misc.and + items.get(1).toString();
             default:
                 StringBuilder join = new StringBuilder();
-                for (int i = 0; i < strings.size(); i++) {
-                    join.append(strings.get(i));
-                    if (i < strings.size() - 1) {
+                for (int i = 0; i < items.size(); i++) {
+                    join.append(items.get(i));
+                    if (i < items.size() - 1) {
                         join.append(", ");
                     }
-                    if (i == strings.size() - 2) {
+                    if (i == items.size() - 2) {
                         join.append(Strings.Misc.and);
                     }
                 }
@@ -375,21 +393,33 @@ public abstract class Utils {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 
-    public static boolean fixVariantInconsistencies(MutableShipStatsAPI stats) {
+    /** {@code isInPlayerFleet} distinguishes between ships actually in the player's fleet and the temporary ships
+     *  used for refit screen purposes. Only the latter should refund LPCs, etc. */
+    public static boolean fixVariantInconsistencies(MutableShipStatsAPI stats, boolean isInPlayerFleet) {
         ShipVariantAPI variant = stats.getVariant();
         List<String> wingIds = variant.getWings();
+        // TODO: is there a better way to handle this? This doesn't handle the cass where a wing is both modular and
+        // built-in on the same ship
+        Set<String> nonBuiltIn = new HashSet<>(variant.getNonBuiltInWings());
+        boolean changed = false;
         if (wingIds != null && !wingIds.isEmpty()) {
             for (int i = stats.getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
-                variant.setWingId(i, null);
+                if (variant.getWingId(i) != null) {
+                    if (!isInPlayerFleet && nonBuiltIn.contains(variant.getWingId(i))) {
+                        Global.getSector().getPlayerFleet().getCargo().addFighters(variant.getWingId(i), 1);
+                    }
+                    variant.setWingId(i, null);
+                    changed = true;
+                }
             }
         }
         if (clampOP(variant, Global.getSector().getPlayerStats())) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                     Strings.Misc.excessOPWarning,
                     Misc.getNegativeHighlightColor());
-            return true;
+            changed = true;
         }
-        return false;
+        return changed;
     }
 
     public static void fixPlayerFleetInconsistencies() {
@@ -399,7 +429,7 @@ public abstract class Utils {
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
             variant.addPermaMod("sms_masteryHandler");
-            Utils.fixVariantInconsistencies(fm.getStats());
+            Utils.fixVariantInconsistencies(fm.getStats(), true);
         }
     }
 

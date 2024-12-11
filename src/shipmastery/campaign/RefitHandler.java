@@ -282,11 +282,12 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                             tooltipMaker.addPara(
                                     mp + " MP",
                                     padded ? 0f : 10f).setAlignment(Alignment.LMID);
+                            padded = true;
                         }
                         int enhanceCount = MasteryUtils.getEnhanceCount(spec);
                         if (enhanceCount > 0) {
                             String enhanceStr = "+" + enhanceCount;
-                            tooltipMaker.addPara(enhanceStr, 0f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.LMID);
+                            tooltipMaker.addPara(enhanceStr, padded ? 0f : 10f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.LMID);
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;
@@ -400,7 +401,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             // This call does nothing except set variant.hasOpAffectingMods = null, which
             // triggers the variant to refresh its statsForOpCosts
             module.getVariant().addPermaMod("sms_masteryHandler");
-            if (Utils.fixVariantInconsistencies(module.getMutableStats())) {
+            if (Utils.fixVariantInconsistencies(module.getMutableStats(), false)) {
                 syncRefitScreenWithVariant(false);
             }
         }

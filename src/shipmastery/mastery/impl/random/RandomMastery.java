@@ -14,11 +14,12 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
-import shipmastery.ui.RerollMasteryDisplay;
 
 import java.util.*;
 
 public class RandomMastery extends BaseMasteryEffect {
+
+    int seedPrefix = 0;
 
     @Override
     public MasteryEffect postInit(String... args) {
@@ -72,11 +73,8 @@ public class RandomMastery extends BaseMasteryEffect {
             if (uniqueDontRepeat.contains(info.effectClass)) continue;
             if (info.tier > maxTier) continue;
             if (info.tags.contains(MasteryTags.COMBAT) && spec.isCivilianNonCarrier()) continue;
-            // TODO: optimize this by storing selection weights in a map somewhere
-            MasteryGenerator dummyGenerator = new MasteryGenerator(info,null);
-            MasteryEffect dummy = dummyGenerator.generateDontInit(spec, level, index, false);
-            Float weight = dummy.getSelectionWeight(spec);
 
+            Float weight = ShipMastery.getCachedSelectionWeight(str, spec);
             boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier masteries, if they are applicable
@@ -96,7 +94,7 @@ public class RandomMastery extends BaseMasteryEffect {
             // Fallback if there's literally nothing to pick
             if (effectPicker.isEmpty()) {
                 MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2());
+                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0);
             }
 
             MasteryInfo selected = effectPicker.pickAndRemove();
@@ -114,30 +112,21 @@ public class RandomMastery extends BaseMasteryEffect {
         return effect;
     }
 
+    public void setSeedPrefix(int prefix) {
+        seedPrefix = prefix;
+    }
+
+    private String getSectorSeed() {
+        String seed = (String) Global.getSector().getPersistentData().get(ModPlugin.GENERATION_SEED_KEY);
+        return seed == null ? Global.getSector().getPlayerPerson().getId() : seed;
+    }
+
     long makeSeed() {
-        //noinspection unchecked
-        Map<String, Integer> rerollMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(RerollMasteryDisplay.REROLL_MAP);
-        Integer rerollCount;
-        if (rerollMap == null) rerollCount = 0;
-        else {
-            rerollCount = rerollMap.get(getHullSpec().getHullId());
-            if (rerollCount == null) rerollCount = 0;
-        }
-
-        if ("wolf".equals(getHullSpec().getHullId())) {
-            System.out.println(((rerollCount*17) + "_" +
-                    getId() + "_" +
-                    level + "_" +
-                    index + "_" +
-                    isOption2() + "_" +
-                    getHullSpec().getHullId() + "_" + Global.getSector().getPlayerPerson().getId()).hashCode());
-        }
-
-        return ((rerollCount*17) + "_" +
+        return ((seedPrefix*17) + "_" +
                 getId() + "_" +
                 level + "_" +
                 index + "_" +
                 isOption2() + "_" +
-                getHullSpec().getHullId() + "_" + Global.getSector().getPlayerPerson().getId()).hashCode();
+                getHullSpec().getHullId() + "_" + getSectorSeed()).hashCode();
     }
 }

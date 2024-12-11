@@ -22,11 +22,11 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
     public static final float[] MAX_RANGE = new float[] {500f, 600f, 800f, 1000f};
 
     float getIncreaseRate(ShipAPI ship) {
-        return getStrength(ship) / 10f;
+        return getStrength(ship) / 5f;
     }
 
     float getDecayRate(ShipAPI ship) {
-        return getStrength(ship) / 10f;
+        return getStrength(ship) / 20f;
     }
 
     @Override
@@ -117,6 +117,6 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return 1f + Utils.hullSizeToInt(spec.getHullSize());
+        return 1f;
     }
 }

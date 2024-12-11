@@ -67,9 +67,8 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
 
     public float adjustForHullSize(float value, ShipAPI.HullSize hullSize) {
         switch (hullSize) {
-            case FRIGATE: value *= 0.25f; break;
+            case FRIGATE: value *= 0.5f; break;
             case DESTROYER: value *= 0.5f; break;
-            case CRUISER: value *= 0.75f; break;
         }
         return value;
     }

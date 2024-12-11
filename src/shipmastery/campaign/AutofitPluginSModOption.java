@@ -60,13 +60,17 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         });
     }
 
-    private boolean addSModIfPossible(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate) {
-        return useSP ? addSModIfPossibleUseSP(hullmod, variant, delegate) : addSModIfPossibleUseMP(hullmod, variant, delegate);
+    private boolean addSModIfPossible(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
+        return useSP ? addSModIfPossibleUseSP(hullmod, variant, delegate, hasLogisticsSMod)
+                : addSModIfPossibleUseMP(hullmod, variant, delegate, hasLogisticsSMod);
     }
 
-    private boolean addSModIfPossibleUseSP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate) {
+    private boolean addSModIfPossibleUseSP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
         ShipAPI ship = delegate.getShip();
         int sModLimit = Misc.getMaxPermanentMods(ship);
+        if (MasteryUtils.hasBonusLogisticSlot(rootSpec) && (hasLogisticsSMod || Global.getSettings().getHullModSpec(hullmod).hasUITag("Logistics"))) {
+            sModLimit++;
+        }
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         int playerSP = playerStats.getStoryPoints();
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
@@ -85,10 +89,13 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         return false;
     }
 
-    private boolean addSModIfPossibleUseMP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate) {
+    private boolean addSModIfPossibleUseMP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
         ShipAPI ship = delegate.getShip();
         int sModLimit = Misc.getMaxPermanentMods(ship);
         HullModSpecAPI modSpec = Global.getSettings().getHullModSpec(hullmod);
+        if (MasteryUtils.hasBonusLogisticSlot(rootSpec) && (hasLogisticsSMod || modSpec.hasUITag("Logistics"))) {
+            sModLimit++;
+        }
         float mpCost = SModUtils.getMPCost(modSpec, ship);
         float creditsCost = SModUtils.getCreditsCost(modSpec, ship);
         float playerMP = ShipMastery.getPlayerMasteryPoints(rootSpec);
@@ -121,7 +128,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         sortByCost(enhanceable, ship);
         for (String sMod : enhanceable) {
             if (!current.getSModdedBuiltIns().contains(sMod)) {
-                if (addSModIfPossible(sMod, current, delegate)) {
+                if (addSModIfPossible(sMod, current, delegate, false)) {
                     HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
@@ -130,18 +137,30 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 } else break;
             }
         }
+
         // Modular s-mods
         List<String> sMods = new ArrayList<>(target.getSMods());
+        boolean hasLogisticsSMod = false;
         sortByCost(sMods, ship);
+        for (String sMod : current.getSMods()) {
+            HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
+            if (hullModSpec.hasUITag("Logistics")) {
+                hasLogisticsSMod = true;
+                break;
+            }
+        }
         for (String sMod : sMods) {
+            HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
             if (!current.getSMods().contains(sMod)) {
-                if (addSModIfPossible(sMod, current, delegate)) {
-                    HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
+                if (addSModIfPossible(sMod, current, delegate, hasLogisticsSMod)) {
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
                     sModMPCostMap.put(sMod, SModUtils.getMPCost(hullModSpec, ship));
                     modified = true;
-                } else break;
+                    if (hullModSpec.hasUITag("Logistics")) {
+                        hasLogisticsSMod = true;
+                    }
+                }
             }
         }
         return modified;

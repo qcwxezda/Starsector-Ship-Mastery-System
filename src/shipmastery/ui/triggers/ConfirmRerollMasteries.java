@@ -5,15 +5,17 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.plugin.ModPlugin;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.ui.RerollMasteryDisplay;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ConfirmRerollMasteries extends DialogDismissedListener{
 
@@ -31,6 +33,15 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
         int option = (int) args[1];
         if (option == 1) return;
 
+        Set<Integer> levels = new HashSet<>();
+        for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
+            levels.add(i);
+        }
+        levels.removeAll(ShipMastery.getPlayerActiveMasteriesCopy(spec).keySet());
+        if (levels.isEmpty()) {
+            return;
+        }
+
         ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getRerollMPCost(spec));
         Global.getSector().getPlayerStats().spendStoryPoints(MasteryUtils.getRerollSPCost(spec), false, null, false, 0f, null);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
@@ -38,15 +49,19 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
 
         // Increment reroll count
         //noinspection unchecked
-        Map<String, Integer> rerollMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(RerollMasteryDisplay.REROLL_MAP);
+        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
         if (rerollMap == null) {
             rerollMap = new HashMap<>();
-            Global.getSector().getPersistentData().put(RerollMasteryDisplay.REROLL_MAP, rerollMap);
+            Global.getSector().getPersistentData().put(ShipMastery.REROLL_SEQUENCE_MAP, rerollMap);
         }
-        Integer rerollCount = rerollMap.get(spec.getHullId());
-        rerollCount = rerollCount == null ? 1 : rerollCount + 1;
-        rerollMap.put(spec.getHullId(), rerollCount);
-        ModPlugin.setRerolledMasteriesThisSave();
+        List<Set<Integer>> rerollSequence = rerollMap.get(spec.getHullId());
+        if (rerollSequence == null) {
+            rerollSequence = new LinkedList<>();
+            rerollMap.put(spec.getHullId(), rerollSequence);
+        }
+
+        rerollSequence.add(levels);
+        ShipMastery.addRerolledSpecThisSave(spec);
 
         try {
             MasteryUtils.applyAllActiveMasteryEffects(
@@ -56,7 +71,7 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
                             effect.onDeactivate(Global.getSector().getPlayerPerson());
                         }
                     });
-            ShipMastery.generateMasteries(spec);
+            ShipMastery.generateMasteries(spec, levels, rerollSequence.size());
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
                         @Override

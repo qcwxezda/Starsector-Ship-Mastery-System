@@ -28,7 +28,7 @@ public class EnhanceButtonPressed extends ActionListener {
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
         int curSP = Global.getSector().getPlayerStats().getStoryPoints();
 
-        boolean isLogisticsBoost = MasteryUtils.getEnhanceCount(spec) == 2;
+        boolean isLogisticsBoost = MasteryUtils.getEnhanceCount(spec) == MasteryUtils.bonusLogisticSlotEnhanceNumber - 1;
         String stringToUse = getConfirmString(spCost, isLogisticsBoost);
 
         String amountStr = Utils.asPercent(Settings.ENHANCE_AMOUNT);

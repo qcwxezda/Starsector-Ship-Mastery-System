@@ -49,7 +49,7 @@ public class SModTableRowPressed extends TriggerableProxy {
 
         // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
         boolean isLogistic = spec.hasUITag("Logistics");
-        boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.getEnhanceCount(rootVariant.getHullSpec()) >= 3;
+        boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.hasBonusLogisticSlot(rootVariant.getHullSpec());
         boolean hasLogistics = false;
         for (String id : variant.getSMods()) {
             if (Global.getSettings().getHullModSpec(id).hasUITag("Logistics")) {

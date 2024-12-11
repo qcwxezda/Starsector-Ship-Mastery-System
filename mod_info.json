@@ -2,7 +2,7 @@
     "id": "shipmasterysystem",
     "name": "Ship Mastery System",
     "author": "qcwxezda",
-    "version": {"major":0, "minor":10, "patch":1},
+    "version": {"major":0, "minor":10, "patch":2},
     "dependencies":[
         {"id":"particleengine", "name":"Particle Engine"}
     ],

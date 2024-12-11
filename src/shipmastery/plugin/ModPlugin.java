@@ -34,16 +34,12 @@ public class ModPlugin extends BaseModPlugin {
     private static String lastSaveId = null;
     private static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
+    public static final String GENERATION_SEED_KEY = "$sms_MasteryGenerationSeed";
     public static final ReflectionEnabledClassLoader classLoader;
-    public static boolean rerolledMasteriesThisSave = false;
 
     static {
         URL url = ModPlugin.class.getProtectionDomain().getCodeSource().getLocation();
         classLoader = new ReflectionEnabledClassLoader(url, ModPlugin.class.getClassLoader());
-    }
-
-    public static void setRerolledMasteriesThisSave() {
-        rerolledMasteriesThisSave = true;
     }
 
     @Override
@@ -56,6 +52,11 @@ public class ModPlugin extends BaseModPlugin {
         else {
             Settings.loadSettingsFromJson();
         }
+    }
+
+    @Override
+    public void afterGameSave() {
+        ShipMastery.clearRerolledSpecsThisSave();
     }
 
     @Override
@@ -75,6 +76,18 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         boolean randomMode = (boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
+        if (newGame) {
+            String seed = Settings.RANDOM_GENERATION_SEED;
+            if (seed == null || seed.trim().isEmpty()) {
+                seed = Global.getSector().getPlayerPerson().getId();
+            }
+            Global.getSector().getPersistentData().put(GENERATION_SEED_KEY, seed);
+        } else {
+            String savedKey = (String) Global.getSector().getPersistentData().get(GENERATION_SEED_KEY);
+            if (savedKey == null) {
+                Global.getSector().getPersistentData().put(GENERATION_SEED_KEY, Global.getSector().getPlayerPerson().getId());
+            }
+        }
 
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
@@ -101,11 +114,10 @@ public class ModPlugin extends BaseModPlugin {
                 if (!id.equals(lastSaveId)) {
                     lastSaveId = id;
                     ShipMastery.initMasteries(randomMode);
-                    ShipMastery.generateAndApplyMasteries(true);
+                    ShipMastery.generateAndApplyMasteries(false);
                 } else {
-                    ShipMastery.generateAndApplyMasteries(rerolledMasteriesThisSave);
+                    ShipMastery.generateAndApplyMasteries(true);
                 }
-                rerolledMasteriesThisSave = false;
             }
             catch (Exception e) {
                 throw new RuntimeException(e);

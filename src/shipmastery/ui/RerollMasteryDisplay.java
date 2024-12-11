@@ -19,8 +19,6 @@ public class RerollMasteryDisplay implements CustomUIElement {
     final ShipHullSpecAPI spec;
     final MasteryPanel panel;
 
-    public static final String REROLL_MAP = "$sms_RerollMap";
-
     public RerollMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;
         this.panel = panel;

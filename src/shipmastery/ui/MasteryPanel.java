@@ -219,7 +219,7 @@ public class MasteryPanel {
     UIPanelAPI makeThisShipPanel(float width, float height) {
         ShipVariantAPI moduleVariant = module.getVariant();
         hasLogisticBuiltIn = false;
-        hasLogisticEnhanceBonus = MasteryUtils.getEnhanceCount(root.getHullSpec()) >= 3;
+        hasLogisticEnhanceBonus = MasteryUtils.hasBonusLogisticSlot(root.getHullSpec());
         for (String id : moduleVariant.getSMods()) {
             if (Global.getSettings().getHullModSpec(id).hasUITag("Logistics")) {
                 hasLogisticBuiltIn = true;
@@ -356,6 +356,13 @@ public class MasteryPanel {
         maxMastery = ShipMastery.getMaxMasteryLevel(baseHullSpec);
 
         CustomPanelAPI masteryPanel = Global.getSettings().createCustom(width, height, null);
+
+        if (Settings.ENABLE_COPY_SEED_BUTTON) {
+            TooltipMakerAPI copySeedButton = masteryPanel.createUIElement(100f, 50f, false);
+            new CopySeedButton().create(copySeedButton);
+            masteryPanel.addUIElement(copySeedButton).inTL(15f, -45f);
+        }
+
         float shipDisplaySize = 250f;
         TooltipMakerAPI shipDisplay = masteryPanel.createUIElement(shipDisplaySize, shipDisplaySize + 25f, false);
         new ShipDisplay(baseHullSpec, shipDisplaySize).create(shipDisplay);

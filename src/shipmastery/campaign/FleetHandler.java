@@ -85,7 +85,10 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     public static final float EXISTING_HULLMOD_WEIGHT = 3f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
     @Override
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
+        // Ignore custom production "fleets", they will have the player as their commander
         PersonAPI commander = fleet.getCommander();
+        if (commander.isPlayer()) return;
+
         CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
         Random random = new Random(commander.getId().hashCode());
         auto.setRandom(random);
