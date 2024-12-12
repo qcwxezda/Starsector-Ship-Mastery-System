@@ -38,6 +38,18 @@ public class Settings {
 
     /** Chance for each available s-mod slot to be filled is equal to the fleet's quality plus this bonus. */
     public static Float NPC_SMOD_QUALITY_MOD;
+
+    /** Hard caps for progression purposes */
+    public static Float NPC_MASTERY_DENSITY_CAP;
+    public static Float NPC_MASTERY_QUALITY_CAP;
+    public static Integer  NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP;
+    public static Integer NPC_MASTERY_FLAGSHIP_BONUS_CAP;
+    public static Float NPC_SMOD_QUALITY_MOD_CAP;
+
+    public static Boolean NPC_PROGRESSION_ENABLED;
+    /** How long it takes for NPC mastery stats to reach cap, measured in total player MP gain across all combat ships*/
+    public static Integer NPC_TOTAL_PROGRESSION_MP;
+
     public static Boolean SHOW_MP_AND_LEVEL_IN_REFIT;
 
     /** If the player loses a battle, ships that would otherwise be recoverable are spawned as derelicts */
@@ -57,6 +69,15 @@ public class Settings {
         NPC_MASTERY_MAX_LEVEL_MODIFIER = json.getInt("npcMasteryMaxLevelModifier");
         NPC_MASTERY_FLAGSHIP_BONUS = json.getInt("npcMasteryFlagshipBonus");
         NPC_SMOD_QUALITY_MOD = (float) json.getDouble("npcSmodQualityMod");
+        NPC_MASTERY_DENSITY_CAP = (float) json.getDouble("npcMasteryDensityCap");
+        NPC_MASTERY_QUALITY_CAP = (float) json.getDouble("npcMasteryQualityCap");
+        NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP = json.getInt("npcMasteryMaxLevelModifierCap");
+        NPC_MASTERY_FLAGSHIP_BONUS_CAP = json.getInt("npcMasteryFlagshipBonusCap");
+        NPC_SMOD_QUALITY_MOD_CAP = (float) json.getDouble("npcSmodQualityModCap");
+
+        NPC_PROGRESSION_ENABLED = json.getBoolean("progressionEnabled");
+        NPC_TOTAL_PROGRESSION_MP = json.getInt("npcTotalProgressionMP");
+
         SHOW_MP_AND_LEVEL_IN_REFIT = json.getBoolean("showMpAndLevelInRefit");
         ENABLE_PLAYER_SHIP_GRAVEYARDS = json.getBoolean("enablePlayerShipGraveyards");
         ENABLE_RANDOM_MODE = json.getBoolean("enableRandomMode");

@@ -21,12 +21,10 @@ import java.util.Set;
 
 public class RerollButtonPressed extends ActionListener {
     final MasteryPanel masteryPanel;
-    final String defaultText;
     final ShipHullSpecAPI spec;
 
-    public RerollButtonPressed(MasteryPanel masteryPanel, String defaultText, ShipHullSpecAPI spec) {
+    public RerollButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
-        this.defaultText = defaultText;
         this.spec = spec;
     }
 

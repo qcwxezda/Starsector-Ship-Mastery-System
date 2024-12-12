@@ -17,7 +17,7 @@ public abstract class AdditiveMasteryEffect extends BaseMasteryEffect {
         return truncateExceptNearZero(f);
     }
 
-    public final int truncateExceptNearZero(float f) {
+    public static int truncateExceptNearZero(float f) {
         if (f > 0 && f < 1) return 1;
         if (f < 0 && f > -1) return -1;
         return (int) f;

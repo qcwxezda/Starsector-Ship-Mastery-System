@@ -7,11 +7,21 @@
 
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
-  "npcMasteryDensity": 0.65,
-  "npcMasteryQuality": 0.5,
+
+  "npcMasteryDensity": 0.4,
+  "npcMasteryQuality": 0.3,
   "npcMasteryMaxLevelModifier": -2,
-  "npcMasteryFlagshipBonus": 4,
+  "npcMasteryFlagshipBonus": 3,
   "npcSmodQualityMod": -0.6,
+
+  "npcMasteryDensityCap": 0.9,
+  "npcMasteryQualityCap": 0.6,
+  "npcMasteryMaxLevelModifierCap": 2,
+  "npcMasteryFlagshipBonusCap": 6,
+  "npcSmodQualityModCap": -0.25,
+
+  "progressionEnabled": true,
+  "npcTotalProgressionMP": 2500,
 
   # Will not undo skill changes due to modding API limitations. This must be done manually; see LunaLib settings
   # for instructions.

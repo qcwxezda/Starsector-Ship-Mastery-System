@@ -50,15 +50,9 @@ public class SModTableRowPressed extends TriggerableProxy {
         // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
         boolean isLogistic = spec.hasUITag("Logistics");
         boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.hasBonusLogisticSlot(rootVariant.getHullSpec());
-        boolean hasLogistics = false;
-        for (String id : variant.getSMods()) {
-            if (Global.getSettings().getHullModSpec(id).hasUITag("Logistics")) {
-                hasLogistics = true;
-                break;
-            }
-        }
+        boolean hasLogistics = SModUtils.hasLogisticSMod(variant);
         boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);
-        if (hasLogisticsBonus && hasLogistics) limit++;
+        //if (hasLogisticsBonus && hasLogistics) limit++;
 
         final ButtonAPI button = (ButtonAPI) ReflectionUtils.invokeMethod(row, "getButton");
         if (rowData.cantBuildInReason == null) {

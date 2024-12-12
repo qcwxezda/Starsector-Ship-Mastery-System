@@ -93,6 +93,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         Random random = new Random(commander.getId().hashCode());
         auto.setRandom(random);
 
+        float progression = PlayerMPHandler.getTotalCombatMP() / Settings.NPC_TOTAL_PROGRESSION_MP;
+
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
             if (fm.isStation()) continue;
             ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
@@ -160,7 +162,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
                     for (int i = 0; i < sModsToAdd; i++) {
                         if (picker.isEmpty()) break;
-                        if (random.nextFloat() > Settings.NPC_SMOD_QUALITY_MOD + inflater.getQuality()) continue;
+                        if (random.nextFloat() > getNPCSModQualityMod(progression) + inflater.getQuality()) continue;
                         variant.addPermaMod(picker.pickAndRemove(), true);
                     }
                 }
@@ -242,6 +244,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         NavigableMap<Integer, Boolean> cachedMasteries = getCachedNPCMasteries(commander, spec);
         if (cachedMasteries != null) return cachedMasteries;
 
+        float progression = PlayerMPHandler.getTotalCombatMP() / Settings.NPC_TOTAL_PROGRESSION_MP;
+
         spec = Utils.getRestoredHullSpec(spec);
         NavigableMap<Integer, Boolean> map = new TreeMap<>();
         if (commander.getMemoryWithoutUpdate().contains(CUSTOM_MASTERIES_KEY)) {
@@ -255,19 +259,19 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
 
-        int maxLevel = commander.getStats().getLevel() + Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER;
+        int maxLevel = commander.getStats().getLevel() + getNPCMaxLevelModifier(progression);
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {
-            maxLevel += Settings.NPC_MASTERY_FLAGSHIP_BONUS;
+            maxLevel += getNPCFlagshipBonus(progression);
         }
-        else if (random.nextFloat() > Settings.NPC_MASTERY_DENSITY) return map;
+        else if (random.nextFloat() > getNPCMasteryDensity(progression)) return map;
 
 
         int level = 0, cap = ShipMastery.getMaxMasteryLevel(spec);
 
         for (int i = 0; i < maxLevel; i++) {
-            if (i == 0 || random.nextFloat() <= Settings.NPC_MASTERY_QUALITY) {
+            if (i == 0 || random.nextFloat() <= getNPCMasteryQuality(progression)) {
                 level++;
                 if (level > cap) break;
 
@@ -296,6 +300,35 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         cacheNPCMasteries(commander, spec, map);
 
         return map;
+    }
+
+    public static int getNPCMaxLevelModifier(float progression) {
+        progression = clampProgression(progression);
+        return Math.round((1f - progression) * Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER + progression * Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP);
+    }
+
+    public static int getNPCFlagshipBonus(float progression) {
+        progression = clampProgression(progression);
+        return Math.round((1f - progression) * Settings.NPC_MASTERY_FLAGSHIP_BONUS + progression * Settings.NPC_MASTERY_FLAGSHIP_BONUS_CAP);
+    }
+
+    public static float getNPCMasteryDensity(float progression) {
+        progression = clampProgression(progression);
+        return (1f - progression) * Settings.NPC_MASTERY_DENSITY + progression * Settings.NPC_MASTERY_DENSITY_CAP;
+    }
+
+    public static float getNPCMasteryQuality(float progression) {
+        progression = clampProgression(progression);
+        return (1f - progression) * Settings.NPC_MASTERY_QUALITY + progression * Settings.NPC_MASTERY_QUALITY_CAP;
+    }
+
+    public static float getNPCSModQualityMod(float progression) {
+        progression = clampProgression(progression);
+         return (1f - progression) * Settings.NPC_SMOD_QUALITY_MOD + progression * Settings.NPC_SMOD_QUALITY_MOD_CAP;
+    }
+
+    private static float clampProgression(float progression) {
+        return Settings.NPC_PROGRESSION_ENABLED ? MathUtils.clamp(progression, 0f, 1f) : 0f;
     }
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {

@@ -53,24 +53,21 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         Collections.sort(hullmods, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
-                float cost1 = SModUtils.getCreditsCost(Global.getSettings().getHullModSpec(s1), ship);
-                float cost2 = SModUtils.getCreditsCost(Global.getSettings().getHullModSpec(s2), ship);
+                HullModSpecAPI hm1 = Global.getSettings().getHullModSpec(s1);
+                HullModSpecAPI hm2 = Global.getSettings().getHullModSpec(s2);
+                float cost1 = SModUtils.getCreditsCost(hm1, ship);
+                float cost2 = SModUtils.getCreditsCost(hm2, ship);
                 return (int) (cost2 - cost1);
             }
         });
     }
 
-    private boolean addSModIfPossible(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
-        return useSP ? addSModIfPossibleUseSP(hullmod, variant, delegate, hasLogisticsSMod)
-                : addSModIfPossibleUseMP(hullmod, variant, delegate, hasLogisticsSMod);
+    private boolean addSModIfPossible(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
+        return useSP ? addSModIfPossibleUseSP(hullmod, variant, delegate, sModLimit)
+                : addSModIfPossibleUseMP(hullmod, variant, delegate, sModLimit);
     }
 
-    private boolean addSModIfPossibleUseSP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
-        ShipAPI ship = delegate.getShip();
-        int sModLimit = Misc.getMaxPermanentMods(ship);
-        if (MasteryUtils.hasBonusLogisticSlot(rootSpec) && (hasLogisticsSMod || Global.getSettings().getHullModSpec(hullmod).hasUITag("Logistics"))) {
-            sModLimit++;
-        }
+    private boolean addSModIfPossibleUseSP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         int playerSP = playerStats.getStoryPoints();
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
@@ -89,13 +86,9 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         return false;
     }
 
-    private boolean addSModIfPossibleUseMP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, boolean hasLogisticsSMod) {
+    private boolean addSModIfPossibleUseMP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         ShipAPI ship = delegate.getShip();
-        int sModLimit = Misc.getMaxPermanentMods(ship);
         HullModSpecAPI modSpec = Global.getSettings().getHullModSpec(hullmod);
-        if (MasteryUtils.hasBonusLogisticSlot(rootSpec) && (hasLogisticsSMod || modSpec.hasUITag("Logistics"))) {
-            sModLimit++;
-        }
         float mpCost = SModUtils.getMPCost(modSpec, ship);
         float creditsCost = SModUtils.getCreditsCost(modSpec, ship);
         float playerMP = ShipMastery.getPlayerMasteryPoints(rootSpec);
@@ -121,14 +114,19 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
     private String isNotConfirmFieldName;
 
     protected boolean tryAddSMods(ShipVariantAPI current, ShipVariantAPI target, AutofitPluginDelegate delegate) {
-        // Enhanceable built-ins
         boolean modified = false;
         ShipAPI ship = delegate.getShip();
+        int limit = Misc.getMaxPermanentMods(ship);
+        if (current.hasHullMod("swp_extrememods")) {
+            limit--;
+        }
+
+        // Enhanceable built-ins
         List<String> enhanceable = new ArrayList<>(target.getSModdedBuiltIns());
         sortByCost(enhanceable, ship);
         for (String sMod : enhanceable) {
             if (!current.getSModdedBuiltIns().contains(sMod)) {
-                if (addSModIfPossible(sMod, current, delegate, false)) {
+                if (addSModIfPossible(sMod, current, delegate, limit)) {
                     HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
@@ -140,23 +138,18 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
 
         // Modular s-mods
         List<String> sMods = new ArrayList<>(target.getSMods());
-        boolean hasLogisticsSMod = false;
         sortByCost(sMods, ship);
-        for (String sMod : current.getSMods()) {
-            HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
-            if (hullModSpec.hasUITag("Logistics")) {
-                hasLogisticsSMod = true;
-                break;
-            }
-        }
+        boolean hasLogisticsSMod = SModUtils.hasLogisticSMod(current);
         for (String sMod : sMods) {
             HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
             if (!current.getSMods().contains(sMod)) {
-                if (addSModIfPossible(sMod, current, delegate, hasLogisticsSMod)) {
+                boolean isFirstLogistic = MasteryUtils.hasBonusLogisticSlot(rootSpec) && !hasLogisticsSMod && hullModSpec.hasUITag("Logistics");
+                if (addSModIfPossible(sMod, current, delegate, limit + (isFirstLogistic ? 1 : 0))) {
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
                     sModMPCostMap.put(sMod, SModUtils.getMPCost(hullModSpec, ship));
                     modified = true;
+                    if (isFirstLogistic) limit++;
                     if (hullModSpec.hasUITag("Logistics")) {
                         hasLogisticsSMod = true;
                     }

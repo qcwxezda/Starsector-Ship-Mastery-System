@@ -17,14 +17,14 @@ public class VentSpeedFluxLevel extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.VentSpeedFluxLevel)
-                                 .params(Utils.asPercent(2f/3f * getStrength((PersonAPI) null)), Utils.asPercent(getStrength(selectedModule)))
+                                 .params(Utils.asPercent(0.75f * getStrength((PersonAPI) null)), Utils.asPercent(getStrength(selectedModule)))
                                  .colors(Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(VentSpeedFluxLevelScript.class)) {
-            ship.addListener(new VentSpeedFluxLevelScript(ship, -2f/3f*getStrength((PersonAPI) null), getStrength(ship), id));
+            ship.addListener(new VentSpeedFluxLevelScript(ship, -0.75f*getStrength((PersonAPI) null), getStrength(ship), id));
         }
     }
 

@@ -40,7 +40,7 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
         ButtonAPI enhanceButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);
-        ReflectionUtils.setButtonListener(enhanceButton, new EnhanceButtonPressed(panel, buttonText, spec));
+        ReflectionUtils.setButtonListener(enhanceButton, new EnhanceButtonPressed(panel, spec));
         enhanceButton.setEnabled(Global.getSettings().isDevMode() ||
                 (ShipMastery.getPlayerMasteryPoints(spec) >= cost && Global.getSector().getPlayerStats().getStoryPoints() >= spCost)
         );

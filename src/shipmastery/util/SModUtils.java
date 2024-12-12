@@ -70,6 +70,16 @@ public abstract class SModUtils {
         return (int) (Math.min(cost, CREDITS_HARD_CAP));
     }
 
+    public static boolean hasLogisticSMod(ShipVariantAPI variant) {
+        for (String sMod : variant.getSMods()) {
+            HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
+            if (hullModSpec.hasUITag("Logistics")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isHullmodBuiltIn(HullModSpecAPI spec, ShipVariantAPI variant) {
         return variant.getHullSpec().isBuiltInMod(spec.getId());
     }

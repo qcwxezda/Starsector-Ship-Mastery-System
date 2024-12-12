@@ -1,6 +1,6 @@
 {
-  "sms_clear_smods": [
-    {"file": "sounds/sfx_interface/ui_income_report_negative.ogg", "pitch": 1, "volume": 1}
+  "sms_create_construct": [
+    {"file": "sounds/sfx_interface/ui_income_report_negative.ogg", "pitch": 1, "volume": 0.25}
   ],
   "sms_add_smod": [
     {"file": "sounds/sfx_interface/perform_survey_hit_02.ogg", "pitch": 1, "volume": 1}

@@ -26,7 +26,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseTeleporterTimeFlow)
-                                 .params(getSystemName(), Utils.asPercent(strength), Utils.asFloatOneDecimal(5f*strength));
+                                 .params(getSystemName(), Utils.asPercent(strength), Utils.asFloatOneDecimal(3f*strength));
     }
 
     @Override
@@ -37,10 +37,10 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
                 Strings.Descriptions.PhaseTeleporterTimeFlowPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asFloatOneDecimal(15f*strength),
+                Utils.asFloatOneDecimal(10f*strength),
+                Utils.asFloatOneDecimal(20f*strength),
                 Utils.asFloatOneDecimal(30f*strength),
-                Utils.asFloatOneDecimal(45f*strength),
-                Utils.asFloatOneDecimal(60f*strength));
+                Utils.asFloatOneDecimal(40f*strength));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(PhaseTeleporterTimeFlowScript.class)) {
-            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 5f*getStrength(ship), 15f*getStrength(ship), id));
+            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 3f*getStrength(ship), 10f*getStrength(ship), id));
         }
     }
 

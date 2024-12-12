@@ -39,6 +39,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private final Set<FleetMemberAPI> deployedInLastBattle = new HashSet<>();
     private boolean lastXPGainWasBattle = false;
     private final Random random = new Random(90706904117206L);
+    public static final String TOTAL_COMBAT_MP_KEY = "$sms_totalCombatMP";
 
     public PlayerMPHandler() {
         super(false);
@@ -228,6 +229,16 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             dialog.getTextPanel().addPara(message, Misc.getTextColor(), Settings.MASTERY_COLOR, highlight);
             dialog.getTextPanel().setFontInsignia();
         }
+    }
+
+    public static void addTotalCombatMP(float amount) {
+        Float previous = (Float) Global.getSector().getPersistentData().get(TOTAL_COMBAT_MP_KEY);
+        Global.getSector().getPersistentData().put(TOTAL_COMBAT_MP_KEY, previous == null ? amount : previous + amount);
+    }
+
+    public static float getTotalCombatMP() {
+        Float amount = (Float) Global.getSector().getPersistentData().get(TOTAL_COMBAT_MP_KEY);
+        return amount == null ? 0f : amount;
     }
 
     @Override

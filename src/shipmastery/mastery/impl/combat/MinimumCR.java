@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -26,6 +27,7 @@ public class MinimumCR extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        if (stats.getVariant() != null && stats.getVariant().hasHullMod(HullMods.SAFETYOVERRIDES)) return;
         stats.getCriticalMalfunctionChance().modifyMult(id, 0f);
         stats.getWeaponMalfunctionChance().modifyMult(id, 0f);
         stats.getEngineMalfunctionChance().modifyMult(id, 0f);

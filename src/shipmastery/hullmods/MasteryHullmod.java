@@ -4,10 +4,12 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.SModUtils;
 import shipmastery.util.VariantLookup;
 
 import java.util.Objects;
@@ -22,7 +24,18 @@ public class MasteryHullmod extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(final ShipAPI.HullSize hullSize, final MutableShipStatsAPI stats,
                                                final String id) {
-        applyEffects(stats.getVariant(), new HullmodAction() {
+        ShipVariantAPI variant = stats.getVariant();
+        // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
+        if (variant != null) {
+            ShipHullSpecAPI spec = variant.getHullSpec();
+            if (MasteryUtils.hasBonusLogisticSlot(spec) && SModUtils.hasLogisticSMod(variant)) {
+                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
+            } else {
+                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
+            }
+        }
+
+        applyEffects(variant, new HullmodAction() {
             @Override
             public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
                 if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {

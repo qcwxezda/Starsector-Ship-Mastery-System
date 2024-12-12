@@ -105,7 +105,7 @@ public class ClearSModsPressed extends ActionListener {
                         Utils.asInt(mpRefund),
                         Misc.getHighlightColor());
             }
-            Global.getSoundPlayer().playUISound("sms_clear_smods", 1f, 1f);
+            Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
             masteryPanel.forceRefresh(true, true, true, false);
 
             // Some non-s-modded hullmods may no longer be applicable; remove these also

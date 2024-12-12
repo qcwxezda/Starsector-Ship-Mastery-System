@@ -13,12 +13,10 @@ import shipmastery.util.Utils;
 
 public class EnhanceButtonPressed extends ActionListener {
     final MasteryPanel masteryPanel;
-    final String defaultText;
     final ShipHullSpecAPI spec;
 
-    public EnhanceButtonPressed(MasteryPanel masteryPanel, String defaultText, ShipHullSpecAPI spec) {
+    public EnhanceButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
-        this.defaultText = defaultText;
         this.spec = spec;
     }
 

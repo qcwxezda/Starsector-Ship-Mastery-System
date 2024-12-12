@@ -35,7 +35,7 @@ RepairTime,weapon and engine repair time,,-0.25,,shipmastery.stats.combat.Repair
 HullPoints,hull durability,2,0.15,,shipmastery.stats.combat.HullPoints
 ArmorPoints,armor durability,3,0.1,,shipmastery.stats.combat.ArmorPoints
 BallisticEnergyAmmo,ballistic and energy weapons' ammo count,,0.3,,shipmastery.stats.combat.BallisticEnergyAmmo
-MissileSpeed,"missile speed, acceleration, and maneuverability",2,0.25,,shipmastery.stats.combat.MissileSpeed
+MissileSpeed,"missile speed, acceleration, and maneuverability",2,0.2,,shipmastery.stats.combat.MissileSpeed
 HitStrength,hit strength against armor,2,0.15,,shipmastery.stats.combat.HitStrength
 OverloadTime,overload duration,,-0.2,,shipmastery.stats.combat.OverloadTime
 ProjectileSpeed,projectile speed of all projectile weapons,2,0.2,,shipmastery.stats.combat.ProjectileSpeed

@@ -56,6 +56,11 @@ public interface Strings {
         String hullmodsTab = Utils.getString("sms_masteryPanel", "hullmodsTab");
         String unknownMastery = Utils.getString("sms_masteryPanel", "unknownMastery");
         String levelUpMastery = Utils.getString("sms_masteryPanel", "levelUpMastery");
+        String createConstruct = Utils.getString("sms_masteryPanel", "createConstruct");
+        String createConstructConfirmSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmSingular");
+        String createConstructConfirmPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmPlural");
+        String createConstructConfirmTextSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmTextSingular");
+        String createConstructConfirmTextPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmTextPlural");
         String rerollMasteries = Utils.getString("sms_masteryPanel", "rerollMasteries");
         String rerollConfirm = Utils.getString("sms_masteryPanel", "rerollConfirm");
         String enhanceMasteries = Utils.getString("sms_masteryPanel", "enhanceMasteries");

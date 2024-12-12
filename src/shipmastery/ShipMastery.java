@@ -6,6 +6,7 @@ import com.fs.starfarer.api.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
@@ -122,6 +123,11 @@ public abstract class ShipMastery {
         for (String skinId : allSkins) {
             if (Objects.equals(restoredId, skinId)) continue;
             toAdd.add(new Pair<>(skinId, 0.75f));
+        }
+
+        // Total combat MP gained doesn't count MP gained for skins
+        if (!spec.isCivilianNonCarrier()) {
+            PlayerMPHandler.addTotalCombatMP(amount);
         }
 
         // Gaining mastery points for a ship type also gains mastery points for all skins that share the same
