@@ -1,3 +1,7 @@
+0.11.1
+----------
+- Fixed an infinite MP exploit -- knowledge constructs no longer grant MP to skins.
+
 0.11.0
 ----------
 - Added the ability to create knowledge constructs by spending 10 MP. These can then be sold for credits.
