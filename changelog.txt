@@ -1,6 +1,6 @@
 0.11.0
 ----------
-- Added the ability to create knowledge constructs by spending 10 MP after reaching max mastery in a hull. These can then be sold for credits.
+- Added the ability to create knowledge constructs by spending 10 MP. These can then be sold for credits.
 - Added progression options to evolve NPC fleet difficulty over time.
     - Progression is based on total player MP gain for all combat ships, excluding those gained passively for skins.
     - Updating an existing save game will start its progression counter at 0.
