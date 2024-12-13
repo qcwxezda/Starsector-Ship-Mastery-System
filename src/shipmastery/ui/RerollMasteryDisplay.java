@@ -28,9 +28,9 @@ public class RerollMasteryDisplay implements CustomUIElement {
     public void create(TooltipMakerAPI tooltip) {
         tooltip.setParaOrbitronLarge();
         tooltip.setButtonFontOrbitron20();
-        LabelAPI upgradeLabel = tooltip.addPara(Strings.MasteryPanel.rerollMasteries, 0f);
-        upgradeLabel.setAlignment(Alignment.MID);
-        upgradeLabel.getPosition().setXAlignOffset(5f);
+        LabelAPI rerollLabel = tooltip.addPara(Strings.MasteryPanel.rerollMasteries, 0f);
+        rerollLabel.setAlignment(Alignment.MID);
+        rerollLabel.getPosition().setXAlignOffset(5f);
         int cost = MasteryUtils.getRerollMPCost(spec);
         int spCost = MasteryUtils.getRerollSPCost(spec);
         String buttonText = cost + " MP + " + spCost + " SP";

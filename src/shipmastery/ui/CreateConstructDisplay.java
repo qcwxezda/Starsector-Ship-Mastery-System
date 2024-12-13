@@ -28,9 +28,9 @@ public class CreateConstructDisplay implements CustomUIElement {
     public void create(TooltipMakerAPI tooltip) {
         tooltip.setParaOrbitronLarge();
         tooltip.setButtonFontOrbitron20();
-        LabelAPI upgradeLabel = tooltip.addPara(Strings.MasteryPanel.createConstruct, 0f);
-        upgradeLabel.setAlignment(Alignment.MID);
-        upgradeLabel.getPosition().setXAlignOffset(5f);
+        LabelAPI constructLabel = tooltip.addPara(Strings.MasteryPanel.createConstruct, 0f);
+        constructLabel.setAlignment(Alignment.MID);
+        constructLabel.getPosition().setXAlignOffset(5f);
         String buttonText = KnowledgeConstructPlugin.NUM_POINTS_GAINED + " MP";
         ButtonAPI constructButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),

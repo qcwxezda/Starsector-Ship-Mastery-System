@@ -31,9 +31,9 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
     public void create(TooltipMakerAPI tooltip) {
         tooltip.setParaOrbitronLarge();
         tooltip.setButtonFontOrbitron20();
-        LabelAPI upgradeLabel = tooltip.addPara(Strings.MasteryPanel.enhanceMasteries, 0f);
-        upgradeLabel.setAlignment(Alignment.MID);
-        upgradeLabel.getPosition().setXAlignOffset(5f);
+        LabelAPI enhanceLabel = tooltip.addPara(Strings.MasteryPanel.enhanceMasteries, 0f);
+        enhanceLabel.setAlignment(Alignment.MID);
+        enhanceLabel.getPosition().setXAlignOffset(5f);
         int cost = MasteryUtils.getEnhanceMPCost(spec);
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
         String buttonText = spCost > 0 ? cost + " MP + " + spCost + " SP" : cost + " MP";

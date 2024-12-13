@@ -111,7 +111,11 @@ public abstract class ShipMastery {
         return data == null ? 0 : data.points;
     }
 
-    public static void addPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
+    public static void addPlayerMasteryPoints(
+            ShipHullSpecAPI spec,
+            float amount,
+            boolean trickleToSkins,
+            boolean countsForDifficultyProgression) {
         ShipHullSpecAPI restored = Utils.getRestoredHullSpec(spec);
         String baseHullId = restored.getBaseHullId();
         Set<String> allSkins = Utils.baseHullToAllSkinsMap.get(baseHullId);
@@ -120,13 +124,14 @@ public abstract class ShipMastery {
         List<Pair<String, Float>> toAdd = new ArrayList<>();
         toAdd.add(new Pair<>(restoredId, 1f));
 
-        for (String skinId : allSkins) {
-            if (Objects.equals(restoredId, skinId)) continue;
-            toAdd.add(new Pair<>(skinId, 0.75f));
+        if (trickleToSkins) {
+            for (String skinId : allSkins) {
+                if (Objects.equals(restoredId, skinId)) continue;
+                toAdd.add(new Pair<>(skinId, 0.5f));
+            }
         }
 
-        // Total combat MP gained doesn't count MP gained for skins
-        if (!spec.isCivilianNonCarrier()) {
+        if (countsForDifficultyProgression) {
             PlayerMPHandler.addTotalCombatMP(amount);
         }
 

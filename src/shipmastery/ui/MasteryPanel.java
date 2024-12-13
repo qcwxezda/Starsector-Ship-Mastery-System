@@ -328,7 +328,7 @@ public class MasteryPanel {
     void showUpgradeOrConfirmation(boolean canEnhance) {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", currentMastery >= maxMastery ? 1f : 0f);
+            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 1f);
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 1f : 0f);
             ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", currentMastery >= maxMastery && canEnhance ? 1f : 0f);
             ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
@@ -370,7 +370,7 @@ public class MasteryPanel {
 
         createConstructDisplay = masteryPanel.createUIElement(200f, 100f, false);
         new CreateConstructDisplay(this, restoredHullSpec).create(createConstructDisplay);
-        masteryPanel.addUIElement(createConstructDisplay).belowMid(shipDisplay, 0f);
+        masteryPanel.addUIElement(createConstructDisplay).belowMid(shipDisplay, currentMastery >= maxMastery ? 0f : 95f);
 
         rerollMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
         new RerollMasteryDisplay(this, restoredHullSpec).create(rerollMasteryDisplay);
@@ -389,7 +389,7 @@ public class MasteryPanel {
             ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", canEnhance ? 1f : 0f);
         } else {
             ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 0f);
+            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 1f);
             ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 1f);
         }

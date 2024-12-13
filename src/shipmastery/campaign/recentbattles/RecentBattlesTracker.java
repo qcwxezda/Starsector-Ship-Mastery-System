@@ -15,6 +15,8 @@ import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.loading.specs.HullVariantSpec;
+import shipmastery.campaign.FleetHandler;
+import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.Settings;
 import shipmastery.util.SizeLimitedMap;
@@ -118,7 +120,12 @@ public class RecentBattlesTracker extends BaseCampaignEventListener implements F
                     }
                     copy.getRepairTracker().setCR(copy.getRepairTracker().getMaxCR());
                 }
-                fleet.setCommander(fleetToCopy.getCommander());
+                PersonAPI commander = fleetToCopy.getCommander();
+                // Save progression level at which fleet was fought
+                if (commander != null) {
+                    commander.getMemoryWithoutUpdate().set(FleetHandler.CUSTOM_PROGRESSION_KEY, PlayerMPHandler.getDifficultyProgression());
+                }
+                fleet.setCommander(commander);
                 fleet.setStationMode(fleetToCopy.isStationMode());
                 if (!Settings.RECENT_BATTLES_PRECISE_MODE) {
                     FleetInflater inflater = fleetToCopy.getInflater();

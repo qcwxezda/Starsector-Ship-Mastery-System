@@ -46,6 +46,7 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP = LunaSettings.getInt(id, "sms_DifficultyMaxLevelModCap");
         Settings.NPC_MASTERY_FLAGSHIP_BONUS_CAP = LunaSettings.getInt(id, "sms_DifficultyFlagshipBonusCap");
         Settings.NPC_SMOD_QUALITY_MOD_CAP = LunaSettings.getFloat(id, "sms_DifficultySModModCap");
+
         Settings.NPC_PROGRESSION_ENABLED = LunaSettings.getBoolean(id, "sms_ProgressionEnabled");
         Settings.NPC_TOTAL_PROGRESSION_MP = LunaSettings.getInt(id, "sms_TotalProgressionMP");
 

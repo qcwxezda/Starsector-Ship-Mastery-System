@@ -1,14 +1,20 @@
-0.11.0 (dev)
+0.11.0
 ----------
 - Added the ability to create knowledge constructs by spending 10 MP after reaching max mastery in a hull. These can then be sold for credits.
 - Added progression options to evolve NPC fleet difficulty over time.
     - Progression is based on total player MP gain for all combat ships, excluding those gained passively for skins.
     - Updating an existing save game will start its progression counter at 0.
+- (New game only) Moderately decreased the number of concealed stations generated per sector, and added a lower limit of 4.
+- Improved MP gain from large battles (single actions that grant lots of XP)
 - Changed knowledge construct price upper bound from 100000 to 60000, lower bound from 0 to 20000.
+- Reduced passive MP gain for skins from 75% to 50%.
 - Reduced the default strength of a bunch of mastery effects that slipped past the first pass.
 - Mastery effect that prevents CR from dropping below a certain threshold now no longer prevents malfunctions if Safety Overrides is installed.
+- Fixed range display issue in the description text of phase skimmer EMP arc mastery.
 - Extra logistics S-mod is now reflected in MAX_PERMANENT_HULLMODS mod (no behavioral change, but should work better with other mods that check S-mod count)
 - Fixed exploit between S-mod-enabled autofit and extreme modifications
+- Fixed issue with clearing S-mods with refunds enabled granting extraneous MP to skins
+- Fixed issue where flagship tracking was using the combined fleet's commander rather than the individual fleet's commander when applying mastery effects.
 - Mastery interface is now slightly bigger.
 - Changed the "Clear S-mods" sound to be the same as adding S-mods.
 

@@ -18,7 +18,9 @@ import java.util.Set;
 
 public abstract class Generator {
     public final static float WEIGHT_PENALTY_PER_STATION = 0.9f;
-    public final static float STARS_PER_STATION = 15;
+    public final static float STARS_PER_STATION = 25f;
+    public final static int MIN_STATIONS = 4;
+
     public static final Set<String> tagsToSkip = new HashSet<>();
     static {
         tagsToSkip.add(Tags.THEME_CORE);
@@ -28,6 +30,8 @@ public abstract class Generator {
     public static void generate() {
         WeightedRandomPicker<StarSystemAPI> picker = getSystemPicker(Misc.random);
         float numStations = picker.getItems().size() / STARS_PER_STATION;
+        numStations = Math.max(numStations, MIN_STATIONS);
+
         for (int i = 0; i < numStations; i++) {
             if (picker.isEmpty()) return;
             StarSystemAPI system = picker.pickAndRemove();

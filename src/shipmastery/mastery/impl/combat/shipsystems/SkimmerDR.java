@@ -22,7 +22,7 @@ public class SkimmerDR extends ShipSystemEffect {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerDR).params(
                 getSystemName(),
                 Utils.asPercent(strength),
-                Utils.asFloatOneDecimal(10f * strength));
+                Utils.asFloatOneDecimal(15f * strength));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SkimmerDR extends ShipSystemEffect {
         }
         if (!ship.hasListenerOfClass(SkimmerDRScript.class)) {
             float strength = getStrength(ship);
-            ship.addListener(new SkimmerDRScript(ship, 1f - strength, strength * 10f, id));
+            ship.addListener(new SkimmerDRScript(ship, 1f - strength, strength * 15f, id));
         }
     }
 

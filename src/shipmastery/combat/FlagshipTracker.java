@@ -57,7 +57,7 @@ public class FlagshipTracker implements EndOfCombatListener {
         if (newFlagship == null) return;
         final List<EffectActivationRecord> newEffects = new ArrayList<>();
         MasteryUtils.applyAllActiveMasteryEffects(
-                newFlagship.getFleetMember() == null ? null : newFlagship.getFleetMember().getFleetCommander(),
+                newFlagship.getFleetMember() == null ? null : newFlagship.getFleetMember().getFleetCommanderForStats(),
                 newFlagship.getHullSpec(), new MasteryUtils.MasteryAction() {
                     @Override
                     public void perform(MasteryEffect effect) {

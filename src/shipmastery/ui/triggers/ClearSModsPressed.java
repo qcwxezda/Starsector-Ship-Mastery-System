@@ -88,7 +88,7 @@ public class ClearSModsPressed extends ActionListener {
             float creditsRefund = creditsSpent * Settings.CLEAR_SMODS_REFUND_FRACTION;
             int mpRefund = (int) (mpSpent * Settings.CLEAR_SMODS_REFUND_FRACTION);
             Utils.getPlayerCredits().add(creditsRefund);
-            ShipMastery.addPlayerMasteryPoints(root.getHullSpec(), mpRefund);
+            ShipMastery.addPlayerMasteryPoints(root.getHullSpec(), mpRefund, false, false);
 
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.clearConfirm, Settings.MASTERY_COLOR);
             if (creditsRefund > 0f) {

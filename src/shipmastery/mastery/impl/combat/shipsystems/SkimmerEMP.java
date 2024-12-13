@@ -30,7 +30,7 @@ public class SkimmerEMP extends ShipSystemEffect {
                                  .params(
                                          getSystemName(),
                                          Utils.asInt(strength),
-                                         Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(hullSize)),
+                                         Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(MAX_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())])),
                                          Utils.asFloatOneDecimal(strength*50f*DAMAGE_MULT[hullSize]),
                                          Utils.asFloatOneDecimal(strength*125f*DAMAGE_MULT[hullSize]));
     }

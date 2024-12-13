@@ -17,6 +17,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
+import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -26,11 +27,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 4400f;
+    public static final float XP_PER_HALF_MP = 7500f;
     public static final float XP_PER_HALF_MP_CIV = 2750f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 600f;
-    public static final float MULT_PER_MP = 1.175f;
+    public static final float MULT_PER_MP = 1.1f;
     /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.985f;
     private long prevXP;
@@ -39,7 +40,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private final Set<FleetMemberAPI> deployedInLastBattle = new HashSet<>();
     private boolean lastXPGainWasBattle = false;
     private final Random random = new Random(90706904117206L);
-    public static final String TOTAL_COMBAT_MP_KEY = "$sms_totalCombatMP";
+    public static final String DIFFICULTY_PROGRESSION_KEY = "$sms_DifficultyProgression";
 
     public PlayerMPHandler() {
         super(false);
@@ -199,7 +200,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             amounts.put(spec, amount == null ? 1 : 1 + amount);
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
-            ShipMastery.addPlayerMasteryPoints(entry.getKey(), entry.getValue());
+            ShipMastery.addPlayerMasteryPoints(
+                    entry.getKey(),
+                    entry.getValue(),
+                    true,
+                    !isCivilian && !entry.getKey().isCivilianNonCarrier());
         }
         showMasteryPointGainMessage(amounts);
     }
@@ -232,13 +237,17 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     }
 
     public static void addTotalCombatMP(float amount) {
-        Float previous = (Float) Global.getSector().getPersistentData().get(TOTAL_COMBAT_MP_KEY);
-        Global.getSector().getPersistentData().put(TOTAL_COMBAT_MP_KEY, previous == null ? amount : previous + amount);
+        Float previous = (Float) Global.getSector().getPersistentData().get(DIFFICULTY_PROGRESSION_KEY);
+        float gain = amount / Math.max(1f, Settings.NPC_TOTAL_PROGRESSION_MP);
+        float newAmount = previous == null ? gain : previous + gain;
+        newAmount = MathUtils.clamp(newAmount, 0f, 1f);
+        Global.getSector().getPersistentData().put(DIFFICULTY_PROGRESSION_KEY, newAmount);
     }
 
-    public static float getTotalCombatMP() {
-        Float amount = (Float) Global.getSector().getPersistentData().get(TOTAL_COMBAT_MP_KEY);
-        return amount == null ? 0f : amount;
+    /** Between 0 and 1 */
+    public static float getDifficultyProgression() {
+        Float progression = (Float) Global.getSector().getPersistentData().get(DIFFICULTY_PROGRESSION_KEY);
+        return progression == null ? 0f : progression;
     }
 
     @Override
