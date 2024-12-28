@@ -81,7 +81,7 @@ DEMBoost,4,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
 RegroupReplacement,2,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
 ExtraMiningDrones,3,combat unique,,4,shipmastery.mastery.impl.combat.ExtraMiningDrones
 LimitedArmorRegen,3,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
-HammerLingeringDamage,4,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
+HammerLingeringDamage,3,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
 PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
 PhasedArmorRepair,3,combat unique,,0.015,shipmastery.mastery.impl.combat.PhasedArmorRepair
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity

@@ -437,8 +437,9 @@ public abstract class ShipMastery {
                 spec = Utils.getRestoredHullSpec(spec);
                 String id = spec.getHullId();
                 if (!masteryMap.containsKey(id)) {
+                    int seed = (id + "_" + MasteryUtils.getRandomMasterySeed()).hashCode();
                     HullMasteryData data = new HullMasteryData(id, maxLevel);
-                    Collections.shuffle(allLevels);
+                    Collections.shuffle(allLevels, new Random(seed));
                     Set<Integer> sModLevels = new HashSet<>();
                     for (int i = 0; i < Math.min(3, maxLevel); i++) {
                         sModLevels.add(allLevels.get(i));

@@ -112,6 +112,6 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.lb;
         if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 1f, false);
+        return 1.6f * Utils.getSelectionWeightScaledByValue(count, 1f, false);
     }
 }

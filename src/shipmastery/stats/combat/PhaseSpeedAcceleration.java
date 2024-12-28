@@ -17,6 +17,6 @@ public class PhaseSpeedAcceleration extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return spec.isPhase() ? 2f : null;
+        return spec.isPhase() ? 2.5f : null;
     }
 }

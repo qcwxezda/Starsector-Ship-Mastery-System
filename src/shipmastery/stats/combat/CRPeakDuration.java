@@ -15,6 +15,6 @@ public class CRPeakDuration extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getNoCRLossSeconds(), 360f, true);
+        return 1.6f * Utils.getSelectionWeightScaledByValue(spec.getNoCRLossSeconds(), 360f, true);
     }
 }

@@ -9,6 +9,7 @@ import shipmastery.campaign.FleetHandler;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.plugin.ModPlugin;
 import shipmastery.ui.EnhanceMasteryDisplay;
 
 import java.util.*;
@@ -105,6 +106,11 @@ public abstract class MasteryUtils {
             }
         }
         //System.out.println();
+    }
+
+    public static String getRandomMasterySeed() {
+        String seed = (String) Global.getSector().getPersistentData().get(ModPlugin.GENERATION_SEED_KEY);
+        return seed == null ? Global.getSector().getPlayerPerson().getId() : seed;
     }
 
     private static class MasteryEffectData implements Comparable<MasteryEffectData>  {

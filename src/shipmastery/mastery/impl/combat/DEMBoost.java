@@ -132,6 +132,6 @@ public class DEMBoost extends BaseMasteryEffect {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.sm + wsc.mm + wsc.lm;
         if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 4f, false);
+        return 1.6f * Utils.getSelectionWeightScaledByValue(count, 4f, false);
     }
 }

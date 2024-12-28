@@ -15,6 +15,6 @@ public class MinArmorFraction extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getArmorRating(), 800f, false);
+        return 1.6f * Utils.getSelectionWeightScaledByValue(spec.getArmorRating(), 450f, false);
     }
 }

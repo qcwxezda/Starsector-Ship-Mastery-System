@@ -18,8 +18,15 @@ import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import shipmastery.ShipMastery;
+import shipmastery.data.MasteryInfo;
+import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.impl.stats.ModifyStatsEffect;
+import shipmastery.stats.ShipStat;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -542,9 +549,8 @@ public abstract class Utils {
     }
 
     public static float getSelectionWeightScaledByValue(float value, float valueForOneWeight, boolean lowerValuesHigherWeight) {
-        float f = (float) (Math.log(1f + value/valueForOneWeight)/Math.log(2f));
-        if (!lowerValuesHigherWeight) return f;
-        else return getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
+        float f =  !lowerValuesHigherWeight ? (float) (Math.log(1f + value/valueForOneWeight)/Math.log(2f)) : getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
+        return Math.min(f, 3f);
     }
 
     public static Set<WeaponAPI.WeaponType> getDominantWeaponTypes(ShipHullSpecAPI spec) {
@@ -569,5 +575,77 @@ public abstract class Utils {
         if (count.sb == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.BALLISTIC);
         if (count.sm == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.MISSILE);
         return dominantTypes;
+    }
+
+    @SuppressWarnings("unused")
+    public static void dumpMasteryFrequencies() {
+        Map<String, Integer> freqs = new HashMap<>();
+        Map<String, Integer> statFreqs = new HashMap<>();
+        int maxKeyLength = 0;
+        int maxStatKeyLength = 0;
+
+        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+            if (spec != getRestoredHullSpec(spec)) continue;
+
+            for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
+                List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
+                effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
+                for (MasteryEffect effect : effects) {
+                    String shortId = ShipMastery.getId(effect.getClass());
+                    MasteryInfo info = ShipMastery.getMasteryInfo(shortId);
+                    String id = shortId + "(" + info.tier + ")";
+                    maxKeyLength = Math.max(maxKeyLength, id.length());
+
+                    if (effect instanceof ModifyStatsEffect) {
+                        ModifyStatsEffect mEffect = (ModifyStatsEffect) effect;
+                        for (ShipStat stat : mEffect.getAffectedStats()) {
+                            String statId = stat.id + "(" + stat.tier + ")";
+                            maxStatKeyLength = Math.max(maxStatKeyLength, statId.length());
+                            Integer statFreq = statFreqs.get(statId);
+                            statFreqs.put(statId, statFreq == null ? 1 : statFreq + 1);
+                        }
+                    }
+
+                    Integer freq = freqs.get(id);
+                    freqs.put(id, freq == null ? 1 : freq + 1);
+                }
+            }
+        }
+
+        try (PrintWriter pw = new PrintWriter("mastery_freqs.txt")) {
+            List<Map.Entry<String, Integer>> entries = new ArrayList<>(freqs.entrySet());
+            Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                    return o2.getValue().compareTo(o1.getValue());
+                }
+            });
+            List<Map.Entry<String, Integer>> statEntries = new ArrayList<>(statFreqs.entrySet());
+            Collections.sort(statEntries, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                    return o2.getValue().compareTo(o1.getValue());
+                }
+            });
+            for (Map.Entry<String, Integer> entry : entries) {
+                StringBuilder sb = new StringBuilder(entry.getKey());
+                sb.append(":      ");
+                for (int i = 0; i < maxKeyLength - entry.getKey().length(); i++) {
+                    sb.append(" ");
+                }
+                sb.append(entry.getValue());
+                pw.println(sb);
+            }
+            pw.println();
+            for (Map.Entry<String, Integer> entry : statEntries) {
+                StringBuilder sb = new StringBuilder(entry.getKey());
+                sb.append(":      ");
+                for (int i = 0; i < maxStatKeyLength - entry.getKey().length(); i++) {
+                    sb.append(" ");
+                }
+                sb.append(entry.getValue());
+                pw.println(sb);
+            }
+        } catch (FileNotFoundException ignore) {}
     }
 }

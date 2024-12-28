@@ -35,7 +35,7 @@ public class MaxBurnLevel extends ShipStat {
                 throw new RuntimeException(e);
             }
         }
-        float weight = 0.5f;
+        float weight = 0.2f;
         if (maxBurn <= 10f) weight *= 1.5f;
         if (maxBurn <= 9f) weight *= 1.5f;
         if (maxBurn <= 8f) weight *= 1.5f;

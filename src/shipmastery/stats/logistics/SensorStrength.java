@@ -13,6 +13,6 @@ public class SensorStrength extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return Utils.hullSizeToInt(spec.getHullSize()) + 1f;
+        return 2f * (Utils.hullSizeToInt(spec.getHullSize()) + 1f);
     }
 }

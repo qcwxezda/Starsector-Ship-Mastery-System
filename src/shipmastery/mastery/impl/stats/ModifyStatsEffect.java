@@ -22,6 +22,7 @@ import java.util.*;
 
 public abstract class ModifyStatsEffect extends BaseMasteryEffect {
     final Map<ShipStat, Float> amounts = new LinkedHashMap<>();
+
     @Override
     public MasteryEffect postInit(String... args) {
         for (int i = 1; i < args.length; i++) {
@@ -102,6 +103,9 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
 
     abstract float getModifiedAmount(ShipStat stat, float amount);
     abstract String getAmountString(ShipStat stat, float modifiedAmount);
+    public final List<ShipStat> getAffectedStats() {
+        return new ArrayList<>(amounts.keySet());
+    }
 
     protected final List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
         WeightedRandomPicker<ShipStat> picker = new WeightedRandomPicker<>();
@@ -126,6 +130,7 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
                 // try to prioritize higher tier stats, if applicable
                 float tierMult = stat.tier * stat.tier;
                 // strongly avoid low-tier stuff
+                if (maxTier - stat.tier >= 1) tierMult *= 0.5f;
                 if (maxTier - stat.tier >= 2) tierMult = Float.MIN_NORMAL;
                 picker.add(stat, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }

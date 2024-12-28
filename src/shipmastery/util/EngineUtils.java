@@ -152,12 +152,22 @@ public abstract class EngineUtils {
      *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */
     public static ShipAPI getBaseShip(ShipAPI shipWingOrModule) {
+        return getBaseShip(shipWingOrModule, new HashSet<ShipAPI>());
+    }
+
+    public static ShipAPI getBaseShip(ShipAPI shipWingOrModule, Set<ShipAPI> seen) {
         if (shipWingOrModule == null) {
             return null;
         }
+        if (seen.contains(shipWingOrModule)) {
+            // Early exit to prevent infinite loop, this should never happen though
+            // as ships shouldn't be parent modules of themselves or their own parent modules, etc.
+            return shipWingOrModule;
+        }
+        seen.add(shipWingOrModule);
         // The "ship" in question is a drone
         if (shipWingOrModule.getAIFlags().hasFlag(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP)) {
-            return getBaseShip((ShipAPI) shipWingOrModule.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP));
+            return getBaseShip((ShipAPI) shipWingOrModule.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP), seen);
         }
         if (shipWingOrModule.isFighter()) {
             ShipAPI base = null;
@@ -170,7 +180,7 @@ public abstract class EngineUtils {
                 }
             }
             else {
-                base = getBaseShip(shipWingOrModule.getWing().getSourceShip());
+                base = getBaseShip(shipWingOrModule.getWing().getSourceShip(), seen);
             }
             return base;
         }
@@ -184,7 +194,7 @@ public abstract class EngineUtils {
                 }
             }
             else {
-                base = getBaseShip(shipWingOrModule.getParentStation());
+                base = getBaseShip(shipWingOrModule.getParentStation(), seen);
             }
             return base;
         }

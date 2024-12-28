@@ -17,8 +17,8 @@ DModEffect,the effect of d-mods,,-0.25,,shipmastery.stats.logistics.DModEffect
 DModAcquireProbability,the probability that ships destroyed in combat gain d-mods,,-0.3,,shipmastery.stats.logistics.DModAcquireProbability
 #### COMBAT ####
 MaxSpeed,maximum speed in combat,2,0.1,,shipmastery.stats.combat.MaxSpeed
-Maneuverability,maneuverability in combat,,0.25,,shipmastery.stats.combat.Maneuverability
-FluxCapacity,flux capacity,2,0.1,,shipmastery.stats.combat.FluxCapacity
+Maneuverability,maneuverability in combat,2,0.25,,shipmastery.stats.combat.Maneuverability
+FluxCapacity,flux capacity,3,0.1,,shipmastery.stats.combat.FluxCapacity
 FluxDissipation,flux dissipation,3,0.1,,shipmastery.stats.combat.FluxDissipation
 MalfunctionChance,malfunction chance at low combat readiness,,-0.3,,shipmastery.stats.combat.MalfunctionChance
 CRPeakDuration,peak combat readiness duration,,0.3,,shipmastery.stats.combat.CRPeakDuration

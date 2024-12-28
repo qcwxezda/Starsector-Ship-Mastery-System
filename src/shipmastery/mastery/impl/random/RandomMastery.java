@@ -14,6 +14,7 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
+import shipmastery.util.MasteryUtils;
 
 import java.util.*;
 
@@ -116,17 +117,12 @@ public class RandomMastery extends BaseMasteryEffect {
         seedPrefix = prefix;
     }
 
-    private String getSectorSeed() {
-        String seed = (String) Global.getSector().getPersistentData().get(ModPlugin.GENERATION_SEED_KEY);
-        return seed == null ? Global.getSector().getPlayerPerson().getId() : seed;
-    }
-
     long makeSeed() {
         return ((seedPrefix*17) + "_" +
                 getId() + "_" +
                 level + "_" +
                 index + "_" +
                 isOption2() + "_" +
-                getHullSpec().getHullId() + "_" + getSectorSeed()).hashCode();
+                getHullSpec().getHullId() + "_" + MasteryUtils.getRandomMasterySeed()).hashCode();
     }
 }

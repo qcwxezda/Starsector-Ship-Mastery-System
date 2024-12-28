@@ -49,6 +49,6 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getUpkeepCost(), 200f, false);
+        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getUpkeepCost(), 150f, false);
     }
 }

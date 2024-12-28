@@ -14,6 +14,6 @@ public class CRPerDeployment extends ShipStat {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getCRToDeploy(), 0.1f, false);
+        return Utils.getSelectionWeightScaledByValue(spec.getCRToDeploy(), 0.3f, false);
     }
 }

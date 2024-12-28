@@ -15,6 +15,6 @@ public class FluxDissipation extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFluxDissipation(), 500f, false);
+        return Utils.getSelectionWeightScaledByValue(spec.getFluxDissipation(), 400f, false);
     }
 }

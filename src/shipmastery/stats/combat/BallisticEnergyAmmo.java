@@ -19,6 +19,6 @@ public class BallisticEnergyAmmo extends ShipStat {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.se + wsc.me + wsc.le + wsc.sb + wsc.mb + wsc.lb;
         if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 6f, false);
+        return 1.5f * Utils.getSelectionWeightScaledByValue(count, 4f, false);
     }
 }

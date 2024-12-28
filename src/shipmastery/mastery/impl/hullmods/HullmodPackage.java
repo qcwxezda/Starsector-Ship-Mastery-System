@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.hullmods;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -47,5 +48,10 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
             this.id = id;
             this.requireBuiltIn = requireBuiltIn;
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return 0.6f;
     }
 }

@@ -162,6 +162,6 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!spec.isPhase()) return null;
-        return 0.5f + Utils.hullSizeToInt(spec.getHullSize());
+        return 0.7f + Utils.hullSizeToInt(spec.getHullSize());
     }
 }

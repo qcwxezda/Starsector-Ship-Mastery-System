@@ -34,6 +34,6 @@ public class SafetyOverridesBoost extends BaseMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         if (ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return null;
         if (spec.getBuiltInMods().contains(HullMods.FLUX_SHUNT)) return null;
-        return 1.5f - 0.5f * Utils.hullSizeToInt(spec.getHullSize());
+        return 0.6f * (1.5f - 0.5f * Utils.hullSizeToInt(spec.getHullSize()));
     }
 }

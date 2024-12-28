@@ -250,6 +250,6 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.sm + 2f * wsc.mm + 3f * wsc.lm;
         if (count <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 4f, false);
+        return 0.6f * Utils.getSelectionWeightScaledByValue(count, 4f, false);
     }
 }

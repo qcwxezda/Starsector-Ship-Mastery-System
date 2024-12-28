@@ -19,6 +19,7 @@ public class MissileHealth extends ShipStat {
         // Count number of missile slots
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.sm + wsc.mm + wsc.lm;
-        return Utils.getSelectionWeightScaledByValue(count, 3f, false);
+        if (count <= 0) return null;
+        return Utils.getSelectionWeightScaledByValue(count, 1f, false);
     }
 }

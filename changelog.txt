@@ -1,3 +1,13 @@
+0.11.3
+----------
+Mastery weights have been changed, generated masteries will be different.
+
+- Adjusted the weights of many randomly selected mastery effects; in general, effects that were too common have been made less common.
+- Crew loss mastery no longer generates for ships specs without crew.
+- Fixed "excess fuel" warning showing up on game load with masteries that increase fuel capacity.
+- Fixed S-mod capacity levels being unseeded when random mode is enabled.
+- Handled possible (but which should never happen) cyclic base ship chain.
+
 0.11.2
 ----------
 - Fixed another issue with flagship tracker not working in some cases.

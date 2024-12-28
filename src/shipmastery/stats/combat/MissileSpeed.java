@@ -21,6 +21,6 @@ public class MissileSpeed extends ShipStat {
         // Count number of missile slots
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = wsc.sm + wsc.mm + wsc.lm;
-        return Utils.getSelectionWeightScaledByValue(count, 3f, false);
+        return Utils.getSelectionWeightScaledByValue(count, 2f, false);
     }
 }

@@ -16,6 +16,6 @@ public class MalfunctionChance extends ShipStat {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
         // Prefer ships with low CR
-        return Utils.getSelectionWeightScaledByValue(spec.getNoCRLossSeconds(), 360f, true);
+        return 1.6f * Utils.getSelectionWeightScaledByValue(spec.getNoCRLossSeconds(), 540f, true);
     }
 }

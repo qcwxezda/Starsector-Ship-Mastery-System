@@ -184,6 +184,6 @@ public class ShieldDeflection extends BaseMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
         if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return 0f;
-        return Utils.getSelectionWeightScaledByValue(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.6f, true);
+        return Utils.getSelectionWeightScaledByValue(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.7f, true);
     }
 }

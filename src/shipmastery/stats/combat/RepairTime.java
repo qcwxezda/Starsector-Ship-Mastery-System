@@ -15,6 +15,6 @@ public class RepairTime extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return 1f;
+        return 2f;
     }
 }

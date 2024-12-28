@@ -13,7 +13,7 @@ public class SupplyUsage extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        float weight = Utils.getSelectionWeightScaledByValue(spec.getSuppliesPerMonth(), 10f, false);
+        float weight = Utils.getSelectionWeightScaledByValue(spec.getSuppliesPerMonth(), 8f, false);
         if (spec.getBuiltInMods().contains("high_maintenance")) weight *= 2f;
         return weight;
     }

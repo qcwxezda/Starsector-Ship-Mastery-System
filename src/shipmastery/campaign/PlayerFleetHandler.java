@@ -17,28 +17,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
                                            EconomyTickListener {
 
     @Override
-    public void reportPlayerOpenedMarket(MarketAPI market) {
-//        for (SubmarketAPI sub : market.getSubmarketsCopy()) {
-//            CargoAPI cargo = sub.getCargo();
-//            if (cargo != null) {
-//                FleetDataAPI mothballed = cargo.getMothballedShips();
-//                FleetDataAPI carrying = cargo.getFleetData();
-//                List<FleetMemberAPI> fms = new ArrayList<>();
-//                if (mothballed != null) {
-//                    fms.addAll(mothballed.getMembersListCopy());
-//                }
-//                if (carrying != null) {
-//                    fms.addAll(carrying.getMembersListCopy());
-//                }
-//                for (FleetMemberAPI fm : fms) {
-//                    int level = ShipMastery.getPlayerMasteryLevel(fm.getHullSpec());
-//                    if (level > 0) {
-//                        fm.getVariant().addMod("sms_npcIndicator" + level);
-//                    }
-//                }
-//            }
-//        }
-    }
+    public void reportPlayerOpenedMarket(MarketAPI market) {}
     @Override
     public void reportPlayerClosedMarket(MarketAPI market) {}
     @Override
@@ -79,7 +58,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
                     || variantInfo == null
                     || variantInfo.fleet != Global.getSector().getPlayerFleet()
                     || variant.isStockVariant() || variant.isGoalVariant()) {
-                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, fm), false, false);
+                fm.setVariant(FleetHandler.addHandlerMod(variant, variant, fm), false, true);
             }
             // Remove NPC mastery indicators if they exist
             for (int i = 1; i <= 9; i++) {

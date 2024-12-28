@@ -15,6 +15,6 @@ public class MaxSpeed extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getEngineSpec().getMaxSpeed(), 85f, true);
+        return Utils.getSelectionWeightScaledByValue(spec.getEngineSpec().getMaxSpeed(), 70f, true);
     }
 }

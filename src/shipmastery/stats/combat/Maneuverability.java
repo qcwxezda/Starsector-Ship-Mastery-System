@@ -17,6 +17,6 @@ public class Maneuverability extends ShipStat {
         if (spec.isCivilianNonCarrier()) return null;
         // Prefer less maneuverable ships
         ShipHullSpecAPI.EngineSpecAPI engine = spec.getEngineSpec();
-        return Utils.getSelectionWeightScaledByValue(engine.getMaxTurnRate(), 20f, true);
+        return Utils.getSelectionWeightScaledByValue(engine.getMaxTurnRate(), 8f, true);
     }
 }
