@@ -25,7 +25,6 @@ import shipmastery.mastery.impl.stats.ModifyStatsEffect;
 import shipmastery.stats.ShipStat;
 
 import java.awt.Color;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -646,6 +645,6 @@ public abstract class Utils {
                 sb.append(entry.getValue());
                 pw.println(sb);
             }
-        } catch (FileNotFoundException ignore) {}
+        } catch (Exception ignore) {}
     }
 }

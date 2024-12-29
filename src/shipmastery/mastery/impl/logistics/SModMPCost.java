@@ -17,7 +17,7 @@ public class SModMPCost extends AdditiveMasteryEffect {
 
     @Override
     public void onBeginRefit(ShipVariantAPI selectedVariant, boolean isModule) {
-        TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.modifyFlat(id, getIncreasePlayer());
+        TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.modifyFlat(id, -getIncreasePlayer());
     }
 
     @Override

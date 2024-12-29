@@ -1,3 +1,8 @@
+0.11.4
+----------
+- Removed FileNotFoundException from some debug code.
+- Fixed issue with unused MP cost mastery.
+
 0.11.3
 ----------
 Mastery weights have been changed, generated masteries will be different.
