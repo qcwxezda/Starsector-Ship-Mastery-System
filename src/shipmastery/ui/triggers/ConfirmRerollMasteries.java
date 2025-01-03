@@ -71,7 +71,7 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
                             effect.onDeactivate(Global.getSector().getPlayerPerson());
                         }
                     });
-            ShipMastery.generateMasteries(spec, levels, rerollSequence.size());
+            ShipMastery.generateMasteries(spec, levels, rerollSequence.size(), true);
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
                         @Override

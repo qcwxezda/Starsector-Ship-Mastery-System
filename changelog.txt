@@ -1,3 +1,19 @@
+0.11.5 (dev)
+----------
+Reroll mechanic has been modified -- you may find your mastery effects changed if you rerolled them.
+
+- Cybernetic augmentation:
+    - Max bonus reduced from 12% to 10%.
+    - Ship types required to master for max bonus reduced from 30 to 20.
+    - Civilian ships no longer count.
+- MP assignment algorithm for combat encounters now takes deployed time (with enough enemies in range to degrade CR) into account.
+- Regenerate option now strongly prefers mastery effects different from the effects prior to regenerating.
+- Added id to S-Mod autofit plugin
+- Mastery effect that reduces weapon flux for each empty mount no longer counts decorative and non-weapon slots.
+- Nerfed missile-regen-on-kill mastery.
+- Buffed residual armor mastery.
+- Buffed energy mine mastery effect base damage by 20% and fixed issue that caused piercing arcs not to scale with mastery bonuses.
+
 0.11.4
 ----------
 - Removed FileNotFoundException from some debug code.

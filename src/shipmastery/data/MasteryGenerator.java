@@ -41,12 +41,13 @@ public class MasteryGenerator {
         return effect;
     }
 
-    public MasteryEffect generate(ShipHullSpecAPI spec, int level, int index, boolean isOption2, int seedPrefix)
+    public MasteryEffect generate(ShipHullSpecAPI spec, int level, int index, boolean isOption2, int seedPrefix, Set<Class<?>> avoidWhenGeneratingRandom)
             throws InstantiationException, IllegalAccessException {
         MasteryEffect effect = generateDontInit(spec, level, index, isOption2);
 
         if (effect instanceof RandomMastery) {
             ((RandomMastery) effect).setSeedPrefix(seedPrefix);
+            ((RandomMastery) effect).setAvoidWhenGenerating(avoidWhenGeneratingRandom);
         }
 
         return effect.init(params);

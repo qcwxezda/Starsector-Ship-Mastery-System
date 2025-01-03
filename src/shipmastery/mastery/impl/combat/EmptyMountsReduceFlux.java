@@ -50,7 +50,7 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
 
         float boost = 0f;
         for (WeaponSlotAPI slot : variant.getHullSpec().getAllWeaponSlotsCopy()) {
-            if (slot.isBuiltIn()) continue;
+            if (slot.isBuiltIn() || !slot.isWeaponSlot() || slot.isDecorative()) continue;
             if (variant.getWeaponId(slot.getId()) == null) {
                 boost += getStrength(stats) * getReductionMultiplier(variant.getSlot(slot.getId()).getSlotSize());
             }

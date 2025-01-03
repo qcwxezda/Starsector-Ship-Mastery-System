@@ -39,7 +39,7 @@ MissileSpeed,"missile speed, acceleration, and maneuverability",2,0.2,,shipmaste
 HitStrength,hit strength against armor,2,0.15,,shipmastery.stats.combat.HitStrength
 OverloadTime,overload duration,,-0.2,,shipmastery.stats.combat.OverloadTime
 ProjectileSpeed,projectile speed of all projectile weapons,2,0.2,,shipmastery.stats.combat.ProjectileSpeed
-MinArmorFraction,residual armor fraction applied when calculating hull damage,,0.2,,shipmastery.stats.combat.MinArmorFraction
+MinArmorFraction,residual armor fraction applied when calculating hull damage,,0.3,,shipmastery.stats.combat.MinArmorFraction
 MissileHealth,durability of all missiles,3,0.3,,shipmastery.stats.combat.MissileHealth
 DamageToFightersMissiles,damage to fighters and missiles,,0.3,,shipmastery.stats.combat.DamageToFightersMissiles
 FighterRefitTime,fighter replacement time,2,-0.1,,shipmastery.stats.combat.FighterRefitTime

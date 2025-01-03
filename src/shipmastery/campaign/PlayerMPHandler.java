@@ -37,7 +37,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private long prevXP;
     private long prevBonusXP;
     private int prevSP;
-    private final Set<FleetMemberAPI> deployedInLastBattle = new HashSet<>();
+    /** Fleet member -> how long they were deployed for in the last battle. */
+    private final Map<FleetMemberAPI, Float> deployedTimeInLastBattle = new HashMap<>();
     private boolean lastXPGainWasBattle = false;
     private final Random random = new Random(90706904117206L);
     public static final String DIFFICULTY_PROGRESSION_KEY = "$sms_DifficultyProgression";
@@ -74,7 +75,6 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 //                    if (words.length >= 3 && "Gained")
 //                }
 //            }
-
 //        }
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         long curXP = playerStats.getXP();
@@ -83,9 +83,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         long xpGained = getXpGained(curXP, curBonusXP, curSP, playerStats);
 
         if (xpGained > 0) {
-            if (!deployedInLastBattle.isEmpty()) {
-                gainMPFromBattle(xpGained, deployedInLastBattle);
-                deployedInLastBattle.clear();
+            if (!deployedTimeInLastBattle.isEmpty()) {
+                gainMPFromBattle(xpGained, deployedTimeInLastBattle);
+                deployedTimeInLastBattle.clear();
             }
             // means auto-pursuit, treat as if all combat ships were deployed
             else if (lastXPGainWasBattle) {
@@ -123,18 +123,45 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         return xpGained;
     }
     private WeightedRandomPicker<ShipHullSpecAPI> makePicker(
-            Collection<FleetMemberAPI> toConsider,
-            boolean allowCivilian,
-            boolean allowCombat,
-            boolean allowDuplicates) {
+            Map<FleetMemberAPI, Float> deployedTime) {
         WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>();
         picker.setRandom(random);
+        Map<ShipHullSpecAPI, Integer> counts = new HashMap<>();
+        Map<ShipHullSpecAPI, Float> averageTimes = new HashMap<>();
+        for (Map.Entry<FleetMemberAPI, Float> entry : deployedTime.entrySet()) {
+            FleetMemberAPI fm = entry.getKey();
+            ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
+            Integer count = counts.get(spec);
+            if (count == null) count = 0;
+            counts.put(spec, count + 1);
+            Float totalTime = averageTimes.get(spec);
+            if (totalTime == null) totalTime = 0f;
+            averageTimes.put(spec, totalTime + entry.getValue());
+        }
+        for (Map.Entry<ShipHullSpecAPI, Float> time : averageTimes.entrySet()) {
+            ShipHullSpecAPI spec = time.getKey();
+            int count = counts.get(spec);
+            time.setValue(time.getValue() / count);
+            float weight = time.getValue() * 2f * (1f - (float) Math.pow(0.5f, count));
+            if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
+                weight *= (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec));
+            }
+            picker.add(spec, weight);
+        }
+        return picker;
+    }
+
+    private WeightedRandomPicker<ShipHullSpecAPI> makePicker(
+            Collection<FleetMemberAPI> toConsider,
+            boolean allowCivilian,
+            boolean allowCombat) {
+        WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>();
         Map<ShipHullSpecAPI, Integer> counts = new HashMap<>();
         for (FleetMemberAPI fm : toConsider) {
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
             if (spec.isCivilianNonCarrier() && !allowCivilian) continue;
             if (!spec.isCivilianNonCarrier() && !allowCombat) continue;
-            if (picker.getWeight(spec) > 0f && !allowDuplicates) continue;
+            if (picker.getWeight(spec) > 0f) continue;
             Integer count = counts.get(spec);
             if (count == null) count = 0;
             float weight = (float) Math.pow(2, -count);
@@ -147,16 +174,16 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         return picker;
     }
 
-    public void gainMPFromBattle(long xpGained, Set<FleetMemberAPI> deployed) {
+    public void gainMPFromBattle(long xpGained, Map<FleetMemberAPI, Float> deployedTime) {
         WeightedRandomPicker<ShipHullSpecAPI> picker =
-                makePicker(deployed, false, true, true);
+                makePicker(deployedTime);
         gainMP(xpGained, picker, false, false);
     }
 
     public void gainMPFromAutoPursuit(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
-                makePicker(members, false, true, false);
+                makePicker(members, false, true);
         // 65% XP penalty for auto pursuits
         gainMP(0.35f * xpGained, picker, false, true);
     }
@@ -164,7 +191,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public void gainMPFromOther(long xpGained) {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
-                makePicker(members, true, false, false);
+                makePicker(members, true, false);
         gainMP(xpGained, picker, true, false);
     }
 
@@ -270,8 +297,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (playerResult.getAllEverDeployedCopy() == null) return;
         Set<FleetMemberAPI> playerFleetMembers = new HashSet<>(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
         for (DeployedFleetMemberAPI dfm : playerResult.getAllEverDeployedCopy()) {
-            if (dfm.isFighterWing() || dfm.getMember() == null || !playerFleetMembers.contains(dfm.getMember())) continue;
-            deployedInLastBattle.add(dfm.getMember());
+            FleetMemberAPI fm = dfm.getMember();
+            if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
+            Float existingTime = deployedTimeInLastBattle.get(fm);
+            float newTime = dfm.getShip().getTimeDeployedForCRReduction();
+            deployedTimeInLastBattle.put(fm, existingTime == null ? newTime : existingTime + newTime);
         }
     }
 }

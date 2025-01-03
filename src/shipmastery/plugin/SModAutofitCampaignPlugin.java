@@ -17,6 +17,11 @@ public class SModAutofitCampaignPlugin extends BaseCampaignPlugin {
     }
 
     @Override
+    public String getId() {
+        return "sms_SModAutofitCampaignPlugin";
+    }
+
+    @Override
     public PluginPick<AutofitPlugin> pickAutofitPlugin(FleetMemberAPI member) {
         if (isNotPlayerAndChangeAutofitEnabled(member)) return null;
         if (Settings.DISABLE_MAIN_FEATURES) return null;

@@ -6,6 +6,7 @@ import shipmastery.mastery.MasteryEffect;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /** Data for a specific mastery level. One instance per ship hull type per level. */
 public class MasteryLevelData {
@@ -21,15 +22,15 @@ public class MasteryLevelData {
     final ShipHullSpecAPI spec;
     final int level;
 
-    public void generateEffects(int seedPrefix) throws InstantiationException, IllegalAccessException {
+    public void generateEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating) throws InstantiationException, IllegalAccessException {
         if (spec == null) {
             throw new RuntimeException(hullOrPresetName + " is a preset; can't generate masteries for a preset");
         }
         for (int i = 0; i < generatorsOption1.size(); i++) {
-            effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false, seedPrefix));
+            effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false, seedPrefix, avoidWhenGenerating));
         }
         for (int i = 0; i < generatorsOption2.size(); i++) {
-            effectsListOption2.add(generatorsOption2.get(i).generate(spec, level, i, true, seedPrefix));
+            effectsListOption2.add(generatorsOption2.get(i).generate(spec, level, i, true, seedPrefix, avoidWhenGenerating));
         }
     }
 

@@ -75,7 +75,7 @@ RangeNoNearbyEnemies,3,combat unique,,0.15,shipmastery.mastery.impl.combat.Range
 EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
 RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.4,shipmastery.mastery.impl.combat.RandomBeamIntensity
 SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRegenOnKill
-MissileRegenOnKill,3,combat unique,,0.3,shipmastery.mastery.impl.combat.MissileRegenOnKill
+MissileRegenOnKill,3,combat unique,,0.2,shipmastery.mastery.impl.combat.MissileRegenOnKill
 SafetyOverridesPPT,2,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT
 DEMBoost,4,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
 RegroupReplacement,2,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement

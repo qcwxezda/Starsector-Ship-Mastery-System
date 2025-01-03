@@ -10,6 +10,7 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.MasteryTags;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -505,7 +506,7 @@ public abstract class ShipMastery {
         for (int i = 1; i <= data.getMaxLevel(); i++) {
             levels.add(i);
         }
-        generateMasteries(spec, levels, 0);
+        generateMasteries(spec, levels, 0, false);
 
         Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(REROLL_SEQUENCE_MAP);
         if (rerollMap == null) return;
@@ -513,22 +514,34 @@ public abstract class ShipMastery {
         if (rerollSequence == null) return;
         int seedPrefix = 1;
         for (Set<Integer> levelSet : rerollSequence) {
-            generateMasteries(spec, levelSet, seedPrefix++);
+            generateMasteries(spec, levelSet, seedPrefix++, true);
         }
     }
 
-    public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix) throws InstantiationException, IllegalAccessException {
+    public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix, boolean avoidSeen) throws InstantiationException, IllegalAccessException {
         HullMasteryData data = masteryMap.get(spec.getHullId());
+        Set<Class<?>> seenEffectClasses = new HashSet<>();
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
+                for (MasteryEffect effect : levelData.getEffectsListOption1()) {
+                    if (!effect.hasTag(MasteryTags.VARYING)) {
+                        seenEffectClasses.add(effect.getClass());
+                    }
+                }
+                for (MasteryEffect effect : levelData.getEffectsListOption2()) {
+                    if (!effect.hasTag(MasteryTags.VARYING)) {
+                        seenEffectClasses.add(effect.getClass());
+                    }
+                }
                 levelData.clear();
             }
+
         }
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
-                levelData.generateEffects(seedPrefix);
+                levelData.generateEffects(seedPrefix, avoidSeen ? seenEffectClasses : new HashSet<Class<?>>());
             }
         }
     }

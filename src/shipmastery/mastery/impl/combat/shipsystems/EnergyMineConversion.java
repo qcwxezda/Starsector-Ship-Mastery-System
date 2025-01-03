@@ -26,7 +26,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
 
     static final float EFFECT_RADIUS = 400f;
     static final int NUM_ARCS = 10;
-    static final float DAMAGE_FRAC = 0.5f;
+    static final float DAMAGE_FRAC = 0.6f;
     public static final String PROJ_DAMAGE_KEY = "sms_EnergyMineArcDamage";
     public static final String PROJ_EMP_DAMAGE_KEY = "sms_EnergyMineArcEmp";
 
@@ -174,8 +174,8 @@ public class EnergyMineConversion extends ShipSystemEffect {
                             null,
                             target,
                             DamageType.ENERGY,
-                            150f,
-                            1000f,
+                            damage,
+                            empDamage,
                             1000000f,
                             "tachyon_lance_emp_impact",
                             40f,
