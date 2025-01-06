@@ -73,7 +73,7 @@ LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,50,shipmastery.ma
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PhasedCRDegradation
 RangeNoNearbyEnemies,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
 EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
-RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.4,shipmastery.mastery.impl.combat.RandomBeamIntensity
+RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
 SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRegenOnKill
 MissileRegenOnKill,3,combat unique,,0.2,shipmastery.mastery.impl.combat.MissileRegenOnKill
 SafetyOverridesPPT,2,combat unique doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT

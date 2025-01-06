@@ -28,12 +28,13 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
     public static final float XP_PER_HALF_MP = 7500f;
-    public static final float XP_PER_HALF_MP_CIV = 2750f;
+    public static final float XP_PER_HALF_MP_CIV = 3000f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 600f;
-    public static final float MULT_PER_MP = 1.1f;
+    public static final float MULT_PER_MP = 1.115f;
     /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.985f;
+    public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 60f;
     private long prevXP;
     private long prevBonusXP;
     private int prevSP;
@@ -184,8 +185,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true);
-        // 65% XP penalty for auto pursuits
-        gainMP(0.35f * xpGained, picker, false, true);
+        // 50% XP penalty for auto pursuits
+        gainMP(0.5f * xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {
@@ -211,12 +212,12 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             else if (uniques.size() >= 8) xpPer *= 0.5f;
         }
         float totalMPGained = 0f;
-        while (xp > 0 && (random.nextFloat() < xp / (xpPer + xp) || xp > 15f * xpPer)) {
+        while (xp > 0 && (random.nextFloat() < xp / (xpPer + xp) || xp > 8f * xpPer)) {
             totalMPGained++;
             xp -= xpPer;
             xpPer *= MULT_PER_MP;
         }
-        totalMPGained *= Settings.MP_GAIN_MULTIPLIER;
+        totalMPGained *= (isCivilian ? 0.8f : 1.25f) * Settings.MP_GAIN_MULTIPLIER;
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
             totalMPGained++;
@@ -301,7 +302,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
             Float existingTime = deployedTimeInLastBattle.get(fm);
             float newTime = dfm.getShip().getTimeDeployedForCRReduction();
-            deployedTimeInLastBattle.put(fm, existingTime == null ? newTime : existingTime + newTime);
+            float total = existingTime == null ? newTime : existingTime + newTime;
+            total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
+            deployedTimeInLastBattle.put(fm, total);
         }
     }
 }

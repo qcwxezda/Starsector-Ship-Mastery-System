@@ -7,10 +7,15 @@ Reroll mechanic has been modified -- you may find your mastery effects changed i
     - Ship types required to master for max bonus reduced from 30 to 20.
     - Civilian ships no longer count.
 - MP assignment algorithm for combat encounters now takes deployed time (with enough enemies in range to degrade CR) into account.
+    - Chance to gain mastery scales linearly with total time deployed, up to 60 seconds.
+    - Meant to discourage deploying and instantly retreating a ship without it ever having seen combat.
+- Decreased civilian MP gain by a flat 20%, increased combat MP gain by a flat 25%.
+- Reduced auto-pursuit MP penalty from 65% to 50%.
 - Regenerate option now strongly prefers mastery effects different from the effects prior to regenerating.
 - Added id to S-Mod autofit plugin
 - Mastery effect that reduces weapon flux for each empty mount no longer counts decorative and non-weapon slots.
 - Nerfed missile-regen-on-kill mastery.
+- Nerfed random beam damage mastery, extra damage is now flat 50% regardless of mastery strength increases.
 - Buffed residual armor mastery.
 - Buffed energy mine mastery effect base damage by 20% and fixed issue that caused piercing arcs not to scale with mastery bonuses.
 

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import particleengine.Particles;
@@ -25,12 +26,12 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
 
     public static final float BEAM_WIDTH_MULT = 1.3f;
 
-    public float getDamageIncrease(ShipAPI ship) {
-        return getStrength(ship);
+    public float getDamageIncrease() {
+        return 0.5f;
     }
 
     public float getDuration(ShipAPI ship) {
-        return getStrength(ship) * 6f;
+        return getStrength(ship) * 3f;
     }
 
     public float getChancePerSecond(ShipAPI ship) {
@@ -41,8 +42,9 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RandomBeamIntensity).params(
                 Utils.asInt(getStrength(selectedModule) * 200f),
-                Utils.asPercent(getDamageIncrease(selectedModule)),
-                Utils.asFloatOneDecimal(getDuration(selectedModule)));
+                Utils.asPercent(getDamageIncrease()),
+                Utils.asFloatOneDecimal(getDuration(selectedModule)))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
@@ -59,7 +61,7 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
         if (ship != null && !ship.hasListenerOfClass(RandomBeamIntensityScript.class)) {
-            ship.addListener(new RandomBeamIntensityScript(ship, getChancePerSecond(ship), getStrength(ship), getDuration(ship), id));
+            ship.addListener(new RandomBeamIntensityScript(ship, getChancePerSecond(ship), getDamageIncrease(), getDuration(ship), id));
         }
     }
 
