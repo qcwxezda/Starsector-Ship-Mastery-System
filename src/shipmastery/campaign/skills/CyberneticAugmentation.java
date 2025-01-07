@@ -7,6 +7,7 @@ import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -20,10 +21,7 @@ public class CyberneticAugmentation {
 
     public static final String MASTERED_COUNT_KEY = "$sms_MasteredCountKey";
     public static final float NPC_OP_BONUS = 0.05f;
-    public static final float BASE_BONUS = 0.02f;
-    public static final float BONUS_PER_MASTERED_CLUSTER = 0.02f;
     public static final int MASTERIES_PER_CLUSTER = 5;
-    public static final float MAX_BONUS = 0.1f;
 
     public static class Level0 implements DescriptionSkillEffect {
         public String getString() {
@@ -62,13 +60,13 @@ public class CyberneticAugmentation {
             Integer count = (Integer) player.getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
             if (count == null) count = 0;
             int clusters = count / MASTERIES_PER_CLUSTER;
-            float bonus = Math.min(MAX_BONUS, BASE_BONUS + clusters * BONUS_PER_MASTERED_CLUSTER);
+            float bonus = Math.min(Settings.CYBER_AUG_MAX_BONUS, Settings.CYBER_AUG_BASE_BONUS + clusters * Settings.CYBER_AUG_BONUS_PER_GROUP);
             info.addPara(Strings.Misc.cyberneticAugmentationDesc, 0f, hc, hc,
                          Utils.asPercent(bonus),
-                         Utils.asPercent(BASE_BONUS),
-                         Utils.asPercent(BONUS_PER_MASTERED_CLUSTER),
+                         Utils.asPercent(Settings.CYBER_AUG_BASE_BONUS),
+                         Utils.asPercent(Settings.CYBER_AUG_BONUS_PER_GROUP),
                          Utils.asInt(MASTERIES_PER_CLUSTER),
-                         Utils.asPercent(MAX_BONUS));
+                         Utils.asPercent(Settings.CYBER_AUG_MAX_BONUS));
         }
 
         @Override
@@ -83,7 +81,7 @@ public class CyberneticAugmentation {
             if (masteredCount == null || masteredCount < 0) return;
 
             int clusters = masteredCount / MASTERIES_PER_CLUSTER;
-            float bonus = Math.min(MAX_BONUS, BASE_BONUS + clusters * BONUS_PER_MASTERED_CLUSTER);
+            float bonus = Math.min(Settings.CYBER_AUG_MAX_BONUS, Settings.CYBER_AUG_BASE_BONUS + clusters * Settings.CYBER_AUG_BONUS_PER_GROUP);
             stats.getShipOrdnancePointBonus().modifyPercent(id, 100f * bonus);
         }
 

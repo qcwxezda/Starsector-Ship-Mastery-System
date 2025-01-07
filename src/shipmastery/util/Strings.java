@@ -149,6 +149,16 @@ public interface Strings {
         String intelDespawnWarning = Utils.getString("sms_graveyard", "intelDespawnWarning");
     }
 
+    interface Hullmods {
+        String rearrangementEffect1 = Utils.getString("sms_hullmods", "rearrangementEffect1");
+        String rearrangementEffect2 = Utils.getString("sms_hullmods", "rearrangementEffect2");
+        String rearrangementEffect3 = Utils.getString("sms_hullmods", "rearrangementEffect3");
+        String rearrangementEffect4 = Utils.getString("sms_hullmods", "rearrangementEffect4");
+        String rearrangementEffect5 = Utils.getString("sms_hullmods", "rearrangementEffect5");
+        String rearrangementEffect6 = Utils.getString("sms_hullmods", "rearrangementEffect6");
+        String rearrangementEffect7 = Utils.getString("sms_hullmods", "rearrangementEffect7");
+    }
+
     interface Descriptions {
         String SModCapacity = Utils.getString("sms_descriptions", "SModCapacity");
         String SModCreditsCost = Utils.getString("sms_descriptions", "SModCreditsCost");

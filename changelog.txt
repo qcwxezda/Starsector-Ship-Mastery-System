@@ -1,4 +1,4 @@
-0.11.5 (dev)
+0.11.5
 ----------
 Reroll mechanic has been modified -- you may find your mastery effects changed if you rerolled them.
 
@@ -6,18 +6,26 @@ Reroll mechanic has been modified -- you may find your mastery effects changed i
     - Max bonus reduced from 12% to 10%.
     - Ship types required to master for max bonus reduced from 30 to 20.
     - Civilian ships no longer count.
+    - Added some settings to tune this to your liking.
+- Reduced "Extradimensional Rearrangement" variance:
+    - Extra time flow is now always 10% (multiplicative).
+    - Stat penalties are always between -10% and -5%, with lower penalties being more common.
+    - Exact stat penalties are now shown in the hullmod tooltip.
 - MP assignment algorithm for combat encounters now takes deployed time (with enough enemies in range to degrade CR) into account.
     - Chance to gain mastery scales linearly with total time deployed, up to 60 seconds.
     - Meant to discourage deploying and instantly retreating a ship without it ever having seen combat.
-- Decreased civilian MP gain by a flat 20%, increased combat MP gain by a flat 25%.
+- Decreased civilian MP gain by a flat 20%, increased combat MP gain by a flat 20%.
 - Reduced auto-pursuit MP penalty from 65% to 50%.
 - Regenerate option now strongly prefers mastery effects different from the effects prior to regenerating.
 - Added id to S-Mod autofit plugin
 - Mastery effect that reduces weapon flux for each empty mount no longer counts decorative and non-weapon slots.
+- Modified the extra-frag-damage-for-large-ballistic-weapons mastery to scale based on the projectile's original damage, so it doesn't disproportionately favor e.g. storm needlers.
 - Nerfed missile-regen-on-kill mastery.
 - Nerfed random beam damage mastery, extra damage is now flat 50% regardless of mastery strength increases.
 - Buffed residual armor mastery.
 - Buffed energy mine mastery effect base damage by 20% and fixed issue that caused piercing arcs not to scale with mastery bonuses.
+- Fixed issue where excess OP being removed in the refit screen didn't also apply to the fleet-facing ship, causing the same message to pop up again when re-selecting the offending ship.
+- Fixed issue where regenerating masteries could be confirmed with spacebar input even if there was nothing to regenerate.
 
 0.11.4
 ----------

@@ -30,7 +30,11 @@
   "enablePlayerShipGraveyards": true,
   "enableRecentBattles": true,
   "recentBattlesPreciseMode": false,
-  "addSModAutofitOption": true
+  "addSModAutofitOption": true,
+
+  "cyberAugBaseBonus": 0.02,
+  "cyberAugMaxBonus": 0.1,
+  "cyberAugBonusPerGroup": 0.02,
 
   # Use this option to fix a seed for randomly generated masteries, ensuring you get the same generated masteries for
   # the same ship type. Leaving blank or whitespace only will use the player id (sector seed) as the seed.

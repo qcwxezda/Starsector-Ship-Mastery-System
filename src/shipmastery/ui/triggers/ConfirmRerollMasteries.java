@@ -21,10 +21,12 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
 
     final MasteryPanel masteryPanel;
     final ShipHullSpecAPI spec;
+    final boolean isNoEffect;
 
-    public ConfirmRerollMasteries(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
+    public ConfirmRerollMasteries(MasteryPanel masteryPanel, ShipHullSpecAPI spec, boolean isNoEffect) {
         this.masteryPanel = masteryPanel;
         this.spec = spec;
+        this.isNoEffect = isNoEffect;
     }
 
     @Override
@@ -32,15 +34,15 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
         // The second argument is 0 if confirmed, 1 if canceled
         int option = (int) args[1];
         if (option == 1) return;
+        // Needed because spacebar confirms even if the confirm button is grayed out
+        if (isNoEffect) return;
 
         Set<Integer> levels = new HashSet<>();
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
             levels.add(i);
         }
         levels.removeAll(ShipMastery.getPlayerActiveMasteriesCopy(spec).keySet());
-        if (levels.isEmpty()) {
-            return;
-        }
+
 
         ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getRerollMPCost(spec));
         Global.getSector().getPlayerStats().spendStoryPoints(MasteryUtils.getRerollSPCost(spec), false, null, false, 0f, null);

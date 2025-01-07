@@ -22,6 +22,9 @@ public class Settings {
     public static Float MP_GAIN_MULTIPLIER;
     public static Float BUILD_IN_CREDITS_COST_MULTIPLIER;
     public static Float DOUBLE_CLICK_INTERVAL;
+    public static Float CYBER_AUG_MAX_BONUS;
+    public static Float CYBER_AUG_BONUS_PER_GROUP;
+    public static Float CYBER_AUG_BASE_BONUS;
     public static Boolean ENABLE_COPY_SEED_BUTTON;
 
     /** From 0-1, roughly the percentage of ships in NPC fleets that will have masteries */
@@ -91,5 +94,9 @@ public class Settings {
         BUILD_IN_CREDITS_COST_MULTIPLIER = Math.max(0f, (float) json.getDouble("buildInCreditsCostMultiplier"));
         RANDOM_GENERATION_SEED = json.getString("randomMasterySeed");
         ENABLE_COPY_SEED_BUTTON = json.getBoolean("enableCopySeedButton");
+
+        CYBER_AUG_BASE_BONUS = Math.max(0f, (float) json.getDouble("cyberAugBaseBonus"));
+        CYBER_AUG_MAX_BONUS = Math.max(0f, (float) json.getDouble("cyberAugMaxBonus"));
+        CYBER_AUG_BONUS_PER_GROUP = Math.max(0f, (float) json.getDouble("cyberAugBonusPerGroup"));
     }
 }

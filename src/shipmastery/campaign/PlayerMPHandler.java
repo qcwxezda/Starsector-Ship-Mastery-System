@@ -212,12 +212,12 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             else if (uniques.size() >= 8) xpPer *= 0.5f;
         }
         float totalMPGained = 0f;
-        while (xp > 0 && (random.nextFloat() < xp / (xpPer + xp) || xp > 8f * xpPer)) {
+        while (xp > 0 && (random.nextFloat() < xp / (xpPer + xp) || xp > 9f * xpPer)) {
             totalMPGained++;
             xp -= xpPer;
             xpPer *= MULT_PER_MP;
         }
-        totalMPGained *= (isCivilian ? 0.8f : 1.25f) * Settings.MP_GAIN_MULTIPLIER;
+        totalMPGained *= (isCivilian ? 0.8f : 1.2f) * Settings.MP_GAIN_MULTIPLIER;
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
             totalMPGained++;

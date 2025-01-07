@@ -75,7 +75,7 @@ public class RerollButtonPressed extends ActionListener {
                 Strings.MasteryPanel.cancelText,
                 500f,
                 noEffect ? 330f : 390f,
-                new ConfirmRerollMasteries(masteryPanel, spec)
+                new ConfirmRerollMasteries(masteryPanel, spec, noEffect)
         );
 
         if (dialogData != null) {

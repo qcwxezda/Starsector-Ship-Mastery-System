@@ -277,7 +277,7 @@
     "ExtraFighterPerWingPost": "This effect has lower priority than other sources of reserve deployment and will be suspended until they expire.",
     "BurnDriveCooldown": "Grants faster %1$s cooldown on manual deactivations: the cooldown time becomes proportional to the amount of time the system was active.",
     "BurnDriveCooldownPost": "This effect will not increase system cooldown rate beyond %1$s times normal rate.",
-    "LargeBallisticFragDamage": "All large ballistic projectile weapons deal an additional %1$s fragmentation damage on hit.",
+    "LargeBallisticFragDamage": "All large ballistic projectile weapons deal additional fragmentation damage per hit equal to %1$s of their base damage, up to a maximum of %2$s damage.",
     "LargeBallisticFragDamagePost": "Doesn't apply to weapons that themselves deal fragmentation damage.",
     "PhasedCRDegradation": "Reduces peak performance time decay and combat readiness degradation rate by %1$s while phased.",
     "TemporalShellCRDegradation": "While %1$s is active, reduces peak performance time decay and combat readiness degradation rate by %2$s.",
@@ -405,6 +405,16 @@
   "sms_messages": {
     "gainedMPSingle": "Gained %1$s for %2$s ships.",
     "gainedMPMultiple": "Gained %1$s across %2$s ship hull types."
+  },
+
+  "sms_hullmods": {
+    "rearrangementEffect1": "- Time flow multiplied by a factor of %1$s.",
+    "rearrangementEffect2": "- Max speed reduced by %1$s.",
+    "rearrangementEffect3": "- Maneuverability reduced by %1$s.",
+    "rearrangementEffect4": "- Flux capacity reduced by %1$s.",
+    "rearrangementEffect5": "- Flux dissipation reduced by %1$s.",
+    "rearrangementEffect6": "- Hull durability reduced by %1$s.",
+    "rearrangementEffect7": "- Armor durability reduced by %1$s."
   },
 
   "sms_items": {

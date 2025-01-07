@@ -6,10 +6,12 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
+import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.ParticleBurstEmitter;
@@ -23,10 +25,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LargeBallisticFragDamage extends BaseMasteryEffect {
+
+    public static final float DAMAGE_FRAC = 0.5f;
+
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LargeBallisticFragDamage).params(
-                Utils.asInt(getStrength(selectedModule)));
+                Utils.asPercent(DAMAGE_FRAC), Utils.asInt(getStrength(selectedModule)))
+                .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
@@ -50,13 +56,13 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
     static class LargeBallisticFragDamageScript implements DamageDealtModifier {
 
         final ShipAPI ship;
-        final float damageAmount;
+        final float maxDamage;
         final Set<WeaponAPI> largeBallistics = new HashSet<>();
         final Color burstColor = new Color(200, 200, 180, 255);
 
-        LargeBallisticFragDamageScript(ShipAPI ship, float damageAmount) {
+        LargeBallisticFragDamageScript(ShipAPI ship, float maxDamage) {
             this.ship = ship;
-            this.damageAmount = damageAmount;
+            this.maxDamage = maxDamage;
 
             for (WeaponAPI weapon : ship.getUsableWeapons()) {
                 if (WeaponAPI.WeaponSize.LARGE.equals(weapon.getSize()) && WeaponAPI.WeaponType.BALLISTIC.equals(weapon.getType())) {
@@ -74,6 +80,8 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
             if (!largeBallistics.contains(proj.getWeapon())) return null;
             if (DamageType.FRAGMENTATION.equals(damage.getType())) return null;
 
+            final float fragDamage = Math.min(maxDamage, proj.getWeapon().getDamage().getBaseDamage() * DAMAGE_FRAC);
+
             // Do this later so that it hits the stripped armor
             CombatDeferredActionPlugin.performLater(new Action() {
                 @Override
@@ -82,7 +90,7 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
                             proj,
                             target,
                             pt,
-                            damageAmount,
+                            fragDamage,
                             DamageType.FRAGMENTATION,
                             0f,
                             false,
@@ -96,8 +104,8 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
                     emitter.life = 0.35f;
                     emitter.lifeJitter = 0.5f;
                     emitter.size = 4f;
-                    emitter.radius = 30f;
-                    Particles.burst(emitter, 30);
+                    emitter.radius = 5f + 2f * (float) Math.sqrt(fragDamage);
+                    Particles.burst(emitter, 10 + (int) (3f * (float) Math.sqrt(fragDamage)));
                 }
             }, 0f);
 

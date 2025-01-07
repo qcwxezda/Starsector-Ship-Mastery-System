@@ -69,7 +69,7 @@ ConvertedHangarBays,4,combat,,0.5,shipmastery.mastery.impl.combat.ConvertedHanga
 ConvertedCargoBayNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
 ExtraFighterPerWing,3,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
 DamageTakenNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
-LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,50,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
+LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,150,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PhasedCRDegradation
 RangeNoNearbyEnemies,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
 EnergyProjectileRange,3,combat unique,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange

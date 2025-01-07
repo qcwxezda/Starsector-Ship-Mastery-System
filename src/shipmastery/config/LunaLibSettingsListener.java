@@ -64,6 +64,10 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         }
         Settings.DISABLE_MAIN_FEATURES = LunaSettings.getBoolean(id, "sms_DisableMainFeatures");
 
+        Settings.CYBER_AUG_BASE_BONUS = LunaSettings.getFloat(id, "sms_CyberAugBaseBonus");
+        Settings.CYBER_AUG_MAX_BONUS = LunaSettings.getFloat(id, "sms_CyberAugMaxBonus");
+        Settings.CYBER_AUG_BONUS_PER_GROUP = LunaSettings.getFloat(id, "sms_CyberAugBonusPerGroup");
+
         FleetHandler.NPC_MASTERY_CACHE.clear();
     }
 }

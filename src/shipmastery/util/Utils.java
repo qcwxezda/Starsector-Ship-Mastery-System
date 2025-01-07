@@ -31,6 +31,7 @@ import java.util.*;
 
 public abstract class Utils {
     public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.##%");
+    public static final DecimalFormat percentFormatOneDecimal = new DecimalFormat("#,##0.#%");
     public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
     public static final DecimalFormat integerFormat = new DecimalFormat("0");
@@ -201,6 +202,7 @@ public abstract class Utils {
     }
 
     public static String asPercent(float num) {return percentFormat.format(num);}
+    public static String asPercentOneDecimal(float num) {return percentFormatOneDecimal.format(num);}
 
     public static String asPercentNoDecimal(float num) {return percentFormatNoDecimal.format(num);}
 
