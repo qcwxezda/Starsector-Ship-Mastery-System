@@ -3,6 +3,7 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
@@ -48,7 +49,7 @@ public class SModTableRowPressed extends TriggerableProxy {
         int limit = SModUtils.getMaxSMods(module.getMutableStats());
 
         // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
-        boolean isLogistic = spec.hasUITag("Logistics");
+        boolean isLogistic = spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
         boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.hasBonusLogisticSlot(rootVariant.getHullSpec());
         boolean hasLogistics = SModUtils.hasLogisticSMod(variant);
         boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);

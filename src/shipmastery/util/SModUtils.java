@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -73,7 +74,7 @@ public abstract class SModUtils {
     public static boolean hasLogisticSMod(ShipVariantAPI variant) {
         for (String sMod : variant.getSMods()) {
             HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
-            if (hullModSpec.hasUITag("Logistics")) {
+            if (hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS)) {
                 return true;
             }
         }

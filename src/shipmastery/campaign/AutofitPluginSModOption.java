@@ -5,6 +5,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.impl.campaign.plog.SModRecord;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -143,14 +144,14 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         for (String sMod : sMods) {
             HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
             if (!current.getSMods().contains(sMod)) {
-                boolean isFirstLogistic = MasteryUtils.hasBonusLogisticSlot(rootSpec) && !hasLogisticsSMod && hullModSpec.hasUITag("Logistics");
+                boolean isFirstLogistic = MasteryUtils.hasBonusLogisticSlot(rootSpec) && !hasLogisticsSMod && hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS);
                 if (addSModIfPossible(sMod, current, delegate, limit + (isFirstLogistic ? 1 : 0))) {
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
                     sModMPCostMap.put(sMod, SModUtils.getMPCost(hullModSpec, ship));
                     modified = true;
                     if (isFirstLogistic) limit++;
-                    if (hullModSpec.hasUITag("Logistics")) {
+                    if (hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS)) {
                         hasLogisticsSMod = true;
                     }
                 }

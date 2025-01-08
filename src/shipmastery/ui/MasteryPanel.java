@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.*;
@@ -463,7 +464,7 @@ public class MasteryPanel {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
         }
 
-        boolean isExtraLogistics = modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag("Logistics");
+        boolean isExtraLogistics = modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
         tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, isExtraLogistics ? Misc.getStoryBrightColor() : nameColor),
                                 Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost,
                                 Alignment.MID, Settings.MASTERY_COLOR, label(mpCostStr, masteryColor), Alignment.MID,
@@ -522,7 +523,7 @@ public class MasteryPanel {
         }
         if (Global.getSettings().isDevMode()) return null;
 
-        int logisticsEnhanceBonus = hasLogisticEnhanceBonus && !hasLogisticBuiltIn && spec.hasUITag("Logistics") ? 1 : 0;
+        int logisticsEnhanceBonus = hasLogisticEnhanceBonus && !hasLogisticBuiltIn && spec.hasUITag(HullMods.TAG_UI_LOGISTICS) ? 1 : 0;
         if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
                 + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() + logisticsEnhanceBonus && modular) {
             return Strings.MasteryPanel.limitReached;
