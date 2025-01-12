@@ -14,7 +14,7 @@ public class PlasmaJetsDissipation extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedModule);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsDissipation)
-                                 .params(getSystemName(), Utils.asFloatTwoDecimals(1f + strength), Utils.asPercent(strength));
+                                 .params(getSystemName(), Utils.asFloatTwoDecimals(1f + strength), Utils.asPercent(0.5f*strength));
     }
 
     @Override
@@ -23,7 +23,7 @@ public class PlasmaJetsDissipation extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(PlasmaJetsDissipationScript.class)) {
-            ship.addListener(new PlasmaJetsDissipationScript(ship, getStrength(ship), id));
+            ship.addListener(new PlasmaJetsDissipationScript(ship, 0.5f*getStrength(ship), id));
         }
     }
 

@@ -214,6 +214,14 @@ public interface Strings {
         String BallisticFireRateHullLevelTitle = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelTitle");
         String BallisticFireRateHullLevelDesc1 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc1");
         String BallisticFireRateHullLevelDesc2 = Utils.getString("sms_descriptions", "BallisticFireRateHullLevelDesc2");
+        String EnergyDamageFluxLevel = Utils.getString("sms_descriptions", "EnergyDamageFluxLevel");
+        String EnergyDamageFluxLevelPost = Utils.getString("sms_descriptions", "EnergyDamageFluxLevelPost");
+        String EnergyDamageFluxLevelTitle = Utils.getString("sms_descriptions", "EnergyDamageFluxLevelTitle");
+        String EnergyDamageFluxLevelDesc1 = Utils.getString("sms_descriptions", "EnergyDamageFluxLevelDesc1");
+        String MissileRoFFluxLevel = Utils.getString("sms_descriptions", "MissileRoFFluxLevel");
+        String MissileRoFFluxLevelPost = Utils.getString("sms_descriptions", "MissileRoFFluxLevelPost");
+        String MissileRoFFluxLevelTitle = Utils.getString("sms_descriptions", "MissileRoFFluxLevelTitle");
+        String MissileRofFluxLevelDesc1 = Utils.getString("sms_descriptions", "MissileRofFluxLevelDesc1");
         String SpeedHullLevel = Utils.getString("sms_descriptions", "SpeedHullLevel");
         String SpeedHullLevelPost = Utils.getString("sms_descriptions", "SpeedHullLevelPost");
         String SpeedHullLevelTitle = Utils.getString("sms_descriptions", "SpeedHullLevelTitle");

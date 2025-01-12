@@ -3,11 +3,31 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.util.Misc;
+import shipmastery.config.Settings;
+import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class ShieldHullmodPackage extends HullmodPackage {
+
+    public static final float SHIELD_UPKEEP_MULT = 0.5f;
+
+    @Override
+    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription
+                .init(getDescriptionString())
+                .params((Object[]) getDescriptionParams(selectedModule))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Misc.getTextColor());
+    }
+
     @Override
     protected String getDescriptionString() {
         return Strings.Descriptions.ShieldHullmodPackage;
@@ -20,7 +40,8 @@ public class ShieldHullmodPackage extends HullmodPackage {
                 Utils.getHullmodName(HullMods.EXTENDED_SHIELDS),
                 Utils.getHullmodName(HullMods.HARDENED_SHIELDS),
                 Utils.getHullmodName(HullMods.STABILIZEDSHIELDEMITTER),
-                Utils.asPercent(getStrength(selectedModule))
+                Utils.asPercent(getStrength(selectedModule)),
+                Utils.asPercent(1f - SHIELD_UPKEEP_MULT)
         };
     }
 
@@ -41,7 +62,7 @@ public class ShieldHullmodPackage extends HullmodPackage {
 
     @Override
     protected void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
-        stats.getShieldUpkeepMult().modifyMult(id, 0f);
+        stats.getShieldUpkeepMult().modifyMult(id, SHIELD_UPKEEP_MULT);
         stats.getShieldDamageTakenMult().modifyMult(id, 1f - getStrength(stats));
     }
 

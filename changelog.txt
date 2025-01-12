@@ -1,3 +1,20 @@
+0.11.6 (dev)
+----------
+Mastery weights have been modified and new mastery effects have been added -- you may find your mastery effects changed.
+Reroll mechanic has been modified slightly -- you may find your mastery effects changed if you rerolled them.
+
+- Added new mastery effects:
+    - Increased energy damage by up to 10% depending on flux level (independent of range).
+    - Increased missile rate of fire and ammo regen by up to 10% depending on flux level.
+- Merged multiplicative stat boosts and flat stat boosts into a single mastery effect class when randomly generating.
+    - Previously they were separate, and since there were far fewer flat boosts (e.g. max burn, max CR), they would end up getting selected disproportionately.
+- When regenerating "varying" (those with additional parameters) effects into the same effect, will now avoid picking the same additional parameters.
+    - E.g. it's significantly less likely to reroll into the same stat boost as before.
+- Nerfed hard-flux dissipation for plasma jets mastery by 50%.
+- Shield hullmod mastery effect now reduces shield upkeep by 50% rather than negating it entirely. Also nerfed damage reduction by 25%.
+- Miscellaneous stat mastery changes.
+- Bonus logistics S-mod check now properly uses HullMods.TAG_UI_LOGISTICS.
+
 0.11.5
 ----------
 Reroll mechanic has been modified -- you may find your mastery effects changed if you rerolled them.

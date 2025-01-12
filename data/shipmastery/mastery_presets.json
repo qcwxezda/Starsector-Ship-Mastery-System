@@ -53,7 +53,7 @@
     }
   },
 
-  # spec.isPhase() is hardCoded here
+  # spec.isPhase() is hard coded here
   "phase": {
     "preset": "_DEFAULT_",
     "levels": {

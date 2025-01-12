@@ -27,9 +27,11 @@ ModifyStatsMult,,varying negative_strength_allowed scale_selection_weight,,1,shi
 # If amounts aren't specified, the default_amount from stats_list.csv is used
 # ModifyStatsFlat <strength> <statId1> [amount1] [ statId2 [amount2] ] [...]
 ModifyStatsFlat,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsFlat
+# For random generation purposes
+ModifyStatsEffect,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsEffect
 #### COMBAT ####
 ApplyOfficerSkill,2,varying combat,,1,shipmastery.mastery.impl.combat.ApplyOfficerSkill
-ShieldHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
+ShieldHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
 ArmorHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ArmorHullmodPackage
 HullHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.HullHullmodPackage
 EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.EngineHullmodPackage
@@ -50,6 +52,8 @@ PhaseCloakResidue,4,combat unique doesnt_affect_modules,,2.5,shipmastery.mastery
 ZeroFluxResidue,3,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
 BallisticFireRateHullLevel,4,combat unique,,0.15,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
 BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
+EnergyDamageFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.EnergyDamageFluxLevel
+MissileRoFFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRoFFluxLevel
 SpeedHullLevel,4,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.SpeedHullLevel
 HitAngleDR,3,combat unique negative_strength_allowed,,-0.2,shipmastery.mastery.impl.combat.HitAngleDR
 TPCUpgrade,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCUpgrade

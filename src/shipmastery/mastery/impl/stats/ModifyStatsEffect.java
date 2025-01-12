@@ -8,6 +8,7 @@ import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
+import shipmastery.data.MasteryGenerator;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
@@ -20,7 +21,7 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 import java.util.*;
 
-public abstract class ModifyStatsEffect extends BaseMasteryEffect {
+public class ModifyStatsEffect extends BaseMasteryEffect {
     final Map<ShipStat, Float> amounts = new LinkedHashMap<>();
 
     @Override
@@ -42,7 +43,23 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
             amounts.put(stat, existing == null ? amount : existing + amount);
             addTags(stat.tags.toArray(new String[0]));
         }
-        return this;
+
+        if (this instanceof ModifyStatsFlat || this instanceof ModifyStatsMult) {
+            return this;
+        }
+        // Doesn't support multiple stats some of which are flat mods and others of which are multiplicative mods
+        ShipStat stat = amounts.keySet().iterator().next();
+        try {
+            if (stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) {
+                return MasteryGenerator.copyEffect(ModifyStatsFlat.class, this, args);
+            }
+            else {
+                return MasteryGenerator.copyEffect(ModifyStatsMult.class, this, args);
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -101,13 +118,33 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
         return MasteryDescription.init(sb.toString()).params(params.toArray(new Object[0])).colors(colors.toArray(new Color[0]));
     }
 
-    abstract float getModifiedAmount(ShipStat stat, float amount);
-    abstract String getAmountString(ShipStat stat, float modifiedAmount);
+    protected float getModifiedAmount(ShipStat stat, float amount) {
+        throw new UnsupportedOperationException("ModifyStatsEffect doesn't support this; use one of its subclasses");
+    }
+    protected String getAmountString(ShipStat stat, float modifiedAmount) {
+        throw new UnsupportedOperationException("ModifyStatsEffect doesn't support this; use one of its subclasses");
+    }
+
     public final List<ShipStat> getAffectedStats() {
         return new ArrayList<>(amounts.keySet());
     }
 
-    protected final List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return 3.5f;
+    }
+
+    @Override
+    public List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed) {
+        WeightedRandomPicker<ShipStat> modifyFlatPicker = getRandomArgsPicker(spec, maxTier, seed, true);
+        WeightedRandomPicker<ShipStat> combinedPicker = getRandomArgsPicker(spec, maxTier, seed, false);
+        combinedPicker.addAll(modifyFlatPicker);
+        if (combinedPicker.isEmpty()) return null;
+        ShipStat selected = combinedPicker.pickAndRemove();
+        return Collections.singletonList(selected.id);
+    }
+
+    protected final WeightedRandomPicker<ShipStat> getRandomArgsPicker(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
         WeightedRandomPicker<ShipStat> picker = new WeightedRandomPicker<>();
         picker.setRandom(new Random(seed));
         outer:
@@ -135,7 +172,11 @@ public abstract class ModifyStatsEffect extends BaseMasteryEffect {
                 picker.add(stat, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }
+        return picker;
+    }
 
+    protected final List<String> generateRandomArgs(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
+        WeightedRandomPicker<ShipStat> picker = getRandomArgsPicker(spec, maxTier, seed, modifyFlat);
         if (picker.isEmpty()) return null;
         ShipStat selected = picker.pickAndRemove();
         return Collections.singletonList(selected.id);

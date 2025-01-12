@@ -13,7 +13,7 @@ import java.util.Map;
 public class ModifyStatsFlat extends ModifyStatsEffect {
 
     @Override
-    float getModifiedAmount(ShipStat stat, float amount) {
+    protected float getModifiedAmount(ShipStat stat, float amount) {
         if (stat.tags.contains(StatTags.TAG_REQUIRE_INTEGER)) {
             if (amount < 1f && amount > 0f) return 1f;
             if (amount > -1f && amount < 0f) return -1f;
@@ -26,7 +26,7 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
     }
 
     @Override
-    String getAmountString(ShipStat stat, float modifiedAmount) {
+    protected String getAmountString(ShipStat stat, float modifiedAmount) {
         if (stat.tags.contains(StatTags.TAG_DISPLAY_AS_PERCENT)) {
             return Utils.absValueAsPercent(modifiedAmount);
         }
@@ -60,6 +60,12 @@ public class ModifyStatsFlat extends ModifyStatsEffect {
                 modify(o, id, amount);
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        // Select ModifyStatsEffect instead to get better spread between flat and mult stats
+        return null;
     }
 
     @Override

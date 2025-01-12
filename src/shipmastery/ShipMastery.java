@@ -10,7 +10,6 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
-import shipmastery.mastery.MasteryTags;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -520,19 +519,22 @@ public abstract class ShipMastery {
 
     public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix, boolean avoidSeen) throws InstantiationException, IllegalAccessException {
         HullMasteryData data = masteryMap.get(spec.getHullId());
+        Set<String> seenParams = new HashSet<>();
         Set<Class<?>> seenEffectClasses = new HashSet<>();
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
                 for (MasteryEffect effect : levelData.getEffectsListOption1()) {
-                    if (!effect.hasTag(MasteryTags.VARYING)) {
-                        seenEffectClasses.add(effect.getClass());
-                    }
+                    seenEffectClasses.add(effect.getClass());
+                    String[] args = effect.getArgs();
+                    // First arg is strength, that shouldn't be avoided when avoiding repeats
+                    seenParams.addAll(Arrays.asList(args).subList(1, args.length));
                 }
                 for (MasteryEffect effect : levelData.getEffectsListOption2()) {
-                    if (!effect.hasTag(MasteryTags.VARYING)) {
-                        seenEffectClasses.add(effect.getClass());
-                    }
+                    seenEffectClasses.add(effect.getClass());
+                    String[] args = effect.getArgs();
+                    // First arg is strength, that shouldn't be avoided when avoiding repeats
+                    seenParams.addAll(Arrays.asList(args).subList(1, args.length));
                 }
                 levelData.clear();
             }
@@ -541,7 +543,10 @@ public abstract class ShipMastery {
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
-                levelData.generateEffects(seedPrefix, avoidSeen ? seenEffectClasses : new HashSet<Class<?>>());
+                levelData.generateEffects(
+                        seedPrefix,
+                        avoidSeen ? seenEffectClasses : new HashSet<Class<?>>(),
+                        avoidSeen ? seenParams : new HashSet<String>());
             }
         }
     }

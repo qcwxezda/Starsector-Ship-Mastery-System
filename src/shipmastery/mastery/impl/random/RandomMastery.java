@@ -23,6 +23,7 @@ public class RandomMastery extends BaseMasteryEffect {
     protected int seedPrefix = 0;
     // So that the regenerate option avoids picking the same things as previous.
     protected Set<Class<?>> avoidWhenGenerating = new HashSet<>();
+    protected Set<String> paramsToAvoidWhenGenerating = new HashSet<>();
 
     @Override
     public MasteryEffect postInit(String... args) {
@@ -80,27 +81,25 @@ public class RandomMastery extends BaseMasteryEffect {
             Float weight = ShipMastery.getCachedSelectionWeight(str, spec);
             boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
             if (weight != null && (weight > 0f || randomMode)) {
-
                 // try to prioritize higher tier masteries, if they are applicable
                 float tier = info.tags.contains(MasteryTags.SCALE_SELECTION_WEIGHT) ? maxTier : info.tier;
                 float tierMult = tier * tier;
-                // strongly avoid regenerating the same stuff
-                if (avoidWhenGenerating.contains(info.effectClass)) tierMult *= 0.001f;
-                    // strongly avoid low-tier stuff
+                if (avoidWhenGenerating.contains(info.effectClass) && !info.tags.contains(MasteryTags.VARYING)) weight *= 0.000001f;
+                // strongly avoid low-tier stuff
                 if (maxTier - tier >= 2) tierMult = Float.MIN_NORMAL;
                 effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }
 
         MasteryEffect effect;
-        List<String> additionalParams;
+        List<String> additionalParams = null;
         List<String> params = new ArrayList<>();
 
         do {
             // Fallback if there's literally nothing to pick
             if (effectPicker.isEmpty()) {
                 MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>());
+                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>(), new HashSet<String>());
             }
 
             MasteryInfo selected = effectPicker.pickAndRemove();
@@ -110,16 +109,30 @@ public class RandomMastery extends BaseMasteryEffect {
 
             MasteryGenerator generator = new MasteryGenerator(selected, null);
             effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), isOption2());
-            additionalParams = effect.generateRandomArgs(getHullSpec(), maxTier, makeSeed());
+            // Try a few times to get something not in the seen params list
+            for (int i = 0; i < 4; i++) {
+                additionalParams = effect.generateRandomArgs(getHullSpec(), maxTier, makeSeed() + 12335231*i);
+                boolean notSeen = true;
+                for (String param : paramsToAvoidWhenGenerating) {
+                    if (additionalParams.contains(param)) {
+                        notSeen = false;
+                        break;
+                    }
+                }
+                if (notSeen) break;
+            }
         } while (additionalParams == null);
 
         params.addAll(additionalParams);
-        effect.init(params.toArray(new String[0]));
-        return effect;
+        return effect.init(params.toArray(new String[0]));
     }
 
     public void setAvoidWhenGenerating(Set<Class<?>> classesToAvoid) {
         avoidWhenGenerating = classesToAvoid;
+    }
+
+    public void setParamsToAvoidWhenGenerating(Set<String> paramsToAvoid) {
+        paramsToAvoidWhenGenerating = paramsToAvoid;
     }
 
     public void setSeedPrefix(int prefix) {

@@ -10,12 +10,12 @@ import java.util.Map;
 
 public class ModifyStatsMult extends ModifyStatsEffect {
     @Override
-    float getModifiedAmount(ShipStat stat, float amount) {
+    protected float getModifiedAmount(ShipStat stat, float amount) {
         return amount;
     }
 
     @Override
-    String getAmountString(ShipStat stat, float modifiedAmount) {
+    protected String getAmountString(ShipStat stat, float modifiedAmount) {
         return Utils.absValueAsPercent(modifiedAmount);
     }
 
@@ -62,6 +62,7 @@ public class ModifyStatsMult extends ModifyStatsEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 3f;
+        // Select ModifyStatsEffect instead to get better spread between flat and mult stats
+        return null;
     }
 }
