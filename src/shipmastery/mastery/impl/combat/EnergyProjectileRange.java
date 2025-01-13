@@ -18,9 +18,7 @@ public class EnergyProjectileRange extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(EnergyProjectileRangeScript.class)) {
-            ship.addListener(new EnergyProjectileRangeScript(getStrength(ship)));
-        }
+        ship.addListener(new EnergyProjectileRangeScript(getStrength(ship)));
     }
 
     static class EnergyProjectileRangeScript implements WeaponBaseRangeModifier {

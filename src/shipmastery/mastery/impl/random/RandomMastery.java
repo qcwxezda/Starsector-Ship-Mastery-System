@@ -49,6 +49,7 @@ public class RandomMastery extends BaseMasteryEffect {
             throws InstantiationException, IllegalAccessException {
         ShipHullSpecAPI spec = getHullSpec();
         Set<Class<?>> uniqueDontRepeat = new HashSet<>();
+        Set<Class<?>> seenNotUnique = new HashSet<>();
         int maxTier = args.length >= 2 ? Integer.parseInt(args[1]) : 1;
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
             List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
@@ -57,6 +58,8 @@ public class RandomMastery extends BaseMasteryEffect {
                 // Don't want same effects in a single level even if not unique
                 if (effect != null && (effect.hasTag(MasteryTags.UNIQUE) || (i == level && !effect.hasTag(MasteryTags.VARYING)))) {
                     uniqueDontRepeat.add(effect.getClass());
+                } else if (effect != null && !effect.hasTag(MasteryTags.VARYING)) {
+                    seenNotUnique.add(effect.getClass());
                 }
             }
             // Check the generators for masteries that haven't yet been generated
@@ -66,6 +69,8 @@ public class RandomMastery extends BaseMasteryEffect {
                 Set<String> tags = generator.tags;
                 if ((i == level && !tags.contains(MasteryTags.VARYING)) || tags.contains(MasteryTags.UNIQUE)) {
                     uniqueDontRepeat.add(generator.effectClass);
+                } else if (!tags.contains(MasteryTags.VARYING)) {
+                    seenNotUnique.add(generator.effectClass);
                 }
             }
         }
@@ -84,9 +89,11 @@ public class RandomMastery extends BaseMasteryEffect {
                 // try to prioritize higher tier masteries, if they are applicable
                 float tier = info.tags.contains(MasteryTags.SCALE_SELECTION_WEIGHT) ? maxTier : info.tier;
                 float tierMult = tier * tier;
+                // strongly reduce weight if effect has been seen before, even if not unique
+                if (seenNotUnique.contains(info.effectClass)) weight *= 0.01f;
                 if (avoidWhenGenerating.contains(info.effectClass) && !info.tags.contains(MasteryTags.VARYING)) weight *= 0.000001f;
                 // strongly avoid low-tier stuff
-                if (maxTier - tier >= 2) tierMult = Float.MIN_NORMAL;
+                if (maxTier - tier >= 2) tierMult = 0.01f;
                 effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }

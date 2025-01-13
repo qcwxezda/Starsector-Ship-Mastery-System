@@ -482,5 +482,7 @@ public interface Strings {
         String BuiltInNeuralIntegratorCRDesc = Utils.getString( "sms_descriptions", "BuiltInNeuralIntegratorCRDesc");
         String EmptyMountsReduceFlux = Utils.getString( "sms_descriptions", "EmptyMountsReduceFlux");
         String EmptyMountsReduceFluxPost = Utils.getString( "sms_descriptions", "EmptyMountsReduceFluxPost");
+        String FullHitpointsBoost = Utils.getString( "sms_descriptions", "FullHitpointsBoost");
+        String FullHitpointsBoostPost = Utils.getString( "sms_descriptions", "FullHitpointsBoostPost");
     }
 }

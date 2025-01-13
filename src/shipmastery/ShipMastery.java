@@ -541,6 +541,7 @@ public abstract class ShipMastery {
         }
 
         // Generate the non-random effects first so they don't end up clashing with the random effects
+        // Should be handled in RandomMastery by checking generators, but handle it here as well
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {

@@ -46,13 +46,10 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(TimeFlowNearbyEnemiesScript.class)) {
-            ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
-        }
+        ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
     }
 
     static class TimeFlowNearbyEnemiesScript implements AdvanceableListener {
-
         final ShipAPI ship;
         final float range;
         final float effectPerShip;
@@ -74,6 +71,10 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
+                ship.removeListener(this);
+            }
+
             checkInterval.advance(amount);
             if (checkInterval.intervalElapsed()) {
                 int count = 0;
