@@ -217,7 +217,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             xp -= xpPer;
             xpPer *= MULT_PER_MP;
         }
-        totalMPGained *= (isCivilian ? 0.8f : 1.2f) * Settings.MP_GAIN_MULTIPLIER;
+        totalMPGained *= (isCivilian ? 0.8f * Settings.CIVILIAN_MP_GAIN_MULTIPLIER : 1.2f * Settings.COMBAT_MP_GAIN_MULTIPLIER);
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
             totalMPGained++;

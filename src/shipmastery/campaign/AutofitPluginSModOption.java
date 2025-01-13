@@ -122,6 +122,11 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
             limit--;
         }
 
+        // Only allow adding S-mods with engineering override if already permanent on target
+        if (current.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && !target.getPermaMods().contains(Strings.Hullmods.ENGINEERING_OVERRIDE)) {
+            return false;
+        }
+
         // Enhanceable built-ins
         List<String> enhanceable = new ArrayList<>(target.getSModdedBuiltIns());
         sortByCost(enhanceable, ship);
@@ -144,7 +149,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         for (String sMod : sMods) {
             HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
             if (!current.getSMods().contains(sMod)) {
-                boolean isFirstLogistic = MasteryUtils.hasBonusLogisticSlot(rootSpec) && !hasLogisticsSMod && hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS);
+                boolean isFirstLogistic = SModUtils.hasBonusLogisticSlot(current) && !hasLogisticsSMod && hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS);
                 if (addSModIfPossible(sMod, current, delegate, limit + (isFirstLogistic ? 1 : 0))) {
                     sModCreditsCostMap.put(
                             sMod, SModUtils.getCreditsCost(hullModSpec, ship));
@@ -249,17 +254,24 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                         }
                     }
 
-                    if (refitHandler != null) {
-                        DeferredActionPlugin.performLater(new Action() {
-                            @Override
-                            public void perform() {
-                                refitHandler.injectRefitScreen(true, true);
+                    // Engineering override becomes permanent
+                    if (!useSP && !sModCreditsCostMap.isEmpty()
+                            && current.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)
+                            && !current.getPermaMods().contains(Strings.Hullmods.ENGINEERING_OVERRIDE)) {
+                        current.addPermaMod(Strings.Hullmods.ENGINEERING_OVERRIDE, false);
+                    }
+
+                    DeferredActionPlugin.performLater(new Action() {
+                        @Override
+                        public void perform() {
+                            if (refitHandler != null) {
+                                refitHandler.injectRefitScreen(true, !sModCreditsCostMap.isEmpty());
                             }
-                        }, 0f);
-                    }
-                    else {
-                        RefitHandler.syncRefitScreenWithVariant(true);
-                    }
+                            else {
+                                RefitHandler.syncRefitScreenWithVariant(!sModCreditsCostMap.isEmpty());
+                            }
+                        }
+                    }, 0f);
                 }
             }
         }

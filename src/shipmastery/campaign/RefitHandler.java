@@ -422,6 +422,10 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         final ShipHullSpecAPI newSpec = newInfo.rootSpec;
         final ShipVariantAPI newVariant = newInfo.moduleVariant;
 
+        // Unset the hidden tag from the Engineering Override hullmod
+        // Have to do it here, as when it's hidden none of the hullmod check-if-applicable methods get called
+        Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHidden(false);
+
         for (int i = effectsToDeactivate.size() - 1; i >= 0; i--) {
             EffectActivationRecord toDeactivate = effectsToDeactivate.get(i);
             toDeactivate.effect.onEndRefit(toDeactivate.moduleVariant, toDeactivate.isModule);

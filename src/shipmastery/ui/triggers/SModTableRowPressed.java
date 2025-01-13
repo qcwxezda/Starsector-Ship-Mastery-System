@@ -50,7 +50,7 @@ public class SModTableRowPressed extends TriggerableProxy {
 
         // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
         boolean isLogistic = spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
-        boolean hasLogisticsBonus = rootVariant != null && MasteryUtils.hasBonusLogisticSlot(rootVariant.getHullSpec());
+        boolean hasLogisticsBonus = rootVariant != null && SModUtils.hasBonusLogisticSlot(variant);
         boolean hasLogistics = SModUtils.hasLogisticSMod(variant);
         boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);
         //if (hasLogisticsBonus && hasLogistics) limit++;
@@ -106,6 +106,11 @@ public class SModTableRowPressed extends TriggerableProxy {
                                 Strings.MasteryPanel.builtInConfirm + name, Settings.MASTERY_COLOR);
                     }
                     Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
+
+                    // If engineering override is installed, it becomes permanent
+                    if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && !variant.getPermaMods().contains(Strings.Hullmods.ENGINEERING_OVERRIDE)) {
+                        variant.addPermaMod(Strings.Hullmods.ENGINEERING_OVERRIDE, false);
+                    }
 
                     ShipMastery.spendPlayerMasteryPoints(rootVariant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);

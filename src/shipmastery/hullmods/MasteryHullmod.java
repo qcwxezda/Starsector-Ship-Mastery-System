@@ -10,6 +10,7 @@ import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
+import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
 import java.util.Objects;
@@ -26,9 +27,8 @@ public class MasteryHullmod extends BaseHullMod {
                                                final String id) {
         ShipVariantAPI variant = stats.getVariant();
         // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
-        if (variant != null) {
-            ShipHullSpecAPI spec = variant.getHullSpec();
-            if (MasteryUtils.hasBonusLogisticSlot(spec) && SModUtils.hasLogisticSMod(variant)) {
+        if (shouldApplyEffects(variant)) {
+            if (SModUtils.hasBonusLogisticSlot(variant) && SModUtils.hasLogisticSMod(variant)) {
                 stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
             } else {
                 stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
@@ -83,7 +83,7 @@ public class MasteryHullmod extends BaseHullMod {
     // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.
     boolean noRecurse = false;
     private void applyEffects(final ShipVariantAPI variant, final HullmodAction action) {
-        if (variant == null || noRecurse || Settings.DISABLE_MAIN_FEATURES) {
+        if (variant == null || noRecurse || !shouldApplyEffects(variant)) {
             return;
         }
 
@@ -110,6 +110,10 @@ public class MasteryHullmod extends BaseHullMod {
             fleet.getFleetData().setForceNoSync(wasNoSync);
         }
         noRecurse = false;
+    }
+
+    private boolean shouldApplyEffects(ShipVariantAPI variant) {
+        return !Settings.DISABLE_MAIN_FEATURES && variant != null && !variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE);
     }
 
     private interface HullmodAction {

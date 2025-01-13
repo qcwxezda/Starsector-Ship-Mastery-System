@@ -220,7 +220,7 @@ public class MasteryPanel {
     UIPanelAPI makeThisShipPanel(float width, float height) {
         ShipVariantAPI moduleVariant = module.getVariant();
         hasLogisticBuiltIn = SModUtils.hasLogisticSMod(moduleVariant);
-        hasLogisticEnhanceBonus = MasteryUtils.hasBonusLogisticSlot(root.getHullSpec());
+        hasLogisticEnhanceBonus = SModUtils.hasBonusLogisticSlot(moduleVariant);
 
         List<HullModSpecAPI> applicableSpecs = new ArrayList<>();
         for (String id : moduleVariant.getHullSpec().getBuiltInMods()) {
@@ -464,7 +464,7 @@ public class MasteryPanel {
             nameColor = masteryColor = creditsColor = Misc.getGrayColor();
         }
 
-        boolean isExtraLogistics = modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
+        boolean isExtraLogistics = cantBuildInReason == null && modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
         tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, isExtraLogistics ? Misc.getStoryBrightColor() : nameColor),
                                 Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost,
                                 Alignment.MID, Settings.MASTERY_COLOR, label(mpCostStr, masteryColor), Alignment.MID,
@@ -478,21 +478,21 @@ public class MasteryPanel {
                 ShipAPI.HullSize hullSize = module.getHullSize();
                 tooltip.addTitle(spec.getDisplayName());
                 tooltip.addSpacer(10f);
-                if (effect.shouldAddDescriptionToTooltip(hullSize, null, true)) {
+                if (effect.shouldAddDescriptionToTooltip(hullSize, module, false)) {
                     List<String> highlights = new ArrayList<>();
                     String descParam;
                     // hard cap at 100 just in case getDescriptionParam for some reason
                     // doesn't default to null
-                    for (int i = 0; i < 100 && (descParam = effect.getDescriptionParam(i, hullSize, null)) != null;
+                    for (int i = 0; i < 100 && (descParam = effect.getDescriptionParam(i, hullSize, module)) != null;
                          i++) {
                         highlights.add(descParam);
                     }
                     tooltip.addPara(spec.getDescription(hullSize).replaceAll("%", "%%"), 0f, Misc.getHighlightColor(),
                                     highlights.toArray(new String[0]));
                 }
-                effect.addPostDescriptionSection(tooltip, hullSize, null, getTooltipWidth(tooltipParam), true);
-                if (effect.hasSModEffectSection(hullSize, null, false)) {
-                    effect.addSModSection(tooltip, hullSize, null, getTooltipWidth(tooltipParam), true, true);
+                effect.addPostDescriptionSection(tooltip, hullSize, module, getTooltipWidth(tooltipParam), true);
+                if (effect.hasSModEffectSection(hullSize, module, false)) {
+                    effect.addSModSection(tooltip, hullSize, module, getTooltipWidth(tooltipParam), false, true);
                 }
             }
 

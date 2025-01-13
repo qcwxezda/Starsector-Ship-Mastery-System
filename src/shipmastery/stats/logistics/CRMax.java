@@ -14,6 +14,6 @@ public class CRMax extends ShipStat {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return 1f;
+        return 1.6f;
     }
 }

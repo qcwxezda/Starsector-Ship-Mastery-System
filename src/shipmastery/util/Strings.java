@@ -150,6 +150,7 @@ public interface Strings {
     }
 
     interface Hullmods {
+        String ENGINEERING_OVERRIDE = "sms_engineeringOverride";
         String rearrangementEffect1 = Utils.getString("sms_hullmods", "rearrangementEffect1");
         String rearrangementEffect2 = Utils.getString("sms_hullmods", "rearrangementEffect2");
         String rearrangementEffect3 = Utils.getString("sms_hullmods", "rearrangementEffect3");
@@ -157,6 +158,9 @@ public interface Strings {
         String rearrangementEffect5 = Utils.getString("sms_hullmods", "rearrangementEffect5");
         String rearrangementEffect6 = Utils.getString("sms_hullmods", "rearrangementEffect6");
         String rearrangementEffect7 = Utils.getString("sms_hullmods", "rearrangementEffect7");
+        String engineeringOverrideDesc = Utils.getString("sms_hullmods", "engineeringOverrideDesc");
+        String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
+        String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
     }
 
     interface Descriptions {

@@ -21,7 +21,8 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
 
         Settings.CLEAR_SMODS_ALWAYS_ENABLED = LunaSettings.getBoolean(id, "sms_ClearSModsAlwaysEnabled");
         Settings.CLEAR_SMODS_REFUND_FRACTION = LunaSettings.getFloat(id, "sms_ClearSModsRefundFraction");
-        Settings.MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_MPGainMultiplier");
+        Settings.COMBAT_MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_CombatMPGainMultiplier");
+        Settings.CIVILIAN_MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_CivilianMPGainMultiplier");
         Settings.BUILD_IN_CREDITS_COST_MULTIPLIER = LunaSettings.getFloat(id, "sms_SModCreditCostMultiplier");
         Settings.RANDOM_GENERATION_SEED = LunaSettings.getString(id, "sms_RandomMasterySeed");
 

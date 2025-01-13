@@ -42,9 +42,6 @@ public abstract class MasteryUtils {
         return enhanceCount == null ? 0 : enhanceCount;
     }
 
-    public static boolean hasBonusLogisticSlot(ShipHullSpecAPI spec) {
-        return getEnhanceCount(spec) >= bonusLogisticSlotEnhanceNumber;
-    }
     public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return 0;
         return 1;

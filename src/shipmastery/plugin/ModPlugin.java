@@ -23,6 +23,7 @@ import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.procgen.Generator;
 import shipmastery.procgen.StationDefenderPlugin;
+import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
 import java.net.URL;
@@ -107,6 +108,7 @@ public class ModPlugin extends BaseModPlugin {
         if (!Settings.DISABLE_MAIN_FEATURES) {
             Misc.MAX_PERMA_MODS = 0;
             Global.getSettings().setFloat("maxPermanentHullmods", 0f);
+            Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(false);
             // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
             // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
             String id = Global.getSector().getPlayerPerson().getId();
@@ -160,6 +162,7 @@ public class ModPlugin extends BaseModPlugin {
         } else {
             Misc.MAX_PERMA_MODS = originalMaxPermaMods;
             Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
+            Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(true);
             try {
                 CampaignPlugin autofitPlugin = (CampaignPlugin) classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP").newInstance();
                 Global.getSector().registerPlugin(autofitPlugin);

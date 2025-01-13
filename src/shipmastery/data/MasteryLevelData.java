@@ -3,6 +3,7 @@ package shipmastery.data;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.mastery.impl.random.RandomMastery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,26 @@ public class MasteryLevelData {
     final ShipHullSpecAPI spec;
     final int level;
 
-    public void generateEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException {
+    public void generateNonRandomEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException {
+        generateEffects(seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating, false);
+    }
+
+    public void generateRandomEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException {
+        generateEffects(seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating, true);
+    }
+    private void generateEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating, boolean isRandomEffect) throws InstantiationException, IllegalAccessException {
         if (spec == null) {
             throw new RuntimeException(hullOrPresetName + " is a preset; can't generate masteries for a preset");
         }
         for (int i = 0; i < generatorsOption1.size(); i++) {
-            effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+            if (RandomMastery.class.isAssignableFrom(generatorsOption1.get(i).effectClass) == isRandomEffect) {
+                effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+            }
         }
         for (int i = 0; i < generatorsOption2.size(); i++) {
-            effectsListOption2.add(generatorsOption2.get(i).generate(spec, level, i, true, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+            if (RandomMastery.class.isAssignableFrom(generatorsOption2.get(i).effectClass) == isRandomEffect) {
+                effectsListOption2.add(generatorsOption2.get(i).generate(spec, level, i, true, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+            }
         }
     }
 

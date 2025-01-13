@@ -58,3 +58,4 @@ AllWeaponOPCost,the OP cost of all weapons,4,-0.8,modify_flat require_integer tr
 ExplosionRadiusDamage,explosion radius and damage when destroyed,,1,,shipmastery.stats.combat.ExplosionRadiusDamage
 BallisticWeaponsOPCost,the OP cost of all ballistic weapons,3,-1.2,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BallisticWeaponsOPCost
 EnergyWeaponsOPCost,the OP cost of all energy weapons,3,-1.2,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
+ShipSystemCooldown,"ship system recharge and regeneration rate, where applicable,",2,0.1,,shipmastery.stats.combat.ShipSystemCooldown

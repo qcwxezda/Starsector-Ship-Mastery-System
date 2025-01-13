@@ -34,7 +34,7 @@ public class ExtradimensionalRearrangement extends BaseHullMod {
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect1, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatTwoDecimals(1.1f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect1, 8f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatTwoDecimals(1.1f));
 
         if (ship == null || ship.getFleetMemberId() == null) return;
         float[] params = getParams(ship.getFleetMemberId().hashCode());

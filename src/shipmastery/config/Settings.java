@@ -19,7 +19,8 @@ public class Settings {
     public static Boolean CLEAR_SMODS_ALWAYS_ENABLED;
     public static Float CLEAR_SMODS_REFUND_FRACTION;
     public static String RANDOM_GENERATION_SEED;
-    public static Float MP_GAIN_MULTIPLIER;
+    public static Float COMBAT_MP_GAIN_MULTIPLIER;
+    public static Float CIVILIAN_MP_GAIN_MULTIPLIER;
     public static Float BUILD_IN_CREDITS_COST_MULTIPLIER;
     public static Float DOUBLE_CLICK_INTERVAL;
     public static Float CYBER_AUG_MAX_BONUS;
@@ -90,7 +91,8 @@ public class Settings {
         DISABLE_MAIN_FEATURES = json.getBoolean("disableMainFeatures");
         CLEAR_SMODS_ALWAYS_ENABLED = json.getBoolean("clearSModsAlwaysEnabled");
         CLEAR_SMODS_REFUND_FRACTION = MathUtils.clamp((float) json.getDouble("clearSModsRefundFraction"), 0f, 1f);
-        MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("mpGainMultiplier"));
+        COMBAT_MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("combatMPGainMultiplier"));
+        CIVILIAN_MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("civilianMPGainMultiplier"));
         BUILD_IN_CREDITS_COST_MULTIPLIER = Math.max(0f, (float) json.getDouble("buildInCreditsCostMultiplier"));
         RANDOM_GENERATION_SEED = json.getString("randomMasterySeed");
         ENABLE_COPY_SEED_BUTTON = json.getBoolean("enableCopySeedButton");

@@ -12,6 +12,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
+import shipmastery.hullmods.EngineeringOverride;
 
 public abstract class SModUtils {
 
@@ -25,8 +26,11 @@ public abstract class SModUtils {
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
         ShipVariantAPI variant = ship.getVariant();
+        if (variant == null) return 0;
+        // Engineering override reduces cost to 0
+        if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)) return 0;
         // Built-in mods always have static cost
-        if (isHullmodBuiltIn(spec, ship.getVariant())) {
+        if (isHullmodBuiltIn(spec, variant)) {
             return 1;
         }
 
@@ -50,6 +54,8 @@ public abstract class SModUtils {
     }
 
     public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {
+        ShipVariantAPI variant = ship.getVariant();
+        if (variant == null) return 0;
         int hullSizeOrd = Utils.hullSizeToInt(ship.getHullSize());
 
         float valueFrac = Math.max(1, ship.getHullSpec().getBaseValue() / BASE_VALUE_AMTS[hullSizeOrd]);
@@ -60,8 +66,13 @@ public abstract class SModUtils {
         cost = (float) (Math.ceil(cost/1000f)*1000f);
 
         // If enhancing built-in, credits cost is halved
-        if (isHullmodBuiltIn(spec, ship.getVariant())) {
+        if (isHullmodBuiltIn(spec, variant)) {
             cost /= 2f;
+        }
+
+        // Engineering override reduces by additional factor
+        if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)) {
+            cost *= EngineeringOverride.CREDITS_COST_MULT;
         }
 
         cost *= TransientSettings.SMOD_CREDITS_COST_MULT.getModifiedValue();
@@ -93,5 +104,12 @@ public abstract class SModUtils {
         return (int) stats.getDynamic()
                           .getMod(Stats.MAX_PERMANENT_HULLMODS_MOD)
                           .computeEffective(Global.getSettings().getInt("maxPermanentHullmods"));
+    }
+
+    public static boolean hasBonusLogisticSlot(ShipVariantAPI variant) {
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
+        ShipVariantAPI rootVariant = info == null || info.root == null ? variant : info.root;
+        return !variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)
+                && MasteryUtils.getEnhanceCount(rootVariant.getHullSpec()) >= MasteryUtils.bonusLogisticSlotEnhanceNumber;
     }
 }

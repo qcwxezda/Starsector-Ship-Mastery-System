@@ -422,7 +422,10 @@
     "rearrangementEffect4": "- Flux capacity reduced by %1$s.",
     "rearrangementEffect5": "- Flux dissipation reduced by %1$s.",
     "rearrangementEffect6": "- Hull durability reduced by %1$s.",
-    "rearrangementEffect7": "- Armor durability reduced by %1$s."
+    "rearrangementEffect7": "- Armor durability reduced by %1$s.",
+    "engineeringOverrideDesc": "Engineering Override hullmod",
+    "engineeringOverrideWarning": "If a hullmod is built in or enhanced while this hullmod is installed, this hullmod will become permanent.",
+    "engineeringOverridePermanent": "A hullmod has been built in or enhanced while this hullmod was installed. This hullmod is now permanent."
   },
 
   "sms_items": {

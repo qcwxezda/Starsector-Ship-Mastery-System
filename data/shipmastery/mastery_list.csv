@@ -50,7 +50,7 @@ PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modu
 ShieldDeflection,4,combat unique doesnt_affect_modules prefix_flagship_only,,7,shipmastery.mastery.impl.combat.ShieldDeflection
 PhaseCloakResidue,4,combat unique doesnt_affect_modules,,2.5,shipmastery.mastery.impl.combat.PhaseCloakResidue
 ZeroFluxResidue,3,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
-BallisticFireRateHullLevel,4,combat unique,,0.15,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
+BallisticFireRateHullLevel,4,combat unique,,0.125,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
 BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
 EnergyDamageFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.EnergyDamageFluxLevel
 MissileRoFFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRoFFluxLevel

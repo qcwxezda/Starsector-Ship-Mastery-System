@@ -538,12 +538,22 @@ public abstract class ShipMastery {
                 }
                 levelData.clear();
             }
+        }
 
+        // Generate the non-random effects first so they don't end up clashing with the random effects
+        for (int i : levels) {
+            MasteryLevelData levelData = data.getDataForLevel(i);
+            if (levelData != null) {
+                levelData.generateNonRandomEffects(
+                        seedPrefix,
+                        avoidSeen ? seenEffectClasses : new HashSet<Class<?>>(),
+                        avoidSeen ? seenParams : new HashSet<String>());
+            }
         }
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
-                levelData.generateEffects(
+                levelData.generateRandomEffects(
                         seedPrefix,
                         avoidSeen ? seenEffectClasses : new HashSet<Class<?>>(),
                         avoidSeen ? seenParams : new HashSet<String>());
