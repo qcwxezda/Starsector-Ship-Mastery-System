@@ -93,7 +93,7 @@ public class RandomMastery extends BaseMasteryEffect {
                 if (seenNotUnique.contains(info.effectClass)) weight *= 0.01f;
                 if (avoidWhenGenerating.contains(info.effectClass) && !info.tags.contains(MasteryTags.VARYING)) weight *= 0.000001f;
                 // strongly avoid low-tier stuff
-                if (maxTier - tier >= 2) tierMult = 0.01f;
+                if (maxTier - tier >= 2) tierMult *= 0.01f;
                 effectPicker.add(info, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }
@@ -102,12 +102,14 @@ public class RandomMastery extends BaseMasteryEffect {
         List<String> additionalParams = null;
         List<String> params = new ArrayList<>();
 
+        int tries = 10;
         do {
             // Fallback if there's literally nothing to pick
             if (effectPicker.isEmpty()) {
                 MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
                 return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>(), new HashSet<String>());
             }
+            tries++;
 
             MasteryInfo selected = effectPicker.pickAndRemove();
 
@@ -119,6 +121,7 @@ public class RandomMastery extends BaseMasteryEffect {
             // Try a few times to get something not in the seen params list
             for (int i = 0; i < 4; i++) {
                 additionalParams = effect.generateRandomArgs(getHullSpec(), maxTier, makeSeed() + 12335231*i);
+                if (additionalParams == null) break;
                 boolean notSeen = true;
                 for (String param : paramsToAvoidWhenGenerating) {
                     if (additionalParams.contains(param)) {
@@ -128,7 +131,13 @@ public class RandomMastery extends BaseMasteryEffect {
                 }
                 if (notSeen) break;
             }
-        } while (additionalParams == null);
+        } while (additionalParams == null && tries > 0);
+
+        // Fallback if there's literally nothing to pick
+        if (additionalParams == null) {
+            MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
+            return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>(), new HashSet<String>());
+        }
 
         params.addAll(additionalParams);
         return effect.init(params.toArray(new String[0]));

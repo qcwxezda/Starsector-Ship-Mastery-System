@@ -40,7 +40,7 @@ FluxHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.FluxHu
 BuiltInHSA,2,combat unique,,150,shipmastery.mastery.impl.hullmods.BuiltInHSA
 AmmoHullmodPackage,2,combat unique,,0.25,shipmastery.mastery.impl.hullmods.AmmoHullmodPackage
 BuiltInNeuralIntegrator,3,combat unique,,1,shipmastery.mastery.impl.hullmods.BuiltInNeuralIntegrator
-FluxByShieldUpkeep,3,negative_strength_allowed combat,1,0.25,shipmastery.mastery.impl.combat.FluxByShieldUpkeep
+FluxByShieldUpkeep,2,negative_strength_allowed combat,1,0.25,shipmastery.mastery.impl.combat.FluxByShieldUpkeep
 RangeIfNoBonuses,2,negative_strength_allowed unique combat,1,0.25,shipmastery.mastery.impl.combat.RangeIfNoBonuses
 EmptyMountsReduceFlux,3,unique combat,,0.01,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
 # Doesn't work
@@ -64,7 +64,7 @@ HullThresholdDR,4,combat unique,,3,shipmastery.mastery.impl.combat.HullThreshold
 BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.BackArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentingSpeedBoost
-RangeNotMoving,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNotMoving
+RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNotMoving
 SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 TimeFlowNearbyEnemies,4,combat,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
@@ -75,7 +75,7 @@ ExtraFighterPerWing,3,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFig
 DamageTakenNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
 LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,150,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PhasedCRDegradation
-RangeNoNearbyEnemies,3,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
+RangeNoNearbyEnemies,2,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies
 EnergyProjectileRange,3,combat,,60,shipmastery.mastery.impl.combat.EnergyProjectileRange
 RandomBeamIntensity,4,combat unique prefix_flagship_only,,0.5,shipmastery.mastery.impl.combat.RandomBeamIntensity
 SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRegenOnKill
@@ -87,12 +87,12 @@ ExtraMiningDrones,3,combat unique,,4,shipmastery.mastery.impl.combat.ExtraMining
 LimitedArmorRegen,3,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
 HammerLingeringDamage,3,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
 PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
-PhasedArmorRepair,3,combat unique,,0.015,shipmastery.mastery.impl.combat.PhasedArmorRepair
+PhasedArmorRepair,4,combat unique,,0.015,shipmastery.mastery.impl.combat.PhasedArmorRepair
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,4,combat unique,,0.5,shipmastery.mastery.impl.combat.BDeckExtraCharges
 FighterCountDR,3,combat unique,,0.03,shipmastery.mastery.impl.combat.FighterCountDR
 ShieldEfficiencyHardFlux,3,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
-ConvertedHangarNoPenalty,3,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
+ConvertedHangarNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
 MinimumReplacementRate,4,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
 VentSpeedFluxLevel,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
 MakeshiftShieldBoost,3,combat unique,,1,shipmastery.mastery.impl.combat.MakeshiftShieldBoost
@@ -101,7 +101,7 @@ NavRelayBoost,4,combat,,1,shipmastery.mastery.impl.combat.NavRelayBoost
 ECMPackageBoost,4,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,4,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
 MaxAutomatedCR,4,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
-FullHitpointsBoost,2,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
+FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,4,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,4,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion

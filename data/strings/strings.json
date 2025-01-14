@@ -35,7 +35,6 @@
 
   "sms_masteryPanel": {
     "mustBeDockedHullmods": "Must be docked at a market to build in hullmods.",
-    "mustBeDockedMasteries": "Must be docked at a market to change active masteries",
     "hullmodsTab": "Hullmods",
     "masteryTab": "Mastery",
     "doubleClickHint": "Double-click to build in",
@@ -86,7 +85,9 @@
     "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
     "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP. You have %3$s SP.",
     "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
-    "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP."
+    "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP.",
+    "unassignedWarningTextPlural": "%1$s unassigned levels",
+    "unassignedWarningTextSingular": "%1$s unassigned level"
   },
 
   "sms_descriptions": {
@@ -409,7 +410,7 @@
     "EmptyMountsReduceFlux": "Each small/medium/large weapon mount left empty reduces the flux cost of all weapons by %1$s/%2$s/%3$s.",
     "EmptyMountsReduceFluxPost": "This effect has a hard cap of %1$s total weapon flux reduction.",
     "FullHitpointsBoost": "If hull health is at maximum, increases the ship's max speed, flux dissipation, and all weapons' rate of fire by %1$s.",
-    "FullHitpointsBoostPost": "This bonus disappears as soon as the ship takes hull damage and will not be regained even should the ship's hull be repaired to its maximum integrity."
+    "FullHitpointsBoostPost": "This bonus disappears as soon as the ship takes hull damage and will not be regained even should the ship's hull be fully repaired."
   },
 
   "sms_messages": {
@@ -457,7 +458,6 @@
   },
 
   "sms_misc": {
-    "failedToGenerateMasteries": "Failed to generate mastery effects! Check stack trace for details",
     "doesntAffectModules": "This effect doesn't apply to modules.",
     "flagshipOnly": "Flagship only: ",
     "effectCantBeDeactivated": "Effect can't be deactivated",

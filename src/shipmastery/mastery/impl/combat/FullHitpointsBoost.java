@@ -63,6 +63,6 @@ public class FullHitpointsBoost extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return 1.2f;
+        return 1f;
     }
 }

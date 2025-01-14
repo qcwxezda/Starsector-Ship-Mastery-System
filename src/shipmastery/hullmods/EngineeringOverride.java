@@ -1,5 +1,7 @@
 package shipmastery.hullmods;
 
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -43,6 +45,19 @@ public class EngineeringOverride extends BaseLogisticsHullMod {
         else {
             tooltip.addPara(Strings.Hullmods.engineeringOverrideWarning, 8f);
         }
+    }
+
+    @Override
+    public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
+        if (ship.getVariant() == null || ship.getVariant().getPermaMods().contains(spec.getId())) return false;
+        return super.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
+    }
+
+    @Override
+    public String getCanNotBeInstalledNowReason(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
+        // Don't show the "can't be removed without spaceport" text if it's permanent
+        if (ship.getVariant() != null && ship.getVariant().getPermaMods().contains(spec.getId())) return null;
+        return super.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);
     }
 
     @Override

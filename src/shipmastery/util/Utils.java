@@ -58,7 +58,8 @@ public abstract class Utils {
 
     public static final Set<String> allHullSpecIds = new HashSet<>();
 
-    static {
+    public static void init() {
+        // Elite skill icons
         try {
             JSONArray array = Global.getSettings().getMergedSpreadsheetData("id", "data/characters/skills/aptitude_data.csv");
             for (int i = 0; i < array.length(); i++) {
@@ -68,25 +69,18 @@ public abstract class Utils {
         } catch (Exception e) {
             throw new RuntimeException("Could not load data/characters/skills/aptitude_data.csv from the base game");
         }
-    }
 
-    static {
+        // Initialize helper structures
         for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {
             wingVariantToIdMap.put(spec.getVariantId(), spec.getId());
         }
         for (HullModSpecAPI spec : Global.getSettings().getAllHullModSpecs()) {
             hullmodIdToNameMap.put(spec.getId(), spec.getDisplayName());
         }
-    }
-
-    static {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             if (spec != getRestoredHullSpec(spec)) continue;
             allHullSpecIds.add(spec.getHullId());
         }
-    }
-
-    static {
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
@@ -102,7 +96,6 @@ public abstract class Utils {
             skins.add(id);
         }
     }
-
 
     public static String getHullmodName(String hullmodId) {
         return hullmodIdToNameMap.get(hullmodId);

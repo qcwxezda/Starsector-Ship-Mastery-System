@@ -14,7 +14,8 @@ public class DModEffect extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.isCivilianNonCarrier()) return null;
-        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        float weight = 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        if (spec.isCivilianNonCarrier()) weight *= 0.5f;
+        return weight;
     }
 }

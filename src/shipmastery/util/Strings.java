@@ -38,7 +38,6 @@ public interface Strings {
 
     interface MasteryPanel {
         String mustBeDockedHullmods = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
-        String mustBeDockedMasteries = Utils.getString("sms_masteryPanel", "mustBeDockedMasteries");
         String masteryTab = Utils.getString("sms_masteryPanel", "masteryTab");
         String creditsDisplay = Utils.getString("sms_masteryPanel", "creditsDisplay");
         String masteryPointsDisplay = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
@@ -90,6 +89,8 @@ public interface Strings {
         String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
         String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");
         String enhanceMasteryConfirmText2NoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2NoSP");
+        String unassignedWarningTextPlural = Utils.getString("sms_masteryPanel", "unassignedWarningTextPlural");
+        String unassignedWarningTextSingular = Utils.getString("sms_masteryPanel", "unassignedWarningTextSingular");
     }
 
     interface Misc {
@@ -99,7 +100,6 @@ public interface Strings {
         String shipMasteryEffect = Utils.getString("sms_misc", "shipMasteryEffect");
         String and = Utils.getString("sms_misc", "and");
         String doesntAffectModules = Utils.getString("sms_misc", "doesntAffectModules");
-        String failedToGenerateMasteries = Utils.getString("sms_misc", "failedToGenerateMasteries");
         String flagshipOnly = Utils.getString("sms_misc", "flagshipOnly");
         String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
         String bestOfTheBestDesc2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");

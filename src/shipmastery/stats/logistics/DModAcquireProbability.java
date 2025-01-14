@@ -14,7 +14,8 @@ public class DModAcquireProbability extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.isCivilianNonCarrier()) return null;
-        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        float weight = 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        if (spec.isCivilianNonCarrier()) weight *= 0.25f;
+        return weight;
     }
 }

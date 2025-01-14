@@ -147,17 +147,18 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
     protected final WeightedRandomPicker<ShipStat> getRandomArgsPicker(ShipHullSpecAPI spec, int maxTier, long seed, boolean modifyFlat) {
         WeightedRandomPicker<ShipStat> picker = new WeightedRandomPicker<>();
         picker.setRandom(new Random(seed));
-        outer:
         for (String name : ShipMastery.getAllStatNames()) {
             ShipStat stat = ShipMastery.getStatParams(name);
             if (modifyFlat && !stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (!modifyFlat && stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (stat.tier > maxTier) continue;
+            boolean duplicateArg = false;
             List<String[]> usedArgs = getAllUsedArgs();
             for (String[] args : usedArgs) {
                 // Avoid duplicate stat buffs
                 if (args.length >= 2 && args[1].equals(stat.id)) {
-                    continue outer;
+                    duplicateArg = true;
+                    break;
                 }
             }
 
@@ -166,9 +167,9 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier stats, if applicable
                 float tierMult = stat.tier * stat.tier;
-                // strongly avoid low-tier stuff
-                if (maxTier - stat.tier >= 1) tierMult *= 0.5f;
-                if (maxTier - stat.tier >= 2) tierMult = Float.MIN_NORMAL;
+                // Strongly avoid duplicate arguments
+                if (duplicateArg) weight *= 0.0001f;
+                if (maxTier - stat.tier >= 2) tierMult *= 0.01f;
                 picker.add(stat, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }
         }

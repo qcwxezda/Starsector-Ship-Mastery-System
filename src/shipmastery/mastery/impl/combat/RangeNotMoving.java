@@ -34,7 +34,7 @@ public class RangeNotMoving extends BaseMasteryEffect {
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(strength / 5f),
                 Utils.asInt(INCREASE_SPEED_LIMIT),
-                Utils.asPercent(strength / 20f),
+                Utils.asPercent(strength / 15f),
                 Utils.asInt(DECAY_SPEED_LIMIT));
     }
 
@@ -42,7 +42,7 @@ public class RangeNotMoving extends BaseMasteryEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(RangeNotMovingScript.class)) {
             float strength = getStrength(ship);
-            ship.addListener(new RangeNotMovingScript(ship, strength, strength / 5f, strength / 20f, id));
+            ship.addListener(new RangeNotMovingScript(ship, strength, strength / 5f, strength / 15f, id));
         }
     }
 

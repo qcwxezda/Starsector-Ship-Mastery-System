@@ -26,7 +26,7 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
     }
 
     float getDecayRate(ShipAPI ship) {
-        return getStrength(ship) / 20f;
+        return getStrength(ship) / 15f;
     }
 
     @Override

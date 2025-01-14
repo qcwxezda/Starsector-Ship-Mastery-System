@@ -407,8 +407,9 @@ public class MasteryPanel {
         masteryPanel.addUIElement(masteryContainer).inRMid(50f);
 
         float containerPadX = 4f, containerPadY = 8f;
+        float masteryDisplayWidth = containerW + 50f - containerPadX, masteryDisplayHeight = containerH + 2f - containerPadY;
         TooltipMakerAPI masteryDisplayTTM =
-                masteryPanel.createUIElement(containerW + 50f - containerPadX, containerH + 2f - containerPadY, true);
+                masteryPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
 
         float pad = 25f;
         MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, new Action() {
@@ -432,6 +433,25 @@ public class MasteryPanel {
         }
 
         savedMasteryDisplay = display;
+
+        int maxLevel = ShipMastery.getPlayerMasteryLevel(root.getHullSpec());
+        Set<Integer> assignedLevels = ShipMastery.getPlayerActiveMasteriesCopy(root.getHullSpec()).keySet();
+        int unassignedLevels = 0;
+        for (int i = 1; i <= maxLevel; i++) {
+            if (!assignedLevels.contains(i)) {
+                unassignedLevels++;
+            }
+        }
+
+        if (unassignedLevels > 0) {
+            TooltipMakerAPI unassignedWarning = masteryPanel.createUIElement(300f, 20f, false);
+            String warningText = unassignedLevels == 1 ? Strings.MasteryPanel.unassignedWarningTextSingular : Strings.MasteryPanel.unassignedWarningTextPlural;
+            String warningTextFmt = String.format(warningText, unassignedLevels);
+            LabelAPI warningLabel = unassignedWarning.addPara(warningText, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, "" + unassignedLevels);
+            warningLabel.setColor(Misc.getGrayColor());
+            masteryPanel.addUIElement(unassignedWarning).inTR(-240f + warningLabel.computeTextWidth(warningTextFmt), -10f);
+        }
+
         return masteryPanel;
     }
 

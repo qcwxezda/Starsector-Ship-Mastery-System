@@ -1,7 +1,9 @@
 0.12.0 (dev)
 ----------
-Mastery weights have been modified and new mastery effects have been added -- you may find your mastery effects changed.
-Reroll mechanic has been modified slightly -- you may find your mastery effects changed if you rerolled them.
+If added to an existing save, prepare for your mastery effects to be completely rearranged and changed:
+    Mastery level structure has been changed.
+    Mastery weights have been modified and new mastery effects have been added.
+    Reroll mechanic has been modified slightly.
 
 - Added the "Engineering Override" hullmod, which increases S-mod capacity by 2 but prevents the ship from benefiting from mastery effects.
     - Also reduces MP cost of building in and enhancing to 0 and reduces credits cost by 75%.
@@ -11,6 +13,9 @@ Reroll mechanic has been modified slightly -- you may find your mastery effects 
     - Increased missile rate of fire and ammo regen by up to 10% depending on flux level.
     - Increased speed, flux dissipation, and weapon rate of fire by 5% when at full hitpoints.
     - Improved ship system recharge and regeneration rate by 10% (stat effect).
+- Moved S-mod capacity masteries from levels 2 and 5 to levels 3 and 6, as Engineering Override provides an alternative to getting S-mods immediately and cheaply.
+- Level 1 mastery now gives a choice between two options.
+- Now shows some warning text if you leave one or more available levels for a hull type unassigned.
 - Merged multiplicative stat boosts and flat stat boosts into a single mastery effect class when randomly generating.
     - Previously they were separate, and since there were far fewer flat boosts (e.g. max burn, max CR), they would end up getting selected disproportionately.
 - When regenerating "varying" (those with additional parameters) effects into the same effect, will now avoid picking the same additional parameters.
@@ -18,9 +23,13 @@ Reroll mechanic has been modified slightly -- you may find your mastery effects 
 - When generating mastery effects, all non-random effects are now generated first, followed by all random effects.
 - Randomly generated effects now also avoid repeating the same effect, even if it's not marked as "unique".
     - Removed unique tag from some mastery effects that should theoretically be stackable.
+- Downgraded some masteries from tier 3 (levels 6-7) to tier 2 (levels 3-4).
+- Mastery effect that increases PPT per additional ship of the same type now no longer generates for capitals ships or those with >=40 DP.
+- D-mod acquisition probability and effect reduction masteries are no longer limited to combat ships (but are still less common on civilian ships).
 - Nerfed hard-flux dissipation for plasma jets mastery by 50%.
 - Nerfed ballistic-fire-rate-based-on-hull-level mastery from 15% to 12.5%.
 - Shield hullmod mastery effect now reduces shield upkeep by 50% rather than negating it entirely. Also nerfed damage reduction by 25%.
+- Increased decay rate of increased range if not moving/no nearby enemies masteries by 25%.
 - Miscellaneous stat mastery changes.
 - Split MP_GAIN_MULTIPLIER setting into combat and civilian sub-settings.
 - Bonus logistics S-mod check now properly uses HullMods.TAG_UI_LOGISTICS.
@@ -29,6 +38,7 @@ Reroll mechanic has been modified slightly -- you may find your mastery effects 
 - Fixed issue where logistics hullmods that couldn't be built in would still be highlighted green when earning the additional logistics S-mod from enhancing.
 - Fixed issue with autofit S-mod plugin not saving the variant when it needed to and, conversely, saving the variant unnecessarily.
     - Now, variant will be saved (preventing undo) if and only if S-mods were added, both with this mod's main features enabled and disabled.
+- Fixed issue where code in static blocks could be called too early, when e.g. Global.getSettings().getAllShipHullSpecs() could return an empty list.
 
 0.11.5
 ----------

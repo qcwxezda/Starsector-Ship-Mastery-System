@@ -24,6 +24,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.procgen.Generator;
 import shipmastery.procgen.StationDefenderPlugin;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
 import java.net.URL;
@@ -45,6 +46,7 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        Utils.init();
         ShipMastery.loadMasteries();
         ShipMastery.loadStats();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
