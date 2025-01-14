@@ -1,4 +1,4 @@
-0.12.0 (dev)
+0.12.0
 ----------
 If added to an existing save, prepare for your mastery effects to be completely rearranged and changed:
     Mastery level structure has been changed.
