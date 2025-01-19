@@ -91,6 +91,6 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
         // bay on ships that filled it
         Utils.fixPlayerFleetInconsistencies();
-        masteryPanel.forceRefresh(true, false, false, true);
+        masteryPanel.forceRefresh(true, false, true, false);
     }
 }

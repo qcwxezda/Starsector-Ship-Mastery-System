@@ -190,7 +190,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             if (!masteries.isEmpty()) {
                 int level = masteries.lastEntry().getKey();
                 if (level >= 1) {
-                    level = Math.min(level, 9);
+                    level = Math.min(level, 15);
                     fm.getVariant().addMod("sms_npcIndicator" + level);
                 }
             }

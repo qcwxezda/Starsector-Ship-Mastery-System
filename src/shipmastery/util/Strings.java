@@ -84,7 +84,9 @@ public interface Strings {
         String sModRefundTextCredits = Utils.getString("sms_masteryPanel", "sModRefundTextCredits");
         String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
         String rerollMasteryConfirmText = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmText");
-        String rerollMasteryNotApplicableText = Utils.getString("sms_masteryPanel", "rerollMasteryNotApplicableText");
+        String rerollMasteryConfirmTextApplicable = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmTextApplicable");
+        String rerollMasteryConfirmTextApplicableCost = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmTextApplicableCost");
+        String rerollMasteryComfirmTextNotApplicable = Utils.getString("sms_masteryPanel", "rerollMasteryComfirmTextNotApplicable");
         String enhanceMasteryConfirmText = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText");
         String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
         String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");
@@ -94,7 +96,6 @@ public interface Strings {
     }
 
     interface Misc {
-
         String effectCantBeDeactivated = Utils.getString("sms_misc", "effectCantBeDeactivated");
         String effectCantBeDeactivatedWarning = Utils.getString("sms_misc", "effectCantBeDeactivatedWarning");
         String shipMasteryEffect = Utils.getString("sms_misc", "shipMasteryEffect");
@@ -114,8 +115,6 @@ public interface Strings {
         String cyberneticAugmentationDesc3 = Utils.getString("sms_misc", "cyberneticAugmentationDesc3");
         String cyberneticAugmentationDesc3Singular = Utils.getString("sms_misc", "cyberneticAugmentationDesc3Singular");
         String cyberneticAugmentationScope = Utils.getString("sms_misc", "cyberneticAugmentationScope");
-
-
     }
 
     interface Messages {

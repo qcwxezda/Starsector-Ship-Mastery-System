@@ -70,7 +70,7 @@ public abstract class ShipMastery {
         if (SAVE_DATA_TABLE == null) return 0;
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
-        return data == null ? 0 : data.level;
+        return data == null ? 0 : Math.min(data.level, getMaxMasteryLevel(spec));
     }
 
     public static void advancePlayerMasteryLevel(ShipHullSpecAPI spec) {
@@ -519,8 +519,10 @@ public abstract class ShipMastery {
     }
 
     public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
+        spec = Utils.getRestoredHullSpec(spec);
         Set<Integer> levels = new HashSet<>();
         HullMasteryData data = masteryMap.get(spec.getHullId());
+        if (data == null) return;
         for (int i = 1; i <= data.getMaxLevel(); i++) {
             levels.add(i);
         }
@@ -602,6 +604,7 @@ public abstract class ShipMastery {
                  if (levelData == null) continue;
                  levelData.clear();
              }
+             data.setGenerated(false);
          }
     }
 

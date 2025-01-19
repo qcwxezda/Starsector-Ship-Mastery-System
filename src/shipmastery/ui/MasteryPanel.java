@@ -423,7 +423,7 @@ public class MasteryPanel {
         masteryPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
 
         if (savedMasteryDisplay != null && useSavedScrollerLocation) {
-            display.scrollToHeight(savedMasteryDisplay.getSavedScrollerHeight());
+            display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight() - containerH - pad)));
         }
         else if (!scrollToStart) {
             display.scrollToHeight(Math.max(0f, Math.min(display.getScrollToHeight() - pad, display.getTotalHeight() - containerH - pad)));

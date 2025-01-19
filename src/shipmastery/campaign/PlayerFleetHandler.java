@@ -61,7 +61,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
                 fm.setVariant(FleetHandler.addHandlerMod(variant, variant, fm), false, true);
             }
             // Remove NPC mastery indicators if they exist
-            for (int i = 1; i <= 9; i++) {
+            for (int i = 1; i <= 15; i++) {
                 fm.getVariant().removeMod("sms_npcIndicator" + i);
             }
         }

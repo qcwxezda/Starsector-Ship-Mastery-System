@@ -12,7 +12,10 @@
         "A": "RandomMastery 1 2",
         "B": "RandomMastery 1 2"
       },
-      "3": ["SModCapacity","RestorationCost"],
+      "3": [
+        "SModCapacity",
+        "RestorationCost"
+      ],
       "4": {
         "A": "RandomMastery 1 2",
         "B": "RandomMastery 1 2"
@@ -21,7 +24,10 @@
         "A": "RandomMastery 1 3",
         "B": "RandomMastery 1 3"
       },
-      "6": ["SModCapacity","SModRemoval"],
+      "6": [
+        "SModCapacity",
+        "SModRemoval"
+      ],
       "7": {
         "A": "RandomMastery 1 3",
         "B": "RandomMastery 1 3"

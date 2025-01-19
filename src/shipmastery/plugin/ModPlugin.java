@@ -18,6 +18,7 @@ import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
 import shipmastery.campaign.skills.CyberneticAugmentation;
+import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
@@ -94,6 +95,7 @@ public class ModPlugin extends BaseModPlugin {
 
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
+        CombatListenerManager.clearLastBattleCreationContext();
 
         try {
             EveryFrameScript initializer = (EveryFrameScript) classLoader.loadClass("shipmastery.campaign.Initializer").newInstance();

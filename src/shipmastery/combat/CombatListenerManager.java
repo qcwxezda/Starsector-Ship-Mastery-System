@@ -15,6 +15,7 @@ import java.util.List;
 public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     private CombatEngineAPI engine;
+    /** Needs to be cleared on game load to prevent memory leak. */
     private static BattleCreationContext lastBattleCreationContext = null;
     private final ShipSystemTracker shipSystemTracker = new ShipSystemTracker();
     private final FlagshipTracker flagshipTracker = new FlagshipTracker();
@@ -22,6 +23,10 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     public static BattleCreationContext getLastBattleCreationContext() {
         return lastBattleCreationContext;
+    }
+
+    public static void clearLastBattleCreationContext() {
+        lastBattleCreationContext = null;
     }
 
     @Override

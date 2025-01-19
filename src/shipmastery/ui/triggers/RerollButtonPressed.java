@@ -3,6 +3,8 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -14,6 +16,7 @@ import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -64,31 +67,40 @@ public class RerollButtonPressed extends ActionListener {
         boolean noEffect = randomizedLevels.isEmpty();
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
-                noEffect ? String.format(Strings.MasteryPanel.rerollMasteryNotApplicableText, levelsJoinedA) :
-                        String.format(Strings.MasteryPanel.rerollMasteryConfirmText,
-                        levelsJoinedA,
-                        levelsJoinedB,
-                        mpCost,
-                        spCost,
-                        curSP),
+                "",
                 Strings.MasteryPanel.confirmText2,
                 Strings.MasteryPanel.cancelText,
                 500f,
-                noEffect ? 330f : 390f,
+                300f,
                 new ConfirmRerollMasteries(masteryPanel, spec, noEffect)
         );
 
         if (dialogData != null) {
-            dialogData.textLabel.setAlignment(Alignment.TMID);
-            if (!noEffect) {
-                dialogData.textLabel.setHighlight(levelsJoinedA, levelsJoinedB, mpCost + " MP", spCost + " SP", curSP + " SP");
-                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.MASTERY_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
-            }
-            else {
-                dialogData.textLabel.setHighlight(levelsJoinedA);
-                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR);
+            CustomPanelAPI inner = Global.getSettings().createCustom(500f, 300f, null);
+            TooltipMakerAPI text = inner.createUIElement(475f, 200f, true);
+            text.setParaInsigniaLarge();
+            text.addPara(Strings.MasteryPanel.rerollMasteryConfirmText, 0f);
+            text.setParaFontDefault();
+            if (noEffect) {
+                text.addPara(Strings.MasteryPanel.rerollMasteryComfirmTextNotApplicable, 10f, Settings.MASTERY_COLOR, levelsJoinedA);
                 dialogData.confirmButton.setEnabled(false);
             }
+            else {
+                text.addPara(Strings.MasteryPanel.rerollMasteryConfirmTextApplicable, 10f, Settings.MASTERY_COLOR, levelsJoinedA, levelsJoinedB);
+                TooltipMakerAPI costText = inner.createUIElement(475f, 25f, false);
+                costText.setParaInsigniaLarge();
+                costText.addPara(Strings.MasteryPanel.rerollMasteryConfirmTextApplicableCost,
+                        10f,
+                        new Color[] {Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor()},
+                        "" + mpCost,
+                        "" + spCost,
+                        "" + curSP);
+                inner.addUIElement(costText).inBL(8f, 65f);
+            }
+            inner.addUIElement(text).inTL(8f, 8f);
+            dialogData.panel.addComponent(inner).inTL(0f, 0f);
+
+            dialogData.textLabel.setAlignment(Alignment.TMID);
         }
     }
 }

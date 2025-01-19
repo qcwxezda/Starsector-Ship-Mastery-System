@@ -3,12 +3,16 @@
 - Masteries that require a ship to earn the "kill credit" for a target are now more lenient
     - As long as a ship damaged a target within 1 second of its destruction, it counts as a kill for the ship.
     - Doesn't apply to the terminator drone mastery, as that requires the drone to deal the killing blow.
+- Added NPC indicator hullmods up to mastery level 15.
+    - NPC fleets with mastery levels greater than or equal to 15 will show "Level 15+", as was the case before with levels greater than or equal to 9.
 - No longer generates masteries for *all* hull specs on game load, now uses a lazy approach where masteries are only generated as necessary.
     - Should substantially improve performance for games with a lot of hull specs and/or games where the maximum level has been configured higher than default.
 - No longer generates non-random masteries first in order to preserve input order in configurations with multiple masteries in a level
     - Unwanted duplicates should be handled in RandomMastery by checking generators.
 - Mastery effect that grants damage reduction for nearby owned fighters no longer affects modules.
 - Improved performance by caching Utils.getRestoredHullSpec results.
+- Adjusted reroll confirmation dialog to better accommodate for custom configs with lots of mastery levels.
+- Fixed possible memory leak related to recent-battles tracker.
 - Fixed rare crash with missile boost masteries where weapon.getSprite() could be null.
 - Fixed issue with non-combat and auto-pursuit XP not taking number of ships of the same type into account.
 
