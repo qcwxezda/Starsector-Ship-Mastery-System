@@ -90,7 +90,7 @@ PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumS
 PhasedArmorRepair,4,combat unique,,0.015,shipmastery.mastery.impl.combat.PhasedArmorRepair
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,4,combat unique,,0.5,shipmastery.mastery.impl.combat.BDeckExtraCharges
-FighterCountDR,3,combat unique,,0.03,shipmastery.mastery.impl.combat.FighterCountDR
+FighterCountDR,3,combat unique doesnt_affect_modules,,0.03,shipmastery.mastery.impl.combat.FighterCountDR
 ShieldEfficiencyHardFlux,3,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
 ConvertedHangarNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
 MinimumReplacementRate,4,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate

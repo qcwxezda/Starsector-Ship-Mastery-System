@@ -19,6 +19,7 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
+import java.util.Set;
 
 public class SystemRegenOnKill extends BaseMasteryEffect {
 
@@ -60,8 +61,16 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
-            if (EngineUtils.shipIsOwnedBy(source, ship)) {
+        public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
+            boolean countAsKill = false;
+            for (ShipAPI source : recentlyDamagedBy) {
+                if (EngineUtils.shipIsOwnedBy(source, ship)) {
+                    countAsKill = true;
+                    break;
+                }
+            }
+
+            if (countAsKill) {
                 if (target.isFighter() || Utils.hullSizeToInt(target.getHullSize()) < Utils.hullSizeToInt(ship.getHullSize())) return;
                 ShipSystemAPI system = ship.getSystem();
                 boolean activated = false;

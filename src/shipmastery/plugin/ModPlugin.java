@@ -118,9 +118,9 @@ public class ModPlugin extends BaseModPlugin {
                 if (!id.equals(lastSaveId)) {
                     lastSaveId = id;
                     ShipMastery.initMasteries(randomMode);
-                    ShipMastery.generateAndApplyMasteries(false);
+                    ShipMastery.activatePlayerMasteries();
                 } else {
-                    ShipMastery.generateAndApplyMasteries(true);
+                    ShipMastery.clearRerolledMasteries();
                 }
             }
             catch (Exception e) {

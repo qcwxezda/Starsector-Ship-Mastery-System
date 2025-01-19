@@ -20,6 +20,7 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MissileRegenOnKill extends BaseMasteryEffect {
     public static final float DAMAGE_MULT = 0.75f;
@@ -71,8 +72,16 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
-            if (EngineUtils.shipIsOwnedBy(source, ship)) {
+        public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
+            boolean countAsKill = false;
+            for (ShipAPI source : recentlyDamagedBy) {
+                if (EngineUtils.shipIsOwnedBy(source, ship)) {
+                    countAsKill = true;
+                    break;
+                }
+            }
+
+            if (countAsKill) {
                 if (target.isFighter() || Utils.hullSizeToInt(target.getHullSize()) < Utils.hullSizeToInt(ship.getHullSize())) return;
 
                 for (WeaponAPI weapon : missileWeapons) {

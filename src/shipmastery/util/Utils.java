@@ -51,6 +51,7 @@ public abstract class Utils {
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
+    public static final Map<String, ShipHullSpecAPI> hullIdToRestored = new HashMap<>();
     public static final Map<String, Set<String>> baseHullToAllSkinsMap = new HashMap<>();
 
     /** Map from skill aptitudes to their elite icons */
@@ -114,11 +115,16 @@ public abstract class Utils {
     }
 
     public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
+        ShipHullSpecAPI memo = hullIdToRestored.get(spec.getHullId());
+        if (memo != null) return memo;
+
         ShipHullSpecAPI prevSpec = null;
         while (spec != prevSpec) {
             prevSpec = spec;
             spec = getRestoredHullSpecOneStep(spec);
         }
+
+        hullIdToRestored.put(spec.getHullId(), spec);
         return spec;
     }
 

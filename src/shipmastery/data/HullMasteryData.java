@@ -8,6 +8,7 @@ public class HullMasteryData {
     final List<MasteryLevelData> levels = new ArrayList<>();
     final String hullOrPresetName;
     final int maxLevel;
+    boolean generated = false;
 
     public HullMasteryData(String name, int maxLevel) {
         hullOrPresetName = name;
@@ -15,6 +16,14 @@ public class HullMasteryData {
         for (int i = 1; i <= maxLevel; i++) {
             levels.add(null);
         }
+    }
+
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
     }
 
     public MasteryLevelData getDataForLevel(int level) {

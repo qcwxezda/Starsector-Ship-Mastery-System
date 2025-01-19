@@ -162,7 +162,6 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
             if (spec.isCivilianNonCarrier() && !allowCivilian) continue;
             if (!spec.isCivilianNonCarrier() && !allowCombat) continue;
-            if (picker.getWeight(spec) > 0f) continue;
             Integer count = counts.get(spec);
             if (count == null) count = 0;
             float weight = (float) Math.pow(2, -count);

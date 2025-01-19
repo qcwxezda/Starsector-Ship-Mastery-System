@@ -66,6 +66,7 @@ public class HEFMissileBoost extends ShipSystemEffect {
 
             for (WeaponAPI weapon : ship.getUsableWeapons()) {
                 if (WeaponAPI.WeaponType.MISSILE.equals(weapon.getType())) {
+                    if (weapon.getSprite() == null) continue;
                     BurstEmitter emitter = new BurstEmitter(weapon.getSprite(), new Color(255, 0, 255), 6, 0f, particleLife);
                     emitter.layer = CombatEngineLayers.BELOW_PHASED_SHIPS_LAYER;
                     emitter.blendDestFactor = GL11.GL_ONE;

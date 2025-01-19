@@ -12,6 +12,7 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.List;
+import java.util.Set;
 
 public class DroneStrikeRegen extends ShipSystemEffect {
 
@@ -79,7 +80,7 @@ public class DroneStrikeRegen extends ShipSystemEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
+        public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
             if (target.isFighter()) return;
             Object lastDamagedBy = target.getParamAboutToApplyDamage();
             if (lastDamagedBy instanceof DamagingProjectileAPI) {

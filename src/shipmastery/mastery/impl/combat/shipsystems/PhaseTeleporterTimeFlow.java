@@ -21,6 +21,8 @@ import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.Set;
+
 public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -134,9 +136,17 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         }
 
         @Override
-        public void reportShipDestroyed(ShipAPI source, ShipAPI target) {
+        public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
+            boolean countAsKill = false;
+            for (ShipAPI source : recentlyDamagedBy) {
+                if (EngineUtils.shipIsOwnedBy(source, ship)) {
+                    countAsKill = true;
+                    break;
+                }
+            }
+
             if (timeLeft <= 0f) return;
-            if (EngineUtils.shipIsOwnedBy(source, ship) && !target.isFighter()) {
+            if (countAsKill && !target.isFighter()) {
                 int size = Utils.hullSizeToInt(target.getHullSize());
                 float amount = (size + 1f) * basePPTAmount;
                 MutableStat.StatMod current = ship.getMutableStats().getPeakCRDuration().getFlatBonus(id);
