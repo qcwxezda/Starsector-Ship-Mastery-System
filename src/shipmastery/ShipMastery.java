@@ -10,6 +10,7 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.*;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.plugin.ModPlugin;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
@@ -223,12 +224,24 @@ public abstract class ShipMastery {
         return isOption2 ? levelData.getGeneratorsOption2() : levelData.getGeneratorsOption1();
     }
 
-    // prevent infinite recursion
-    private static boolean shouldGenerate = true;
+
     private static MasteryLevelData getLevelData(ShipHullSpecAPI spec, int level) {
         String id = Utils.getRestoredHullSpecId(spec);
         HullMasteryData masteryData = masteryMap.get(id);
         if (masteryData == null) return null;
+        generateIfNeeded(spec);
+        return masteryData.getDataForLevel(level);
+    }
+
+    // prevent infinite recursion
+    private static boolean shouldGenerate = true;
+    public static void generateIfNeeded(ShipHullSpecAPI spec) {
+        String id = Utils.getRestoredHullSpecId(spec);
+        HullMasteryData masteryData = masteryMap.get(id);
+        if (masteryData == null) return;
+        // Don't generate if so early in the load process that the persistent data hasn't been loaded yet
+        Boolean b = (Boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+        if (b == null) return;
         if (!masteryData.isGenerated() && shouldGenerate) {
             try {
                 shouldGenerate = false;
@@ -239,7 +252,6 @@ public abstract class ShipMastery {
                 throw new RuntimeException(e);
             }
         }
-        return masteryData.getDataForLevel(level);
     }
 
     private static MasteryLevelData getLevelDataNoGenerate(ShipHullSpecAPI spec, int level) {

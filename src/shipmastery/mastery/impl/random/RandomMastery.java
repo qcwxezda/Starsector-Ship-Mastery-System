@@ -84,7 +84,8 @@ public class RandomMastery extends BaseMasteryEffect {
             if (info.tags.contains(MasteryTags.COMBAT) && spec.isCivilianNonCarrier()) continue;
 
             Float weight = ShipMastery.getCachedSelectionWeight(str, spec);
-            boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            Boolean randomMode = (Boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            if (randomMode == null) randomMode = false;
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier masteries, if they are applicable
                 float tier = info.tags.contains(MasteryTags.SCALE_SELECTION_WEIGHT) ? maxTier : info.tier;

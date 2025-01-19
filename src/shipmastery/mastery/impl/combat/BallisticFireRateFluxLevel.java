@@ -68,6 +68,9 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
 
             float effectMult = Math.min(1f, ship.getFluxLevel() / maxFluxLevel);
             float effectLevel = maxEffectLevel * effectMult;
+            if (ship.getFluxTracker() != null && ship.getFluxTracker().isOverloadedOrVenting()) {
+                effectLevel = 0f;
+            }
             if (checkerInterval.intervalElapsed()) {
                 ship.getMutableStats().getBallisticRoFMult().modifyPercent(id, 100f * effectLevel);
                 ship.getMutableStats().getBallisticProjectileSpeedMult().modifyPercent(id, 100f * effectLevel);

@@ -1,4 +1,8 @@
-0.12.1 (dev)
+0.12.2
+----------
+- Fixed potential loading crash issue where persistent data hadn't been loaded yet.
+
+0.12.1
 ----------
 - Masteries that require a ship to earn the "kill credit" for a target are now more lenient
     - As long as a ship damaged a target within 1 second of its destruction, it counts as a kill for the ship.
@@ -10,6 +14,7 @@
 - No longer generates non-random masteries first in order to preserve input order in configurations with multiple masteries in a level
     - Unwanted duplicates should be handled in RandomMastery by checking generators.
 - Mastery effect that grants damage reduction for nearby owned fighters no longer affects modules.
+- Mastery effects that boost performance based on flux level are no longer in effect if the ship is overloaded or venting.
 - Improved performance by caching Utils.getRestoredHullSpec results.
 - Adjusted reroll confirmation dialog to better accommodate for custom configs with lots of mastery levels.
 - Fixed possible memory leak related to recent-battles tracker.

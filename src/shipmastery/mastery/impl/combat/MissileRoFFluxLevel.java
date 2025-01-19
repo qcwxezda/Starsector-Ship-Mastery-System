@@ -68,6 +68,10 @@ public class MissileRoFFluxLevel extends BaseMasteryEffect {
 
             float effectMult = Math.min(1f, ship.getFluxLevel() / maxFluxLevel);
             float effectLevel = maxEffectLevel * effectMult;
+            if (ship.getFluxTracker() != null && ship.getFluxTracker().isOverloadedOrVenting()) {
+                effectLevel = 0f;
+            }
+
             if (checkerInterval.intervalElapsed()) {
                 ship.getMutableStats().getMissileRoFMult().modifyPercent(id, 100f * effectLevel);
                 ship.getMutableStats().getMissileAmmoRegenMult().modifyPercent(id, 100f * effectLevel);

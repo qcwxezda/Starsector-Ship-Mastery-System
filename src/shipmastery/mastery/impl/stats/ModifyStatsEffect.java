@@ -163,7 +163,8 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
             }
 
             Float weight = stat.getSelectionWeight(spec);
-            boolean randomMode = (boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            Boolean randomMode = (Boolean) Global.getSector().getPersistentData().get(ModPlugin.RANDOM_MODE_KEY);
+            if (randomMode == null) randomMode = false;
             if (weight != null && (weight > 0f || randomMode)) {
                 // try to prioritize higher tier stats, if applicable
                 float tierMult = stat.tier * stat.tier;
