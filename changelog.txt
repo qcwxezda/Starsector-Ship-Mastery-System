@@ -1,3 +1,9 @@
+0.12.3
+----------
+- Fixed issue with mastery effects getting un-applied after replaying a battle.
+- Fixed solo replay not creating a battle instance, which could cause crashes with modded battle creation contexts.
+- Temporary encounter dialog created for recent battles now copies the existing "core UI", increasing robustness and compatibility with mods that don't use null checks.
+
 0.12.2
 ----------
 - Fixed potential loading crash issue where persistent data hadn't been loaded yet.

@@ -2,7 +2,6 @@ package shipmastery.campaign.recentbattles;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -413,7 +412,7 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
             tempFleet.getFleetData().addFleetMember(tempMember);
             tempMember.getStatus().repairFully();
             tempMember.getRepairTracker().setCR(tempMember.getRepairTracker().getMaxCR());
-
+            BattleAPI battle = Global.getFactory().createBattle(Global.getSector().getPlayerFleet(), tempFleet);
             BattleCreationContext newContext = RecentBattlesTracker.cloneContextAlwaysAttack(
                     bccStub, Global.getSector().getPlayerFleet(), tempFleet);
             newContext.objectivesAllowed = false;
@@ -430,6 +429,7 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
                                 tempFleet.getFleetData().clear();
                             }
                         });
+                battle.finish(null, false);
             }
             catch (Throwable e) {
                 logger.error("Failed to replay battle: ", e);

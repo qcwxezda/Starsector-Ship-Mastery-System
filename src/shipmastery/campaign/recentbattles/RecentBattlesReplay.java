@@ -2,6 +2,7 @@ package shipmastery.campaign.recentbattles;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -33,6 +34,7 @@ import java.util.Map;
 public abstract class RecentBattlesReplay {
     public static Class<?> encounterDialogClass;
     public static Constructor<?> encounterDialogConstructor;
+    public static Field coreUIInEncounterDialogField;
     public static final Logger logger = Logger.getLogger(RecentBattlesReplay.class);
     public static final String isReplayKey = "shipmastery_IsBattleReplay";
 
@@ -50,6 +52,13 @@ public abstract class RecentBattlesReplay {
                     for (Constructor<?> cons : child.getClass().getConstructors()) {
                         if (cons.getParameterTypes().length == 4) {
                             encounterDialogClass = child.getClass();
+                            for (Field field : encounterDialogClass.getDeclaredFields()) {
+                                if (CoreUIAPI.class.isAssignableFrom(field.getType())) {
+                                    coreUIInEncounterDialogField = field;
+                                    coreUIInEncounterDialogField.setAccessible(true);
+                                    break;
+                                }
+                            }
                             encounterDialogConstructor = cons;
                             ((InteractionDialogAPI) child).dismiss();
                             return;
@@ -147,6 +156,7 @@ public abstract class RecentBattlesReplay {
                     setFleetMemberStatus(member, savedStatuses.get(member));
                     Float cr = savedCR.get(member);
                     member.getRepairTracker().setCR(cr == null ? member.getRepairTracker().getMaxCR() : cr);
+                    member.updateStats();
                 }
                 // Reset last player battle timestamp and whether last battle was a player win,
                 // as this fight shouldn't count.
@@ -166,7 +176,12 @@ public abstract class RecentBattlesReplay {
             public Map<String, MemoryAPI> getMemoryMap() {return null;}
         };
 
-        Object newDialog = encounterDialogConstructor.newInstance(null, battlePlugin, null, null);
+        Global.getSector().setPaused(true);
+        Object screenPanel = ReflectionUtils.getField(campaignState, "screenPanel");
+        Object newDialog = encounterDialogConstructor.newInstance(null, battlePlugin, screenPanel, campaignState);
+        if (coreUIInEncounterDialogField != null) {
+            coreUIInEncounterDialogField.set(newDialog, ReflectionUtils.getCoreUI());
+        }
         ReflectionUtils.invokeMethodNoCatch(campaignState, "setEncounterDialog", newDialog);
     }
 
