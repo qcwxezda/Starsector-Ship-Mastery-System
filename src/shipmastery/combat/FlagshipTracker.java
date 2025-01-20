@@ -13,6 +13,7 @@ import shipmastery.util.MasteryUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class FlagshipTracker implements EndOfCombatListener {
     public void onCombatEnd() {
         // This guarantees that for every onFlagshipStatusGained (with non-null ship), there is a
         // onFlagshipStatusLost
-        for (PersonAPI person : activationRecordMap.keySet()) {
+        for (PersonAPI person : new HashSet<>(activationRecordMap.keySet())) {
             onFlagshipChanged(person, null);
         }
     }
