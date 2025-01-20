@@ -4,6 +4,7 @@
 - Fixed solo replay not creating a battle instance, which could cause crashes with modded battle creation contexts.
 - Temporary encounter dialog created for recent battles now copies the existing "core UI", increasing robustness and compatibility with mods that don't use null checks.
 - Fixed latent crash issue with flagship tracker that was only being triggered by FSF (no version update, re-download latest version if you're still encountering this).
+- Added missing comma in settings json (no version update, re-download latest version if you're still encountering this).
 
 0.12.2
 ----------
