@@ -56,7 +56,7 @@ public class OverlayEmitter extends BaseIEmitter {
     @Override
     protected boolean preInitParticles(int start, int count) {
         if (anchor instanceof ShipAPI) {
-            anchorAlpha = ((ShipAPI) anchor).getSpriteAPI().getAlphaMult();
+            anchorAlpha = Math.min(1f, ((ShipAPI) anchor).getSpriteAPI().getAlphaMult());
         }
         return true;
     }

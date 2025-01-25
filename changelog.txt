@@ -1,3 +1,7 @@
+0.12.4
+----------
+- Fixed issue with particles if a ship's sprite's alphaMult was set to be greater than 1.
+
 0.12.3
 ----------
 - Fixed issue with mastery effects getting un-applied after replaying a battle.
