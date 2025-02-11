@@ -1,6 +1,7 @@
 0.12.4
 ----------
 - Fixed issue with particles if a ship's sprite's alphaMult was set to be greater than 1.
+- Added no_auto_activate tag to "ignore no build-in" mastery (this only appears and therefore is only relevant in random mode).
 
 0.12.3
 ----------

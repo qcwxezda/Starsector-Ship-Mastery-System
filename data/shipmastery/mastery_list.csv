@@ -12,7 +12,7 @@ SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
 SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
 ScaleOtherMasteries,4,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
-IgnoreNoBuildIn,4,no_disable logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
+IgnoreNoBuildIn,4,no_disable no_auto_activate logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
 EfficiencyOverhaulBoost,3,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
 ExpandedCargoBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
 ExpandedFuelBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedFuelBoost

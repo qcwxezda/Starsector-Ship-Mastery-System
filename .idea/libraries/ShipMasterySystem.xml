@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="ShipMasterySystem">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/jars/ShipMasterySystem.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
