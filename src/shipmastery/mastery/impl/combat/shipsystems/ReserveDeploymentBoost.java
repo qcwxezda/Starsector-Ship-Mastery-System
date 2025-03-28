@@ -6,7 +6,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.ReserveWingStats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -61,22 +60,14 @@ public class ReserveDeploymentBoost extends ShipSystemEffect {
 
         @Override
         public void onActivate() {
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    for (FighterLaunchBayAPI bay : ship.getLaunchBaysCopy()) {
-                        bay.setExtraDeployments(bay.getExtraDeployments() + count);
-                    }
-                    ship.getMutableStats().getFighterRefitTimeMult().modifyMult(id, 1f - refitTimeDecrease);
+            CombatDeferredActionPlugin.performLater(() -> {
+                for (FighterLaunchBayAPI bay : ship.getLaunchBaysCopy()) {
+                    bay.setExtraDeployments(bay.getExtraDeployments() + count);
                 }
+                ship.getMutableStats().getFighterRefitTimeMult().modifyMult(id, 1f - refitTimeDecrease);
             }, 1f);
 
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    ship.getMutableStats().getFighterRefitTimeMult().unmodify(id);
-                }
-            }, ReserveWingStats.EXTRA_FIGHTER_DURATION);
+            CombatDeferredActionPlugin.performLater(() -> ship.getMutableStats().getFighterRefitTimeMult().unmodify(id), ReserveWingStats.EXTRA_FIGHTER_DURATION);
         }
     }
 }

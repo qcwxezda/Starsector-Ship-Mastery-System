@@ -108,7 +108,7 @@ public class RandomMastery extends BaseMasteryEffect {
             // Fallback if there's literally nothing to pick
             if (effectPicker.isEmpty()) {
                 MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>(), new HashSet<String>());
+                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<>(), new HashSet<>());
             }
             tries++;
 
@@ -137,7 +137,7 @@ public class RandomMastery extends BaseMasteryEffect {
         // Fallback if there's literally nothing to pick
         if (additionalParams == null) {
             MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-            return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<Class<?>>(), new HashSet<String>());
+            return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<>(), new HashSet<>());
         }
 
         params.addAll(additionalParams);

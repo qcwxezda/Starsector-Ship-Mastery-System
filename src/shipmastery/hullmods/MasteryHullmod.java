@@ -35,17 +35,14 @@ public class MasteryHullmod extends BaseHullMod {
             }
         }
 
-        applyEffects(variant, new HullmodAction() {
-            @Override
-            public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
-                if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                    effect.applyEffectsBeforeShipCreation(hullSize, stats);
-                    // For display purposes only
-                    FleetMemberAPI fm = stats.getFleetMember();
-                    final PersonAPI captain = fm == null ? null : fm.getCaptain();
-                    if (commander != null && Objects.equals(commander, captain)) {
-                        effect.onFlagshipStatusGained(commander, stats, null);
-                    }
+        applyEffects(variant, (effect, commander, isModule) -> {
+            if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                effect.applyEffectsBeforeShipCreation(hullSize, stats);
+                // For display purposes only
+                FleetMemberAPI fm = stats.getFleetMember();
+                final PersonAPI captain = fm == null ? null : fm.getCaptain();
+                if (commander != null && Objects.equals(commander, captain)) {
+                    effect.onFlagshipStatusGained(commander, stats, null);
                 }
             }
         });
@@ -53,16 +50,13 @@ public class MasteryHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsAfterShipCreation(final ShipAPI ship, final String id) {
-        applyEffects(ship.getVariant(), new HullmodAction() {
-            @Override
-            public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
-                if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                    effect.applyEffectsAfterShipCreation(ship);
-                    // For display purposes only
-                    final PersonAPI captain = ship.getCaptain();
-                    if (commander != null && Objects.equals(commander, captain)) {
-                        effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
-                    }
+        applyEffects(ship.getVariant(), (effect, commander, isModule) -> {
+            if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                effect.applyEffectsAfterShipCreation(ship);
+                // For display purposes only
+                final PersonAPI captain = ship.getCaptain();
+                if (commander != null && Objects.equals(commander, captain)) {
+                    effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
                 }
             }
         });
@@ -70,12 +64,9 @@ public class MasteryHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(final ShipAPI fighter, final ShipAPI ship, final String id) {
-        applyEffects(ship.getVariant(), new HullmodAction() {
-            @Override
-            public void perform(MasteryEffect effect, PersonAPI commander, boolean isModule) {
-                if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                    effect.applyEffectsToFighterSpawnedByShip(fighter, ship);
-                }
+        applyEffects(ship.getVariant(), (effect, commander, isModule) -> {
+            if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                effect.applyEffectsToFighterSpawnedByShip(fighter, ship);
             }
         });
     }
@@ -100,12 +91,7 @@ public class MasteryHullmod extends BaseHullMod {
             fleet.getFleetData().setForceNoSync(true);
         }
         MasteryUtils.applyAllActiveMasteryEffects(
-                commander, rootSpec, new MasteryUtils.MasteryAction() {
-                    @Override
-                    public void perform(MasteryEffect effect) {
-                        action.perform(effect, commander, isModule);
-                    }
-                });
+                commander, rootSpec, effect -> action.perform(effect, commander, isModule));
         if (fleet != null) {
             fleet.getFleetData().setForceNoSync(wasNoSync);
         }

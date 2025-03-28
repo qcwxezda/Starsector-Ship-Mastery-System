@@ -13,7 +13,6 @@ import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.ParticleBurstEmitter;
 import shipmastery.fx.TrailEmitter;
@@ -89,8 +88,7 @@ public class HEFExplosion extends ShipSystemEffect {
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
             while (itr.hasNext()) {
                 Object o = itr.next();
-                if (!(o instanceof DamagingProjectileAPI)) continue;
-                DamagingProjectileAPI proj = (DamagingProjectileAPI) o;
+                if (!(o instanceof DamagingProjectileAPI proj)) continue;
                 if (proj.getElapsed() > 0.05f) continue;
                 if (!largeEnergyWeapons.contains(proj.getWeapon())) continue;
                 if (proj.getCustomData() == null || !proj.getCustomData().containsKey(id)) {
@@ -103,12 +101,7 @@ public class HEFExplosion extends ShipSystemEffect {
                     trail.sizeJitter = 0.25f;
                     trail.life = 0.2f;
                     trail.yOffset = -trail.length * 0.25f;
-                    Particles.stream(trail, 1, 60f, -1f, new Particles.StreamAction<TrailEmitter>() {
-                        @Override
-                        public boolean apply(TrailEmitter emitter) {
-                            return !Utils.wasProjectileRemoved(emitter.getProj());
-                        }
-                    });
+                    Particles.stream(trail, 1, 60f, -1f, emitter -> !Utils.wasProjectileRemoved(emitter.getProj()));
                 }
             }
 
@@ -123,55 +116,51 @@ public class HEFExplosion extends ShipSystemEffect {
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, final DamageAPI damage,
                                         final Vector2f pt, boolean shieldHit) {
-            if (!(param instanceof DamagingProjectileAPI)) return null;
-            final DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (proj.getCustomData() == null || !proj.getCustomData().containsKey(id)) return null;
 
             final float damageAmount = DamageType.FRAGMENTATION.equals(proj.getDamageType()) ? damage.getDamage() / 4f : damage.getDamage();
             final float radius = (float) Math.sqrt(damageAmount) * 5f;
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    // Only spawn the explosion if the projectile is destroyed
-                    // isFading is set after modifyDamageDealt call, so need to do this check
-                    // later
-                    if (!Utils.wasProjectileRemoved(proj)) return;
-                    proj.getCustomData().remove(id);
-                    float[] explosionColorComps = new float[4];
-                    trailColor.getComponents(explosionColorComps);
-                    explosionColorComps[3] = damageAmount / 10000f;
-                    Color explosionColor = new Color(explosionColorComps[0], explosionColorComps[1], explosionColorComps[2], explosionColorComps[3]);
-                    DamagingExplosionSpec spec = new DamagingExplosionSpec(
-                            0.1f,
-                            radius,
-                            radius / 2f,
-                            damageAmount * damageFrac,
-                            damageAmount * damageFrac / 2f,
-                            CollisionClass.PROJECTILE_FF,
-                            CollisionClass.PROJECTILE_FIGHTER,
-                            1f,
-                            4f,
-                            0.5f,
-                            0,
-                            explosionColor,
-                            explosionColor
-                    );
-                    spec.setDamageType(DamageType.HIGH_EXPLOSIVE);
-                    spec.setUseDetailedExplosion(false);
-                    Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt);
+            CombatDeferredActionPlugin.performLater(() -> {
+                // Only spawn the explosion if the projectile is destroyed
+                // isFading is set after modifyDamageDealt call, so need to do this check
+                // later
+                if (!Utils.wasProjectileRemoved(proj)) return;
+                proj.getCustomData().remove(id);
+                float[] explosionColorComps = new float[4];
+                trailColor.getComponents(explosionColorComps);
+                explosionColorComps[3] = damageAmount / 10000f;
+                Color explosionColor = new Color(explosionColorComps[0], explosionColorComps[1], explosionColorComps[2], explosionColorComps[3]);
+                DamagingExplosionSpec spec = new DamagingExplosionSpec(
+                        0.1f,
+                        radius,
+                        radius / 2f,
+                        damageAmount * damageFrac,
+                        damageAmount * damageFrac / 2f,
+                        CollisionClass.PROJECTILE_FF,
+                        CollisionClass.PROJECTILE_FIGHTER,
+                        1f,
+                        4f,
+                        0.5f,
+                        0,
+                        explosionColor,
+                        explosionColor
+                );
+                spec.setDamageType(DamageType.HIGH_EXPLOSIVE);
+                spec.setUseDetailedExplosion(false);
+                Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt);
 
-                    ParticleBurstEmitter burst = new ParticleBurstEmitter(pt);
-                    burst.size = 7f;
-                    burst.sizeJitter = 0.5f;
-                    burst.lifeJitter = 0.5f;
-                    burst.radiusJitter = 1f;
-                    burst.radius = radius;
-                    burst.alpha = 0.6f;
-                    burst.alphaJitter = 0.4f;
-                    burst.color = trailColor;
-                    burst.life = radius / 250f;
-                    Particles.burst(burst, (int) radius);
-                }
+                ParticleBurstEmitter burst = new ParticleBurstEmitter(pt);
+                burst.size = 7f;
+                burst.sizeJitter = 0.5f;
+                burst.lifeJitter = 0.5f;
+                burst.radiusJitter = 1f;
+                burst.radius = radius;
+                burst.alpha = 0.6f;
+                burst.alphaJitter = 0.4f;
+                burst.color = trailColor;
+                burst.life = radius / 250f;
+                Particles.burst(burst, (int) radius);
             }, 0f);
             return null;
         }

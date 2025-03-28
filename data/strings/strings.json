@@ -412,7 +412,8 @@
     "EmptyMountsReduceFlux": "Each small/medium/large weapon mount left empty reduces the flux cost of all weapons by %1$s/%2$s/%3$s.",
     "EmptyMountsReduceFluxPost": "This effect has a hard cap of %1$s total weapon flux reduction.",
     "FullHitpointsBoost": "If hull health is at maximum, increases the ship's max speed, flux dissipation, and all weapons' rate of fire by %1$s.",
-    "FullHitpointsBoostPost": "This bonus disappears as soon as the ship takes hull damage and will not be regained even should the ship's hull be fully repaired."
+    "FullHitpointsBoostPost": "This bonus disappears as soon as the ship takes hull damage and will not be regained even should the ship's hull be fully repaired.",
+    "WeakerDesignCompromises": "Reduces the penalty to base flux capacity and flux dissipation from %1$s by %2$s. Additional energy weapon flux generation is reduced to %3$s."
   },
 
   "sms_messages": {

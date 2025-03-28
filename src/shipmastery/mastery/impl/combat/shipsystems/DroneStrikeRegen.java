@@ -83,8 +83,7 @@ public class DroneStrikeRegen extends ShipSystemEffect {
         public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
             if (target.isFighter()) return;
             Object lastDamagedBy = target.getParamAboutToApplyDamage();
-            if (lastDamagedBy instanceof DamagingProjectileAPI) {
-                DamagingProjectileAPI proj = (DamagingProjectileAPI) lastDamagedBy;
+            if (lastDamagedBy instanceof DamagingProjectileAPI proj) {
                 if (proj.getSource() == ship && "terminator_missile_proj".equals(proj.getProjectileSpecId())) {
                     List<FighterLaunchBayAPI> bays = ship.getLaunchBaysCopy();
                     if (bays != null) {

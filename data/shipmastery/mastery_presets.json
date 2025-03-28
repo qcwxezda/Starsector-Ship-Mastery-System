@@ -58,7 +58,7 @@
     "preset": "automated",
     "hint_or_tag": "derelict",
     "levels": {
-      "9": ["MaxAutomatedCR","ModifyStatsMult 1 DModEffect -0.5"]
+      "max": ["MaxAutomatedCR","ModifyStatsMult 1 DModEffect -0.5"]
     }
   },
 
@@ -66,7 +66,7 @@
   "phase": {
     "preset": "_DEFAULT_",
     "levels": {
-      "8": {
+      "max": {
         "A": ["SModCapacity","IgnoreNoBuildIn 1 phase_anchor"],
         "B": "ScaleOtherMasteries"
       }
@@ -77,7 +77,7 @@
     "preset": "_DEFAULT_",
     "hint_or_tag": "FREIGHTER",
     "levels": {
-      "9": {
+      "max": {
         "A": "EfficiencyOverhaulBoost",
         "B": "ExpandedCargoBoost"
       }
@@ -88,7 +88,7 @@
     "preset": "_DEFAULT_",
     "hint_or_tag": "TANKER",
     "levels": {
-      "9": {
+      "max": {
         "A": "EfficiencyOverhaulBoost",
         "B": "ExpandedFuelBoost"
       }
@@ -99,7 +99,7 @@
     "preset": "_DEFAULT_",
     "hint_or_tag": "LINER",
     "levels": {
-      "9": {
+      "max": {
         "A": "EfficiencyOverhaulBoost",
         "B": "ExpandedCrewBoost"
       }

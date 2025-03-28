@@ -161,13 +161,10 @@ public abstract class RecentBattlesReplay {
                 // Reset last player battle timestamp and whether last battle was a player win,
                 // as this fight shouldn't count.
                 // Do it outside the current call stack, as CampaignState.prepare sets the values after calling backFromEngagement
-                DeferredActionPlugin.performLater(new Action() {
-                    @Override
-                    public void perform() {
-                        Global.getSector().setLastPlayerBattleTimestamp(lastPlayerBattleTimestamp);
-                        Global.getSector().setLastPlayerBattleWon(lastPlayerBattleWon);
-                        onBackFromEngagement.perform();
-                    }
+                DeferredActionPlugin.performLater(() -> {
+                    Global.getSector().setLastPlayerBattleTimestamp(lastPlayerBattleTimestamp);
+                    Global.getSector().setLastPlayerBattleWon(lastPlayerBattleWon);
+                    onBackFromEngagement.perform();
                 }, 0f);
             }
             @Override

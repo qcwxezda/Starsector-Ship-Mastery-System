@@ -11,7 +11,6 @@ import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
@@ -78,33 +77,29 @@ public class NovaBurstDamage extends ShipSystemEffect {
 
         @Override
         public void onActivate() {
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    Vector2f location = bombLauncher.getLocation();
-                    float angle = bombLauncher.getCurrAngle();
-                    Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*RANGE, 2f*RANGE);
-                    while (itr.hasNext()) {
-                        Object o = itr.next();
-                        if (!(o instanceof CombatEntityAPI)) continue;
-                        CombatEntityAPI entity = (CombatEntityAPI) o;
-                        if (MathUtils.dist(entity.getLocation(), location) > RANGE + entity.getCollisionRadius()) continue;
-                        if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
-                        if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
-                        Global.getCombatEngine().spawnEmpArc(
-                                ship,
-                                location,
-                                ship,
-                                entity,
-                                DamageType.ENERGY,
-                                damage,
-                                damage,
-                                1000000f,
-                                "tachyon_lance_emp_impact",
-                                80f,
-                                new Color(100,165,255,255),
-                                Color.WHITE).setCoreWidthOverride(40f);
-                    }
+            CombatDeferredActionPlugin.performLater(() -> {
+                Vector2f location = bombLauncher.getLocation();
+                float angle = bombLauncher.getCurrAngle();
+                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*RANGE, 2f*RANGE);
+                while (itr.hasNext()) {
+                    Object o = itr.next();
+                    if (!(o instanceof CombatEntityAPI entity)) continue;
+                    if (MathUtils.dist(entity.getLocation(), location) > RANGE + entity.getCollisionRadius()) continue;
+                    if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
+                    if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
+                    Global.getCombatEngine().spawnEmpArc(
+                            ship,
+                            location,
+                            ship,
+                            entity,
+                            DamageType.ENERGY,
+                            damage,
+                            damage,
+                            1000000f,
+                            "tachyon_lance_emp_impact",
+                            80f,
+                            new Color(100,165,255,255),
+                            Color.WHITE).setCoreWidthOverride(40f);
                 }
             }, 0.5f);
         }

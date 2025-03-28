@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
-import shipmastery.mastery.MasteryEffect;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
@@ -56,31 +55,17 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
             rerollMap = new HashMap<>();
             Global.getSector().getPersistentData().put(ShipMastery.REROLL_SEQUENCE_MAP, rerollMap);
         }
-        List<Set<Integer>> rerollSequence = rerollMap.get(spec.getHullId());
-        if (rerollSequence == null) {
-            rerollSequence = new LinkedList<>();
-            rerollMap.put(spec.getHullId(), rerollSequence);
-        }
+        List<Set<Integer>> rerollSequence = rerollMap.computeIfAbsent(spec.getHullId(), k -> new LinkedList<>());
 
         rerollSequence.add(levels);
         ShipMastery.addRerolledSpecThisSave(spec);
 
         try {
             MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
-                        @Override
-                        public void perform(MasteryEffect effect) {
-                            effect.onDeactivate(Global.getSector().getPlayerPerson());
-                        }
-                    });
+                    Global.getSector().getPlayerPerson(), spec, effect -> effect.onDeactivate(Global.getSector().getPlayerPerson()));
             ShipMastery.generateMasteries(spec, levels, rerollSequence.size(), true);
             MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
-                        @Override
-                        public void perform(MasteryEffect effect) {
-                            effect.onActivate(Global.getSector().getPlayerPerson());
-                        }
-                    });
+                    Global.getSector().getPlayerPerson(), spec, effect -> effect.onActivate(Global.getSector().getPlayerPerson()));
 
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

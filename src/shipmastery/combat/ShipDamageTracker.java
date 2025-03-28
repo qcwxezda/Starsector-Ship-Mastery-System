@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.EMPEmitterDamageListener;
 import shipmastery.combat.listeners.ShipDestroyedListener;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 
 import java.util.HashMap;
@@ -45,18 +44,9 @@ public class ShipDamageTracker implements DamageTakenModifier {
     private final Map<ShipAPI, Set<ShipAPI>> recentlyDamagedBy = new HashMap<>();
 
     private void setRecentlyDamagedBy(final ShipAPI source, final ShipAPI target) {
-        Set<ShipAPI> sources = recentlyDamagedBy.get(target);
-        if (sources == null) {
-            sources = new HashSet<>();
-            recentlyDamagedBy.put(target, sources);
-        }
+        Set<ShipAPI> sources = recentlyDamagedBy.computeIfAbsent(target, k -> new HashSet<>());
         sources.add(source);
-        CombatDeferredActionPlugin.performLater(new Action() {
-            @Override
-            public void perform() {
-                removeRecentlyDamagedBy(source, target);
-            }
-        }, RECENTLY_DAMAGED_TIME);
+        CombatDeferredActionPlugin.performLater(() -> removeRecentlyDamagedBy(source, target), RECENTLY_DAMAGED_TIME);
     }
 
     private void removeRecentlyDamagedBy(ShipAPI source, ShipAPI target) {
@@ -71,7 +61,7 @@ public class ShipDamageTracker implements DamageTakenModifier {
 
     private @NotNull Set<ShipAPI> getRecentlyDamagedBy(ShipAPI target) {
         Set<ShipAPI> sources = recentlyDamagedBy.get(target);
-        return sources == null ? new HashSet<ShipAPI>() : sources;
+        return sources == null ? new HashSet<>() : sources;
     }
 
     @Override
@@ -79,9 +69,7 @@ public class ShipDamageTracker implements DamageTakenModifier {
                                     boolean shieldHit) {
         if (damage.getStats() == null) return null;
         Object source = damage.getStats().getEntity();
-        if (!(source instanceof ShipAPI) || !(target instanceof ShipAPI)) return null;
-        ShipAPI sourceShip = (ShipAPI) source;
-        ShipAPI targetShip = (ShipAPI) target;
+        if (!(source instanceof ShipAPI sourceShip) || !(target instanceof ShipAPI targetShip)) return null;
         if ("EMP_SHIP_SYSTEM_PARAM".equals(targetShip.getParamAboutToApplyDamage())) {
             for (EMPEmitterDamageListener listener : sourceShip.getListeners(EMPEmitterDamageListener.class)) {
                 listener.reportEMPEmitterHit(targetShip, damage, pt, shieldHit);

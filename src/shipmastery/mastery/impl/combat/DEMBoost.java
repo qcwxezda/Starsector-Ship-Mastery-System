@@ -45,15 +45,11 @@ public class DEMBoost extends BaseMasteryEffect {
     }
 
     public float getRegenRate(ShipAPI ship, WeaponAPI.WeaponSize slotSize) {
-        switch (slotSize) {
-            case SMALL:
-                return getStrength(ship);
-            case MEDIUM:
-                return 1.5f * getStrength(ship);
-            case LARGE:
-                return 2f * getStrength(ship);
-            default: return 0f;
-        }
+        return switch (slotSize) {
+            case SMALL -> getStrength(ship);
+            case MEDIUM -> 1.5f * getStrength(ship);
+            case LARGE -> 2f * getStrength(ship);
+        };
     }
 
     @Override
@@ -63,8 +59,7 @@ public class DEMBoost extends BaseMasteryEffect {
         for (WeaponAPI weapon : ship.getUsableWeapons()) {
             if (weapon.getAmmoPerSecond() > 0f) continue;
             Object projSpec = weapon.getSpec().getProjectileSpec();
-            if (projSpec instanceof MissileSpecAPI) {
-                MissileSpecAPI missileSpec = (MissileSpecAPI) projSpec;
+            if (projSpec instanceof MissileSpecAPI missileSpec) {
                 boolean isDEM = missileSpec.getOnFireEffect() instanceof DEMEffect;
                 // Absolutely no way to get projectile spec from spec id string (in this case the "hydra_warhead" in
                 // MIRV behavior spec, so have to hard code this
@@ -110,8 +105,7 @@ public class DEMBoost extends BaseMasteryEffect {
                     Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(weapon.getLocation(), 100f, 100f);
                     while (itr.hasNext()) {
                         Object o = itr.next();
-                        if (!(o instanceof MissileAPI)) continue;
-                        MissileAPI missile = (MissileAPI) o;
+                        if (!(o instanceof MissileAPI missile)) continue;
                         if (missile.getSource() != ship) continue;
                         if (missile.getCustomData() == null || !missile.getCustomData().containsKey(PROCESSED_MISSILE_KEY)) {
                             missile.setCustomData(PROCESSED_MISSILE_KEY, true);

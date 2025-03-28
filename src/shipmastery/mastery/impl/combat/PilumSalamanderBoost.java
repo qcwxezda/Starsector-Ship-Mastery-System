@@ -9,7 +9,6 @@ import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -63,8 +62,7 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
 
             for (WeaponAPI weapon : ship.getUsableWeapons()) {
                 Object projSpec = weapon.getSpec().getProjectileSpec();
-                if (projSpec instanceof MissileSpecAPI) {
-                    MissileSpecAPI missileSpec = (MissileSpecAPI) projSpec;
+                if (projSpec instanceof MissileSpecAPI missileSpec) {
                     if (isPilumOrSalamander(missileSpec)) {
                         eligibleWeapons.add(weapon);
                     }
@@ -85,8 +83,7 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
                 Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 2f*ship.getCollisionRadius(), 2f*ship.getCollisionRadius());
                 while (itr.hasNext()) {
                     Object o = itr.next();
-                    if (!(o instanceof MissileAPI)) continue;
-                    MissileAPI missile = (MissileAPI) o;
+                    if (!(o instanceof MissileAPI missile)) continue;
                     if (!eligibleWeapons.contains(missile.getWeapon())) continue;
                     if (missile.getCustomData() != null && missile.getCustomData().containsKey(id)) continue;
                     missile.setCustomData(id, true);
@@ -103,8 +100,7 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, final DamageAPI damage,
                                         final Vector2f pt, boolean shieldHit) {
-            if (!(param instanceof MissileAPI)) return null;
-            MissileAPI missile = (MissileAPI) param;
+            if (!(param instanceof MissileAPI missile)) return null;
             if (!eligibleWeapons.contains(missile.getWeapon())) return null;
 
             int numArcs = (int) MathUtils.randBetween(5f, 11f);
@@ -125,27 +121,24 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
                         new Color(125,125,100,255),
                         new Color(255, 255, 255, 200)).setSingleFlickerMode();
             }
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    DamagingExplosionSpec spec = new DamagingExplosionSpec(
-                            0.1f,
-                            damageRadius,
-                            damageRadius / 2f,
-                            PilumSalamanderBoostScript.this.damage,
-                            PilumSalamanderBoostScript.this.damage/2f,
-                            CollisionClass.PROJECTILE_FF,
-                            CollisionClass.PROJECTILE_FIGHTER,
-                            0f,
-                            0f,
-                            0f,
-                            0,
-                            new Color(0f, 0f, 0f, 0f),
-                            null
-                    );
-                    spec.setDamageType(DamageType.ENERGY);
-                    Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt).getDamage().setFluxComponent(empDamage);
-                }
+            CombatDeferredActionPlugin.performLater(() -> {
+                DamagingExplosionSpec spec = new DamagingExplosionSpec(
+                        0.1f,
+                        damageRadius,
+                        damageRadius / 2f,
+                        PilumSalamanderBoostScript.this.damage,
+                        PilumSalamanderBoostScript.this.damage/2f,
+                        CollisionClass.PROJECTILE_FF,
+                        CollisionClass.PROJECTILE_FIGHTER,
+                        0f,
+                        0f,
+                        0f,
+                        0,
+                        new Color(0f, 0f, 0f, 0f),
+                        null
+                );
+                spec.setDamageType(DamageType.ENERGY);
+                Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt).getDamage().setFluxComponent(empDamage);
             }, 0f);
             return null;
         }

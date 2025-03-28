@@ -43,11 +43,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, Boolean> levels) {
-        Map<String, NavigableMap<Integer, Boolean>> subMap = NPC_MASTERY_CACHE.get(commander.getId());
-        if (subMap == null) {
-            subMap = new HashMap<>();
-            NPC_MASTERY_CACHE.put(commander.getId(), subMap);
-        }
+        Map<String, NavigableMap<Integer, Boolean>> subMap = NPC_MASTERY_CACHE.computeIfAbsent(commander.getId(), k -> new HashMap<>());
         subMap.put(Utils.getRestoredHullSpecId(spec), levels);
     }
 
@@ -114,8 +110,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 }
             }
 
-            if (inflater instanceof AutofitPlugin.AutofitPluginDelegate && !isNoAutofit(fleet, fm)) {
-                AutofitPlugin.AutofitPluginDelegate delegate = (AutofitPlugin.AutofitPluginDelegate) inflater;
+            if (inflater instanceof AutofitPlugin.AutofitPluginDelegate delegate && !isNoAutofit(fleet, fm)) {
                 boolean canAutofit = delegate.getAvailableFighters() != null && delegate.getAvailableWeapons() != null;
 
                 auto.setChecked(CoreAutofitPlugin.STRIP, false);
@@ -298,12 +293,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         // Once NPC mastery levels have been generated for the first time, activate the corresponding masteries
-        MasteryUtils.applyMasteryEffects(spec, map, false, new MasteryUtils.MasteryAction() {
-            @Override
-            public void perform(MasteryEffect effect) {
-                effect.onActivate(commander);
-            }
-        });
+        MasteryUtils.applyMasteryEffects(spec, map, false, effect -> effect.onActivate(commander));
 
         cacheNPCMasteries(commander, spec, map);
 

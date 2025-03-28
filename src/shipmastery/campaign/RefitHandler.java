@@ -18,7 +18,6 @@ import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
@@ -155,20 +154,14 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             // This should just be the "go back" and "add" buttons
             List<?> children = (List<?>) ReflectionUtils.invokeMethod(modsPanel, "getChildrenNonCopy");
             for (Object child : children) {
-                if (child instanceof ButtonAPI && child != permButton && !MASTERY_BUTTON_TAG.equals(
-                        ((ButtonAPI) child).getCustomData())) {
-                    final ButtonAPI button = (ButtonAPI) child;
+                if (child instanceof ButtonAPI button && child != permButton && !MASTERY_BUTTON_TAG.equals(
+                        button.getCustomData())) {
                     final Object origListener = ReflectionUtils.getButtonListener(button);
                     if (!Proxy.isProxyClass(origListener.getClass())) {
                         ReflectionUtils.setButtonListener(button, new ActionListener() {
                             @Override
                             public void trigger(Object... args) {
-                                DeferredActionPlugin.performLater(new Action() {
-                                    @Override
-                                    public void perform() {
-                                        injectRefitScreen(false, false, button == addButton);
-                                    }
-                                }, 0f);
+                                DeferredActionPlugin.performLater(() -> injectRefitScreen(false, false, button == addButton), 0f);
                                 ReflectionUtils.invokeMethodExtWithClasses(origListener, "actionPerformed", false,
                                                                            new Class[]{Object.class, Object.class},
                                                                            args);
@@ -197,13 +190,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         // Remove existing CustomPanelAPIs, which would be mastery buttons we added previously
         List<?> children = (List<?>) ReflectionUtils.invokeMethod(modsPanel, "getChildrenNonCopy");
-        Iterator<?> itr = children.listIterator();
-        while (itr.hasNext()) {
-            Object child = itr.next();
-            if (child == masteryButtonPanelRef.get()) {
-                itr.remove();
-            }
-        }
+        children.removeIf(child -> child == masteryButtonPanelRef.get());
 
         if (shouldHide) return;
 
@@ -244,13 +231,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                 UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(randomButton, "getParent");
                 List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");
                 // Delete MP panels we may have previously added
-                Iterator<?> itr = sortedButtonList.listIterator();
-                while (itr.hasNext()) {
-                    Object child = itr.next();
-                    if (child == mpPanelRef.get()) {
-                        itr.remove();
-                    }
-                }
+                sortedButtonList.removeIf(child -> child == mpPanelRef.get());
                 float w = parent.getPosition().getWidth(), h = parent.getPosition().getHeight();
                 CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
 
@@ -258,7 +239,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                 tooltipMaker.setParaFontColor(Settings.MASTERY_COLOR);
                 for (int i = 0; i < sortedButtonList.size(); i++) {
                     // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
-                    if (!(sortedButtonList.get(i) instanceof ButtonAPI)) continue;
+                    if (!(sortedButtonList.get(i) instanceof ButtonAPI button)) continue;
                     float h2 = tooltipMaker.getHeightSoFar();
                     //noinspection SuspiciousMethodCalls
                     FleetMemberAPI fm = buttonToMemberMap.get(sortedButtonList.get(i));
@@ -291,15 +272,13 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
                         }
                     }
                     float hDiff = tooltipMaker.getHeightSoFar() - h2;
-                    ButtonAPI button = (ButtonAPI) sortedButtonList.get(i);
-                    if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI) {
-                        ButtonAPI nextButton = (ButtonAPI) sortedButtonList.get(i + 1);
+                    if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI nextButton) {
                         tooltipMaker.addSpacer(button.getPosition().getY() - nextButton.getPosition().getY() - hDiff);
                     }
                 }
                 custom.addUIElement(tooltipMaker);
                 parent.addComponent(custom).inBL(2f, -6f);
-                mpPanelRef = new WeakReference<>((UIPanelAPI) custom);
+                mpPanelRef = new WeakReference<>(custom);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -334,30 +313,24 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
         if (CoreUITabId.REFIT.equals(id)) {
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    injectRefitScreen(false);
-                    checkIfRefitShipChanged();
-                    UIPanelAPI core = ReflectionUtils.getCoreUI();
-                    final CoreInteractionListener origListener = (CoreInteractionListener) ReflectionUtils.invokeMethod(core, "getListener");
-                    if (!(origListener instanceof CoreInteractionListenerExt)) {
-                        ReflectionUtils.invokeMethodExtWithClasses(
-                                core,
-                                "setListener",
-                                false,
-                                new Class<?>[]{CoreInteractionListener.class},
-                                new CoreInteractionListenerExt() {
-                                    @Override
-                                    public void coreUIDismissed() {
-                                        if (origListener != null) {
-                                            origListener.coreUIDismissed();
-                                        }
-                                        insideRefitPanel = false;
-                                        checkIfRefitShipChanged();
-                                    }
-                                });
-                    }
+            DeferredActionPlugin.performLater(() -> {
+                injectRefitScreen(false);
+                checkIfRefitShipChanged();
+                UIPanelAPI core = ReflectionUtils.getCoreUI();
+                final CoreInteractionListener origListener = (CoreInteractionListener) ReflectionUtils.invokeMethod(core, "getListener");
+                if (!(origListener instanceof CoreInteractionListenerExt)) {
+                    ReflectionUtils.invokeMethodExtWithClasses(
+                            core,
+                            "setListener",
+                            false,
+                            new Class<?>[]{CoreInteractionListener.class},
+                            (CoreInteractionListenerExt) () -> {
+                                if (origListener != null) {
+                                    origListener.coreUIDismissed();
+                                }
+                                insideRefitPanel = false;
+                                checkIfRefitShipChanged();
+                            });
                 }
             }, 0f);
             insideRefitPanel = true;
@@ -436,15 +409,12 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         if (newSpec != null && newVariant != null) {
             MasteryUtils.applyMasteryEffects(
-                newSpec, newInfo.activeMasteries, false, new MasteryUtils.MasteryAction() {
-                    @Override
-                    public void perform(MasteryEffect effect) {
-                        boolean isModule = !Objects.equals(Utils.getRestoredHullSpecId(newVariant.getHullSpec()), newSpec.getHullId());
-                        if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                            effect.onBeginRefit(newVariant, isModule);
-                            //System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
-                            effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule));
-                        }
+                newSpec, newInfo.activeMasteries, false, effect -> {
+                    boolean isModule = !Objects.equals(Utils.getRestoredHullSpecId(newVariant.getHullSpec()), newSpec.getHullId());
+                    if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                        effect.onBeginRefit(newVariant, isModule);
+                        //System.out.println("Apply: " + id + " to " + newVariant.getHullVariantId() + ", " + isModule);
+                        effectsToDeactivate.add(new EffectActivationRecord(effect, newVariant, isModule));
                     }
                 });
         }
@@ -488,8 +458,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof ShipInfo)) return false;
-            ShipInfo o = (ShipInfo) other;
+            if (!(other instanceof ShipInfo o)) return false;
             boolean sameRootSpec = (rootSpec == null && o.rootSpec == null)
                     || (rootSpec != null && o.rootSpec != null && rootSpec.getHullId().equals(o.rootSpec.getHullId()));
             boolean sameModuleVariant = moduleVariant == o.moduleVariant;//(moduleVariant == null && o.moduleVariant == null)

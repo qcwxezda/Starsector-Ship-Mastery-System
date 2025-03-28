@@ -14,7 +14,7 @@
     <orderEntry type="library" name="ParticleEngine" level="project" />
     <orderEntry type="library" name="Console Commands" level="project" />
     <orderEntry type="library" name="LunaLib" level="project" />
-    <orderEntry type="library" name="starsector-core" level="project" />
     <orderEntry type="library" name="realityforge.jetbrains.annotations" level="project" />
+    <orderEntry type="library" name="starsector-core" level="project" />
   </component>
 </module>

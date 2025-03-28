@@ -223,8 +223,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         }
         for (int i = 0; i < totalMPGained; i++) {
             ShipHullSpecAPI spec = picker.pick();
-            Integer amount = amounts.get(spec);
-            amounts.put(spec, amount == null ? 1 : 1 + amount);
+            amounts.compute(spec, (k, amount) -> amount == null ? 1 : 1 + amount);
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
             ShipMastery.addPlayerMasteryPoints(

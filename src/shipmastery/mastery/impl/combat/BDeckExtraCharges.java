@@ -7,7 +7,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.hullmods.BDeck;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -54,12 +53,9 @@ public class BDeckExtraCharges extends BaseMasteryEffect {
             super.advance(amount);
 
             if (fired && extraCharges > 0) {
-                CombatDeferredActionPlugin.performLater(new Action() {
-                    @Override
-                    public void perform() {
-                        fired = false;
-                        extraCharges--;
-                    }
+                CombatDeferredActionPlugin.performLater(() -> {
+                    fired = false;
+                    extraCharges--;
                 }, DELAY_SECONDS);
             }
         }

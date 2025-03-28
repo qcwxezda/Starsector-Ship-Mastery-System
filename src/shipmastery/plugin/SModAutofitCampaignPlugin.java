@@ -25,7 +25,7 @@ public class SModAutofitCampaignPlugin extends BaseCampaignPlugin {
     public PluginPick<AutofitPlugin> pickAutofitPlugin(FleetMemberAPI member) {
         if (isNotPlayerAndChangeAutofitEnabled(member)) return null;
         if (Settings.DISABLE_MAIN_FEATURES) return null;
-        return new PluginPick<AutofitPlugin>(new AutofitPluginSModOption(refitHandler, false), PickPriority.MOD_GENERAL);
+        return new PluginPick<>(new AutofitPluginSModOption(refitHandler, false), PickPriority.MOD_GENERAL);
     }
 
     public static boolean isNotPlayerAndChangeAutofitEnabled(FleetMemberAPI member) {

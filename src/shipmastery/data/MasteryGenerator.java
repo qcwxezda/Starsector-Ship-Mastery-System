@@ -9,11 +9,11 @@ import shipmastery.util.MasteryUtils;
 import java.util.Set;
 
 public class MasteryGenerator {
-    public Class<? extends MasteryEffect> effectClass;
+    public final Class<? extends MasteryEffect> effectClass;
     public String[] params;
-    public Set<String> tags;
-    public float defaultStrength;
-    public int priority;
+    public final Set<String> tags;
+    public final float defaultStrength;
+    public final int priority;
 
     public MasteryGenerator(
             MasteryInfo info,

@@ -91,13 +91,11 @@ public abstract class CollisionUtils {
     public static boolean canCollide(Object o, Collection<? extends CombatEntityAPI> ignoreList, ShipAPI source, boolean friendlyFire) {
         int owner = source == null ? 100 : source.getOwner();
         // Ignore things that aren't combat entities
-        if (!(o instanceof CombatEntityAPI)) return false;
+        if (!(o instanceof CombatEntityAPI entity)) return false;
         // Ignore non-missile projectiles
         if ((o instanceof DamagingProjectileAPI) && !(o instanceof MissileAPI)) return false;
         // Ignore explicitly added items to ignore list
         if (ignoreList != null && ignoreList.contains(o)) return false;
-
-        CombatEntityAPI entity = (CombatEntityAPI) o;
 
         // Ignore objects with NONE collision class
         if (CollisionClass.NONE.equals(entity.getCollisionClass())) return false;
@@ -135,8 +133,7 @@ public abstract class CollisionUtils {
         if (thisShield != null) {
             allShields.add(thisShield);
         }
-        if (entity instanceof ShipAPI) {
-            ShipAPI ship = (ShipAPI) entity;
+        if (entity instanceof ShipAPI ship) {
             // [entity] is itself a parent module
             for (ShipAPI child : ship.getChildModulesCopy()) {
                 if (child.getShield() != null) {

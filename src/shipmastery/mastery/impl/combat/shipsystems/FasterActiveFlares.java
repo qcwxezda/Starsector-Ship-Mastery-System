@@ -73,8 +73,7 @@ public class FasterActiveFlares extends BaseMasteryEffect {
                                                                   2f * ship.getCollisionRadius() + 200f);
                 while (search.hasNext()) {
                     Object o = search.next();
-                    if (!(o instanceof MissileAPI)) continue;
-                    MissileAPI missile = (MissileAPI) o;
+                    if (!(o instanceof MissileAPI missile)) continue;
                     if (missile.getSource() != ship) continue;
                     if (missile.getCustomData().containsKey(PROCESSED_KEY)) continue;
                     if (!"FLARE_SEEKER".equals(missile.getSpec().getTypeString())) continue;

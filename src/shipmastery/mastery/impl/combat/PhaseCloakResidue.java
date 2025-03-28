@@ -98,12 +98,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             boolean isUnphasing = ((Ship) ship).isUnphasing();
             if (isUnphasing && !isAcceleratedUnphased) {
                 isAcceleratedUnphased = true;
-                Particles.stream(emitter, 1, particlesPerSecond, maxTime, new Particles.StreamAction<JitterEmitter>() {
-                    @Override
-                    public boolean apply(JitterEmitter emitter) {
-                        return isAcceleratedUnphased;
-                    }
-                });
+                Particles.stream(emitter, 1, particlesPerSecond, maxTime, emitter -> isAcceleratedUnphased);
                 timeAcceleratedUnphased = 0f;
             }
 

@@ -102,12 +102,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         @Override
         public void onFullyActivate() {
             timeLeft = maxTime;
-            Particles.stream(emitter, 1, particlesPerSecond, maxTime, new Particles.StreamAction<JitterEmitter>() {
-                @Override
-                public boolean apply(JitterEmitter emitter) {
-                    return timeLeft > 0f;
-                }
-            });
+            Particles.stream(emitter, 1, particlesPerSecond, maxTime, emitter -> timeLeft > 0f);
         }
 
         @Override

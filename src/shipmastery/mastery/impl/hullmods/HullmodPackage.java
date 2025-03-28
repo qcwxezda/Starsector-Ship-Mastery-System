@@ -42,8 +42,8 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
     protected abstract void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats);
 
     protected static class HullmodData {
-        String id;
-        boolean requireBuiltIn;
+        final String id;
+        final boolean requireBuiltIn;
         protected HullmodData(String id, boolean requireBuiltIn) {
             this.id = id;
             this.requireBuiltIn = requireBuiltIn;

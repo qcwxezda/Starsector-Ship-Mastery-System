@@ -71,11 +71,9 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 2f*effectRadius + 2f*ship.getCollisionRadius(), 2f*effectRadius + 2f*ship.getCollisionRadius());
             while (itr.hasNext()) {
                 Object o = itr.next();
-                if (!(o instanceof CombatEntityAPI)) continue;
-                CombatEntityAPI entity = (CombatEntityAPI) o;
+                if (!(o instanceof CombatEntityAPI entity)) continue;
                 if (MathUtils.dist(ship.getLocation(), entity.getLocation()) > effectRadius + ship.getCollisionRadius()) continue;
-                if (!(o instanceof ShipAPI)) continue;
-                ShipAPI target = (ShipAPI) o;
+                if (!(o instanceof ShipAPI target)) continue;
                 if (target.isFighter() && target.getOwner() != ship.getOwner()) {
                     Global.getCombatEngine().removeEntity(target);
 

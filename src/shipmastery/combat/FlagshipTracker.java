@@ -58,12 +58,9 @@ public class FlagshipTracker implements EndOfCombatListener {
         final List<EffectActivationRecord> newEffects = new ArrayList<>();
         MasteryUtils.applyAllActiveMasteryEffects(
                 commander,
-                newFlagship.getHullSpec(), new MasteryUtils.MasteryAction() {
-                    @Override
-                    public void perform(MasteryEffect effect) {
-                        applyFlagshipStatusChange(effect, commander, newFlagship.getMutableStats(), newFlagship, true);
-                        newEffects.add(new EffectActivationRecord(effect, newFlagship));
-                    }
+                newFlagship.getHullSpec(), effect -> {
+                    applyFlagshipStatusChange(effect, commander, newFlagship.getMutableStats(), newFlagship, true);
+                    newEffects.add(new EffectActivationRecord(effect, newFlagship));
                 });
         activationRecordMap.put(commander, newEffects);
     }

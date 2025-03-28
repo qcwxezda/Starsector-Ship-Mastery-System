@@ -7,7 +7,7 @@ import shipmastery.campaign.FleetHandler;
 
 public class LunaLibSettingsListener implements LunaSettingsListener {
 
-    public static String id = "shipmasterysystem";
+    public static final String id = "shipmasterysystem";
 
     public static void init() {
         LunaLibSettingsListener settingsListener = new LunaLibSettingsListener();

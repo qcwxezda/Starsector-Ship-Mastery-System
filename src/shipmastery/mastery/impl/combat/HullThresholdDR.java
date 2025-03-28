@@ -25,12 +25,12 @@ public class HullThresholdDR extends BaseMasteryEffect {
     public static final float DAMAGE_MULT = 0.1f;
 
     public int getMaxActivations(ShipAPI ship) {
-        switch (ship.getHullSize()) {
-            case FRIGATE: case DESTROYER: return 1;
-            case CRUISER: return 2;
-            case CAPITAL_SHIP: return 3;
-            default: return 0;
-        }
+        return switch (ship.getHullSize()) {
+            case FRIGATE, DESTROYER -> 1;
+            case CRUISER -> 2;
+            case CAPITAL_SHIP -> 3;
+            default -> 0;
+        };
     }
 
     public float getActivationThreshold(ShipAPI ship) {

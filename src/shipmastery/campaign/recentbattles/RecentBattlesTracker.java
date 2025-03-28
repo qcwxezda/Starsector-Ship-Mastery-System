@@ -182,17 +182,11 @@ public class RecentBattlesTracker extends BaseCampaignEventListener implements F
         nonImportant.add(newIntel);
 
         if (nonImportant.size() > RecentBattlesIntel.MAX_SIZE) {
-            Collections.sort(nonImportant, new Comparator<IntelInfoPlugin>() {
-                @Override
-                public int compare(IntelInfoPlugin info1, IntelInfoPlugin info2) {
-                    return Long.compare(info1.getPlayerVisibleTimestamp(), info2.getPlayerVisibleTimestamp());
-                }
-            });
+            nonImportant.sort(Comparator.comparingLong(IntelInfoPlugin::getPlayerVisibleTimestamp));
 
             for (int i = 0; i < nonImportant.size() - RecentBattlesIntel.MAX_SIZE; i++) {
                 IntelInfoPlugin intel = nonImportant.get(i);
-                if (intel instanceof RecentBattlesIntel) {
-                    RecentBattlesIntel rIntel = (RecentBattlesIntel) intel;
+                if (intel instanceof RecentBattlesIntel rIntel) {
                     intelManager.removeIntel(rIntel);
                 }
             }

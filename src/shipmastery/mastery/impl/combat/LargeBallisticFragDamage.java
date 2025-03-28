@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.ParticleBurstEmitter;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -74,8 +73,7 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
         @Override
         public String modifyDamageDealt(Object param, final CombatEntityAPI target, DamageAPI damage,
                                         final Vector2f pt, boolean shieldHit) {
-            if (!(param instanceof DamagingProjectileAPI)) return null;
-            final DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (proj.isFading()) return null;
             if (!largeBallistics.contains(proj.getWeapon())) return null;
             if (DamageType.FRAGMENTATION.equals(damage.getType())) return null;
@@ -83,30 +81,27 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
             final float fragDamage = Math.min(maxDamage, proj.getWeapon().getDamage().getBaseDamage() * DAMAGE_FRAC);
 
             // Do this later so that it hits the stripped armor
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    Global.getCombatEngine().applyDamage(
-                            proj,
-                            target,
-                            pt,
-                            fragDamage,
-                            DamageType.FRAGMENTATION,
-                            0f,
-                            false,
-                            false,
-                            ship,
-                            false);
-                    ParticleBurstEmitter emitter = new ParticleBurstEmitter(pt);
-                    emitter.color = burstColor;
-                    emitter.lengthMultiplierOverTime = 2f;
-                    emitter.radiusJitter = 0.8f;
-                    emitter.life = 0.35f;
-                    emitter.lifeJitter = 0.5f;
-                    emitter.size = 4f;
-                    emitter.radius = 5f + 2f * (float) Math.sqrt(fragDamage);
-                    Particles.burst(emitter, 10 + (int) (3f * (float) Math.sqrt(fragDamage)));
-                }
+            CombatDeferredActionPlugin.performLater(() -> {
+                Global.getCombatEngine().applyDamage(
+                        proj,
+                        target,
+                        pt,
+                        fragDamage,
+                        DamageType.FRAGMENTATION,
+                        0f,
+                        false,
+                        false,
+                        ship,
+                        false);
+                ParticleBurstEmitter emitter = new ParticleBurstEmitter(pt);
+                emitter.color = burstColor;
+                emitter.lengthMultiplierOverTime = 2f;
+                emitter.radiusJitter = 0.8f;
+                emitter.life = 0.35f;
+                emitter.lifeJitter = 0.5f;
+                emitter.size = 4f;
+                emitter.radius = 5f + 2f * (float) Math.sqrt(fragDamage);
+                Particles.burst(emitter, 10 + (int) (3f * (float) Math.sqrt(fragDamage)));
             }, 0f);
 
             // Doesn't modify the damage dealt, just applies its own damage

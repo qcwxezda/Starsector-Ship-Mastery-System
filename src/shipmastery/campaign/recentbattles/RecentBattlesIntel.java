@@ -241,7 +241,7 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
         for (CampaignFleetAPI fleet : fleets) {
             members.addAll(fleet.getFleetData().getMembersListCopy());
         }
-        Collections.sort(members, Utils.byDPComparator);
+        members.sort(Utils.byDPComparator);
         float size = 60f;
         int numPerRow = Math.max(1, (int) ((shipsPanelWidth / size)));
         float offsetX = 0f, offsetY = 0f;
@@ -389,12 +389,7 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
                 replayBattle.invoke(
                         RecentBattlesTracker.cloneContextAlwaysAttack(
                                 bccStub, Global.getSector().getPlayerFleet(), battle.getNonPlayerCombined()),
-                        new Action() {
-                            @Override
-                            public void perform() {
-                                repairFleets();
-                            }
-                        });
+                        (Action) this::repairFleets);
                 battle.finish(null, false);
             }
             catch (Throwable e) {
@@ -422,12 +417,9 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
             try {
                 replayBattle.invoke(
                         newContext,
-                        new Action() {
-                            @Override
-                            public void perform() {
-                                repairFleets();
-                                tempFleet.getFleetData().clear();
-                            }
+                        (Action) () -> {
+                            repairFleets();
+                            tempFleet.getFleetData().clear();
                         });
                 battle.finish(null, false);
             }

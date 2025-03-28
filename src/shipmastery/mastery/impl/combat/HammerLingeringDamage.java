@@ -66,8 +66,7 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
 
             for (WeaponAPI weapon : ship.getUsableWeapons()) {
                 Object projSpec = weapon.getSpec().getProjectileSpec();
-                if (projSpec instanceof MissileSpecAPI) {
-                    MissileSpecAPI missileSpec = (MissileSpecAPI) projSpec;
+                if (projSpec instanceof MissileSpecAPI missileSpec) {
                     if ("hammer_torp".equals(missileSpec.getHullSpec().getHullId())) {
                         hammerWeapons.add(weapon);
                         int baseAmmo = weapon.getSpec().getMaxAmmo();
@@ -84,11 +83,9 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage,
                                         Vector2f pt, boolean shieldHit) {
             if (shieldHit) return null;
-            if (!(param instanceof MissileAPI)) return null;
-            MissileAPI missile = (MissileAPI) param;
+            if (!(param instanceof MissileAPI missile)) return null;
             if (!hammerWeapons.contains(missile.getWeapon())) return null;
-            if (!(target instanceof ShipAPI)) return null;
-            ShipAPI targetShip = (ShipAPI) target;
+            if (!(target instanceof ShipAPI targetShip)) return null;
 
             List<HammerLingeringDamageDealer.LingeringDamageData> damageData = new ArrayList<>();
             float[][] armorGrid = targetShip.getArmorGrid().getGrid();
@@ -193,34 +190,30 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
                     if (shipBounds != null && Misc.isPointInBounds(gridLocation, bounds)) {
                         Particles.stream(
                                 emitter, 1, 3f, tickInterval.getIntervalDuration(),
-                                new Particles.StreamAction<FireEmitter>() {
-                                    @Override
-                                    public boolean apply(FireEmitter fireEmitter) {
-                                        if (!target.isAlive()) return false;
-                                        emitter.location = target.getArmorGrid().getLocation(i, j);
-                                        emitter.alphaMult = dpsAmount / maxDpsInGrid;
-                                        Pair<Integer, Integer> index = new Pair<>(i, j);
-                                        if (target.getCustomData() == null ||
-                                                !target.getCustomData().containsKey(ON_FIRE_KEY)) {
-                                            Map<Object, Object> map = new HashMap<>();
-                                            map.put(index, HammerLingeringDamageDealer.this);
-                                            target.setCustomData(ON_FIRE_KEY, map);
+                                fireEmitter -> {
+                                    if (!target.isAlive()) return false;
+                                    emitter.location = target.getArmorGrid().getLocation(i, j);
+                                    emitter.alphaMult = dpsAmount / maxDpsInGrid;
+                                    Pair<Integer, Integer> index = new Pair<>(i, j);
+                                    if (target.getCustomData() == null ||
+                                            !target.getCustomData().containsKey(ON_FIRE_KEY)) {
+                                        Map<Object, Object> map = new HashMap<>();
+                                        map.put(index, HammerLingeringDamageDealer.this);
+                                        target.setCustomData(ON_FIRE_KEY, map);
+                                        return true;
+                                    } else {
+                                        //noinspection unchecked
+                                        Map<Object, Object> onFire =
+                                                (Map<Object, Object>) target.getCustomData().get(ON_FIRE_KEY);
+                                        Object listener = onFire.get(index);
+                                        if (HammerLingeringDamageDealer.this == listener) {
                                             return true;
                                         }
-                                        else {
-                                            //noinspection unchecked
-                                            Map<Object, Object> onFire =
-                                                    (Map<Object, Object>) target.getCustomData().get(ON_FIRE_KEY);
-                                            Object listener = onFire.get(index);
-                                            if (HammerLingeringDamageDealer.this == listener) {
-                                                return true;
-                                            }
-                                            if (listener == null || !target.hasListener(listener)) {
-                                                onFire.put(index, HammerLingeringDamageDealer.this);
-                                                return true;
-                                            }
-                                            return false;
+                                        if (listener == null || !target.hasListener(listener)) {
+                                            onFire.put(index, HammerLingeringDamageDealer.this);
+                                            return true;
                                         }
+                                        return false;
                                     }
                                 });
                     }

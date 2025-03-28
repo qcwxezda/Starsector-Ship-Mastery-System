@@ -26,9 +26,8 @@ public abstract class BaseGuidedMissileAI implements MissileAIPlugin, GuidedMiss
 
             // This AI doesn't seek non-ship targets, so a non-ship target would have to have been
             // forced via setTarget; assume it's valid.
-            if (!(entity instanceof ShipAPI)) return true;
+            if (!(entity instanceof ShipAPI ship)) return true;
 
-            ShipAPI ship = (ShipAPI) entity;
             return ship.isAlive() && !ship.isShuttlePod();
         }
     };
@@ -131,8 +130,7 @@ public abstract class BaseGuidedMissileAI implements MissileAIPlugin, GuidedMiss
             return false;
         }
 
-        if (target instanceof ShipAPI) {
-            ShipAPI ship = (ShipAPI) target;
+        if (target instanceof ShipAPI ship) {
             return !ship.isPhased() && !ship.getCollisionClass().equals(CollisionClass.NONE);
         }
 

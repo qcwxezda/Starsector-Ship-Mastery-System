@@ -19,13 +19,7 @@ import java.util.*;
 public class ShipGraveyardIntel extends BaseIntelPlugin {
     public static final int MAX_DAYS = 365;
     protected final Set<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo = new TreeSet<>(
-            new Comparator<Pair<FleetMemberAPI, SectorEntityToken>>() {
-                @Override
-                public int compare(Pair<FleetMemberAPI, SectorEntityToken> p1,
-                                   Pair<FleetMemberAPI, SectorEntityToken> p2) {
-                    return Utils.byDPComparator.compare(p1.one, p2.one);
-                }
-            });
+            (p1, p2) -> Utils.byDPComparator.compare(p1.one, p2.one));
     protected final SectorEntityToken entityToShow;
     protected final List<FleetMemberAPI> fleetMembers = new ArrayList<>();
 
@@ -69,12 +63,7 @@ public class ShipGraveyardIntel extends BaseIntelPlugin {
     @Override
     public void notifyPlayerAboutToOpenIntelScreen() {
         // Remove entries from lostInfo if player salvaged or recovered the wreck
-        for (Iterator<Pair<FleetMemberAPI, SectorEntityToken>> iterator = lostInfo.iterator(); iterator.hasNext(); ) {
-            Pair<FleetMemberAPI, SectorEntityToken> pair = iterator.next();
-            if (!pair.two.isAlive()) {
-                iterator.remove();
-            }
-        }
+        lostInfo.removeIf(pair -> !pair.two.isAlive());
         fleetMembers.clear();
         for (Pair<FleetMemberAPI, SectorEntityToken> pair : lostInfo) {
             fleetMembers.add(pair.one);

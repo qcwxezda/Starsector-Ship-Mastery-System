@@ -102,6 +102,7 @@ ECMPackageBoost,4,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,4,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
 MaxAutomatedCR,4,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
+WeakerDesignCompromises,4,combat,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,4,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,4,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion

@@ -169,12 +169,7 @@ public abstract class ShipMastery {
 
     public static void activatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
         String id = Utils.getRestoredHullSpecId(spec);
-        SaveData data = SAVE_DATA_TABLE.get(id);
-
-        if (data == null) {
-            data = new SaveData(0, 0);
-            SAVE_DATA_TABLE.put(id, data);
-        }
+        SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
         data.activateLevel(level, isOption2);
         List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
@@ -185,12 +180,7 @@ public abstract class ShipMastery {
 
     public static void deactivatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
         String id = Utils.getRestoredHullSpecId(spec);
-        SaveData data = SAVE_DATA_TABLE.get(id);
-
-        if (data == null) {
-            data = new SaveData(0, 0);
-            SAVE_DATA_TABLE.put(id, data);
-        }
+        SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
         data.deactivateLevel(level);
         List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
@@ -206,7 +196,7 @@ public abstract class ShipMastery {
         if (SAVE_DATA_TABLE == null || spec == null) return new TreeMap<>();
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
-        return data == null ? new TreeMap<Integer, Boolean>() : new TreeMap<>(data.activeLevels);
+        return data == null ? new TreeMap<>() : new TreeMap<>(data.activeLevels);
     }
 
     /**
@@ -300,8 +290,7 @@ public abstract class ShipMastery {
             }
         }
         // Array of strings means no options, just a list of mastery effects
-        else if (generator instanceof JSONArray) {
-            JSONArray array = (JSONArray) generator;
+        else if (generator instanceof JSONArray array) {
             if (array.length() == 0) return;
             for (int i = 0; i < array.length(); i++) {
                 try {
@@ -316,8 +305,7 @@ public abstract class ShipMastery {
                 }
             }
         }
-        else if (generator instanceof JSONObject) {
-            JSONObject json = (JSONObject) generator;
+        else if (generator instanceof JSONObject json) {
             processLevelData(json.get("A"), data, false);
             processLevelData(json.get("B"), data, true);
         }
@@ -352,21 +340,8 @@ public abstract class ShipMastery {
         JSONObject json = (JSONObject) masteryAssignments.opt(name);
         presetChain.add(name);
 
-        if (json != null) {
-            if (json.has("levels")) {
-                JSONObject levels = (JSONObject) json.get("levels");
-                Iterator<String> itr = levels.keys();
-                while (itr.hasNext()) {
-                    String levelStr = itr.next();
-                    int level = Integer.parseInt(levelStr);
-                    MasteryLevelData levelData = new MasteryLevelData(name, level);
-                    processLevelData(levels.get(levelStr), levelData, false);
-                    levelDataMap.put(level, levelData);
-                }
-            }
-            if (json.has("maxLevel")) {
-                maxLevel = json.getInt("maxLevel");
-            }
+        if (json != null && json.has("maxLevel")) {
+            maxLevel = json.getInt("maxLevel");
         }
 
         String preset = json == null ? null : json.optString("preset", null);
@@ -385,9 +360,31 @@ public abstract class ShipMastery {
         if (presetChain.contains(preset)) {
             throw new RuntimeException("Circular preset dependency: " + presetChain);
         }
+        Pair<Integer, Map<Integer, MasteryLevelData>> presetLevelData = null;
         if (preset != null) {
-            Pair<Integer, Map<Integer, MasteryLevelData>> presetLevelData = initMasteries(preset, presetChain);
+            presetLevelData = initMasteries(preset, presetChain);
             maxLevel = maxLevel == null ? presetLevelData.one : maxLevel;
+        }
+
+        int ml = maxLevel == null ? 0 : maxLevel;
+        if (json != null && json.has("levels")) {
+            JSONObject levels = (JSONObject) json.get("levels");
+            Iterator<String> itr = levels.keys();
+            while (itr.hasNext()) {
+                String levelStr = itr.next();
+                int level;
+                if ("max".equals(levelStr.toLowerCase(Locale.ROOT))) {
+                    level = ml;
+                } else {
+                    level = Integer.parseInt(levelStr);
+                }
+                MasteryLevelData levelData = new MasteryLevelData(name, level);
+                processLevelData(levels.get(levelStr), levelData, false);
+                levelDataMap.put(level, levelData);
+            }
+        }
+
+        if (presetLevelData != null) {
             for (Map.Entry<Integer, MasteryLevelData> entry : presetLevelData.two.entrySet()) {
                 int level = entry.getKey();
                 MasteryLevelData levelData = entry.getValue();
@@ -404,7 +401,6 @@ public abstract class ShipMastery {
             }
         }
 
-        int ml = maxLevel == null ? 0 : maxLevel;
         HullMasteryData masteryData = new HullMasteryData(name, ml);
         for (int i = 1; i <= ml; i++) {
             masteryData.setLevelData(i, levelDataMap.get(i));
@@ -451,7 +447,7 @@ public abstract class ShipMastery {
                 spec = Utils.getRestoredHullSpec(spec);
                 String id = spec.getHullId();
                 if (!masteryMap.containsKey(id)) {
-                    initMasteries(id, new HashSet<String>());
+                    initMasteries(id, new HashSet<>());
                 }
             }
         }
@@ -578,14 +574,13 @@ public abstract class ShipMastery {
             if (levelData != null) {
                 levelData.generateEffects(
                         seedPrefix,
-                        avoidSeen ? seenEffectClasses : new HashSet<Class<?>>(),
-                        avoidSeen ? seenParams : new HashSet<String>());
+                        avoidSeen ? seenEffectClasses : new HashSet<>(),
+                        avoidSeen ? seenParams : new HashSet<>());
             }
         }
     }
 
-    public static void activatePlayerMasteries()
-            throws InstantiationException, IllegalAccessException, JSONException, IOException {
+    public static void activatePlayerMasteries() {
 
 //        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(REROLL_SEQUENCE_MAP);
 //        if (rerollMap == null) rerollMap = new HashMap<>();
@@ -598,12 +593,7 @@ public abstract class ShipMastery {
 
             clearInvalidActiveLevels(spec);
             MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(), spec, new MasteryUtils.MasteryAction() {
-                        @Override
-                        public void perform(MasteryEffect effect) {
-                            effect.onActivate(Global.getSector().getPlayerPerson());
-                        }
-                    });
+                    Global.getSector().getPlayerPerson(), spec, effect -> effect.onActivate(Global.getSector().getPlayerPerson()));
         }
     }
 

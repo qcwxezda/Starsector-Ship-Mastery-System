@@ -31,8 +31,8 @@ public class FullHitpointsBoost extends BaseMasteryEffect {
     }
 
     public static class FullHitpointsBoostScript implements AdvanceableListener {
-        ShipAPI ship;
-        String id;
+        final ShipAPI ship;
+        final String id;
 
         public FullHitpointsBoostScript(ShipAPI ship, String id, float strength) {
             this.ship = ship;

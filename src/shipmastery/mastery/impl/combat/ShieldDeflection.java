@@ -109,8 +109,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
             while (itr.hasNext()) {
                 Object o = itr.next();
-                if (!(o instanceof DamagingProjectileAPI)) continue;
-                DamagingProjectileAPI proj = (DamagingProjectileAPI) o;
+                if (!(o instanceof DamagingProjectileAPI proj)) continue;
                 if (proj.getOwner() == ship.getOwner()) continue;
                 Vector2f loc = proj.getLocation(), vel = proj.getVelocity();
                 Vector2f scaledVel = MathUtils.inDirectionWithLength(vel, Math.max(30f, vel.length() * amount));

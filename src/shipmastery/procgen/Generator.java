@@ -39,8 +39,7 @@ public abstract class Generator {
             BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_concealed_station",
                                                              Factions.NEUTRAL);
             SectorEntityToken focus = added.entity.getOrbitFocus();
-            if (focus instanceof PlanetAPI) {
-                PlanetAPI planet = (PlanetAPI) focus;
+            if (focus instanceof PlanetAPI planet) {
                 boolean nearStar = planet.isStar() && added.entity.getOrbit() != null && added.entity.getCircularOrbitRadius() < 5000;
                 if (!planet.isStar() || nearStar) {
                     BaseThemeGenerator.convertOrbitPointingDown(added.entity);

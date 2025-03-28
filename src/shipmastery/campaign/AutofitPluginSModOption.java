@@ -13,7 +13,6 @@ import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import shipmastery.ShipMastery;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.*;
 
@@ -21,9 +20,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class AutofitPluginSModOption extends CoreAutofitPlugin {
-    public static String COPY_S_MODS = "sms_copy_s_mods";
-    protected Map<String, Integer> sModCreditsCostMap = new HashMap<>();
-    protected Map<String, Integer> sModMPCostMap = new HashMap<>();
+    public static final String COPY_S_MODS = "sms_copy_s_mods";
+    protected final Map<String, Integer> sModCreditsCostMap = new HashMap<>();
+    protected final Map<String, Integer> sModMPCostMap = new HashMap<>();
     protected ShipHullSpecAPI rootSpec;
     private final RefitHandler refitHandler;
     private final boolean useSP;
@@ -51,15 +50,12 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
     }
 
     protected void sortByCost(List<String> hullmods, final ShipAPI ship) {
-        Collections.sort(hullmods, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                HullModSpecAPI hm1 = Global.getSettings().getHullModSpec(s1);
-                HullModSpecAPI hm2 = Global.getSettings().getHullModSpec(s2);
-                float cost1 = SModUtils.getCreditsCost(hm1, ship);
-                float cost2 = SModUtils.getCreditsCost(hm2, ship);
-                return (int) (cost2 - cost1);
-            }
+        hullmods.sort((s1, s2) -> {
+            HullModSpecAPI hm1 = Global.getSettings().getHullModSpec(s1);
+            HullModSpecAPI hm2 = Global.getSettings().getHullModSpec(s2);
+            float cost1 = SModUtils.getCreditsCost(hm1, ship);
+            float cost2 = SModUtils.getCreditsCost(hm2, ship);
+            return (int) (cost2 - cost1);
         });
     }
 
@@ -261,15 +257,12 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                         current.addPermaMod(Strings.Hullmods.ENGINEERING_OVERRIDE, false);
                     }
 
-                    DeferredActionPlugin.performLater(new Action() {
-                        @Override
-                        public void perform() {
-                            if (refitHandler != null) {
-                                refitHandler.injectRefitScreen(true, !sModCreditsCostMap.isEmpty());
-                            }
-                            else {
-                                RefitHandler.syncRefitScreenWithVariant(!sModCreditsCostMap.isEmpty());
-                            }
+                    DeferredActionPlugin.performLater(() -> {
+                        if (refitHandler != null) {
+                            refitHandler.injectRefitScreen(true, !sModCreditsCostMap.isEmpty());
+                        }
+                        else {
+                            RefitHandler.syncRefitScreenWithVariant(!sModCreditsCostMap.isEmpty());
                         }
                     }, 0f);
                 }

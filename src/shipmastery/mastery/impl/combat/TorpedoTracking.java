@@ -95,8 +95,7 @@ public class TorpedoTracking extends BaseMasteryEffect {
                 Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), r, r);
                 while (itr.hasNext()) {
                     Object o = itr.next();
-                    if (!(o instanceof MissileAPI)) continue;
-                    final MissileAPI missile = (MissileAPI) o;
+                    if (!(o instanceof MissileAPI missile)) continue;
                     if (!reaperWeapons.contains(missile.getWeapon())) continue;
                     if (missile.getCustomData() == null || !missile.getCustomData().containsKey(id)) {
                         missile.setCustomData(id, true);
@@ -112,12 +111,7 @@ public class TorpedoTracking extends BaseMasteryEffect {
                         trail.randomXOffset = 5f;
                         trail.randomAngleDegrees = 20f;
                         trail.yOffset = -trail.length * 0.25f;
-                        Particles.stream(trail, 1, 60f, -1f, new Particles.StreamAction<TrailEmitter>() {
-                            @Override
-                            public boolean apply(TrailEmitter emitter) {
-                                return !Utils.wasProjectileRemoved(missile) && !missile.isFizzling();
-                            }
-                        });
+                        Particles.stream(trail, 1, 60f, -1f, emitter -> !Utils.wasProjectileRemoved(missile) && !missile.isFizzling());
 
                         missile.getEngineStats().getMaxTurnRate().setBaseValue(0f);
                         missile.getEngineStats().getTurnAcceleration().setBaseValue(0f);

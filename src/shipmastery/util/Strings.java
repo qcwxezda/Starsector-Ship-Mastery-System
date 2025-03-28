@@ -483,5 +483,6 @@ public interface Strings {
         String EmptyMountsReduceFluxPost = Utils.getString( "sms_descriptions", "EmptyMountsReduceFluxPost");
         String FullHitpointsBoost = Utils.getString( "sms_descriptions", "FullHitpointsBoost");
         String FullHitpointsBoostPost = Utils.getString( "sms_descriptions", "FullHitpointsBoostPost");
+        String WeakerDesignCompromises = Utils.getString( "sms_descriptions", "WeakerDesignCompromises");
     }
 }

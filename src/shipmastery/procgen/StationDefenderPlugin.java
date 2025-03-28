@@ -81,8 +81,7 @@ public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageG
 
     @Override
     public int getHandlingPriority(Object params) {
-        if (!(params instanceof SalvageGenFromSeed.SDMParams)) return -1;
-        SalvageGenFromSeed.SDMParams p = (SalvageGenFromSeed.SDMParams) params;
+        if (!(params instanceof SalvageGenFromSeed.SDMParams p)) return -1;
 
         if (p.entity == null || p.entity.getCustomEntitySpec() == null) {
             return -1;

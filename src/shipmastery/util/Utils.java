@@ -36,17 +36,14 @@ public abstract class Utils {
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");
     public static final DecimalFormat integerFormat = new DecimalFormat("0");
     public static final DecimalFormat twoDecimalPlaceFormat = new DecimalFormat("0.##");
-    public static Comparator<FleetMemberAPI> byDPComparator = new Comparator<FleetMemberAPI>() {
-        @Override
-        public int compare(FleetMemberAPI m1, FleetMemberAPI m2) {
-            float dp1 = m1.getHullSpec().getSuppliesToRecover();
-            float dp2 = m2.getHullSpec().getSuppliesToRecover();
-            int dpDiff = (int) (dp2 - dp1);
-            if (dpDiff != 0) return dpDiff;
-            int specDiff = m1.getHullId().compareTo(m2.getHullId());
-            if (specDiff != 0) return specDiff;
-            return m1.getId().compareTo(m2.getId());
-        }
+    public static final Comparator<FleetMemberAPI> byDPComparator = (m1, m2) -> {
+        float dp1 = m1.getHullSpec().getSuppliesToRecover();
+        float dp2 = m2.getHullSpec().getSuppliesToRecover();
+        int dpDiff = (int) (dp2 - dp1);
+        if (dpDiff != 0) return dpDiff;
+        int specDiff = m1.getHullId().compareTo(m2.getHullId());
+        if (specDiff != 0) return specDiff;
+        return m1.getId().compareTo(m2.getId());
     };
 
     public static final Map<String, String> wingVariantToIdMap = new HashMap<>();
@@ -89,11 +86,7 @@ public abstract class Utils {
             String id = spec.getHullId();
             String baseId = spec.getBaseHullId();
 
-            Set<String> skins = baseHullToAllSkinsMap.get(baseId);
-            if (skins == null) {
-                skins = new HashSet<>();
-                baseHullToAllSkinsMap.put(baseId, skins);
-            }
+            Set<String> skins = baseHullToAllSkinsMap.computeIfAbsent(baseId, k -> new HashSet<>());
             skins.add(id);
         }
     }
@@ -157,16 +150,12 @@ public abstract class Utils {
     }
 
     public static int hullSizeToInt(ShipAPI.HullSize hullSize) {
-        switch (hullSize) {
-            case DESTROYER:
-                return 1;
-            case CRUISER:
-                return 2;
-            case CAPITAL_SHIP:
-                return 3;
-            default:
-                return 0;
-        }
+        return switch (hullSize) {
+            case DESTROYER -> 1;
+            case CRUISER -> 2;
+            case CAPITAL_SHIP -> 3;
+            default -> 0;
+        };
     }
 
     public static Object[] interleaveArrays(Object[] arr1, Object[] arr2) {
@@ -456,13 +445,13 @@ public abstract class Utils {
         fleetData.setForceNoSync(true);
         List<FleetMember> members = ((FleetData) fleetData).getMembers();
         fleetData.setForceNoSync(wasNoSync);
-        return members == null ? new ArrayList<FleetMember>() : members;
+        return members == null ? new ArrayList<>() : members;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean wasProjectileRemoved(DamagingProjectileAPI proj) {
         if (proj instanceof Missile) {
-            return ((Missile) proj).wasRemoved();
+            return proj.wasRemoved();
         }
         else if (proj instanceof PlasmaShot){
             return proj.getBrightness() <= 0f;
@@ -596,54 +585,35 @@ public abstract class Utils {
                     String id = shortId + "(" + info.tier + ")";
                     maxKeyLength = Math.max(maxKeyLength, id.length());
 
-                    if (effect instanceof ModifyStatsEffect) {
-                        ModifyStatsEffect mEffect = (ModifyStatsEffect) effect;
+                    if (effect instanceof ModifyStatsEffect mEffect) {
                         for (ShipStat stat : mEffect.getAffectedStats()) {
                             String statId = stat.id + "(" + stat.tier + ")";
                             maxStatKeyLength = Math.max(maxStatKeyLength, statId.length());
-                            Integer statFreq = statFreqs.get(statId);
-                            statFreqs.put(statId, statFreq == null ? 1 : statFreq + 1);
+                            statFreqs.compute(statId, (k, statFreq) -> statFreq == null ? 1 : statFreq + 1);
                         }
                     }
 
-                    Integer freq = freqs.get(id);
-                    freqs.put(id, freq == null ? 1 : freq + 1);
+                    freqs.compute(id, (k, freq) -> freq == null ? 1 : freq + 1);
                 }
             }
         }
 
         try (PrintWriter pw = new PrintWriter("mastery_freqs.txt")) {
             List<Map.Entry<String, Integer>> entries = new ArrayList<>(freqs.entrySet());
-            Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
-                @Override
-                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                    return o2.getValue().compareTo(o1.getValue());
-                }
-            });
+            entries.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
             List<Map.Entry<String, Integer>> statEntries = new ArrayList<>(statFreqs.entrySet());
-            Collections.sort(statEntries, new Comparator<Map.Entry<String, Integer>>() {
-                @Override
-                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                    return o2.getValue().compareTo(o1.getValue());
-                }
-            });
+            statEntries.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
             for (Map.Entry<String, Integer> entry : entries) {
-                StringBuilder sb = new StringBuilder(entry.getKey());
-                sb.append(":      ");
-                for (int i = 0; i < maxKeyLength - entry.getKey().length(); i++) {
-                    sb.append(" ");
-                }
-                sb.append(entry.getValue());
+                String sb = entry.getKey() + ":      " +
+                        " ".repeat(Math.max(0, maxKeyLength - entry.getKey().length())) +
+                        entry.getValue();
                 pw.println(sb);
             }
             pw.println();
             for (Map.Entry<String, Integer> entry : statEntries) {
-                StringBuilder sb = new StringBuilder(entry.getKey());
-                sb.append(":      ");
-                for (int i = 0; i < maxStatKeyLength - entry.getKey().length(); i++) {
-                    sb.append(" ");
-                }
-                sb.append(entry.getValue());
+                String sb = entry.getKey() + ":      " +
+                        " ".repeat(Math.max(0, maxStatKeyLength - entry.getKey().length())) +
+                        entry.getValue();
                 pw.println(sb);
             }
         } catch (Exception ignore) {}

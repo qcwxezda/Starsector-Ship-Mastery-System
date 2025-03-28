@@ -10,7 +10,6 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.impl.logistics.SModsOverCapacity;
 import shipmastery.ui.MasteryPanel;
@@ -65,12 +64,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
                 }
 
-                DeferredActionPlugin.performLater(new Action() {
-                    @Override
-                    public void perform() {
-                        button.unhighlight();
-                    }
-                }, Settings.DOUBLE_CLICK_INTERVAL);
+                DeferredActionPlugin.performLater(button::unhighlight, Settings.DOUBLE_CLICK_INTERVAL);
 
             }
             else if (newTime - lastClickTime > (int) (Settings.DOUBLE_CLICK_INTERVAL * 1000f)) {
@@ -86,12 +80,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     else {
                         if (module.getFleetMember() != null && cur >= limit && !logisticDontTrack) {
                             final int finalLimit = limit;
-                            DeferredActionPlugin.performLater(new Action() {
-                                @Override
-                                public void perform() {
-                                    SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - finalLimit);
-                                }
-                            }, 0f);
+                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - finalLimit), 0f);
                         }
                         variant.addPermaMod(rowData.hullModSpecId, true);
                         if (module.getFleetMember() != null) {

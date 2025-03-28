@@ -144,8 +144,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
             for (int i = 0; i < NUM_ARCS; i++) {
                 CombatEntityAPI target = picker.pick();
                 boolean pierced = false;
-                if (target instanceof ShipAPI) {
-                    ShipAPI ship = ((ShipAPI) target);
+                if (target instanceof ShipAPI ship) {
                     float pierceChance = ship.getHardFluxLevel() - 0.1f;
                     pierceChance *= ship.getMutableStats().getDynamic().getValue(Stats.SHIELD_PIERCED_MULT);
                     if (Math.random() < pierceChance) {

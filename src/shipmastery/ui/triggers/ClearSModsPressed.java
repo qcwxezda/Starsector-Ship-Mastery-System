@@ -10,7 +10,6 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.ShipMasterySModRecord;
@@ -69,8 +68,7 @@ public class ClearSModsPressed extends ActionListener {
                 }
             }
             for (SModRecord record : records) {
-                if (record instanceof ShipMasterySModRecord) {
-                    ShipMasterySModRecord smsRecord = (ShipMasterySModRecord) record;
+                if (record instanceof ShipMasterySModRecord smsRecord) {
                     if (!Objects.equals(smsRecord.getRootMember(), root.getFleetMember())) continue;
                     // Make sure the module ids are the same
                     if (!Objects.equals(smsRecord.getModuleId(), moduleId)) continue;
@@ -127,12 +125,7 @@ public class ClearSModsPressed extends ActionListener {
         }
         else {
             beginConfirm(button);
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    endConfirm(button);
-                }
-            }, Settings.DOUBLE_CLICK_INTERVAL);
+            DeferredActionPlugin.performLater(() -> endConfirm(button), Settings.DOUBLE_CLICK_INTERVAL);
         }
     }
 

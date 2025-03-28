@@ -16,11 +16,11 @@ public class JitterEmitter2 extends BaseIEmitter {
     public final SpriteAPI sprite;
     public final float width, height;
     public float radius = 10f;
-    public float life = 1.5f;
+    public final float life = 1.5f;
     public Color color = Color.WHITE;
-    public float saturationShift = 0.5f;
-    public float hueShift = 90f;
-    public float alphaMult = 0.2f;
+    public final float saturationShift = 0.5f;
+    public final float hueShift = 90f;
+    public final float alphaMult = 0.2f;
 
     public JitterEmitter2(CombatEntityAPI entity, SpriteAPI sprite) {
         this.entity = entity;

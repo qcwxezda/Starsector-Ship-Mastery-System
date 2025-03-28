@@ -13,7 +13,6 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
-import shipmastery.util.TargetChecker;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
@@ -66,8 +65,7 @@ public class TPCChaining extends BaseMasteryEffect {
 
         @Override
         public String modifyDamageDealt(Object param, final CombatEntityAPI target, final DamageAPI damage, final Vector2f pt, boolean shieldHit) {
-            if (!(param instanceof DamagingProjectileAPI)) return null;
-            final DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (!"tpc_shot".equals(proj.getProjectileSpecId())) return null;
 
             damage.getModifier().modifyPercent(id, 100f * damageBonus);
@@ -79,17 +77,12 @@ public class TPCChaining extends BaseMasteryEffect {
                     true,
                     chainRange,
                     true,
-                    new TargetChecker() {
-                        @Override
-                        public boolean check(CombatEntityAPI entity) {
-                            return entity != null
-                                    && entity != target
-                                    && Global.getCombatEngine().isEntityInPlay(entity)
-                                    && entity.getHitpoints() > 0
-                                    && entity.getOwner() != proj.getOwner()
-                                    && entity.getOwner() != 100;
-                        }
-                    });
+                    entity -> entity != null
+                            && entity != target
+                            && Global.getCombatEngine().isEntityInPlay(entity)
+                            && entity.getHitpoints() > 0
+                            && entity.getOwner() != proj.getOwner()
+                            && entity.getOwner() != 100);
 
             for (CombatEntityAPI entity : targets) {
                 Global.getCombatEngine().spawnEmpArc(proj.getSource(), pt, target, entity,

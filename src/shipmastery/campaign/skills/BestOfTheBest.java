@@ -60,8 +60,7 @@ public class BestOfTheBest {
 
     // from WolfpackTactics
     public static boolean isCapitalAndOfficer(MutableShipStatsAPI stats) {
-        if (stats.getEntity() instanceof ShipAPI) {
-            ShipAPI ship = (ShipAPI) stats.getEntity();
+        if (stats.getEntity() instanceof ShipAPI ship) {
             if (!ship.isCapital()) return false;
             return !ship.getCaptain().isDefault();
         } else {

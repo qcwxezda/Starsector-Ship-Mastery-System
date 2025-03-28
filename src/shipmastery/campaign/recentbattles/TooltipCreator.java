@@ -17,7 +17,7 @@ import java.util.List;
 public class TooltipCreator {
     public static Method setTooltipMethod;
     public static Field rendererFleetMemberField;
-    public static Logger logger = Logger.getLogger(TooltipCreator.class);
+    public static final Logger logger = Logger.getLogger(TooltipCreator.class);
 
     public static void saveScrollbarLocation(RecentBattlesIntel intel, TooltipMakerAPI tooltip) {
         try {

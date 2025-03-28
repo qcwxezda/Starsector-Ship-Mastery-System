@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -26,12 +25,7 @@ public class MissileAutoloaderCapacity extends BaseMasteryEffect {
         if (!ship.getVariant().hasHullMod(HullMods.MISSILE_AUTOLOADER)) return;
         MissileAutoloader.MissileAutoloaderData data = (MissileAutoloader.MissileAutoloaderData) ship.getCustomData().get(MissileAutoloader.MA_DATA_KEY);
         if (data == null) {
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    applyEffectsAfterShipCreation(ship);
-                }
-            }, 0.5f);
+            CombatDeferredActionPlugin.performLater(() -> applyEffectsAfterShipCreation(ship), 0.5f);
         }
         else {
             data.opLeft *= 1f + getStrength(ship);

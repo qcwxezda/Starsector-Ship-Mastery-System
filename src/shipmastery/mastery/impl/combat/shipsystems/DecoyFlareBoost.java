@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -44,18 +43,14 @@ public class DecoyFlareBoost extends ShipSystemEffect{
 
         @Override
         public void onActivate() {
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 200f, 200f);
-                    while (itr.hasNext()) {
-                        Object o = itr.next();
-                        if (!(o instanceof MissileAPI)) continue;
-                        MissileAPI missile = (MissileAPI) o;
-                        if (!"flare_fighter".equals(missile.getProjectileSpecId())) continue;
-                        missile.setHitpoints(missile.getMaxHitpoints() * (1f + strength));
-                        missile.setMaxFlightTime(missile.getMaxFlightTime() * (1f + strength));
-                    }
+            CombatDeferredActionPlugin.performLater(() -> {
+                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 200f, 200f);
+                while (itr.hasNext()) {
+                    Object o = itr.next();
+                    if (!(o instanceof MissileAPI missile)) continue;
+                    if (!"flare_fighter".equals(missile.getProjectileSpecId())) continue;
+                    missile.setHitpoints(missile.getMaxHitpoints() * (1f + strength));
+                    missile.setMaxFlightTime(missile.getMaxFlightTime() * (1f + strength));
                 }
             }, 0.5f);
         }

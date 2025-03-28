@@ -18,7 +18,6 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
-import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.*;
 import shipmastery.util.*;
 
@@ -112,13 +111,7 @@ public class MasteryPanel {
 
             // Only remove the UIPanels -- the first 2 children are a label and the confirm button,
             // which don't need to be refreshed
-            Iterator<?> itr = children.listIterator();
-            while (itr.hasNext()) {
-                Object o = itr.next();
-                if (o instanceof UIPanelAPI) {
-                    itr.remove();
-                }
-            }
+            children.removeIf(o -> o instanceof UIPanelAPI);
         }
 
         float w = panel.getPosition().getWidth() + 20f, h = panel.getPosition().getHeight();
@@ -237,7 +230,7 @@ public class MasteryPanel {
                 applicableSpecs.add(spec);
             }
         }
-        Collections.sort(applicableSpecs, comparator);
+        applicableSpecs.sort(comparator);
 
         CustomPanelAPI thisShipPanel = Global.getSettings().createCustom(width, height, null);
         Object[] columnData = Utils.interleaveArrays(columnNames, columnWidths);
@@ -252,8 +245,7 @@ public class MasteryPanel {
         for (int i = 0; i < headerChildren.size(); i++) {
             Object child = headerChildren.get(i);
 
-            if (!(child instanceof ButtonAPI)) continue;
-            ButtonAPI headerButton = (ButtonAPI) child;
+            if (!(child instanceof ButtonAPI headerButton)) continue;
             if (columnNames[i].equals(currentColumnName)) {
                 headerButton.highlight();
             }
@@ -344,7 +336,7 @@ public class MasteryPanel {
     }
 
     public Map<Integer, Boolean> getSelectedMasteryButtons() {
-        return savedMasteryDisplay == null ? new HashMap<Integer, Boolean>() : savedMasteryDisplay.getSelectedLevels();
+        return savedMasteryDisplay == null ? new HashMap<>() : savedMasteryDisplay.getSelectedLevels();
     }
 
     UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation, boolean scrollToStart) {
@@ -412,12 +404,7 @@ public class MasteryPanel {
                 masteryPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
 
         float pad = 25f;
-        MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, new Action() {
-            @Override
-            public void perform() {
-                showUpgradeOrConfirmation(canEnhance);
-            }
-        });
+        MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, () -> showUpgradeOrConfirmation(canEnhance));
         display.create(masteryDisplayTTM);
         masteryDisplayTTM.setHeightSoFar(display.getTotalHeight() - pad);
         masteryPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
@@ -611,25 +598,22 @@ public class MasteryPanel {
     }
 
     Comparator<HullModSpecAPI> makeComparator(final String columnName) {
-        return new Comparator<HullModSpecAPI>() {
-            @Override
-            public int compare(HullModSpecAPI spec1, HullModSpecAPI spec2) {
-                Object data1 = extractHullmodData(spec1, columnName);
-                Object data2 = extractHullmodData(spec2, columnName);
+        return (spec1, spec2) -> {
+            Object data1 = extractHullmodData(spec1, columnName);
+            Object data2 = extractHullmodData(spec2, columnName);
 
-                if (data1 == null || data2 == null) return 0;
+            if (data1 == null || data2 == null) return 0;
 
-                if (data1 instanceof String) {
-                    return ((String) data1).compareTo((String) data2);
-                }
-                if (data1 instanceof Integer) {
-                    return Integer.compare((int) data1, (int) data2);
-                }
-                if (data1 instanceof Boolean) {
-                    return Boolean.compare((boolean) data1, (boolean) data2);
-                }
-                return 0;
+            if (data1 instanceof String) {
+                return ((String) data1).compareTo((String) data2);
             }
+            if (data1 instanceof Integer) {
+                return Integer.compare((int) data1, (int) data2);
+            }
+            if (data1 instanceof Boolean) {
+                return Boolean.compare((boolean) data1, (boolean) data2);
+            }
+            return 0;
         };
     }
 

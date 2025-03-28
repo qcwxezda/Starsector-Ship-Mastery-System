@@ -65,8 +65,7 @@ public class TPCUpgrade extends BaseMasteryEffect {
 
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f pt, boolean shieldHit) {
-            if (!(param instanceof DamagingProjectileAPI)) return null;
-            DamagingProjectileAPI proj = (DamagingProjectileAPI) param;
+            if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (!"tpc_shot".equals(proj.getProjectileSpecId())) return null;
 
             if (Math.random() <= chance) {

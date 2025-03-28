@@ -44,8 +44,7 @@ public class QuantumDisruptorDuration extends ShipSystemEffect {
         @Override
         public void onFullyActivate() {
             Object target = Global.getCombatEngine().getCustomData().get(ship.getId() + "_acausal_target");
-            if (target instanceof ShipAPI) {
-                ShipAPI targetShip = (ShipAPI) target;
+            if (target instanceof ShipAPI targetShip) {
                 targetShip.getFluxTracker().stopOverload();
                 targetShip.getFluxTracker().beginOverloadWithTotalBaseDuration(AcausalDisruptorStats.DISRUPTION_DUR * (1f + increase));
                 ship.useSystem();

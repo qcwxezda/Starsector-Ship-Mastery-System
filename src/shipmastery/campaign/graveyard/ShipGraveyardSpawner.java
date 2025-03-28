@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class ShipGraveyardSpawner extends BaseCampaignEventListener implements ShipRecoveryListener, EveryFrameScript {
 
-    protected Set<FleetMemberAPI> recoveredShips = new HashSet<>();
+    protected final Set<FleetMemberAPI> recoveredShips = new HashSet<>();
     protected boolean weaponsRecovered = false;
 
     public ShipGraveyardSpawner() {
@@ -41,8 +41,7 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
         InteractionDialogAPI currentDialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
         Set<FleetMemberAPI> members = new HashSet<>(Global.getSector().getPlayerFleet().getFleetData().getSnapshot());
 
-        if (currentDialog != null && currentDialog.getPlugin() instanceof FleetInteractionDialogPluginImpl) {
-            FleetInteractionDialogPluginImpl plugin = (FleetInteractionDialogPluginImpl) currentDialog.getPlugin();
+        if (currentDialog != null && currentDialog.getPlugin() instanceof FleetInteractionDialogPluginImpl plugin) {
             FleetEncounterContext context = (FleetEncounterContext) plugin.getContext();
             // Pretend the player is the winning side, otherwise no ships are recoverable
             List<FleetMemberAPI> recoverable = context.getRecoverableShips(battle, battle.getPlayerCombined(), battle.getNonPlayerCombined());

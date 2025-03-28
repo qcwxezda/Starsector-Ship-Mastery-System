@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
@@ -97,32 +96,28 @@ public class OrionDeviceDamage extends ShipSystemEffect {
                 }
             }
             final DamagingProjectileAPI finalBomb = bomb;
-            CombatDeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    Vector2f location = bombLauncher.getLocation();
-                    float angle = bombLauncher.getCurrAngle();
-                    Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*RANGE, 2f*RANGE);
-                    while (itr.hasNext()) {
-                        Object o = itr.next();
-                        if (!(o instanceof CombatEntityAPI)) continue;
-                        CombatEntityAPI entity = (CombatEntityAPI) o;
-                        if (MathUtils.dist(entity.getLocation(), location) > RANGE + entity.getCollisionRadius()) continue;
-                        if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
-                        if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
-                        Pair<Vector2f, Boolean> collisionPoint = CollisionUtils.rayCollisionCheckEntity(location, entity.getLocation(), entity);
-                        Global.getCombatEngine().applyDamage(
-                                finalBomb,
-                                entity,
-                                collisionPoint.one,
-                                ship.getMutableStats().getMissileWeaponDamageMult().getModifiedValue() * damage,
-                                DamageType.HIGH_EXPLOSIVE,
-                                0f,
-                                false,
-                                false,
-                                ship,
-                                true);
-                    }
+            CombatDeferredActionPlugin.performLater(() -> {
+                Vector2f location = bombLauncher.getLocation();
+                float angle = bombLauncher.getCurrAngle();
+                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*RANGE, 2f*RANGE);
+                while (itr.hasNext()) {
+                    Object o = itr.next();
+                    if (!(o instanceof CombatEntityAPI entity)) continue;
+                    if (MathUtils.dist(entity.getLocation(), location) > RANGE + entity.getCollisionRadius()) continue;
+                    if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
+                    if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
+                    Pair<Vector2f, Boolean> collisionPoint = CollisionUtils.rayCollisionCheckEntity(location, entity.getLocation(), entity);
+                    Global.getCombatEngine().applyDamage(
+                            finalBomb,
+                            entity,
+                            collisionPoint.one,
+                            ship.getMutableStats().getMissileWeaponDamageMult().getModifiedValue() * damage,
+                            DamageType.HIGH_EXPLOSIVE,
+                            0f,
+                            false,
+                            false,
+                            ship,
+                            true);
                 }
             }, 0.25f);
         }

@@ -1,21 +1,21 @@
 name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hiddenEverywhere,cost_frigate,cost_dest,cost_cruiser,cost_capital,script,desc,short,sprite
-Ship Mastery Handler,sms_masteryHandler,,,,,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.MasteryHullmod,Handles mastery effects,Handles mastery effects,graphics/hullmods/generic_mod.png
-Extradimensional Rearrangement,sms_randomModification,,,,,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.ExtradimensionalRearrangement,"This ship has been altered by an unknown mechanism. A number of its stats have been altered slightly but permanently.",Ship altered by unknown mechanism,graphics/hullmods/sms_random_modification.png
+Ship Mastery Handler,sms_masteryHandler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.MasteryHullmod,Handles mastery effects,Handles mastery effects,graphics/hullmods/generic_mod.png
+Extradimensional Rearrangement,sms_randomModification,,,,codex_unlockable,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.ExtradimensionalRearrangement,"This ship has been altered by an unknown mechanism. A number of its stats have been altered slightly but permanently.",Ship altered by unknown mechanism,graphics/hullmods/sms_random_modification.png
 Engineering Override,sms_engineeringOverride,0,,,"req_spaceport, no_build_in","Logistics, Requires Dock",2500,TRUE,FALSE,FALSE,0,0,0,0,shipmastery.hullmods.EngineeringOverride,"Increases the number of hullmods that can be built in by %s. Building in hullmods no longer requires mastery points and costs %s fewer credits.
 
 Renders this ship unable to benefit from any mastery effect. Additionally, each installed S-mod decreases the ship's peak combat readiness by %s.",Allows crude S-mod integration without mastery,graphics/hullmods/sms_engineering_override.png
-Mastery - Level 1,sms_npcIndicator1,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 2,sms_npcIndicator2,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 3,sms_npcIndicator3,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 4,sms_npcIndicator4,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 5,sms_npcIndicator5,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 6,sms_npcIndicator6,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 7,sms_npcIndicator7,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 8,sms_npcIndicator8,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 9,sms_npcIndicator9,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 10,sms_npcIndicator10,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 11,sms_npcIndicator11,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 12,sms_npcIndicator12,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 13,sms_npcIndicator13,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 14,sms_npcIndicator14,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
-Mastery - Level 15+,sms_npcIndicator15,,,,,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 1,sms_npcIndicator1,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 2,sms_npcIndicator2,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 3,sms_npcIndicator3,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 4,sms_npcIndicator4,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 5,sms_npcIndicator5,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 6,sms_npcIndicator6,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 7,sms_npcIndicator7,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 8,sms_npcIndicator8,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 9,sms_npcIndicator9,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 10,sms_npcIndicator10,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 11,sms_npcIndicator11,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 12,sms_npcIndicator12,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 13,sms_npcIndicator13,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 14,sms_npcIndicator14,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png
+Mastery - Level 15+,sms_npcIndicator15,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,graphics/hullmods/generic_mod.png

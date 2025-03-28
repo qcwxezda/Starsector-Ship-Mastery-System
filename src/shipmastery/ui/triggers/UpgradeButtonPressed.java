@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
@@ -38,12 +37,7 @@ public class UpgradeButtonPressed extends ActionListener {
         }
         else {
             beginConfirm(button);
-            DeferredActionPlugin.performLater(new Action() {
-                @Override
-                public void perform() {
-                    endConfirm(button);
-                }
-            }, Settings.DOUBLE_CLICK_INTERVAL);
+            DeferredActionPlugin.performLater(() -> endConfirm(button), Settings.DOUBLE_CLICK_INTERVAL);
         }
     }
 

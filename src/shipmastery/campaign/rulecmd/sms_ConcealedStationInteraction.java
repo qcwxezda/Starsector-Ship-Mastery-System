@@ -8,11 +8,11 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.SharedUnlockData;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -37,6 +37,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                 selectable.add(fm);
             }
         }
+
         dialog.showFleetMemberPickerDialog(
                 Strings.Misc.selectAShip,
                 Strings.MasteryPanel.confirmText2,
@@ -58,6 +59,10 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                         }
                         FleetMemberAPI picked = fleetMembers.get(0);
                         picked.getVariant().addPermaMod("sms_randomModification");
+                        if (SharedUnlockData.get().reportPlayerAwareOfHullmod("sms_randomModification", false)) {
+                            SharedUnlockData.get().saveIfNeeded();
+                        }
+
                         picked.getRepairTracker().setCR(0);
                         memoryMap.get(MemKeys.LOCAL).set(SMS_USED_KEY, true);
                         memoryMap.get(MemKeys.LOCAL).set(SMS_SHIP_NAME_KEY, picked.getShipName());
@@ -71,12 +76,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                         }
                         Global.getSoundPlayer().setSuspendDefaultMusicPlayback(true);
                         Global.getSoundPlayer().pauseMusic();
-                        DeferredActionPlugin.performOnUnpause(new Action() {
-                            @Override
-                            public void perform() {
-                                Global.getSoundPlayer().setSuspendDefaultMusicPlayback(false);
-                            }
-                        });
+                        DeferredActionPlugin.performOnUnpause(() -> Global.getSoundPlayer().setSuspendDefaultMusicPlayback(false));
                         FireBest.fire(null, dialog, memoryMap, "sms_tConcealedStationDocked");
                     }
                 });

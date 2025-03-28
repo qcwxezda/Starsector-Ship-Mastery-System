@@ -67,11 +67,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     }
 
     public static void trackOverCapacityMod(FleetMemberAPI fm, int id) {
-        Set<Integer> ids = overCapacityMap.get(fm.getId());
-        if (ids == null) {
-            ids = new HashSet<>();
-            overCapacityMap.put(fm.getId(), ids);
-        }
+        Set<Integer> ids = overCapacityMap.computeIfAbsent(fm.getId(), k -> new HashSet<>());
         ids.add(id);
     }
 

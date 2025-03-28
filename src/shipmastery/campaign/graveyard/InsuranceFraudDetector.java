@@ -19,15 +19,13 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exerelin.campaign.SectorManager;
 import exerelin.campaign.intel.InsuranceIntelV2;
 import exerelin.utilities.StringHelper;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.plugin.ModPlugin;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.*;
 
 public class InsuranceFraudDetector extends BaseCampaignEventListener {
@@ -63,20 +61,7 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
 
     public InsuranceFraudDetector() {
         super(true);
-        try {
-            Class<?> cls = ModPlugin.classLoader.loadClass(
-                    "shipmastery.campaign.graveyard.ClaimsHistoryGetter");
-            // Can't cast directly as not using same classloader
-            Object getter = cls.newInstance();
-            //noinspection unchecked
-            claimsHistory = (List<InsuranceIntelV2.InsuranceClaim>) MethodHandles.lookup()
-                                                                                 .findVirtual(cls, "getClaimsHistory",
-                                                                                              MethodType.methodType(
-                                                                                                      List.class))
-                                                                                 .invoke(getter);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        claimsHistory = SectorManager.getManager().getInsurance().getClaimsHistory();
     }
 
     public List<FleetMemberAPI> getSnapshotMembers() {
@@ -114,9 +99,8 @@ public class InsuranceFraudDetector extends BaseCampaignEventListener {
             // Only consider lost ships, not recovered ships
             if (!StringHelper.getString("nex_insurance", "entryDescLost").equals(claim.desc)) continue;
 
-            Float existingAmount = paidAmounts.get(claim.member.getId());
-            paidAmounts.put(
-                    claim.member.getId(), existingAmount == null ? claim.payment : existingAmount + claim.payment);
+            paidAmounts.compute(
+                    claim.member.getId(), (k, existingAmount) -> existingAmount == null ? claim.payment : existingAmount + claim.payment);
             seenClaimHashes.add(makeClaimHash(claim));
         }
 

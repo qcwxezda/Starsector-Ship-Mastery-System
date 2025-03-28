@@ -23,9 +23,8 @@ public abstract class EngineUtils {
                 itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*maxRange, 2f*maxRange);
         while (itr.hasNext()) {
             Object obj = itr.next();
-            if (!(obj instanceof CombatEntityAPI)) continue;
+            if (!(obj instanceof CombatEntityAPI entity)) continue;
 
-            CombatEntityAPI entity = (CombatEntityAPI) obj;
             if (!checker.check(entity)) {
                 continue;
             }
@@ -36,8 +35,7 @@ public abstract class EngineUtils {
                 return true;
             }
 
-            if (entity instanceof ShipAPI) {
-                ShipAPI ship = (ShipAPI) entity;
+            if (entity instanceof ShipAPI ship) {
                 if (dist <= maxShipRange && (smallestToNote == null || ship.getHullSize().compareTo(smallestToNote) >= 0)) {
                     return true;
                 }
@@ -64,18 +62,16 @@ public abstract class EngineUtils {
             Iterator<Object> itr = engine.getAllObjectGrid().getCheckIterator(location, 2f*maxRange, 2f*maxRange);
             while (itr.hasNext()) {
                 Object o = itr.next();
-                if (o instanceof ShipAPI) {
-                    ShipAPI ship = (ShipAPI) o;
+                if (o instanceof ShipAPI ship) {
                     float dist = getDistWithEntity(location, ship, considerRadius);
                     if (dist <= maxRange && checker.check(ship) && (smallestToNote == null || ship.getHullSize().compareTo(smallestToNote) >= 0)) {
-                        shipsAndMissiles.add(new Pair<CombatEntityAPI, Float>(ship, dist));
+                        shipsAndMissiles.add(new Pair<>(ship, dist));
                     }
                 }
-                else if (o instanceof MissileAPI && includeMissiles) {
-                    MissileAPI missile = (MissileAPI) o;
+                else if (o instanceof MissileAPI missile && includeMissiles) {
                     float dist = getDistWithEntity(location, missile, considerRadius);
                     if (dist <= maxRange && checker.check(missile)) {
-                        shipsAndMissiles.add(new Pair<CombatEntityAPI, Float>(missile, dist));
+                        shipsAndMissiles.add(new Pair<>(missile, dist));
                     }
                 }
             }
@@ -84,24 +80,19 @@ public abstract class EngineUtils {
             for (ShipAPI ship : engine.getShips()) {
                 float dist = getDistWithEntity(location, ship, considerRadius);
                 if (dist <= maxRange && checker.check(ship) && (smallestToNote == null || ship.getHullSize().compareTo(smallestToNote) >= 0)) {
-                    shipsAndMissiles.add(new Pair<CombatEntityAPI, Float>(ship, dist));
+                    shipsAndMissiles.add(new Pair<>(ship, dist));
                 }
             }
             if (includeMissiles) {
                 for (MissileAPI missile : engine.getMissiles()) {
                     float dist = getDistWithEntity(location, missile, considerRadius);
                     if (dist <= maxRange && checker.check(missile)) {
-                        shipsAndMissiles.add(new Pair<CombatEntityAPI, Float>(missile, dist));
+                        shipsAndMissiles.add(new Pair<>(missile, dist));
                     }
                 }
             }
         }
-        Collections.sort(shipsAndMissiles, new Comparator<Pair<CombatEntityAPI, Float>>() {
-            @Override
-            public int compare(Pair<CombatEntityAPI, Float> p1, Pair<CombatEntityAPI, Float> p2) {
-                return Float.compare(p1.two, p2.two);
-            }
-        });
+        shipsAndMissiles.sort((p1, p2) -> Float.compare(p1.two, p2.two));
 
         List<CombatEntityAPI> kNearest = new ArrayList<>();
         for (int i = 0; i < Math.min(k, shipsAndMissiles.size()); i++) {
@@ -152,7 +143,7 @@ public abstract class EngineUtils {
      *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */
     public static ShipAPI getBaseShip(ShipAPI shipWingOrModule) {
-        return getBaseShip(shipWingOrModule, new HashSet<ShipAPI>());
+        return getBaseShip(shipWingOrModule, new HashSet<>());
     }
 
     public static ShipAPI getBaseShip(ShipAPI shipWingOrModule, Set<ShipAPI> seen) {

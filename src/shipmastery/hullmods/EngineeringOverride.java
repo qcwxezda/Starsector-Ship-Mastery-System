@@ -24,12 +24,12 @@ public class EngineeringOverride extends BaseLogisticsHullMod {
 
     @Override
     public String getDescriptionParam(int index, ShipAPI.HullSize hullSize) {
-        switch (index) {
-            case 0: return "" + NUM_ADDITIONAL_SMODS;
-            case 1: return Utils.asPercent(1f - CREDITS_COST_MULT);
-            case 2: return Utils.asPercent(CR_PENALTY);
-        }
-        return null;
+        return switch (index) {
+            case 0 -> "" + NUM_ADDITIONAL_SMODS;
+            case 1 -> Utils.asPercent(1f - CREDITS_COST_MULT);
+            case 2 -> Utils.asPercent(CR_PENALTY);
+            default -> null;
+        };
     }
 
     @Override

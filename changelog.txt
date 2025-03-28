@@ -1,3 +1,11 @@
+0.13.0
+----------
+- Recompiled for Java 17.
+- Updated to game version 0.98a.
+- Hid mastery-related hullmods from codex (except for Extradimensional Rearrangement, which is unlocked when receiving it).
+- Changed the hard-coded level-9 masteries in mastery_assignments.json to max-level, whatever that max level happens to be.
+- Added tentative max-level masteries for Anubis (subject to change).
+
 0.12.4
 ----------
 - Fixed issue with particles if a ship's sprite's alphaMult was set to be greater than 1.
