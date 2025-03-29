@@ -1,3 +1,7 @@
+0.13.1
+---------
+- Hotfix for a savefile-affecting issue related to the player ship graveyard.
+
 0.13.0
 ----------
 - Recompiled for Java 17.

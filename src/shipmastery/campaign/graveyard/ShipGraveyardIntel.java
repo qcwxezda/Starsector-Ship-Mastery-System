@@ -18,13 +18,13 @@ import java.util.*;
 
 public class ShipGraveyardIntel extends BaseIntelPlugin {
     public static final int MAX_DAYS = 365;
-    protected final Set<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo = new TreeSet<>(
-            (p1, p2) -> Utils.byDPComparator.compare(p1.one, p2.one));
+    protected final List<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo = new ArrayList<>();
     protected final SectorEntityToken entityToShow;
     protected final List<FleetMemberAPI> fleetMembers = new ArrayList<>();
 
     public ShipGraveyardIntel(@NotNull List<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo) {
         this.lostInfo.addAll(lostInfo);
+        this.lostInfo.sort((p1, p2) -> Utils.byDPComparator.compare(p1.one, p2.one));
         entityToShow = lostInfo.iterator().next().two;
         Global.getSector().addScript(this);
     }
