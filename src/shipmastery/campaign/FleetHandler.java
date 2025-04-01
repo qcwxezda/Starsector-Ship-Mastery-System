@@ -22,9 +22,19 @@ import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
-import shipmastery.util.*;
+import shipmastery.util.MasteryUtils;
+import shipmastery.util.SModUtils;
+import shipmastery.util.SizeLimitedMap;
+import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Objects;
+import java.util.Random;
+import java.util.TreeMap;
 
 public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener {
 

@@ -14,7 +14,11 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ShipGraveyardIntel extends BaseIntelPlugin {
     public static final int MAX_DAYS = 365;
@@ -25,7 +29,7 @@ public class ShipGraveyardIntel extends BaseIntelPlugin {
     public ShipGraveyardIntel(@NotNull List<Pair<FleetMemberAPI, SectorEntityToken>> lostInfo) {
         this.lostInfo.addAll(lostInfo);
         this.lostInfo.sort((p1, p2) -> Utils.byDPComparator.compare(p1.one, p2.one));
-        entityToShow = lostInfo.iterator().next().two;
+        entityToShow = lostInfo.get(0).two;
         Global.getSector().addScript(this);
     }
 

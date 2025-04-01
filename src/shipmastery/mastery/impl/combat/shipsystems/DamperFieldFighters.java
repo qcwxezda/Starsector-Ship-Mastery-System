@@ -1,6 +1,10 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -115,6 +119,6 @@ public class DamperFieldFighters extends ShipSystemEffect {
         if (mult == null) return null;
         int n = spec.getFighterBays();
         if (n <= 0) return null;
-        return mult * Utils.getSelectionWeightScaledByValue(n, 1f, false);
+        return mult * Utils.getSelectionWeightScaledByValueIncreasing(spec.getFighterBays() / (1f + Utils.hullSizeToInt(spec.getHullSize())), 0f, 0.5f, 2f);
     }
 }

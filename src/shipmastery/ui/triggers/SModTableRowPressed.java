@@ -13,7 +13,12 @@ import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.impl.logistics.SModsOverCapacity;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.*;
+import shipmastery.util.ClassRefs;
+import shipmastery.util.ReflectionUtils;
+import shipmastery.util.SModUtils;
+import shipmastery.util.ShipMasterySModRecord;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.util.List;
 

@@ -69,6 +69,7 @@ public class ShieldHullmodPackage extends HullmodPackage {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!Utils.hasShield(spec)) return null;
-        return super.getSelectionWeight(spec);
+        // Prefer stronger shields
+        return super.getSelectionWeight(spec) * Utils.getSelectionWeightScaledByValueDecreasing(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.4f, 0.7f, 1.5f);
     }
 }

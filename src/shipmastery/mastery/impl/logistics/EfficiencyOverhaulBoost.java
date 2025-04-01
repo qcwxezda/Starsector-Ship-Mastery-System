@@ -32,7 +32,7 @@ public class EfficiencyOverhaulBoost extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!spec.isCivilianNonCarrier()) return 0f;
-        float f = Utils.getSelectionWeightScaledByValue(spec.getSuppliesPerMonth() + 4f*spec.getFuelPerLY(), 20f, false);
+        float f = Utils.getSelectionWeightScaledByValueIncreasing(spec.getSuppliesPerMonth() + 4f*spec.getFuelPerLY(), 5f, 20f, 60f);
         if (spec.isBuiltInMod("high_maintenance")) f *= 2;
         return f;
     }

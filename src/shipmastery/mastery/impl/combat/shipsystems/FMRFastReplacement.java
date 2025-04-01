@@ -65,6 +65,6 @@ public class FMRFastReplacement extends ShipSystemEffect {
         if (mult == null) return null;
         int n = spec.getFighterBays();
         if (n <= 0) return null;
-        return mult * Utils.getSelectionWeightScaledByValue(n, 1f, false);
+        return mult * Utils.getSelectionWeightScaledByValueIncreasing(spec.getFighterBays() / (1f + Utils.hullSizeToInt(spec.getHullSize())), 0f, 0.5f, 2f);
     }
 }

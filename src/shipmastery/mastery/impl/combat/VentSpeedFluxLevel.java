@@ -65,6 +65,7 @@ public class VentSpeedFluxLevel extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFluxDissipation(), 500f, false);
+        float secondsToFullyDissipate = spec.getFluxCapacity() / spec.getFluxDissipation();
+        return Utils.getSelectionWeightScaledByValueIncreasing(secondsToFullyDissipate, 1f, 5f, 30f);
     }
 }

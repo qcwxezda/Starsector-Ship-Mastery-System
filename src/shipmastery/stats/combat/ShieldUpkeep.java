@@ -18,6 +18,7 @@ public class ShieldUpkeep extends ShipStat {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
         // Prefer ships with higher shield upkeep
-        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getUpkeepCost(), 200f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(
+                spec.getShieldSpec().getUpkeepCost(), 50f, 200f, 600f);
     }
 }

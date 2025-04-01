@@ -59,6 +59,6 @@ public class PhasedArmorRepair extends ArmorRepair {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!spec.isPhase()) return null;
-        return 1f + Utils.hullSizeToInt(spec.getHullSize());
+        return 1.5f;
     }
 }

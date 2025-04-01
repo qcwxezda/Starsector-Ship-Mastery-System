@@ -79,6 +79,6 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
         if (ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return 0f;
         if (spec.getSuppliesToRecover() >= 40f) return 0f;
         float dp = spec.getSuppliesToRecover();
-        return Utils.getSelectionWeightScaledByValue(dp, 5f, true);
+        return Utils.getSelectionWeightScaledByValueDecreasing(dp, 3f, 8f, 40f);
     }
 }

@@ -14,7 +14,14 @@ import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class IgnoreNoBuildIn extends BaseMasteryEffect {
     final Set<String> hullmodIds = new TreeSet<>();

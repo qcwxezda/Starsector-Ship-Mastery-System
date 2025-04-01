@@ -17,6 +17,6 @@ public class FighterRefitTime extends ShipStat {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getFighterBays() <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 1f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getFighterBays() / (1f + Utils.hullSizeToInt(spec.getHullSize())), 0f, 0.5f, 2f);
     }
 }

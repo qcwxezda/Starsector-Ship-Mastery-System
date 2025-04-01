@@ -46,7 +46,7 @@ public class AmmoHullmodPackage extends HullmodPackage {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        if (wsc.mm + wsc.me + wsc.mb + wsc.le + wsc.lm + wsc.lb <= 1) return null;
+        if (wsc.ltotal + wsc.mtotal + wsc.stotal == 0) return null;
         return super.getSelectionWeight(spec);
     }
 }

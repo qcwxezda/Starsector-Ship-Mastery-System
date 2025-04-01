@@ -21,7 +21,13 @@ import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class PlayerMPHandler extends BaseCampaignEventListener implements EveryFrameScript {
 

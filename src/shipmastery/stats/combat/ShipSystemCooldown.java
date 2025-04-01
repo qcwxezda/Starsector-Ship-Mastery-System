@@ -35,6 +35,7 @@ public class ShipSystemCooldown extends ShipStat {
         if (cooldown > 1000f) return null;
 
         // Otherwise, prefer slower recharging
-        return Utils.getSelectionWeightScaledByValue(cooldown, 8f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(cooldown,
+                0f, 8f, 60f);
     }
 }

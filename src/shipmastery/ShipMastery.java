@@ -8,7 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
-import shipmastery.data.*;
+import shipmastery.data.HullMasteryData;
+import shipmastery.data.MasteryGenerator;
+import shipmastery.data.MasteryInfo;
+import shipmastery.data.MasteryLevelData;
+import shipmastery.data.SaveData;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.plugin.ModPlugin;
 import shipmastery.stats.ShipStat;
@@ -16,7 +20,20 @@ import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
 
 @SuppressWarnings("unchecked")
 public abstract class ShipMastery {
@@ -119,7 +136,7 @@ public abstract class ShipMastery {
             boolean countsForDifficultyProgression) {
         ShipHullSpecAPI restored = Utils.getRestoredHullSpec(spec);
         String baseHullId = restored.getBaseHullId();
-        Set<String> allSkins = Utils.baseHullToAllSkinsMap.get(baseHullId);
+        Set<String> allSkins = Utils.baseHullToAllSkinsMap.getOrDefault(baseHullId, new HashSet<>());
 
         String restoredId = restored.getHullId();
         List<Pair<String, Float>> toAdd = new ArrayList<>();

@@ -1,7 +1,13 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.BoundsAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.MissileAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -20,7 +26,12 @@ import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HammerLingeringDamage extends BaseMasteryEffect {
 
@@ -241,8 +252,8 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + 2f * wsc.mm + 3f * wsc.lm;
-        if (count <= 0f) return null;
-        return 0.6f * Utils.getSelectionWeightScaledByValue(count, 4f, false);
+        float weight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
+        if (weight <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
 }

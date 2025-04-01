@@ -17,7 +17,7 @@ public class ShieldSpeed extends ShipStat {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
-        // Prefer ships with higher shield upkeep
-        return 1.6f * Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getArc(), 80f, false);
+        // Prefer ships with higher shield arc
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getShieldSpec().getArc(), 0f, 90f, 720f);
     }
 }

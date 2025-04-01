@@ -35,12 +35,19 @@ public class MaxBurnLevel extends ShipStat {
                 throw new RuntimeException(e);
             }
         }
-        float weight = 0.6f;
-        if (maxBurn <= 10f) weight *= 1.5f;
-        if (maxBurn <= 9f) weight *= 1.5f;
-        if (maxBurn <= 8f) weight *= 1.5f;
-        if (maxBurn <= 7f) weight *= 1.5f;
-        if (maxBurn <= 6f) weight *= 1.5f;
-        return weight;
+        int rounded = Math.round(maxBurn);
+        if (rounded <= 6) {
+            return 3f;
+        }
+        else if (rounded == 7) {
+            return 2f;
+        }
+        else if (rounded == 8) {
+            return 1f;
+        }
+        else if (rounded == 9) {
+            return 0.5f;
+        }
+        return 0.01f;
     }
 }

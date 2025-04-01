@@ -1,6 +1,10 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEngineLayers;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;

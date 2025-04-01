@@ -21,7 +21,11 @@ import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class MasteryDisplay implements CustomUIElement {
 

@@ -17,7 +17,11 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class ClearSModsPressed extends ActionListener {
 

@@ -65,6 +65,6 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         float dp = spec.getSuppliesToRecover();
         if (dp < 10f) return null;
-        return Utils.getSelectionWeightScaledByValue(dp, 15f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(dp, 10f, 20f, 60f);
     }
 }

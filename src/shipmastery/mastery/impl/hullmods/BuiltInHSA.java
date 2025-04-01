@@ -42,7 +42,8 @@ public class BuiltInHSA extends HullmodPackage {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isBuiltInMod(HullMods.ADVANCEDOPTICS)) return null;
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        if (wsc.se + wsc.me + wsc.le <= 0) return null;
-        return super.getSelectionWeight(spec);
+        float weightedTotal = wsc.se + 2f*wsc.me + 4f*wsc.le;
+        if (weightedTotal <= 0) return null;
+        return super.getSelectionWeight(spec) * Utils.getSelectionWeightScaledByValueIncreasing(weightedTotal, 0f, 3.5f, 10f);
     }
 }

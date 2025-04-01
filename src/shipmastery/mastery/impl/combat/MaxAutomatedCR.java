@@ -40,6 +40,6 @@ public class MaxAutomatedCR extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!spec.isBuiltInMod(HullMods.AUTOMATED)) return null;
-        return 3.5f - Utils.hullSizeToInt(spec.getHullSize());
+        return 1f;
     }
 }

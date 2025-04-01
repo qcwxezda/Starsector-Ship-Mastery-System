@@ -20,7 +20,8 @@ public class MissileSpeed extends ShipStat {
         if (spec.isCivilianNonCarrier()) return null;
         // Count number of missile slots
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + wsc.mm + wsc.lm;
-        return Utils.getSelectionWeightScaledByValue(count, 2f, false);
+        float weight = wsc.sm + 2f * wsc.mm + 4f * wsc.lm;
+        if (weight <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 3f, 12f);
     }
 }

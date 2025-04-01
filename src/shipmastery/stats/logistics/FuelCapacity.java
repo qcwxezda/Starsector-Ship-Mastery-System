@@ -14,6 +14,10 @@ public class FuelCapacity extends ShipStat {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFuel(), 300f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(
+                spec.getFuel(),
+                0f,
+                300f,
+                2000f);
     }
 }

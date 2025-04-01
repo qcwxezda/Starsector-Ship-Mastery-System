@@ -1,7 +1,14 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.CollisionClass;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.MissileAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -150,6 +157,6 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
         float count = 0.5f*wsc.sm + 2f*wsc.mm + 4f*wsc.lm;
         if (count < 3f) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 3, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(count, 2f, 5f, 10f);
     }
 }

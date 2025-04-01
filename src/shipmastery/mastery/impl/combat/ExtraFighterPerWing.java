@@ -72,6 +72,6 @@ public class ExtraFighterPerWing extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getFighterBays() <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFighterBays(), 2, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getFighterBays(), 0f, 2f, 6f);
     }
 }

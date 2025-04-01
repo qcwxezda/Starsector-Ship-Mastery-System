@@ -1,7 +1,11 @@
 package shipmastery.campaign.skills;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.*;
+import com.fs.starfarer.api.characters.CharacterStatsSkillEffect;
+import com.fs.starfarer.api.characters.DescriptionSkillEffect;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;

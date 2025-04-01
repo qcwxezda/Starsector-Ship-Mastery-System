@@ -1,6 +1,13 @@
 package shipmastery.mastery.impl.combat;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.BoundsAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.MissileAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -78,6 +85,6 @@ public class HitAngleDR extends MultiplicativeMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getArmorRating(), 700f, false);
+        return Utils.getSelectionWeightScaledByValueDecreasing(Utils.getShieldToHullArmorRatio(spec), 0f, 1f, 2.5f);
     }
 }

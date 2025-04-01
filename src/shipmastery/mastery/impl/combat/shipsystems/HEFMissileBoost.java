@@ -135,7 +135,7 @@ public class HEFMissileBoost extends ShipSystemEffect {
         if (mult == null) return null;
         // Must have at least one missile weapon
         Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
-        int weightedCount = count.sm + 2*count.mm + 4*count.lm;
-        return weightedCount == 0 ? null : mult * Utils.getSelectionWeightScaledByValue(weightedCount, 4f, false);
+        float weight = count.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
+        return weight == 0 ? null : mult * Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
 }

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.stats.ShipStat;
-import shipmastery.util.Utils;
 
 public class DModEffect extends ShipStat {
     @Override
@@ -14,8 +13,6 @@ public class DModEffect extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        float weight = 3.5f - Utils.hullSizeToInt(spec.getHullSize());
-        if (spec.isCivilianNonCarrier()) weight *= 0.5f;
-        return weight;
+        return spec.isCivilianNonCarrier() ? 0.25f : 1f;
     }
 }

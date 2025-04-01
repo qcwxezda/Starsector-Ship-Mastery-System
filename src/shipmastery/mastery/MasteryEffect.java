@@ -1,7 +1,11 @@
 package shipmastery.mastery;
 
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.HullModEffect;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;

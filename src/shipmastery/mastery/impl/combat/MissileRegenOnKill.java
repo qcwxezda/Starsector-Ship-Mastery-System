@@ -105,10 +105,10 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        // Small count as 1, medium as 2, large as 4
+        if (spec.isCivilianNonCarrier()) return null;
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + wsc.mm * 2f  + wsc.lm * 4f;
-        if (count == 0) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 5f, false);
+        float weight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
+        if (weight <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
 }

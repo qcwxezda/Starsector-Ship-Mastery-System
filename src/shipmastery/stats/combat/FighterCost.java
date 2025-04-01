@@ -22,6 +22,6 @@ public class FighterCost extends ShipStat {
         if (spec.isCivilianNonCarrier()) return null;
         int modularBays = spec.getFighterBays() - spec.getBuiltInWings().size();
         if (modularBays <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(modularBays, 1f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(modularBays / (1f + Utils.hullSizeToInt(spec.getHullSize())), 0f, 0.5f, 2f);
     }
 }

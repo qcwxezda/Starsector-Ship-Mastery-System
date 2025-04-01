@@ -102,6 +102,6 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
         if (system == null) return null;
         float regen = system.getRegen(null);
         if (regen <= 0f) return null;
-        return Utils.getSelectionWeightScaledByValue(regen, 0.1f, true);
+        return Utils.getSelectionWeightScaledByValueDecreasing(regen, 0f, 0.1f, 0.4f);
     }
 }

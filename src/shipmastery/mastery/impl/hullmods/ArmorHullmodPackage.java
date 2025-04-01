@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.hullmods;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -44,5 +45,10 @@ public class ArmorHullmodPackage extends HullmodPackage {
     @Override
     protected void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         stats.getArmorBonus().modifyMult(id, 1f + getStrength(stats));
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return super.getSelectionWeight(spec) * Utils.getSelectionWeightScaledByValueDecreasing(Utils.getShieldToHullArmorRatio(spec), 0f, 1f, 2.5f);
     }
 }

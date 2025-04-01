@@ -52,6 +52,6 @@ public class PhasedCRDegradation extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!spec.isPhase()) return null;
-        return 1.6f * (3.5f - Utils.hullSizeToInt(spec.getHullSize()));
+        return 1.5f;
     }
 }

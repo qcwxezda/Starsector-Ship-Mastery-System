@@ -5,7 +5,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -16,8 +22,6 @@ import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import shipmastery.ShipMastery;
 import shipmastery.data.MasteryInfo;
 import shipmastery.mastery.MasteryEffect;
@@ -27,7 +31,13 @@ import shipmastery.stats.ShipStat;
 import java.awt.Color;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class Utils {
     public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.##%");
@@ -51,23 +61,9 @@ public abstract class Utils {
     public static final Map<String, ShipHullSpecAPI> hullIdToRestored = new HashMap<>();
     public static final Map<String, Set<String>> baseHullToAllSkinsMap = new HashMap<>();
 
-    /** Map from skill aptitudes to their elite icons */
-    public static final Map<String, String> eliteSkillIcons = new HashMap<>();
-
     public static final Set<String> allHullSpecIds = new HashSet<>();
 
     public static void init() {
-        // Elite skill icons
-        try {
-            JSONArray array = Global.getSettings().getMergedSpreadsheetData("id", "data/characters/skills/aptitude_data.csv");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject json = array.getJSONObject(i);
-                eliteSkillIcons.put(json.getString("id"), json.optString("elite_overlay", null));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load data/characters/skills/aptitude_data.csv from the base game");
-        }
-
         // Initialize helper structures
         for (FighterWingSpecAPI spec : Global.getSettings().getAllFighterWingSpecs()) {
             wingVariantToIdMap.put(spec.getVariantId(), spec.getId());
@@ -215,6 +211,23 @@ public abstract class Utils {
         public final int sm;
         public final int mm;
         public final int lm;
+        public final int stotal, mtotal, ltotal;
+
+        /** sWeight + mWeight + lWeight should add up to 1. Then computeWeaponWeight returns values in [0, 1]. */
+        public float computeWeaponWeight(WeaponAPI.WeaponType type, float sWeight, float mWeight) {
+            int sCount, mCount, lCount;
+            switch (type) {
+                case BALLISTIC -> {sCount = sb; mCount = mb; lCount = lb;}
+                case ENERGY -> {sCount = se; mCount = me; lCount = le;}
+                case MISSILE -> {sCount = sm; mCount = mm; lCount = lm;}
+                default -> throw new UnsupportedOperationException("Only ballistic, energy, and missile supported");
+            }
+            float lWeight = 1f - sWeight - mWeight;
+            float totalWeight = sWeight * stotal + mWeight * mtotal + lWeight * ltotal;
+            if (totalWeight <= 0f) return 0f;
+            return (sWeight * sCount + mWeight * mCount + lWeight * lCount) / totalWeight;
+        }
+
 
         public WeaponSlotCount(int sb, int mb, int lb, int se, int me, int le, int sm, int mm, int lm) {
             this.sb = sb;
@@ -226,142 +239,104 @@ public abstract class Utils {
             this.sm = sm;
             this.mm = mm;
             this.lm = lm;
+            stotal = sb + se + sm;
+            mtotal = mb + me + mm;
+            ltotal = lb + lm + lm;
         }
+    }
+
+    private static WeaponSlotCount countWeaponSlots(ShipHullSpecAPI spec, boolean includeMixedTypes) {
+        int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
+        for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
+            if (slot.isBuiltIn() || slot.isDecorative() || !slot.isWeaponSlot()) continue;
+            switch (slot.getSlotSize()) {
+                case SMALL:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            sb++;
+                            break;
+                        case ENERGY:
+                            se++;
+                            break;
+                        case MISSILE:
+                            sm++;
+                            break;
+                        case UNIVERSAL:
+                            if (includeMixedTypes) {sb++;se++;sm++;}
+                            break;
+                        case HYBRID:
+                            if (includeMixedTypes) {sb++;se++;}
+                            break;
+                        case SYNERGY:
+                            if (includeMixedTypes) {se++;sm++;}
+                            break;
+                        case COMPOSITE:
+                            if (includeMixedTypes) {sb++;sm++;}
+                            break;
+                    }
+                    break;
+                case MEDIUM:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            mb++;
+                            break;
+                        case ENERGY:
+                            me++;
+                            break;
+                        case MISSILE:
+                            mm++;
+                            break;
+                        case UNIVERSAL:
+                            if (includeMixedTypes) {mb++;me++;mm++;}
+                            break;
+                        case HYBRID:
+                            if (includeMixedTypes) {mb++;me++;}
+                            break;
+                        case SYNERGY:
+                            if (includeMixedTypes) {me++;mm++;}
+                            break;
+                        case COMPOSITE:
+                            if (includeMixedTypes) {mb++;mm++;}
+                            break;
+                    }
+                    break;
+                case LARGE:
+                    switch (slot.getWeaponType()) {
+                        case BALLISTIC:
+                            lb++;
+                            break;
+                        case ENERGY:
+                            le++;
+                            break;
+                        case MISSILE:
+                            lm++;
+                            break;
+                        case UNIVERSAL:
+                            if (includeMixedTypes) {lb++;le++;lm++;}
+                            break;
+                        case HYBRID:
+                            if (includeMixedTypes) {lb++;le++;}
+                            break;
+                        case SYNERGY:
+                            if (includeMixedTypes) {le++;lm++;}
+                            break;
+                        case COMPOSITE:
+                            if (includeMixedTypes) {lb++;lm++;}
+                            break;
+                    }
+                    break;
+            }
+        }
+        return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
     }
 
     /** Sum will be greater than total number of weapon slots since i.e. synergy counts as 1 energy and 1 missile */
     public static WeaponSlotCount countWeaponSlots(ShipHullSpecAPI spec) {
-        int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
-        for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
-            if (slot.isBuiltIn()) continue;
-            switch (slot.getSlotSize()) {
-                case SMALL:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            sb++;
-                            break;
-                        case ENERGY:
-                            se++;
-                            break;
-                        case MISSILE:
-                            sm++;
-                            break;
-                        case UNIVERSAL:
-                            sb++;se++;sm++;
-                            break;
-                        case HYBRID:
-                            sb++;se++;
-                            break;
-                        case SYNERGY:
-                            se++;sm++;
-                            break;
-                        case COMPOSITE:
-                            sb++;sm++;
-                            break;
-                    }
-                    break;
-                case MEDIUM:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            mb++;
-                            break;
-                        case ENERGY:
-                            me++;
-                            break;
-                        case MISSILE:
-                            mm++;
-                            break;
-                        case UNIVERSAL:
-                            mb++;me++;mm++;
-                            break;
-                        case HYBRID:
-                            mb++;me++;
-                            break;
-                        case SYNERGY:
-                            me++;mm++;
-                            break;
-                        case COMPOSITE:
-                            mb++;mm++;
-                            break;
-                    }
-                    break;
-                case LARGE:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            lb++;
-                            break;
-                        case ENERGY:
-                            le++;
-                            break;
-                        case MISSILE:
-                            lm++;
-                            break;
-                        case UNIVERSAL:
-                            lb++;le++;lm++;
-                            break;
-                        case HYBRID:
-                            lb++;le++;
-                            break;
-                        case SYNERGY:
-                            le++;lm++;
-                            break;
-                        case COMPOSITE:
-                            lb++;lm++;
-                            break;
-                    }
-                    break;
-            }
-        }
-        return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
+        return countWeaponSlots(spec, true);
     }
 
     public static WeaponSlotCount countWeaponSlotsStrict(ShipHullSpecAPI spec) {
-        int sb = 0, mb = 0, lb = 0, se = 0, me = 0,  le = 0, sm = 0, mm = 0, lm = 0;
-        for (WeaponSlotAPI slot : spec.getAllWeaponSlotsCopy()) {
-            if (slot.isBuiltIn()) continue;
-            switch (slot.getSlotSize()) {
-                case SMALL:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            sb++;
-                            break;
-                        case ENERGY:
-                            se++;
-                            break;
-                        case MISSILE:
-                            sm++;
-                            break;
-                    }
-                    break;
-                case MEDIUM:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            mb++;
-                            break;
-                        case ENERGY:
-                            me++;
-                            break;
-                        case MISSILE:
-                            mm++;
-                            break;
-                    }
-                    break;
-                case LARGE:
-                    switch (slot.getWeaponType()) {
-                        case BALLISTIC:
-                            lb++;
-                            break;
-                        case ENERGY:
-                            le++;
-                            break;
-                        case MISSILE:
-                            lm++;
-                            break;
-                    }
-                    break;
-            }
-        }
-        return new WeaponSlotCount(sb, mb, lb, se, me, le, sm, mm, lm);
+        return countWeaponSlots(spec, false);
     }
 
     public static String joinList(List<?> items) {
@@ -537,9 +512,36 @@ public abstract class Utils {
         return res;
     }
 
-    public static float getSelectionWeightScaledByValue(float value, float valueForOneWeight, boolean lowerValuesHigherWeight) {
-        float f =  !lowerValuesHigherWeight ? (float) (Math.log(1f + value/valueForOneWeight)/Math.log(2f)) : getSelectionWeightScaledByValue(1f/value, 1f/valueForOneWeight, false);
-        return Math.min(f, 3f);
+    /** Weight is 0 from 0 to breakpoint 1,
+     * increases exponentially from 0 to 1 between breakpoint1 and breakpoint2,
+     * and finally increases linearly from 1 to 3 between breakpoint2 and breakpoint3. */
+    public static float getSelectionWeightScaledByValueIncreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3) {
+        if (value <= breakpoint1) return 0f;
+        else if (value <= breakpoint2) {
+            return (float) ((Math.exp((value - breakpoint1) / (breakpoint2 - breakpoint1)) - 1f) / (Math.E - 1f));
+        }
+        else if (value <= breakpoint3){
+            return 1f + 2f * (value - breakpoint2) / (breakpoint3 - breakpoint2);
+        }
+        else {
+            return 3f;
+        }
+    }
+
+    /** Weight is 3 from 0 to breakpoint 1,
+     * decreases linearly from 3 to 1 between breakpoint1 and breakpoint2,
+     * and finally decreases exponentially from 1 to 0 between breakpoint2 and breakpoint3. */
+    public static float getSelectionWeightScaledByValueDecreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3) {
+        if (value <= breakpoint1) return 3f;
+        else if (value <= breakpoint2) {
+            return 3f - 2f * (value - breakpoint1) / (breakpoint2 - breakpoint1);
+        }
+        else if (value <= breakpoint3) {
+            return (float) (1f / (1f - 1f / Math.E) * ((Math.exp((breakpoint2 - value) / (breakpoint3 - breakpoint2))) - 1f / Math.E));
+        }
+        else {
+            return 0f;
+        }
     }
 
     public static Set<WeaponAPI.WeaponType> getDominantWeaponTypes(ShipHullSpecAPI spec) {
@@ -564,6 +566,13 @@ public abstract class Utils {
         if (count.sb == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.BALLISTIC);
         if (count.sm == maxSmall) dominantTypes.add(WeaponAPI.WeaponType.MISSILE);
         return dominantTypes;
+    }
+
+    public static float getShieldToHullArmorRatio(ShipHullSpecAPI spec) {
+        if (!hasShield(spec)) return 0f;
+        float averageHullArmor = 0.5f * (spec.getArmorRating()*spec.getArmorRating()/100f + spec.getHitpoints());
+        float effectiveShields = spec.getFluxCapacity() / spec.getBaseShieldFluxPerDamageAbsorbed();
+        return effectiveShields / averageHullArmor;
     }
 
     @SuppressWarnings("unused")

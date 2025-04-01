@@ -4,6 +4,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -144,7 +145,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
         if (mult == null) return null;
         // Must have at least one energy weapon
         Utils.WeaponSlotCount count = Utils.countWeaponSlots(spec);
-        int weightedCount = count.se + count.me + count.le;
-        return weightedCount == 0 ? null : mult * Utils.getSelectionWeightScaledByValue(weightedCount, 4f, false);
+        float weight = count.computeWeaponWeight(WeaponAPI.WeaponType.ENERGY, 0.2f, 0.3f);
+        return weight == 0 ? null : mult * Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
 }

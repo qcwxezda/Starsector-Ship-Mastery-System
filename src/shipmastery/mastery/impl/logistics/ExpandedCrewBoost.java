@@ -30,6 +30,6 @@ public class ExpandedCrewBoost extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getMaxCrew(), 300f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getMaxCrew(), 50f, 300f, 1000f);
     }
 }

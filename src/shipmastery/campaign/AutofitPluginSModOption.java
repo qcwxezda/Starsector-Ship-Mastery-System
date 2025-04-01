@@ -14,10 +14,19 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import shipmastery.ShipMastery;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.util.*;
+import shipmastery.util.ReflectionUtils;
+import shipmastery.util.SModUtils;
+import shipmastery.util.ShipMasterySModRecord;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AutofitPluginSModOption extends CoreAutofitPlugin {
     public static final String COPY_S_MODS = "sms_copy_s_mods";

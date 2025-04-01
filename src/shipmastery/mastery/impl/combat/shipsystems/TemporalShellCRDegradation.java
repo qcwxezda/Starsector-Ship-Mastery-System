@@ -48,7 +48,6 @@ public class TemporalShellCRDegradation extends ShipSystemEffect {
             }
             else {
                 ship.getMutableStats().getCRLossPerSecondPercent().unmodify(id);
-
             }
         }
     }

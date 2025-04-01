@@ -26,7 +26,12 @@ import org.lwjgl.util.vector.Vector2f;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class InsuranceFraudDetector extends BaseCampaignEventListener {
 

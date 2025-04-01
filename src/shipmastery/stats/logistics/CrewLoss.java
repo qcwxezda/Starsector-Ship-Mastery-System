@@ -13,7 +13,8 @@ public class CrewLoss extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.getMaxCrew() <= 0) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getMaxCrew(), 300f, false);
+        float weight =  Utils.getSelectionWeightScaledByValueIncreasing(spec.getMaxCrew(),
+                0f, 300f, 1500f);
+        return spec.isCivilianNonCarrier() ? weight : weight * 0.5f;
     }
 }

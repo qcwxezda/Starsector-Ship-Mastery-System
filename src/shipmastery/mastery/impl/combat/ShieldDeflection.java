@@ -2,7 +2,11 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -183,6 +187,6 @@ public class ShieldDeflection extends BaseMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
         if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return 0f;
-        return Utils.getSelectionWeightScaledByValue(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.7f, true);
+        return Utils.getSelectionWeightScaledByValueDecreasing(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.4f, 0.6f, 1f);
     }
 }

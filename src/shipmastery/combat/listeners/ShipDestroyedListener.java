@@ -1,6 +1,7 @@
 package shipmastery.combat.listeners;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+
 import java.util.Set;
 
 /** Attach to a ship. */

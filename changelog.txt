@@ -1,3 +1,13 @@
+0.13.2
+---------
+Note: Mastery weights have been changed across the board. Updating is likely to rearrange mastery effects for your existing ships.
+
+- Added missile OP cost stat.
+- Modified the selection weights of almost every mastery. In general: mastery effects that were deprioritized before are now even more deprioritized.
+    - Should result in fewer "useless" masteries showing up (though they still do have positive weight, and so can still show up occasionally).
+- Increased-range-if-no-other-bonuses mastery: made the numbers nicer (now 5%, 8%, 15%, 25% depending on ship size).
+
+
 0.13.1
 ---------
 - Hotfix for a savefile-affecting issue related to the player ship graveyard.

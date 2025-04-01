@@ -153,6 +153,6 @@ public class HullThresholdDR extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getHitpoints(), 5000f, false);
+        return 1f;
     }
 }

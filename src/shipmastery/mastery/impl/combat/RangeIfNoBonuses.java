@@ -74,9 +74,9 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
 
     public float adjustForHullSize(float amount, ShipAPI.HullSize hullSize) {
         switch (hullSize) {
-            case FRIGATE: amount /= 6f; break;
-            case DESTROYER: amount /= 3f; break;
-            case CRUISER: amount *= 2f / 3f; break;
+            case FRIGATE: amount /= 5f; break;
+            case DESTROYER: amount /= 3.125f; break;
+            case CRUISER: amount *= 0.6f; break;
         }
         return Math.max(amount, -1f);
     }

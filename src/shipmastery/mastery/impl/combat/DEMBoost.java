@@ -124,8 +124,8 @@ public class DEMBoost extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        float count = wsc.sm + wsc.mm + wsc.lm;
-        if (count <= 0f) return null;
-        return 1.6f * Utils.getSelectionWeightScaledByValue(count, 4f, false);
+        float weight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
+        if (weight <= 0f) return null;
+        return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
 }

@@ -39,6 +39,7 @@ public class MissileAutoloaderCapacity extends BaseMasteryEffect {
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlotsStrict(spec);
         float count = wsc.sm;
         if (count == 0) return null;
-        return Utils.getSelectionWeightScaledByValue(count, 3, true);
+        float countPerHullSize = count / (1f + Utils.hullSizeToInt(spec.getHullSize()));
+        return Utils.getSelectionWeightScaledByValueDecreasing(countPerHullSize, 0.35f, 0.9f, 1.5f);
     }
 }

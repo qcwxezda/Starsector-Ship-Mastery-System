@@ -30,6 +30,6 @@ public class ExpandedCargoBoost extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getCargo(), 500f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getCargo(), 100f, 500f, 1500f);
     }
 }

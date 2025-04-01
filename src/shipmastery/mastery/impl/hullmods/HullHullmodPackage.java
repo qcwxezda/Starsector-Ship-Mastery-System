@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.hullmods;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -39,5 +40,10 @@ public class HullHullmodPackage extends HullmodPackage {
         float strength = getStrength(stats);
         stats.getHullDamageTakenMult().modifyMult(id, 1f - strength);
         stats.getArmorDamageTakenMult().modifyMult(id, 1f - strength);
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return super.getSelectionWeight(spec) * Utils.getSelectionWeightScaledByValueDecreasing(Utils.getShieldToHullArmorRatio(spec), 0f, 1f, 2.5f);
     }
 }

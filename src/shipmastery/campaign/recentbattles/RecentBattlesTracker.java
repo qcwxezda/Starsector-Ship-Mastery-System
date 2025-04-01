@@ -1,7 +1,11 @@
 package shipmastery.campaign.recentbattles;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.BattleAPI;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
+import com.fs.starfarer.api.campaign.FleetInflater;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
@@ -21,7 +25,11 @@ import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.Settings;
 import shipmastery.util.SizeLimitedMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RecentBattlesTracker extends BaseCampaignEventListener implements FleetInflationListener {
 

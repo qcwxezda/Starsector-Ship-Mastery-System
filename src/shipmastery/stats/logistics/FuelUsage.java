@@ -13,6 +13,7 @@ public class FuelUsage extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return Utils.getSelectionWeightScaledByValue(spec.getFuelPerLY(), 3.5f, false);
+        float weight = Utils.getSelectionWeightScaledByValueIncreasing(spec.getFuelPerLY(), 1f,  4f, 20f);
+        return spec.isCivilianNonCarrier() ? weight : weight * 0.5f;
     }
 }

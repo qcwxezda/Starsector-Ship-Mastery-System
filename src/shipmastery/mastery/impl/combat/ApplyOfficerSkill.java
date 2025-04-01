@@ -6,6 +6,7 @@ import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
@@ -19,7 +20,11 @@ import shipmastery.util.Utils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class ApplyOfficerSkill extends BaseMasteryEffect {
 
@@ -93,9 +98,10 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
         WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
         picker.setRandom(new Random(seed));
         Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
-        int energy = wsc.se + 2*wsc.me + 4*wsc.le;
-        int ballistic = wsc.sb + 2*wsc.mb + 4*wsc.lb;
-        int missile = wsc.sm + 2*wsc.mm + 4*wsc.lm;
+        float energyWeight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.ENERGY, 0.2f, 0.3f);
+        float ballisticWeight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.BALLISTIC, 0.2f, 0.3f);
+        float missileWeight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
+
         for (String id : skillIds) {
             SkillSpecAPI skill = Global.getSettings().getSkillSpec(id);
             if (skill.hasTag("deprecated")) continue;
@@ -105,13 +111,13 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
                     case Skills.FIELD_MODULATION:
                         if (!Utils.hasShield(spec)) valid = false; break;
                     case Skills.BALLISTIC_MASTERY:
-                        if (ballistic <= 3) valid = false; break;
+                        if (ballisticWeight < 0.3f) valid = false; break;
                     case Skills.SYSTEMS_EXPERTISE:
                         if (spec.getShipSystemId() == null) valid = false; break;
                     case Skills.MISSILE_SPECIALIZATION:
-                        if (missile <= 3) valid = false; break;
+                        if (missileWeight < 0.3f) valid = false; break;
                     case Skills.ENERGY_WEAPON_MASTERY:
-                        if (energy <= 3) valid = false; break;
+                        if (energyWeight < 0.3f) valid = false; break;
                     default: break;
                 }
 

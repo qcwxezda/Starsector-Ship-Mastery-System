@@ -15,6 +15,6 @@ public class CRDecayRate extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return 1.6f * Utils.getSelectionWeightScaledByValue(spec.getNoCRLossSeconds(), 240f, true);
+        return Utils.getSelectionWeightScaledByValueDecreasing(spec.getNoCRLossSeconds(), 60f, 240f, 1200f);
     }
 }

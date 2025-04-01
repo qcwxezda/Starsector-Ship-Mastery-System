@@ -17,7 +17,6 @@ public class ShieldArc extends ShipStat {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec) || spec.getShieldSpec() == null) return null;
         if (spec.getShieldSpec().getArc() >= 360f) return null;
-        // Prefer ships with smaller arcs
-        return Utils.getSelectionWeightScaledByValue(spec.getShieldSpec().getArc(), 180f, true);
+        return 1f;
     }
 }

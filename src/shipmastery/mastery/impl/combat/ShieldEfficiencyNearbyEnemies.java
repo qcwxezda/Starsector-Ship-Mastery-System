@@ -104,6 +104,6 @@ public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.hasShield(spec)) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getFluxCapacity(), 5000f, false);
+        return 1f;
     }
 }

@@ -3,7 +3,6 @@ package shipmastery.stats.logistics;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.stats.ShipStat;
-import shipmastery.util.Utils;
 
 public class SensorProfile extends ShipStat {
     @Override
@@ -13,6 +12,6 @@ public class SensorProfile extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return Utils.hullSizeToInt(spec.getHullSize()) + 1f;
+        return !spec.isCivilianNonCarrier() ? 0.5f : 1f;
     }
 }

@@ -14,6 +14,7 @@ public class CrewCapacity extends ShipStat {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (!spec.isCivilianNonCarrier()) return null;
-        return Utils.getSelectionWeightScaledByValue(spec.getMaxCrew(), 300f, false);
+        return Utils.getSelectionWeightScaledByValueIncreasing(spec.getMaxCrew(),
+                0f, 300f, 1500f);
     }
 }

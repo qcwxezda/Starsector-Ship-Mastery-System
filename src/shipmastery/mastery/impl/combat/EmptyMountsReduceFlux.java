@@ -1,6 +1,10 @@
 package shipmastery.mastery.impl.combat;
 
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -63,7 +67,7 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.getAllWeaponSlotsCopy().size() <= 1) return null;
+        if (spec.getAllWeaponSlotsCopy().size() <= 3) return null;
         return 1f;
     }
 }

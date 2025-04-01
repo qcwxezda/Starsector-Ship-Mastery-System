@@ -17,6 +17,6 @@ public class ExplosionRadiusDamage extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return spec.isCivilianNonCarrier() ? 1.5f : 0.5f;
+        return spec.isCivilianNonCarrier() ? 1f : 0.5f;
     }
 }

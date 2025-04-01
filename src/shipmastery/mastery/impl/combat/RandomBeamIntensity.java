@@ -1,7 +1,11 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;

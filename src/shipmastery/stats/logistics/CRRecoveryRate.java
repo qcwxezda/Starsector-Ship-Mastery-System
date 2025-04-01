@@ -38,6 +38,7 @@ public class CRRecoveryRate extends ShipStat {
                 throw new RuntimeException(e);
             }
         }
-        return Utils.getSelectionWeightScaledByValue(repairPercent, 5f, true);
+        return Utils.getSelectionWeightScaledByValueDecreasing(repairPercent,
+                2f, 6f, 25f);
     }
 }

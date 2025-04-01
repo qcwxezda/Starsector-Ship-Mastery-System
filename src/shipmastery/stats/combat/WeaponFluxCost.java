@@ -15,6 +15,6 @@ public class WeaponFluxCost extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // No civilian ships
         if (spec.isCivilianNonCarrier()) return null;
-        return 0.6f;
+        return 1f;
     }
 }

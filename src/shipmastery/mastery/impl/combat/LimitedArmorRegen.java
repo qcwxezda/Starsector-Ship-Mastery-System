@@ -109,6 +109,6 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getArmorRating() < 500f) return null;
-        return  Utils.getSelectionWeightScaledByValue(spec.getArmorRating(), 600f, false);
+        return  Utils.getSelectionWeightScaledByValueDecreasing(Utils.getShieldToHullArmorRatio(spec), 0f, 1f, 2.5f);
     }
 }
