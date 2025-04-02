@@ -9,13 +9,16 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
+import com.fs.starfarer.combat.entities.Ship;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -31,6 +34,7 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
     String skillId;
     private static MethodHandle applyPersonalToStats;
     private static final Set<String> validSkillIds = new HashSet<>();
+    private static final Set<String> supportDoctrineSkillIds = new HashSet<>();
     static {
         validSkillIds.add(Skills.HELMSMANSHIP);
         validSkillIds.add(Skills.COMBAT_ENDURANCE);
@@ -46,6 +50,10 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
         validSkillIds.add(Skills.ENERGY_WEAPON_MASTERY);
         validSkillIds.add(Skills.ORDNANCE_EXPERTISE);
         validSkillIds.add(Skills.POLARIZED_ARMOR);
+        supportDoctrineSkillIds.add(Skills.HELMSMANSHIP);
+        supportDoctrineSkillIds.add(Skills.COMBAT_ENDURANCE);
+        supportDoctrineSkillIds.add(Skills.DAMAGE_CONTROL);
+        supportDoctrineSkillIds.add(Skills.ORDNANCE_EXPERTISE);
     }
 
     @Override
@@ -62,9 +70,47 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(Strings.Descriptions.ApplyOfficerSkillPost, 0f);
+    }
+
+    private int getSkillLevelForStats(MutableShipStatsAPI stats) {
+        if (stats == null) return 0;
+        PersonAPI captain;
+        if (stats.getEntity() instanceof ShipAPI ship) {
+            captain = ship.getCaptain();
+        } else {
+            captain = stats.getFleetMember() == null ? null : stats.getFleetMember().getCaptain();
+        }
+        boolean noCaptain = captain == null || captain.isDefault() || captain.getStats() == null;
+
+        var lookup = VariantLookup.getVariantInfo(stats.getVariant());
+        if (noCaptain && lookup != null) {
+            var commander = lookup.commander;
+            if (commander != null && commander.getStats().getSkillLevel(Skills.SUPPORT_DOCTRINE) >= 1) {
+                if (supportDoctrineSkillIds.contains(skillId)) {
+                    return 999; // Don't apply anything if the skill is the result of support doctrine
+                }
+            }
+        }
+        return noCaptain ? 0 : (int) captain.getStats().getSkillLevel(skillId);
+    }
+
+    @Override
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {
+        int existingLevel = getSkillLevelForStats(ship.getMutableStats());
+        if (existingLevel >= 2) return;
         PersonAPI dummy = Global.getSettings().createPerson();
-        dummy.getStats().setSkillLevel(skillId, 1);
+        dummy.getStats().setSkillLevel(skillId, existingLevel + 1);
+        ((CharacterStats) dummy.getStats()).applyPersonalToShip((Ship) ship);
+    }
+
+    @Override
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        int existingLevel = getSkillLevelForStats(stats);
+        if (existingLevel >= 2) return;
+        PersonAPI dummy = Global.getSettings().createPerson();
+        dummy.getStats().setSkillLevel(skillId, existingLevel + 1);
         if (applyPersonalToStats == null) {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
             try {

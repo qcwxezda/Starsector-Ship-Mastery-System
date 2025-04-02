@@ -2,11 +2,15 @@
 ---------
 Note: Mastery weights have been changed across the board. Updating is likely to rearrange mastery effects for your existing ships.
 
-- Added missile OP cost stat.
+- Added missile OP cost reduction mastery.
 - Modified the selection weights of almost every mastery. In general: mastery effects that were deprioritized before are now even more deprioritized.
     - Should result in fewer "useless" masteries showing up (though they still do have positive weight, and so can still show up occasionally).
+- The "apply an officer skill" mastery will now grant the elite version of the skill if the skill's captain already has the non-elite version.
+    - *Doesn't* work with Support Doctrine.
 - Increased-range-if-no-other-bonuses mastery: made the numbers nicer (now 5%, 8%, 15%, 25% depending on ship size).
-
+- Some references to "ships" renamed to "this ship".
+- Fixed bug where an officer skill could get applied twice if once was from a mastery and the second was from Support Doctrine.
+- Fixed bug where officer skill masteries only applied "before ship creation" effects.
 
 0.13.1
 ---------

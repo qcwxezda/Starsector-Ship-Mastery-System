@@ -468,6 +468,7 @@ public interface Strings {
         String TimeFlowNearbyEnemiesTitle = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesTitle");
         String TimeFlowNearbyEnemiesDesc1 = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesDesc1");
         String ApplyOfficerSkill = Utils.getString( "sms_descriptions", "ApplyOfficerSkill");
+        String ApplyOfficerSkillPost = Utils.getString( "sms_descriptions", "ApplyOfficerSkillPost");
         String ShieldHullmodPackage = Utils.getString( "sms_descriptions", "ShieldHullmodPackage");
         String ArmorHullmodPackage = Utils.getString( "sms_descriptions", "ArmorHullmodPackage");
         String ArmorHullmodPackagePost = Utils.getString( "sms_descriptions", "ArmorHullmodPackagePost");
