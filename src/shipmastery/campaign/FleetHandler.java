@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -46,6 +47,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     /** Can be used to set custom difficulty progression (between 0 and 1). Place in commander's memory. Mostly used
      *  so that the entries in recent battles stay the same regardless of further player progression. */
     public static final String CUSTOM_PROGRESSION_KEY = "$sms_DifficultyProgressionWhenFought";
+    /** Variant tag placed on NPC variants to indicate that this handler has processed the fleet. Importantly, the tag will
+     *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
+    public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
     public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
 
     public FleetHandler() {
@@ -90,22 +94,32 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         return variant;
     }
 
-
-    public static final float EXISTING_HULLMOD_WEIGHT = 3f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
     @Override
-    public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
+    public void reportShownInteractionDialog(InteractionDialogAPI dialog) {
+        if (dialog.getInteractionTarget() instanceof CampaignFleetAPI fleet) {
+            addMasteriesToFleet(fleet);
+        }
+    }
+
+    public static void addMasteriesToFleet(CampaignFleetAPI fleet) {
+        // Ignore already-processed or empty fleets
+        var members = Utils.getMembersNoSync(fleet);
+        if (members.isEmpty() || (members.get(0).getVariant() != null && members.get(0).getVariant().hasTag(VARIANT_PROCESSED_TAG))) {
+            return;
+        }
         // Ignore custom production "fleets", they will have the player as their commander
         PersonAPI commander = fleet.getCommander();
         if (commander.isPlayer()) return;
 
+        var inflater = fleet.getInflater();
         CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
         Random random = new Random(commander.getId().hashCode());
         auto.setRandom(random);
 
         float progression = Settings.NPC_PROGRESSION_ENABLED ? PlayerMPHandler.getDifficultyProgression() : 0f;
 
-        for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {
-            if (fm.isStation()) continue;
+        for (FleetMemberAPI fm : members) {
+            //if (fm.isStation()) continue;
             ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
             MutableShipStatsAPI stats = fm.getStats();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
@@ -192,6 +206,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 //                }
             }
 
+            fm.getVariant().addTag(VARIANT_PROCESSED_TAG);
             if (!masteries.isEmpty()) {
                 int level = masteries.lastEntry().getKey();
                 if (level >= 1) {
@@ -202,7 +217,14 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
     }
 
-    public boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+
+    public static final float EXISTING_HULLMOD_WEIGHT = 3f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
+    @Override
+    public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
+        addMasteriesToFleet(fleet);
+    }
+
+    public static boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         boolean forceAutofit = fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_FORCE_AUTOFIT_ON_NO_AUTOFIT_SHIPS);
         // From DefaultFleetInflater.java
         if (!forceAutofit && fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT)) {
@@ -224,7 +246,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         return false;
     }
 
-    private void addIfApplicable(String hullmod, boolean civilian, WeightedRandomPicker<String> addTo, ShipVariantAPI check, FactionAPI faction) {
+    private static void addIfApplicable(String hullmod, boolean civilian, WeightedRandomPicker<String> addTo, ShipVariantAPI check, FactionAPI faction) {
         if (!check.getPermaMods().contains(hullmod) && faction.knowsHullMod(hullmod)) {
             if (civilian == check.isCivilian()) {
                 addTo.add(hullmod, faction.isHullModPriority(hullmod) ? PRIORITY_HULLMOD_WEIGHT : STANDARD_HULLMOD_WEIGHT);
@@ -272,7 +294,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
-        int maxLevel = commander.getStats().getLevel() + getNPCMaxLevelModifier(progression);
+        int bonus = commander.getFaction() == null ? 0 : Utils.factionToCommanderBonusLevels.getOrDefault(commander.getFaction().getId(), 0);
+        int maxLevel = commander.getStats().getLevel() + bonus + getNPCMaxLevelModifier(progression);
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {

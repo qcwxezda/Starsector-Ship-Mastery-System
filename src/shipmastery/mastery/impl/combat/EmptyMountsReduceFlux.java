@@ -8,7 +8,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.config.Settings;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
@@ -44,7 +44,7 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.EmptyMountsReduceFluxPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(HARD_CAP));
+        tooltip.addPara(Strings.Descriptions.EmptyMountsReduceFluxPost, 0f, Misc.getTextColor(), Utils.asPercent(HARD_CAP));
     }
 
     @Override

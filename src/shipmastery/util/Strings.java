@@ -485,5 +485,12 @@ public interface Strings {
         String FullHitpointsBoost = Utils.getString( "sms_descriptions", "FullHitpointsBoost");
         String FullHitpointsBoostPost = Utils.getString( "sms_descriptions", "FullHitpointsBoostPost");
         String WeakerDesignCompromises = Utils.getString( "sms_descriptions", "WeakerDesignCompromises");
+        String VambraceBonuses = Utils.getString( "sms_descriptions", "VambraceBonuses");
+        String VambraceBonusesPost = Utils.getString( "sms_descriptions", "VambraceBonusesPost");
+        String CombatBurnRegen = Utils.getString( "sms_descriptions", "CombatBurnRegen");
+        String CombatBurnRegenTitle = Utils.getString( "sms_descriptions", "CombatBurnRegenTitle");
+        String CombatBurnRegenDesc1 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc1");
+        String CombatBurnRegenDesc2 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc2");
+        String CombatBurnRegenDesc3 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc3");
     }
 }

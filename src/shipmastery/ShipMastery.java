@@ -255,7 +255,7 @@ public abstract class ShipMastery {
                 generateMasteries(spec);
                 masteryData.setGenerated(true);
                 shouldGenerate = true;
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -268,15 +268,14 @@ public abstract class ShipMastery {
         return masteryData.getDataForLevel(level);
     }
 
-    public static void loadStats() throws JSONException, InstantiationException, IllegalAccessException,
-                                          ClassNotFoundException, IOException {
+    public static void loadStats() throws NoSuchMethodException, IllegalAccessException, JSONException, IOException, ClassNotFoundException {
         JSONArray statsList = Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/stats_list.csv");
         for (int i = 0; i < statsList.length(); i++) {
             JSONObject item = statsList.getJSONObject(i);
             String id = item.getString("id");
             String className = item.getString("location");
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
-            ShipStat stat = (ShipStat) cls.newInstance();
+            ShipStat stat = (ShipStat) Utils.instantiateClassNoParams(cls);
             stat.id = id;
             stat.description = item.getString("description");
             stat.tier = item.optInt("tier", 1);
@@ -506,7 +505,7 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException, IllegalAccessException, NoSuchMethodException {
         JSONArray masteryList =
                 Global.getSettings().getMergedSpreadsheetData("id", "data/shipmastery/mastery_list.csv");
         for (int i = 0; i < masteryList.length(); i++) {
@@ -543,7 +542,7 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException {
+    public static void generateMasteries(ShipHullSpecAPI spec) throws InstantiationException, IllegalAccessException, NoSuchMethodException {
         spec = Utils.getRestoredHullSpec(spec);
         Set<Integer> levels = new HashSet<>();
         HullMasteryData data = masteryMap.get(spec.getHullId());
@@ -563,7 +562,7 @@ public abstract class ShipMastery {
         }
     }
 
-    public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix, boolean avoidSeen) throws InstantiationException, IllegalAccessException {
+    public static void generateMasteries(ShipHullSpecAPI spec, Set<Integer> levels, int seedPrefix, boolean avoidSeen) throws InstantiationException, IllegalAccessException, NoSuchMethodException {
         HullMasteryData data = masteryMap.get(spec.getHullId());
         Set<String> seenParams = new HashSet<>();
         Set<Class<?>> seenEffectClasses = new HashSet<>();

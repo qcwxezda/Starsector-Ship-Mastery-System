@@ -115,26 +115,18 @@ public abstract class MasteryUtils {
         return seed == null ? Global.getSector().getPlayerPerson().getId() : seed;
     }
 
-    private static class MasteryEffectData implements Comparable<MasteryEffectData>  {
-        final MasteryEffect effect;
-        final int level;
-        final int index;
-
-        private MasteryEffectData(MasteryEffect effect, int level, int index) {
-            this.effect = effect;
-            this.level = level;
-            this.index = index;
-        }
+    private record MasteryEffectData(MasteryEffect effect, int level,
+                                     int index) implements Comparable<MasteryEffectData> {
 
         @Override
-        public int compareTo(@NotNull MasteryUtils.MasteryEffectData o) {
-            int p = Integer.compare(effect.getPriority(), o.effect.getPriority());
-            if (p != 0) return p;
-            int q = Integer.compare(level, o.level);
-            if (q != 0) return q;
-            return Integer.compare(index, o.index);
+            public int compareTo(@NotNull MasteryUtils.MasteryEffectData o) {
+                int p = Integer.compare(effect.getPriority(), o.effect.getPriority());
+                if (p != 0) return p;
+                int q = Integer.compare(level, o.level);
+                if (q != 0) return q;
+                return Integer.compare(index, o.index);
+            }
         }
-    }
 
     public static boolean isUnique(MasteryEffect effect) {
         return effect.hasTag(MasteryTags.UNIQUE);

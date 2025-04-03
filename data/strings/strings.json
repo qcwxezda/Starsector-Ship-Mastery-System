@@ -414,7 +414,14 @@
     "EmptyMountsReduceFluxPost": "This effect has a hard cap of %1$s total weapon flux reduction.",
     "FullHitpointsBoost": "If hull health is at maximum, increases the ship's max speed, flux dissipation, and all weapons' rate of fire by %1$s.",
     "FullHitpointsBoostPost": "This bonus disappears as soon as the ship takes hull damage and will not be regained even should the ship's hull be fully repaired.",
-    "WeakerDesignCompromises": "Reduces the penalty to base flux capacity and flux dissipation from %1$s by %2$s. Additional energy weapon flux generation is reduced to %3$s."
+    "WeakerDesignCompromises": "Reduces the penalty to base flux capacity and flux dissipation from %1$s by %2$s. Additional energy weapon flux generation is reduced to %3$s.",
+    "VambraceBonuses": "Each intact vambrace reduces hull and armor damage taken by this ship by %1$s and increases its effective armor for hit strength calculation only by %2$s.\nEach missing vambrace increases this ship's top speed by %3$s su and maneuverability by %4$s.",
+    "VambraceBonusesPost": "The damage reduction and bonus effective armor only affect the ship, not the vambraces themselves.",
+    "CombatBurnRegen": "This ship's maximum speed is increased by %1$s su for each second that %2$s is active, up to a maximum of %3$s su. This bonus decays at a rate of %4$s su per second while the system is inactive. \nOnce per %5$s seconds, activating %6$s fully replenishes the ammo of all %7$s weapons.",
+    "CombatBurnRegenTitle": "Enhanced Combat Burn",
+    "CombatBurnRegenDesc1": "+%1$s max speed",
+    "CombatBurnRegenDesc2": "%1$s second(s) until recharge",
+    "CombatBurnRegenDesc3": "weapon recharge available"
   },
 
   "sms_messages": {

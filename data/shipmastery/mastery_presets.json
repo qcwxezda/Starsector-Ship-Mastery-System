@@ -1,6 +1,4 @@
 {
-  "none": {},
-
   "_DEFAULT_": {
     "maxLevel": 9,
     "levels": {
@@ -59,6 +57,38 @@
     "hint_or_tag": "derelict",
     "levels": {
       "max": ["MaxAutomatedCR","ModifyStatsMult 1 DModEffect -0.5"]
+    }
+  },
+
+  "threat": {
+    "maxLevel": 10,
+    "levels": {
+      "1": "ModifyStatsMult 1 DeploymentPoints -0.05",
+      "2": "ModifyStatsMult 1 DeploymentPoints -0.052632",
+      "3": "ModifyStatsMult 1 DeploymentPoints -0.055556",
+      "4": "ModifyStatsMult 1 DeploymentPoints -0.0588235",
+      "5": "ModifyStatsMult 1 DeploymentPoints -0.0625",
+      "6": "ModifyStatsMult 1 DeploymentPoints -0.0666666",
+      "7": "ModifyStatsMult 1 DeploymentPoints -0.0714286",
+      "8": "ModifyStatsMult 1 DeploymentPoints -0.076923",
+      "9": "ModifyStatsMult 1 DeploymentPoints -0.0833333",
+      "10": "ModifyStatsMult 1 DeploymentPoints -0.090909"
+    }
+  },
+
+  "dweller": {
+    "maxLevel": 10,
+    "levels": {
+      "1": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "2": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "3": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "4": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "5": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "6": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "7": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "8": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "9": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
+      "10": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"]
     }
   },
 

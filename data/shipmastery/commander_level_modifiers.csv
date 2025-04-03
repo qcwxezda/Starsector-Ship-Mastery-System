@@ -1,0 +1,8 @@
+faction_id, modifier
+derelict, -3
+luddic_path, -2
+pirates, -1
+mercenary, 1
+remnant, 2
+threat, 6
+dweller, 8

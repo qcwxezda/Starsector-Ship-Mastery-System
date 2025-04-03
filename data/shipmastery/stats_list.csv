@@ -60,3 +60,5 @@ BallisticWeaponsOPCost,the OP cost of all ballistic weapons,3,-1.2,modify_flat r
 EnergyWeaponsOPCost,the OP cost of all energy weapons,3,-1.2,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
 MissileWeaponsOPCost,the OP cost of all missile weapons,3,-1.2,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.MissileWeaponsOPCost
 ShipSystemCooldown,"ship system recharge and regeneration rate, where applicable,",2,0.1,,shipmastery.stats.combat.ShipSystemCooldown
+EffectiveArmorBonus,"effective armor, applied for hit strength calculation only,",2,25,modify_flat require_integer,shipmastery.stats.combat.EffectiveArmorBonus
+DeploymentPoints,"deployment points cost",3,-0.05,,shipmastery.stats.combat.DeploymentPoints

@@ -9,17 +9,17 @@
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
 
-  "npcMasteryDensity": 0.4,
-  "npcMasteryQuality": 0.3,
+  "npcMasteryDensity": 0.5,
+  "npcMasteryQuality": 0.6,
   "npcMasteryMaxLevelModifier": -2,
-  "npcMasteryFlagshipBonus": 3,
+  "npcMasteryFlagshipBonus": 2,
   "npcSmodQualityMod": -0.6,
 
   "npcMasteryDensityCap": 0.9,
-  "npcMasteryQualityCap": 0.6,
+  "npcMasteryQualityCap": 0.75,
   "npcMasteryMaxLevelModifierCap": 2,
   "npcMasteryFlagshipBonusCap": 6,
-  "npcSmodQualityModCap": -0.25,
+  "npcSmodQualityModCap": -0.2,
 
   "progressionEnabled": true,
   "npcTotalProgressionMP": 2500,

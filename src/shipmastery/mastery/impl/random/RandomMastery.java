@@ -34,7 +34,7 @@ public class RandomMastery extends BaseMasteryEffect {
         long seed = makeSeed();
         try {
             return postInit(seed, args);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
@@ -50,7 +50,7 @@ public class RandomMastery extends BaseMasteryEffect {
     }
 
     protected final MasteryEffect postInit(long seed, String... args)
-            throws InstantiationException, IllegalAccessException {
+            throws InstantiationException, IllegalAccessException, NoSuchMethodException {
         ShipHullSpecAPI spec = getHullSpec();
         Set<Class<?>> uniqueDontRepeat = new HashSet<>();
         Set<Class<?>> seenNotUnique = new HashSet<>();

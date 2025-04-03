@@ -5,6 +5,7 @@ import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.impl.random.RandomMastery;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.Utils;
 
 import java.util.Set;
 
@@ -29,8 +30,8 @@ public class MasteryGenerator {
     }
 
     public MasteryEffect generateDontInit(ShipHullSpecAPI spec, int level, int index, boolean isOption2)
-            throws InstantiationException, IllegalAccessException {
-        BaseMasteryEffect effect = (BaseMasteryEffect) effectClass.newInstance();
+            throws IllegalAccessException, NoSuchMethodException {
+        BaseMasteryEffect effect = (BaseMasteryEffect) Utils.instantiateClassNoParams(effectClass);
         effect.setIsOption2(isOption2);
         effect.setPriority(priority);
         effect.setHullSpec(spec);
@@ -42,8 +43,8 @@ public class MasteryGenerator {
     }
 
     public static MasteryEffect copyEffect(Class<?> effectClass, MasteryEffect other, String... args)
-            throws InstantiationException, IllegalAccessException {
-        BaseMasteryEffect effect = (BaseMasteryEffect) effectClass.newInstance();
+            throws IllegalAccessException, NoSuchMethodException {
+        BaseMasteryEffect effect = (BaseMasteryEffect) Utils.instantiateClassNoParams(effectClass);
         effect.setIsOption2(other.isOption2());
         effect.setPriority(other.getPriority());
         effect.setHullSpec(other.getHullSpec());
@@ -61,7 +62,7 @@ public class MasteryGenerator {
             boolean isOption2,
             int seedPrefix,
             Set<Class<?>> avoidWhenGeneratingRandom,
-            Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException {
+            Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException, NoSuchMethodException {
         MasteryEffect effect = generateDontInit(spec, level, index, isOption2);
 
         if (effect instanceof RandomMastery) {

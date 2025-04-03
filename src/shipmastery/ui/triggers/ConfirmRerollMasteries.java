@@ -67,7 +67,7 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSector().getPlayerPerson(), spec, effect -> effect.onActivate(Global.getSector().getPlayerPerson()));
 
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 

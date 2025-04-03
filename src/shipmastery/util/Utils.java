@@ -22,6 +22,8 @@ import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import shipmastery.ShipMastery;
 import shipmastery.data.MasteryInfo;
 import shipmastery.mastery.MasteryEffect;
@@ -30,6 +32,9 @@ import shipmastery.stats.ShipStat;
 
 import java.awt.Color;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -60,6 +65,7 @@ public abstract class Utils {
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
     public static final Map<String, ShipHullSpecAPI> hullIdToRestored = new HashMap<>();
     public static final Map<String, Set<String>> baseHullToAllSkinsMap = new HashMap<>();
+    public static final Map<String, Integer> factionToCommanderBonusLevels = new HashMap<>();
 
     public static final Set<String> allHullSpecIds = new HashSet<>();
 
@@ -84,6 +90,16 @@ public abstract class Utils {
 
             Set<String> skins = baseHullToAllSkinsMap.computeIfAbsent(baseId, k -> new HashSet<>());
             skins.add(id);
+        }
+        try {
+            JSONArray factionsArray = Global.getSettings().getMergedSpreadsheetData("faction_id", "data/shipmastery/commander_level_modifiers.csv");
+            for (int i = 0; i < factionsArray.length(); i++) {
+                JSONObject object = factionsArray.getJSONObject(i);
+                factionToCommanderBonusLevels.put(object.getString("faction_id"), object.optInt("modifier", 0));
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to load or read data/shipmastery/commander_level_modifiers.csv: ", e);
         }
     }
 
@@ -535,11 +551,9 @@ public abstract class Utils {
         if (value <= breakpoint1) return 3f;
         else if (value <= breakpoint2) {
             return 3f - 2f * (value - breakpoint1) / (breakpoint2 - breakpoint1);
-        }
-        else if (value <= breakpoint3) {
+        } else if (value <= breakpoint3) {
             return (float) (1f / (1f - 1f / Math.E) * ((Math.exp((breakpoint2 - value) / (breakpoint3 - breakpoint2))) - 1f / Math.E));
-        }
-        else {
+        } else {
             return 0f;
         }
     }
@@ -573,6 +587,18 @@ public abstract class Utils {
         float averageHullArmor = 0.5f * (spec.getArmorRating()*spec.getArmorRating()/100f + spec.getHitpoints());
         float effectiveShields = spec.getFluxCapacity() / spec.getBaseShieldFluxPerDamageAbsorbed();
         return effectiveShields / averageHullArmor;
+    }
+
+    public static <T> T instantiateClassNoParams(Class<T> cls) throws NoSuchMethodException, IllegalAccessException {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle mh = lookup.findConstructor(cls, MethodType.methodType(void.class));
+        try {
+            //noinspection unchecked
+            return (T) mh.invoke();
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressWarnings("unused")

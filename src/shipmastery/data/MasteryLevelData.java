@@ -22,7 +22,7 @@ public class MasteryLevelData {
     final ShipHullSpecAPI spec;
     final int level;
 
-    public void generateEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException {
+    public void generateEffects(int seedPrefix, Set<Class<?>> avoidWhenGenerating, Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException, NoSuchMethodException {
         if (spec == null) {
             throw new RuntimeException(hullOrPresetName + " is a preset; can't generate masteries for a preset");
         }

@@ -102,7 +102,8 @@ ECMPackageBoost,4,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,4,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
 MaxAutomatedCR,4,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
-WeakerDesignCompromises,4,combat,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
+WeakerDesignCompromises,4,combat unique,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
+VambraceBonuses,4,combat doesnt_affect_modules,,0.05,shipmastery.mastery.impl.combat.VambraceBonuses
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,4,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,4,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion
@@ -156,3 +157,4 @@ EMPEmitterFluxBoost,4,combat unique,,0.01,shipmastery.mastery.impl.combat.shipsy
 EMPEmitterEnergyDamage,4,combat unique,,150,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterEnergyDamage
 EMPEmitterFragDamage,4,combat unique,,300,shipmastery.mastery.impl.combat.shipsystems.EMPEmitterFragDamage
 TemporalShellCRDegradation,4,combat unique doesnt_affect_modules,,0.35,shipmastery.mastery.impl.combat.shipsystems.TemporalShellCRDegradation
+CombatBurnRegen,4,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.shipsystems.CombatBurnRegen

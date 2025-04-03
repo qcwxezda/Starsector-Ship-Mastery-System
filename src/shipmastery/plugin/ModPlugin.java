@@ -97,8 +97,9 @@ public class ModPlugin extends BaseModPlugin {
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
 
+
         try {
-            EveryFrameScript initializer = (EveryFrameScript) classLoader.loadClass("shipmastery.campaign.Initializer").newInstance();
+            EveryFrameScript initializer = (EveryFrameScript) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.Initializer"));
             Global.getSector().addTransientScript(initializer);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add initializer", e);
@@ -130,7 +131,7 @@ public class ModPlugin extends BaseModPlugin {
             }
 
             try {
-                Object refitModifier = classLoader.loadClass("shipmastery.campaign.RefitHandler").newInstance();
+                Object refitModifier = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.RefitHandler"));
                 listeners.addListener(refitModifier, true);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to add refit tab modifier", e);
@@ -168,7 +169,7 @@ public class ModPlugin extends BaseModPlugin {
             Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(true);
             try {
-                CampaignPlugin autofitPlugin = (CampaignPlugin) classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP").newInstance();
+                CampaignPlugin autofitPlugin = (CampaignPlugin) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP"));
                 Global.getSector().registerPlugin(autofitPlugin);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to add refit autofit plugin", e);

@@ -120,7 +120,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public Set<String> getTags() {
+    public final Set<String> getTags() {
         return tags;
     }
 
@@ -228,7 +228,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public String getId() {
+    public final String getId() {
         return ID;
     }
 
@@ -237,7 +237,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public int getLevel() {
+    public final int getLevel() {
         return level;
     }
 
@@ -249,7 +249,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public int getIndex() {
+    public final int getIndex() {
         return index;
     }
 
@@ -266,7 +266,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public boolean isOption2() {
+    public final boolean isOption2() {
         return isOption2 != null && isOption2;
     }
 
