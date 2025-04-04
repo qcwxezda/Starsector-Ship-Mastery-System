@@ -65,7 +65,9 @@ public abstract class Utils {
     public static final Map<String, String> hullmodIdToNameMap = new HashMap<>();
     public static final Map<String, ShipHullSpecAPI> hullIdToRestored = new HashMap<>();
     public static final Map<String, Set<String>> baseHullToAllSkinsMap = new HashMap<>();
-    public static final Map<String, Integer> factionToCommanderBonusLevels = new HashMap<>();
+    public static final Map<String, DifficultyData> difficultyDataMap = new HashMap<>();
+    public static DifficultyData defaultDifficultyData;
+    public static final String defaultFactionId = "<default>";
 
     public static final Set<String> allHullSpecIds = new HashSet<>();
 
@@ -92,16 +94,46 @@ public abstract class Utils {
             skins.add(id);
         }
         try {
-            JSONArray factionsArray = Global.getSettings().getMergedSpreadsheetData("faction_id", "data/shipmastery/commander_level_modifiers.csv");
+            JSONArray factionsArray = Global.getSettings().getMergedSpreadsheetData("faction_id", "data/shipmastery/faction_difficulty.csv");
+            // Populate default first
             for (int i = 0; i < factionsArray.length(); i++) {
                 JSONObject object = factionsArray.getJSONObject(i);
-                factionToCommanderBonusLevels.put(object.getString("faction_id"), object.optInt("modifier", 0));
+                String id = object.getString("faction_id");
+                if (defaultFactionId.equals(id)) {
+                    float avgMod = (float) object.getDouble("average_modifier");
+                    float stDev = (float) object.getDouble("stdev");
+                    float flagshipBonus = (float) object.getDouble("flagship_bonus");
+                    float sModProb = (float) object.getDouble("base_smod_prob");
+                    float perDMod = (float) object.getDouble("smod_prob_mult_per_dmod");
+                    DifficultyData data = new DifficultyData(avgMod, stDev, flagshipBonus, sModProb, perDMod);
+                    difficultyDataMap.put(id, data);
+                    defaultDifficultyData = data;
+                    break;
+                }
+            }
+            if (defaultDifficultyData != null) {
+                for (int i = 0; i < factionsArray.length(); i++) {
+                    JSONObject object = factionsArray.getJSONObject(i);
+                    String id = object.getString("faction_id");
+                    float avgMod = (float) object.optDouble("average_modifier", defaultDifficultyData.averageModifier());
+                    float stDev = (float) object.optDouble("stdev", defaultDifficultyData.stDev);
+                    float flagshipBonus = (float) object.optDouble("flagship_bonus", defaultDifficultyData.flagshipBonus());
+                    float sModProb = (float) object.optDouble("base_smod_prob", defaultDifficultyData.baseSModProb());
+                    float perDMod = (float) object.optDouble("smod_prob_mult_per_dmod", defaultDifficultyData.sModProbMultPerDMod());
+                    DifficultyData data = new DifficultyData(avgMod, stDev, flagshipBonus, sModProb, perDMod);
+                    difficultyDataMap.put(id, data);
+                    if (defaultFactionId.equals(id)) {
+                        defaultDifficultyData = data;
+                    }
+                }
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Failed to load or read data/shipmastery/commander_level_modifiers.csv: ", e);
+            throw new RuntimeException("Failed to load or read data/shipmastery/faction_difficulty.csv: ", e);
         }
     }
+
+    public record DifficultyData(float averageModifier, float stDev, float flagshipBonus, float baseSModProb, float sModProbMultPerDMod) {}
 
     public static String getHullmodName(String hullmodId) {
         return hullmodIdToNameMap.get(hullmodId);

@@ -36,17 +36,8 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
                 LunaSettings.getBoolean(id, "sms_RefitScreenDisplay");
         Settings.ENABLE_COPY_SEED_BUTTON = LunaSettings.getBoolean(id, "sms_EnableCopySeedButton");
 
-        Settings.NPC_MASTERY_DENSITY = LunaSettings.getFloat(id, "sms_DifficultyDensity");
-        Settings.NPC_MASTERY_QUALITY = LunaSettings.getFloat(id, "sms_DifficultyQuality");
-        Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyMaxLevelMod");
-        Settings.NPC_MASTERY_FLAGSHIP_BONUS = LunaSettings.getInt(id, "sms_DifficultyFlagshipBonus");
-        Settings.NPC_SMOD_QUALITY_MOD = LunaSettings.getFloat(id, "sms_DifficultySModMod");
-
-        Settings.NPC_MASTERY_DENSITY_CAP = LunaSettings.getFloat(id, "sms_DifficultyDensityCap");
-        Settings.NPC_MASTERY_QUALITY_CAP = LunaSettings.getFloat(id, "sms_DifficultyQualityCap");
-        Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP = LunaSettings.getInt(id, "sms_DifficultyMaxLevelModCap");
-        Settings.NPC_MASTERY_FLAGSHIP_BONUS_CAP = LunaSettings.getInt(id, "sms_DifficultyFlagshipBonusCap");
-        Settings.NPC_SMOD_QUALITY_MOD_CAP = LunaSettings.getFloat(id, "sms_DifficultySModModCap");
+        Settings.NPC_MASTERY_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyLevelMod");
+        Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP = LunaSettings.getInt(id, "sms_DifficultyLevelModCap");
 
         Settings.NPC_PROGRESSION_ENABLED = LunaSettings.getBoolean(id, "sms_ProgressionEnabled");
         Settings.NPC_TOTAL_PROGRESSION_MP = LunaSettings.getInt(id, "sms_TotalProgressionMP");

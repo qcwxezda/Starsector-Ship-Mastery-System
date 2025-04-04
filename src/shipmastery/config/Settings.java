@@ -27,35 +27,14 @@ public class Settings {
     public static Float CYBER_AUG_BONUS_PER_GROUP;
     public static Float CYBER_AUG_BASE_BONUS;
     public static Boolean ENABLE_COPY_SEED_BUTTON;
-
-    /** From 0-1, roughly the percentage of ships in NPC fleets that will have masteries */
-    public static Float NPC_MASTERY_DENSITY;
-
-    /** From 0-1, defines the mastery level distribution among hulls with masteries (0 = all level 1, 1 = all max level) */
-    public static Float NPC_MASTERY_QUALITY;
-
-    /** By default, the maximum mastery level any ship hull can have for an NPC fleet is the officer level of the commander */
-    public static Integer NPC_MASTERY_MAX_LEVEL_MODIFIER;
-
-    /** Modifies the max possible mastery level of the NPC flagship's hull spec by this much */
-    public static Integer NPC_MASTERY_FLAGSHIP_BONUS ;
-
-    /** Chance for each available s-mod slot to be filled is equal to the fleet's quality plus this bonus. */
-    public static Float NPC_SMOD_QUALITY_MOD;
-
-    /** Hard caps for progression purposes */
-    public static Float NPC_MASTERY_DENSITY_CAP;
-    public static Float NPC_MASTERY_QUALITY_CAP;
-    public static Integer  NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP;
-    public static Integer NPC_MASTERY_FLAGSHIP_BONUS_CAP;
-    public static Float NPC_SMOD_QUALITY_MOD_CAP;
-
+    /** By default, the average mastery level any ship hull will have for an NPC fleet is (1/3 commander level + modifier in difficulty csv) */
+    public static Integer NPC_MASTERY_LEVEL_MODIFIER;
+    /** Hard cap for progression purposes */
+    public static Integer NPC_MASTERY_LEVEL_MODIFIER_CAP;
     public static Boolean NPC_PROGRESSION_ENABLED;
     /** How long it takes for NPC mastery stats to reach cap, measured in total player MP gain across all combat ships*/
     public static Integer NPC_TOTAL_PROGRESSION_MP;
-
     public static Boolean SHOW_MP_AND_LEVEL_IN_REFIT;
-
     /** If the player loses a battle, ships that would otherwise be recoverable are spawned as derelicts */
     public static Boolean ENABLE_PLAYER_SHIP_GRAVEYARDS;
     public static Boolean DISABLE_MAIN_FEATURES;
@@ -68,16 +47,8 @@ public class Settings {
     public static void loadSettingsFromJson() throws JSONException, IOException {
         JSONObject json = Global.getSettings().loadJSON("shipmastery_settings.json", "shipmasterysystem");
         DOUBLE_CLICK_INTERVAL = (float) json.getDouble("doubleClickInterval");
-        NPC_MASTERY_DENSITY = (float) json.getDouble("npcMasteryDensity");
-        NPC_MASTERY_QUALITY = (float) json.getDouble("npcMasteryQuality");
-        NPC_MASTERY_MAX_LEVEL_MODIFIER = json.getInt("npcMasteryMaxLevelModifier");
-        NPC_MASTERY_FLAGSHIP_BONUS = json.getInt("npcMasteryFlagshipBonus");
-        NPC_SMOD_QUALITY_MOD = (float) json.getDouble("npcSmodQualityMod");
-        NPC_MASTERY_DENSITY_CAP = (float) json.getDouble("npcMasteryDensityCap");
-        NPC_MASTERY_QUALITY_CAP = (float) json.getDouble("npcMasteryQualityCap");
-        NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP = json.getInt("npcMasteryMaxLevelModifierCap");
-        NPC_MASTERY_FLAGSHIP_BONUS_CAP = json.getInt("npcMasteryFlagshipBonusCap");
-        NPC_SMOD_QUALITY_MOD_CAP = (float) json.getDouble("npcSmodQualityModCap");
+        NPC_MASTERY_LEVEL_MODIFIER = json.getInt("npcMasteryLevelModifier");
+        NPC_MASTERY_LEVEL_MODIFIER_CAP = json.getInt("npcMasteryLevelModifierCap");
 
         NPC_PROGRESSION_ENABLED = json.getBoolean("progressionEnabled");
         NPC_TOTAL_PROGRESSION_MP = json.getInt("npcTotalProgressionMP");

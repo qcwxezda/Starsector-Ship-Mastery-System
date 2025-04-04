@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -116,7 +117,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         Random random = new Random(commander.getId().hashCode());
         auto.setRandom(random);
 
-        float progression = Settings.NPC_PROGRESSION_ENABLED ? PlayerMPHandler.getDifficultyProgression() : 0f;
+        String factionId = fleet.getFaction() == null ? Utils.defaultFactionId : fleet.getFaction().getId();
+        Utils.DifficultyData difficultyData = Utils.difficultyDataMap.getOrDefault(factionId, Utils.defaultDifficultyData);
 
         for (FleetMemberAPI fm : members) {
             //if (fm.isStation()) continue;
@@ -134,60 +136,21 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 }
             }
 
-            if (inflater instanceof AutofitPlugin.AutofitPluginDelegate delegate && !isNoAutofit(fleet, fm)) {
-                boolean canAutofit = delegate.getAvailableFighters() != null && delegate.getAvailableWeapons() != null;
-
-                auto.setChecked(CoreAutofitPlugin.STRIP, false);
-                auto.setChecked(CoreAutofitPlugin.UPGRADE, random.nextFloat() < Math.min(0.1f + inflater.getQuality()*0.5f, 0.5f));
-                auto.setChecked(CoreAutofitPlugin.RANDOMIZE, true);
-
-                if (repeatAutofit && canAutofit) {
-                    auto.doFit(variant, variant.clone(), 0, delegate);
-                }
-
-                float sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
-                if (sModsToAdd > 0) {
-                    WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
-                    picker.setRandom(random);
-
-                    for (String hullmod : variant.getNonBuiltInHullmods()) {
-                        picker.add(hullmod, EXISTING_HULLMOD_WEIGHT);
-                    }
-
-                    // Add a bunch of different always-applicable hull mods for variety
-                    FactionAPI faction = fleet.getFaction();
-                    addIfApplicable(HullMods.TURRETGYROS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.ARMOREDWEAPONS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.AUTOREPAIR, false, picker, variant, faction);
-                    addIfApplicable(HullMods.AUXILIARY_THRUSTERS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.BLAST_DOORS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.ECCM, false, picker, variant, faction);
-                    addIfApplicable(HullMods.MAGAZINES, false, picker, variant, faction);
-                    addIfApplicable(HullMods.MISSLERACKS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.FLUXBREAKERS, false, picker, variant, faction);
-                    addIfApplicable(HullMods.FLUX_COIL, false, picker, variant, faction);
-                    addIfApplicable(HullMods.FLUX_DISTRIBUTOR, false, picker, variant, faction);
-                    addIfApplicable(HullMods.HEAVYARMOR, false, picker, variant, faction);
-                    addIfApplicable(HullMods.INSULATEDENGINE, false, picker, variant, faction);
-                    addIfApplicable(HullMods.POINTDEFENSEAI, false, picker, variant, faction);
-                    addIfApplicable(HullMods.SOLAR_SHIELDING, false, picker, variant, faction);
-                    addIfApplicable(HullMods.UNSTABLE_INJECTOR, false, picker, variant, faction);
-
-                    addIfApplicable(HullMods.AUGMENTEDENGINES, true, picker, variant, faction);
-                    addIfApplicable(HullMods.INSULATEDENGINE, true, picker, variant, faction);
-                    addIfApplicable(HullMods.SURVEYING_EQUIPMENT, true, picker, variant, faction);
-                    addIfApplicable(HullMods.ADDITIONAL_BERTHING, true, picker, variant, faction);
-                    addIfApplicable(HullMods.AUXILIARY_FUEL_TANKS, true, picker, variant, faction);
-                    addIfApplicable(HullMods.EFFICIENCY_OVERHAUL, true, picker, variant, faction);
-                    addIfApplicable(HullMods.EXPANDED_CARGO_HOLDS, true, picker, variant, faction);
-                    addIfApplicable(HullMods.SOLAR_SHIELDING, true, picker, variant, faction);
-
-                    for (int i = 0; i < sModsToAdd; i++) {
-                        if (picker.isEmpty()) break;
-                        if (random.nextFloat() > getNPCSModQualityMod(progression) + inflater.getQuality()) continue;
-                        variant.addPermaMod(picker.pickAndRemove(), true);
+            if (!isNoAutofit(fleet, fm)) {
+                boolean canAutofit = false;
+                if (inflater instanceof AutofitPlugin.AutofitPluginDelegate delegate) {
+                    canAutofit = delegate.getAvailableFighters() != null && delegate.getAvailableWeapons() != null;
+                    auto.setChecked(CoreAutofitPlugin.STRIP, false);
+                    auto.setChecked(CoreAutofitPlugin.UPGRADE, random.nextFloat() < Math.min(0.1f + inflater.getQuality() * 0.5f, 0.5f));
+                    auto.setChecked(CoreAutofitPlugin.RANDOMIZE, true);
+                    if (repeatAutofit && canAutofit) {
+                        auto.doFit(variant, variant.clone(), 0, delegate);
                     }
                 }
+
+                int sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
+                float prob = difficultyData.baseSModProb() * (float) Math.pow(difficultyData.sModProbMultPerDMod(), DModManager.getNumDMods(variant));
+                addAdditionalSModsToVariant(variant, sModsToAdd, fleet, random, prob);
 
                 // If s-modding granted additional OP, do another fit
                 if (variant.getUnusedOP(commander.getStats()) > 0f && canAutofit) {
@@ -207,6 +170,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             }
 
             fm.getVariant().addTag(VARIANT_PROCESSED_TAG);
+
             if (!masteries.isEmpty()) {
                 int level = masteries.lastEntry().getKey();
                 if (level >= 1) {
@@ -214,6 +178,55 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     fm.getVariant().addMod("sms_npcIndicator" + level);
                 }
             }
+        }
+    }
+
+    private static void addAdditionalSModsToVariant(ShipVariantAPI variant, int count, CampaignFleetAPI fleet, Random random, float chanceToAddPer) {
+        for (String id : variant.getModuleSlots()) {
+            addAdditionalSModsToVariant(variant.getModuleVariant(id), count, fleet, random, chanceToAddPer);
+        }
+
+        if (count <= 0 || variant.getHullSpec().getOrdnancePoints(null) <= 0) return;
+
+        WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
+        picker.setRandom(random);
+
+        for (String hullmod : variant.getNonBuiltInHullmods()) {
+            picker.add(hullmod, EXISTING_HULLMOD_WEIGHT);
+        }
+
+        // Add a bunch of different always-applicable hull mods for variety
+        FactionAPI faction = fleet.getFaction();
+        addIfApplicable(HullMods.TURRETGYROS, false, picker, variant, faction);
+        addIfApplicable(HullMods.ARMOREDWEAPONS, false, picker, variant, faction);
+        addIfApplicable(HullMods.AUTOREPAIR, false, picker, variant, faction);
+        addIfApplicable(HullMods.AUXILIARY_THRUSTERS, false, picker, variant, faction);
+        addIfApplicable(HullMods.BLAST_DOORS, false, picker, variant, faction);
+        addIfApplicable(HullMods.ECCM, false, picker, variant, faction);
+        addIfApplicable(HullMods.MAGAZINES, false, picker, variant, faction);
+        addIfApplicable(HullMods.MISSLERACKS, false, picker, variant, faction);
+        addIfApplicable(HullMods.FLUXBREAKERS, false, picker, variant, faction);
+        addIfApplicable(HullMods.FLUX_COIL, false, picker, variant, faction);
+        addIfApplicable(HullMods.FLUX_DISTRIBUTOR, false, picker, variant, faction);
+        addIfApplicable(HullMods.HEAVYARMOR, false, picker, variant, faction);
+        addIfApplicable(HullMods.INSULATEDENGINE, false, picker, variant, faction);
+        addIfApplicable(HullMods.POINTDEFENSEAI, false, picker, variant, faction);
+        addIfApplicable(HullMods.SOLAR_SHIELDING, false, picker, variant, faction);
+        addIfApplicable(HullMods.UNSTABLE_INJECTOR, false, picker, variant, faction);
+
+        addIfApplicable(HullMods.AUGMENTEDENGINES, true, picker, variant, faction);
+        addIfApplicable(HullMods.INSULATEDENGINE, true, picker, variant, faction);
+        addIfApplicable(HullMods.SURVEYING_EQUIPMENT, true, picker, variant, faction);
+        addIfApplicable(HullMods.ADDITIONAL_BERTHING, true, picker, variant, faction);
+        addIfApplicable(HullMods.AUXILIARY_FUEL_TANKS, true, picker, variant, faction);
+        addIfApplicable(HullMods.EFFICIENCY_OVERHAUL, true, picker, variant, faction);
+        addIfApplicable(HullMods.EXPANDED_CARGO_HOLDS, true, picker, variant, faction);
+        addIfApplicable(HullMods.SOLAR_SHIELDING, true, picker, variant, faction);
+
+        for (int i = 0; i < count; i++) {
+            if (picker.isEmpty()) break;
+            if (random.nextFloat() > chanceToAddPer) continue;
+            variant.addPermaMod(picker.pickAndRemove(), true);
         }
     }
 
@@ -226,22 +239,23 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         boolean forceAutofit = fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_FORCE_AUTOFIT_ON_NO_AUTOFIT_SHIPS);
-        // From DefaultFleetInflater.java
-        if (!forceAutofit && fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT)) {
+        if (forceAutofit) return false;
+
+        ShipVariantAPI variant = fm.getVariant();
+
+        // Adapted from DefaultFleetInflater.java
+        if (fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT)) {
             return true;
         }
-        if (!forceAutofit && fm.getVariant() != null && fm.getVariant().hasTag(Tags.TAG_NO_AUTOFIT)) {
+        if (variant != null && variant.hasTag(Tags.TAG_NO_AUTOFIT)) {
             return true;
         }
 
         if (fleet.getFaction() == null || !fleet.getFaction().isPlayerFaction()) {
-            if (!forceAutofit && fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER)) {
+            if (fm.getHullSpec().hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER)) {
                 return true;
             }
-            //noinspection RedundantIfStatement
-            if (!forceAutofit && fm.getVariant() != null && fm.getVariant().hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER)) {
-                return true;
-            }
+            return variant != null && variant.hasTag(Tags.TAG_NO_AUTOFIT_UNLESS_PLAYER);
         }
         return false;
     }
@@ -285,6 +299,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             }
         }
 
+        String factionId = commander.getFaction() == null ? Utils.defaultFactionId : commander.getFaction().getId();
+        Utils.DifficultyData data = Utils.difficultyDataMap.getOrDefault(factionId, Utils.defaultDifficultyData);
+
         float progression;
         if (commander.getMemoryWithoutUpdate().contains(CUSTOM_PROGRESSION_KEY)) {
             Float savedProgression = (Float) commander.getMemoryWithoutUpdate().get(CUSTOM_PROGRESSION_KEY);
@@ -294,63 +311,42 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
-        int bonus = commander.getFaction() == null ? 0 : Utils.factionToCommanderBonusLevels.getOrDefault(commander.getFaction().getId(), 0);
-        int maxLevel = commander.getStats().getLevel() + bonus + getNPCMaxLevelModifier(progression);
+
+        float bonus = data.averageModifier();
+        float averageLevel = commander.getStats().getLevel()/3f + bonus + getNPCLevelModifier(progression);
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {
-            maxLevel += getNPCFlagshipBonus(progression);
+            averageLevel += data.flagshipBonus();
         }
-        else if (random.nextFloat() > getNPCMasteryDensity(progression)) return map;
 
+        float actualLevel = (float) random.nextGaussian(averageLevel, data.stDev());
+        int cap = ShipMastery.getMaxMasteryLevel(spec);
 
-        int level = 0, cap = ShipMastery.getMaxMasteryLevel(spec);
+        for (int level = 1; level <= actualLevel; level++) {
+            if (level > cap) break;
+            // Mapping might already exist due to custom masteries
+            if (map.containsKey(level)) continue;
 
-        for (int i = 0; i < maxLevel; i++) {
-            if (i == 0 || random.nextFloat() <= getNPCMasteryQuality(progression)) {
-                level++;
-                if (level > cap) break;
-
-                // Mapping might already exist due to custom masteries
-                if (map.containsKey(level)) continue;
-
-                boolean isOption2 = random.nextBoolean();
-                if (!isOption2) {
-                    map.put(level, false);
-                }
-                else {
-                    List<MasteryEffect> option2 = ShipMastery.getMasteryEffects(spec, level, true);
-                    map.put(level, !option2.isEmpty());
-                }
+            boolean isOption2 = random.nextBoolean();
+            if (!isOption2) {
+                map.put(level, false);
+            }
+            else {
+                List<MasteryEffect> option2 = ShipMastery.getMasteryEffects(spec, level, true);
+                map.put(level, !option2.isEmpty());
             }
         }
 
         // Once NPC mastery levels have been generated for the first time, activate the corresponding masteries
         MasteryUtils.applyMasteryEffects(spec, map, false, effect -> effect.onActivate(commander));
-
         cacheNPCMasteries(commander, spec, map);
 
         return map;
     }
 
-    public static int getNPCMaxLevelModifier(float progression) {
-        return Math.round((1f - progression) * Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER + progression * Settings.NPC_MASTERY_MAX_LEVEL_MODIFIER_CAP);
-    }
-
-    public static int getNPCFlagshipBonus(float progression) {
-        return Math.round((1f - progression) * Settings.NPC_MASTERY_FLAGSHIP_BONUS + progression * Settings.NPC_MASTERY_FLAGSHIP_BONUS_CAP);
-    }
-
-    public static float getNPCMasteryDensity(float progression) {
-        return (1f - progression) * Settings.NPC_MASTERY_DENSITY + progression * Settings.NPC_MASTERY_DENSITY_CAP;
-    }
-
-    public static float getNPCMasteryQuality(float progression) {
-        return (1f - progression) * Settings.NPC_MASTERY_QUALITY + progression * Settings.NPC_MASTERY_QUALITY_CAP;
-    }
-
-    public static float getNPCSModQualityMod(float progression) {
-        return (1f - progression) * Settings.NPC_SMOD_QUALITY_MOD + progression * Settings.NPC_SMOD_QUALITY_MOD_CAP;
+    public static float getNPCLevelModifier(float progression) {
+        return (1f - progression) * Settings.NPC_MASTERY_LEVEL_MODIFIER + progression * Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP;
     }
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {

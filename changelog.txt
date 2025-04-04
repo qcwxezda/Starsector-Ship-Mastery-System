@@ -7,21 +7,21 @@ Note: Mastery weights have been changed across the board. Updating is likely to 
     - Gray [REDACTED]: max level 10, each level reduces deployment points cost by 5%.
         - This only applies to ships in the starting fleet, and not to any ships that were generated during the fight, so it's less imposing than it seems.
     - Red [REDACTED]: max level 10, each level increases HP by 5% and effective armor (for hit strength calculation only) by a flat 10.
-        - Note: red [REDACTED] start with an effective armor bonus of 50.
-    - Note that enabling random mode will override these custom masteries, in which case the aforementioned ships will just have the same randomly-generated mastery preset as every other ship hull type.
+        - Note: red [REDACTED] start with an effective armor bonus of 50 in vanilla.
+    - Note that enabling random mode will override these custom masteries, in which case the aforementioned ships will just use the same randomly-generated mastery preset as every other ship hull type.
+- Greatly streamlined the difficulty system. Most of the settings that existed previously have now been made faction-specific, modifiable in faction_difficulty.csv.
+    - Mastery levels are now assigned with a normal distribution around a given average and standard deviation, which varies based on faction.
+    - Factions not in faction_difficulty.csv, including modded factions, use the <default> settings.
+    - The difficulty slider now only modifies the average mastery level found in every fleet.
+    - The previous progression setting increased *every* difficulty setting linearly over a period of time t, but since each slider was its own dimension of difficulty, the actual difficulty progression was more like t^5 (since there were 5 sliders).
+    - New difficulty progression should scale linearly with time.
+    - The formula for average mastery level in an NPC fleet is: 1/3*commanderLevel + factionDifficultyBonus + progressionBonus.
 - Increased the types of NPC fleets that can have mastery effects.
     - Now can affect stations, fleets without an inflater, and fleets generated on the fly during an interaction.
-    - Note that if the fleet doesn't have an inflater (gray and red [REDACTED]), has an inflater not compatible with DefaultFleetInflater, or is explicitly tagged NO_AUTOFIT (omega ships), then the fleet handler will not attempt to add S-mods or make up for excess OP as the result of mastery effects.
-- Added the ability to modify the effective commander level for mastery purposes based on the commander's faction, via commander_level_modifiers.csv. Defaults are:
-    - Derelicts: -3
-    - Luddic Path: -2
-    - Pirates: -1
-    - Mercenaries: +1
-    - Remnants: +2
-    - Gray [REDACTED]: +6
-    - Red [REDACTED]: +8
+    - Note that if the fleet doesn't have an inflater (gray and red [REDACTED]), has an inflater not compatible with DefaultFleetInflater, is explicitly tagged NO_AUTOFIT (omega ships), or has no base OP (station bases), then the fleet handler will not attempt to add S-mods or make up for excess OP as the result of mastery effects.
+    - Modules of ships and stations can now have S-mods added to them if applicable.
 - Added missile OP cost reduction mastery.
-- Adjusted default difficulty settings.
+- Adjusted default difficulty and progression settings (2500 MP -> 2000 MP to max difficulty).
 - Modified the selection weights of almost every mastery. In general: mastery effects that were deprioritized before are now even more deprioritized.
     - Should result in fewer "useless" masteries showing up (though they still do have positive weight, and so can still show up occasionally).
 - The "apply an officer skill" mastery will now grant the elite version of the skill if the skill's captain already has the non-elite version.

@@ -2,12 +2,12 @@
     "id": "shipmasterysystem",
     "name": "Ship Mastery System",
     "author": "qcwxezda",
-    "version": {"major":0, "minor":13, "patch":1},
+    "version": {"major":0, "minor":14, "patch":0},
     "dependencies":[
         {"id":"particleengine", "name":"Particle Engine"}
     ],
     "description": "Gain mastery in ship hulls to unlock S-mod slots and additional bonuses.",
-    "gameVersion": "0.98a-RC5",
+    "gameVersion": "0.98a-RC7",
     "jars": ["jars/ShipMasterySystem.jar"],
     "modPlugin": "shipmastery.plugin.ModPlugin",
     "replace": [
