@@ -50,4 +50,6 @@ sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_I
 
 You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
 sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,
-sms_CheckForFleet,DialogOptionSelected,!$global.sms_checkedForFleet score:1000000,sms_CheckForFleetScript,,,
+sms_CheckForFleet,DialogOptionSelected,!$global.sms_checkedForFleet score:99999999,"sms_CheckForFleetScript ""BEST""",,,
+sms_CheckForFleetFireAllIntercept,FireAllIntercept,"$fireAllTrigger == DialogOptionSelected
+!$global.sms_checkedForFleet score:99999999","sms_CheckForFleetScript ""ALL""",,,

@@ -8,7 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.config.Settings;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
@@ -52,7 +52,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, "" + MAX_STACKS,
+        tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 0f, Misc.getTextColor(), "" + MAX_STACKS,
                         Utils.absValueAsPercent(MAX_INCREASE));
     }
 

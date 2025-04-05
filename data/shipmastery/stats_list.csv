@@ -13,7 +13,6 @@ CRMax,maximum combat readiness,2,0.08,modify_flat display_as_percent,shipmastery
 CrewLoss,crew loss,,-0.3,,shipmastery.stats.logistics.CrewLoss
 SensorProfile,sensor profile,,-0.25,,shipmastery.stats.logistics.SensorProfile
 SensorStrength,sensor strength,,0.3,,shipmastery.stats.logistics.SensorStrength
-DModEffect,the effect of d-mods,,-0.25,,shipmastery.stats.logistics.DModEffect
 DModAcquireProbability,the probability that ships destroyed in combat gain d-mods,,-0.3,,shipmastery.stats.logistics.DModAcquireProbability
 #### COMBAT ####
 MaxSpeed,maximum speed in combat,2,0.1,,shipmastery.stats.combat.MaxSpeed

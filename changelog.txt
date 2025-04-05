@@ -1,3 +1,9 @@
+0.14.1
+---------
+- Fixed an issue related to FireAll DialogOptionSelected (never happens in vanilla or basically any mod, but SiC uses this for some reason).
+- Removed the reduced D-mod effect mastery as it didn't work on most d-mods due to hullmod ordering issues.
+- Adjusted a mastery description.
+
 0.14.0
 ---------
 Note: Mastery weights have been changed across the board. Updating is likely to rearrange mastery effects for your existing ships.

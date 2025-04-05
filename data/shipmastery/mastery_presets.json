@@ -56,7 +56,7 @@
     "preset": "automated",
     "hint_or_tag": "derelict",
     "levels": {
-      "max": ["MaxAutomatedCR","ModifyStatsMult 1 DModEffect -0.5"]
+      "max": "MaxAutomatedCR"
     }
   },
 

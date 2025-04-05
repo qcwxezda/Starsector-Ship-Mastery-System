@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SecondInCommand">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Second-in-Command-1.4.1/jars/SecondInCommand.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
