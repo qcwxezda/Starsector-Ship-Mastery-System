@@ -19,14 +19,14 @@ import java.awt.Color;
 
 public class RangeNoNearbyEnemies extends BaseMasteryEffect {
 
-    public static final float[] MAX_RANGE = new float[] {500f, 600f, 800f, 1000f};
+    public static final float[] MAX_RANGE = new float[] {600f, 800f, 1000f, 1250f};
 
     float getIncreaseRate(ShipAPI ship) {
         return getStrength(ship) / 5f;
     }
 
     float getDecayRate(ShipAPI ship) {
-        return getStrength(ship) / 15f;
+        return getStrength(ship) / 10f;
     }
 
     @Override

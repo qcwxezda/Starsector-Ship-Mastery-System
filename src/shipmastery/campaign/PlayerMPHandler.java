@@ -67,22 +67,6 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     @Override
     public void advance(float amount) {
-//        Parsing XP gain messages is technically more robust but doesn't handle translation packs
-//        checkInterval.advance(amount);
-//        if (checkInterval.intervalElapsed()) {
-//            CampaignUIAPI ui = Global.getSector().getCampaignUI();
-//            Object messageList = ReflectionUtils.invokeMethodNoCatch(ui, "getMessageList");
-//            List<?> messages = (List<?>) ReflectionUtils.invokeMethodNoCatch(messageList, "getMessages");
-//            for (Object message : messages) {
-//                Object intel = ReflectionUtils.invokeMethodNoCatch(message, "getIntel");
-//                List<?> lines = (List<?>) ReflectionUtils.getFieldWithClassNoCatch(MessageIntel.class, intel, "lines");
-//                if (!lines.isEmpty()) {
-//                    String text = (String) ReflectionUtils.getFieldWithClassNoCatch(MessageIntel.MessageLineData.class, lines.get(0), "text");
-//                    String[] words = text.split("\\s+");
-//                    if (words.length >= 3 && "Gained")
-//                }
-//            }
-//        }
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         long curXP = playerStats.getXP();
         int curSP = playerStats.getStoryPoints();
@@ -165,6 +149,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>();
         Map<ShipHullSpecAPI, Integer> counts = new HashMap<>();
         for (FleetMemberAPI fm : toConsider) {
+            if (fm.isMothballed()) continue;
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
             if (spec.isCivilianNonCarrier() && !allowCivilian) continue;
             if (!spec.isCivilianNonCarrier() && !allowCombat) continue;

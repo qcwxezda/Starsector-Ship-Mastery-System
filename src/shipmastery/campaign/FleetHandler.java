@@ -124,16 +124,25 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             //if (fm.isStation()) continue;
             ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
             MutableShipStatsAPI stats = fm.getStats();
+
+            float maxBeforeModification = fm.getRepairTracker().getMaxCR();
+            float crBeforeModification = fm.getRepairTracker().getCR();
             NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
             fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
-            final ShipVariantAPI variant = fm.getVariant();
 
+            final ShipVariantAPI variant = fm.getVariant();
             boolean repeatAutofit = false;
             for (Map.Entry<Integer, Boolean> entry : masteries.entrySet()) {
                 for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, entry.getKey(), entry.getValue())) {
                     effect.applyEffectsBeforeShipCreation(variant.getHullSize(), stats);
                     repeatAutofit |= effect.hasTag(MasteryTags.TRIGGERS_AUTOFIT);
                 }
+            }
+
+            float newMax = fm.getRepairTracker().getMaxCR();
+            float diff = newMax - maxBeforeModification;
+            if (diff > 0f) {
+                fm.getRepairTracker().setCR(Math.min(crBeforeModification + diff, fm.isStation() ? 1f : newMax));
             }
 
             if (!isNoAutofit(fleet, fm)) {
@@ -158,18 +167,14 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 }
 
                 // Adjust CR if mastery effects affected that
-                // TODO: figure out if this causes unwanted spontaneous repairs...
-                fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+                //fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
                 // Do this again just to make sure mastery handler is at bottom of hullmod list
-                fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
-
-//                float diff = fm.getRepairTracker().getMaxCR() - crBeforeModification;
-//                if (diff > 0f) {
-//                    fm.getRepairTracker().setCR(Math.min(fm.getRepairTracker().getMaxCR(), fm.getRepairTracker().getCR() + diff));
-//                }
+                variant.getHullMods().remove("sms_masteryHandler");
+                variant.getHullMods().add("sms_masteryHandler");
+                variant.addPermaMod("sms_masteryHandler");
             }
 
-            fm.getVariant().addTag(VARIANT_PROCESSED_TAG);
+            variant.addTag(VARIANT_PROCESSED_TAG);
 
             if (!masteries.isEmpty()) {
                 int level = masteries.lastEntry().getKey();

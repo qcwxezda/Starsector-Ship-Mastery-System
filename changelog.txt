@@ -1,6 +1,13 @@
+0.14.2 (dev)
+---------
+- MP is no longer gained from mothballed ships.
+- Fleet processor no longer repairs NPC fleets after assigning and activating their masteries.
+- Range-if-no-nearby-enemies: base bonus 15% -> 10%, increased range at which mastery triggers, increased decay rate
+- Clarified officer skill mastery description.
+
 0.14.1
 ---------
-- Fixed an issue related to FireAll DialogOptionSelected (never happens in vanilla or basically any mod, but SiC uses this for some reason).
+- Fixed a crash related to FireAll DialogOptionSelected (never happens in vanilla or basically any mod, but SiC uses this for some reason).
 - Removed the reduced D-mod effect mastery as it didn't work on most d-mods due to hullmod ordering issues.
 - Adjusted a mastery description.
 

@@ -92,7 +92,7 @@ public class HEFExplosion extends ShipSystemEffect {
 
         @Override
         public void advanceWhileOn(float amount) {
-            float gridSize = 2.5f * ship.getCollisionRadius();
+            float gridSize = 3.5f * ship.getCollisionRadius();
             Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
             while (itr.hasNext()) {
                 Object o = itr.next();
