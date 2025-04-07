@@ -19,6 +19,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
     private static BattleCreationContext lastBattleCreationContext = null;
     private final ShipSystemTracker shipSystemTracker = new ShipSystemTracker();
     private final FlagshipTracker flagshipTracker = new FlagshipTracker();
+    private final ProjectileTracker projectileTracker = new ProjectileTracker();
     private final IntervalUtil updateInterval = new IntervalUtil(2f, 3f);
 
     public static BattleCreationContext getLastBattleCreationContext() {
@@ -35,6 +36,8 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         // (possibly all ships with modules?)
         this.engine = engine;
         engine.getListenerManager().addListener(flagshipTracker);
+        engine.getListenerManager().addListener(projectileTracker);
+        projectileTracker.init(engine);
         lastBattleCreationContext = engine.getContext();
     }
 
@@ -47,6 +50,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         List<ShipAPI> ships = engine.getShips();
         // Ship system listeners stored per ship
         shipSystemTracker.advance(ships, amount);
+        projectileTracker.advance(engine, amount);
         // Flagship trackers stored in engine
         flagshipTracker.advance(engine);
 

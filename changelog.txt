@@ -2,8 +2,19 @@
 ---------
 - MP is no longer gained from mothballed ships.
 - Fleet processor no longer repairs NPC fleets after assigning and activating their masteries.
-- Range-if-no-nearby-enemies: base bonus 15% -> 10%, increased range at which mastery triggers, increased decay rate
+- Replaced many usages of engine.getCheckIterator and engine.getProjectiles with an implementation that should be more robust.
+    - Previously, projectiles in a certain radius of the firing ship were checked every frame, but this could miss certain projectiles if, e.g., combat time was sped up using the SpeedUp mod.
+    - Note: this has a side effect with the DEM-boost mastery that the regen won't start happening for a weapon until a DEM is actually fired from it.
+        - For hydra, this means that a hydra MIRV needs to split before the regen will kick in.
+- Torpedo-tracking mastery:
+    - Changed to apply to all unguided missiles with at least 500 base damage, as long as they have the default rocket AI (RocketAI in base game).
+        - Won't work for modded, unguided missiles that don't use RocketAI (if, for example, they have additional behavior that requires a custom AI).
+    - Removed the 100% additional ammo.
+    - Base missile HP increase 25% -> 40%.
+- Range-if-no-nearby-enemies: base bonus 15% -> 10%, increased range at which mastery triggers, increased decay rate.
+- Quantum-disruptor-duration mastery: reduced base cooldown reduction from 15% -> 10%.
 - Clarified officer skill mastery description.
+- Fixed issue with decoy-flare-boost-mastery that allowed it to affect decoy flares of other ships.
 
 0.14.1
 ---------

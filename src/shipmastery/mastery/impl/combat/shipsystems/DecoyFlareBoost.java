@@ -1,16 +1,13 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import shipmastery.combat.listeners.BaseShipSystemListener;
-import shipmastery.deferred.CombatDeferredActionPlugin;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
-
-import java.util.Iterator;
 
 public class DecoyFlareBoost extends ShipSystemEffect{
     @Override
@@ -32,27 +29,13 @@ public class DecoyFlareBoost extends ShipSystemEffect{
         return "flarelauncher_fighter";
     }
 
-    static class DecoyFlareBoostScript extends BaseShipSystemListener {
-        final ShipAPI ship;
-        final float strength;
-
-        DecoyFlareBoostScript(ShipAPI ship, float strength) {
-            this.ship = ship;
-            this.strength = strength;
-        }
-
+    record DecoyFlareBoostScript(ShipAPI ship, float strength) implements ProjectileCreatedListener {
         @Override
-        public void onActivate() {
-            CombatDeferredActionPlugin.performLater(() -> {
-                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 200f, 200f);
-                while (itr.hasNext()) {
-                    Object o = itr.next();
-                    if (!(o instanceof MissileAPI missile)) continue;
-                    if (!"flare_fighter".equals(missile.getProjectileSpecId())) continue;
-                    missile.setHitpoints(missile.getMaxHitpoints() * (1f + strength));
-                    missile.setMaxFlightTime(missile.getMaxFlightTime() * (1f + strength));
-                }
-            }, 0.5f);
+            public void reportProjectileCreated(DamagingProjectileAPI proj) {
+                if (!(proj instanceof MissileAPI missile)) return;
+                if (!"flare_fighter".equals(missile.getProjectileSpecId())) return;
+                missile.setHitpoints(missile.getMaxHitpoints() * (1f + strength));
+                missile.setMaxFlightTime(missile.getMaxFlightTime() * (1f + strength));
+            }
         }
-    }
 }

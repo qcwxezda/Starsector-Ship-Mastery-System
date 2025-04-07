@@ -15,7 +15,7 @@ import com.fs.starfarer.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
@@ -26,7 +26,6 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Iterator;
-import java.util.List;
 
 public class OrionDeviceDamage extends ShipSystemEffect {
 
@@ -71,7 +70,7 @@ public class OrionDeviceDamage extends ShipSystemEffect {
         return "orion_device";
     }
 
-    static class OrionDeviceDamageScript extends BaseShipSystemListener {
+    static class OrionDeviceDamageScript implements ProjectileCreatedListener {
         final ShipAPI ship;
         final float damage;
         WeaponAPI bombLauncher;
@@ -89,18 +88,8 @@ public class OrionDeviceDamage extends ShipSystemEffect {
         }
 
         @Override
-        public void onActivate() {
-            // The actual bomb should be the last projectile in the projectiles list
-            List<DamagingProjectileAPI> projectiles = Global.getCombatEngine().getProjectiles();
-            DamagingProjectileAPI bomb = null;
-            for (int i = projectiles.size() - 1; i >= 0; i--) {
-                DamagingProjectileAPI proj = projectiles.get(i);
-                if ("orion_device_bomb".equals(proj.getProjectileSpecId()) && proj.getSource() == ship) {
-                    bomb = proj;
-                    break;
-                }
-            }
-            final DamagingProjectileAPI finalBomb = bomb;
+        public void reportProjectileCreated(DamagingProjectileAPI proj) {
+            if (!"orion_device_bomb".equals(proj.getProjectileSpecId())) return;
             CombatDeferredActionPlugin.performLater(() -> {
                 Vector2f location = bombLauncher.getLocation();
                 float angle = bombLauncher.getCurrAngle();
@@ -113,7 +102,7 @@ public class OrionDeviceDamage extends ShipSystemEffect {
                     if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
                     Pair<Vector2f, Boolean> collisionPoint = CollisionUtils.rayCollisionCheckEntity(location, entity.getLocation(), entity);
                     Global.getCombatEngine().applyDamage(
-                            finalBomb,
+                            proj,
                             entity,
                             collisionPoint.one,
                             ship.getMutableStats().getMissileWeaponDamageMult().getModifiedValue() * damage,

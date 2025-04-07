@@ -15,7 +15,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import particleengine.Particles;
-import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
 import shipmastery.fx.JitterEmitter;
 import shipmastery.mastery.MasteryDescription;
@@ -25,7 +25,6 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -66,7 +65,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
         return "mine_strike";
     }
 
-    public static class EnergyMineConversionScript extends BaseShipSystemListener {
+    public static class EnergyMineConversionScript implements ProjectileCreatedListener {
         final ShipAPI ship;
         final String id;
         final float damage;
@@ -82,40 +81,32 @@ public class EnergyMineConversion extends ShipSystemEffect {
         }
 
         @Override
-        public void onFullyActivate() {
-            // Start from the end of the projectile list -- the newly made mine is very likely to be at the
-            // end of this list, so this for loop is actually O(1)-ish
-            ArrayList<DamagingProjectileAPI> projectiles = (ArrayList<DamagingProjectileAPI>) engine.getProjectiles();
-            for (int i = projectiles.size() - 1; i >= 0; i--) {
-                DamagingProjectileAPI proj = projectiles.get(i);
-                if (ship == proj.getSource() && "minelayer_mine_heavy".equals(proj.getProjectileSpecId())) {
-                    MissileAPI mine = (MissileAPI) engine.spawnProjectile(
-                            ship,
-                            null,
-                            "sms_energyminelayer",
-                            proj.getLocation(),
-                            proj.getFacing(),
-                            null);
-                    mine.setDamageAmount(proj.getBaseDamageAmount() * DAMAGE_FRAC);
-                    mine.setCustomData(PROJ_DAMAGE_KEY, damage);
-                    mine.setCustomData(PROJ_EMP_DAMAGE_KEY, empDamage);
-                    mine.setMineExplosionRange(EFFECT_RADIUS);
-                    int numParticles = 20;
-                    float duration = 0.25f;
-                    JitterEmitter jitter = new JitterEmitter(mine, mine.getSpriteAPI(), Color.CYAN, 0f, 10f, 0.25f, true, 0.5f, numParticles);
-                    jitter.enableDynamicAnchoring();
-                    Particles.stream(jitter, 1, numParticles / duration, duration);
-                    ((MissileAPI) proj).setArmingTime(10f);
-                    Global.getCombatEngine().removeEntity(proj);
-                    // Copied from MineStrikeStats
-                    Global.getCombatEngine().applyDamageModifiersToSpawnedProjectileWithNullWeapon(ship, WeaponAPI.WeaponType.MISSILE, false, mine.getDamage());
-                    float fadeInTime = 0.5F;
-                    mine.fadeOutThenIn(fadeInTime);
-                    float liveTime = 5.0F;
-                    mine.setFlightTime(mine.getMaxFlightTime() - liveTime);
-                    break;
-                }
-            }
+        public void reportProjectileCreated(DamagingProjectileAPI proj) {
+            if (!"minelayer_mine_heavy".equals(proj.getProjectileSpecId())) return;
+            MissileAPI mine = (MissileAPI) engine.spawnProjectile(
+                    ship,
+                    null,
+                    "sms_energyminelayer",
+                    proj.getLocation(),
+                    proj.getFacing(),
+                    null);
+            mine.setDamageAmount(proj.getBaseDamageAmount() * DAMAGE_FRAC);
+            mine.setCustomData(PROJ_DAMAGE_KEY, damage);
+            mine.setCustomData(PROJ_EMP_DAMAGE_KEY, empDamage);
+            mine.setMineExplosionRange(EFFECT_RADIUS);
+            int numParticles = 20;
+            float duration = 0.25f;
+            JitterEmitter jitter = new JitterEmitter(mine, mine.getSpriteAPI(), Color.CYAN, 0f, 10f, 0.25f, true, 0.5f, numParticles);
+            jitter.enableDynamicAnchoring();
+            Particles.stream(jitter, 1, numParticles / duration, duration);
+            ((MissileAPI) proj).setArmingTime(10f);
+            Global.getCombatEngine().removeEntity(proj);
+            // Copied from MineStrikeStats
+            Global.getCombatEngine().applyDamageModifiersToSpawnedProjectileWithNullWeapon(ship, WeaponAPI.WeaponType.MISSILE, false, mine.getDamage());
+            float fadeInTime = 0.5F;
+            mine.fadeOutThenIn(fadeInTime);
+            float liveTime = 5.0F;
+            mine.setFlightTime(mine.getMaxFlightTime() - liveTime);
         }
     }
 
@@ -124,7 +115,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
         @Override
         public void onExplosion(DamagingProjectileAPI explosion, DamagingProjectileAPI mine) {
             CombatEngineAPI engine = Global.getCombatEngine();
-            Iterator<Object> grid = engine.getShipGrid().getCheckIterator(mine.getLocation(), 2f* EFFECT_RADIUS, 2f*
+            Iterator<Object> grid = engine.getShipGrid().getCheckIterator(mine.getLocation(), 2f*EFFECT_RADIUS, 2f*
                     EFFECT_RADIUS);
             WeightedRandomPicker<CombatEntityAPI> picker = new WeightedRandomPicker<>();
             while (grid.hasNext()) {

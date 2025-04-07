@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.ParticleBurstEmitter;
@@ -30,7 +31,6 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class HEFExplosion extends ShipSystemEffect {
@@ -69,12 +69,11 @@ public class HEFExplosion extends ShipSystemEffect {
         return "highenergyfocus";
     }
 
-    static class HEFExplosionScript extends BaseShipSystemListener implements DamageDealtModifier {
+    static class HEFExplosionScript extends BaseShipSystemListener implements DamageDealtModifier, ProjectileCreatedListener {
         final ShipAPI ship;
         final Set<WeaponAPI> largeEnergyWeapons = new HashSet<>();
         final String id;
         final float damageFrac;
-
 
         HEFExplosionScript(ShipAPI ship, String id, float damageFrac) {
             this.ship = ship;
@@ -92,27 +91,6 @@ public class HEFExplosion extends ShipSystemEffect {
 
         @Override
         public void advanceWhileOn(float amount) {
-            float gridSize = 3.5f * ship.getCollisionRadius();
-            Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), gridSize, gridSize);
-            while (itr.hasNext()) {
-                Object o = itr.next();
-                if (!(o instanceof DamagingProjectileAPI proj)) continue;
-                if (proj.getElapsed() > 0.05f) continue;
-                if (!largeEnergyWeapons.contains(proj.getWeapon())) continue;
-                if (proj.getCustomData() == null || !proj.getCustomData().containsKey(id)) {
-                    proj.setCustomData(id, true);
-                    TrailEmitter trail = new TrailEmitter(proj);
-                    trail.color = trailColor;
-                    trail.length = proj.getMoveSpeed() * 0.05f;
-                    trail.width = 10f;
-                    trail.lifeJitter = 0.25f;
-                    trail.sizeJitter = 0.25f;
-                    trail.life = 0.2f;
-                    trail.yOffset = -trail.length * 0.25f;
-                    Particles.stream(trail, 1, 60f, -1f, emitter -> !Utils.wasProjectileRemoved(emitter.getProj()));
-                }
-            }
-
             Utils.maintainStatusForPlayerShip(ship,
                     id,
                     "graphics/icons/hullsys/high_energy_focus.png",
@@ -127,7 +105,9 @@ public class HEFExplosion extends ShipSystemEffect {
             if (!(param instanceof DamagingProjectileAPI proj)) return null;
             if (proj.getCustomData() == null || !proj.getCustomData().containsKey(id)) return null;
 
-            final float damageAmount = DamageType.FRAGMENTATION.equals(proj.getDamageType()) ? damage.getDamage() / 4f : damage.getDamage();
+            final float damageAmount = DamageType.FRAGMENTATION.equals(proj.getDamageType())
+                    ? damage.getDamage() / 4f
+                    : damage.getDamage();
             final float radius = (float) Math.sqrt(damageAmount) * 5f;
             CombatDeferredActionPlugin.performLater(() -> {
                 // Only spawn the explosion if the projectile is destroyed
@@ -156,7 +136,7 @@ public class HEFExplosion extends ShipSystemEffect {
                 );
                 spec.setDamageType(DamageType.HIGH_EXPLOSIVE);
                 spec.setUseDetailedExplosion(false);
-                Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt);
+                Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt).getDamage().setFluxComponent(1f);
 
                 ParticleBurstEmitter burst = new ParticleBurstEmitter(pt);
                 burst.size = 7f;
@@ -171,6 +151,22 @@ public class HEFExplosion extends ShipSystemEffect {
                 Particles.burst(burst, (int) radius);
             }, 0f);
             return null;
+        }
+
+        @Override
+        public void reportProjectileCreated(DamagingProjectileAPI proj) {
+            if (!ship.getSystem().isOn()) return;
+            if (!largeEnergyWeapons.contains(proj.getWeapon())) return;
+            proj.setCustomData(id, true);
+            TrailEmitter trail = new TrailEmitter(proj);
+            trail.color = trailColor;
+            trail.length = proj.getMoveSpeed() * 0.05f;
+            trail.width = 10f;
+            trail.lifeJitter = 0.25f;
+            trail.sizeJitter = 0.25f;
+            trail.life = 0.2f;
+            trail.yOffset = -trail.length * 0.25f;
+            Particles.stream(trail, 1, 60f, -1f, emitter -> !Utils.wasProjectileRemoved(emitter.getProj()));
         }
     }
 

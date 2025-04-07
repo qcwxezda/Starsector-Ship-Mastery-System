@@ -5,17 +5,18 @@ import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
@@ -25,7 +26,6 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class PilumSalamanderBoost extends BaseMasteryEffect {
@@ -50,7 +50,7 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         }
     }
 
-    static class PilumSalamanderBoostScript implements DamageDealtModifier, AdvanceableListener {
+    static class PilumSalamanderBoostScript implements DamageDealtModifier, ProjectileCreatedListener {
         final ShipAPI ship;
         final float hpIncrease;
         final float damage;
@@ -73,28 +73,6 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
                     if (isPilumOrSalamander(missileSpec)) {
                         eligibleWeapons.add(weapon);
                     }
-                }
-            }
-        }
-
-
-        @Override
-        public void advance(float amount) {
-            boolean isFiring = false;
-            for (WeaponAPI weapon : eligibleWeapons) {
-                if (weapon.getChargeLevel() >= 0.999f) {
-                    isFiring = true;
-                }
-            }
-            if (isFiring) {
-                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(ship.getLocation(), 2f*ship.getCollisionRadius(), 2f*ship.getCollisionRadius());
-                while (itr.hasNext()) {
-                    Object o = itr.next();
-                    if (!(o instanceof MissileAPI missile)) continue;
-                    if (!eligibleWeapons.contains(missile.getWeapon())) continue;
-                    if (missile.getCustomData() != null && missile.getCustomData().containsKey(id)) continue;
-                    missile.setCustomData(id, true);
-                    missile.setHitpoints(missile.getHitpoints() * (1f + hpIncrease));
                 }
             }
         }
@@ -148,6 +126,13 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
                 Global.getCombatEngine().spawnDamagingExplosion(spec, ship, pt).getDamage().setFluxComponent(empDamage);
             }, 0f);
             return null;
+        }
+
+        @Override
+        public void reportProjectileCreated(DamagingProjectileAPI proj) {
+            if (!(proj instanceof MissileAPI missile)) return;
+            if (!eligibleWeapons.contains(missile.getWeapon())) return;
+            missile.setHitpoints(missile.getHitpoints() * (1f + hpIncrease));
         }
     }
 
