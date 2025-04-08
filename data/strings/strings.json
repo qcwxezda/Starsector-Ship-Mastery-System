@@ -396,7 +396,7 @@
     "EMPEmitterFragDamage": "Each bolt from %1$s deals an additional %2$s fragmentation damage to fighters and ships.",
     "DriveFieldStabilizerBoost": "If %1$s is installed, increases the fleet's burn bonus by an additional %2$s.",
     "GroundSupportBoost": "If %1$s or %2$s is installed, increases the fleet's ground support bonus by an additional %3$s.",
-    "MaxAutomatedCR": "The %1$s skill always grants an additional %2$s maximum combat readiness regardless of the fleet's automated ship points.",
+    "MaxCRFloor": "If this ship's maximum combat readiness is below %1$s, sets maximum CR to that amount.",
     "ApplyOfficerSkill":"If this ship has no captain, or its captain doesn't have %1$s, grants its non-elite effect.\nIf this ship's captain has the non-elite version of the skill, grants its elite effect.",
     "ApplyOfficerSkillPost": "The ship must be captained by an officer to be eligible to gain the skill's elite effect.",
     "ShieldHullmodPackage": "If 3 of the following hullmods are installed: %1$s, %2$s, %3$s, and %4$s, reduces shield damage taken by %5$s and shield upkeep by %6$s.",

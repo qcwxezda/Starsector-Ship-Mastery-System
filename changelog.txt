@@ -1,20 +1,28 @@
-0.14.2 (dev)
+0.14.2
 ---------
 - MP is no longer gained from mothballed ships.
 - Fleet processor no longer repairs NPC fleets after assigning and activating their masteries.
+    - If they select a mastery effect that increases their max CR, the difference is added to the ship's current CR.
+    - This has a potential side effect of showing the CR bar even though it's full (e.g. 85%/85%), I have no idea why this happens.
 - Replaced many usages of engine.getCheckIterator and engine.getProjectiles with an implementation that should be more robust.
     - Previously, projectiles in a certain radius of the firing ship were checked every frame, but this could miss certain projectiles if, e.g., combat time was sped up using the SpeedUp mod.
     - Note: this has a side effect with the DEM-boost mastery that the regen won't start happening for a weapon until a DEM is actually fired from it.
         - For hydra, this means that a hydra MIRV needs to split before the regen will kick in.
+        - (This behavior is due to a hard-coded check specifically for hydra being removed.)
 - Torpedo-tracking mastery:
     - Changed to apply to all unguided missiles with at least 500 base damage, as long as they have the default rocket AI (RocketAI in base game).
         - Won't work for modded, unguided missiles that don't use RocketAI (if, for example, they have additional behavior that requires a custom AI).
     - Removed the 100% additional ammo.
     - Base missile HP increase 25% -> 40%.
+- Removed the automated-CR-doesn't-depend-on-DP mastery.
+    - Replaced with mastery effect that sets maximum CR to 40% if it was originally below that.
+    - Should no longer be incompatible with, e.g., Second in Command.
+    - Still only appears on automated ships (since it would be pretty useless on crewed ships).
+- Remnant ships no longer get "allow building-in Neural Integrator" as (part of) a mastery option, as this was added in vanilla.
 - Range-if-no-nearby-enemies: base bonus 15% -> 10%, increased range at which mastery triggers, increased decay rate.
 - Quantum-disruptor-duration mastery: reduced base cooldown reduction from 15% -> 10%.
 - Clarified officer skill mastery description.
-- Fixed issue with decoy-flare-boost-mastery that allowed it to affect decoy flares of other ships.
+- Fixed issue with decoy-flare-boost mastery that allowed it to affect decoy flares of other ships.
 
 0.14.1
 ---------

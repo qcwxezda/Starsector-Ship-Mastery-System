@@ -968,7 +968,7 @@
     "levels": {
       "max": {
         "A": "PlasmaJetsDissipation",
-        "B": "MaxAutomatedCR"
+        "B": "MaxCRFloor"
       }
     }
   },

@@ -82,9 +82,6 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
         if (!seenArgs.contains(HullMods.PHASE_ANCHOR) && spec.isPhase() && !spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) {
             wrp.add(HullMods.PHASE_ANCHOR);
         }
-        if (!seenArgs.contains(HullMods.NEURAL_INTEGRATOR) && spec.isBuiltInMod(HullMods.AUTOMATED) && !spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR)) {
-            wrp.add(HullMods.NEURAL_INTEGRATOR);
-        }
         if (wrp.isEmpty()) return null;
         return Collections.singletonList(wrp.pick());
     }

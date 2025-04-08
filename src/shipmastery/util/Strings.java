@@ -462,7 +462,7 @@ public interface Strings {
         String TemporalShellCRDegradation = Utils.getString( "sms_descriptions", "TemporalShellCRDegradation");
         String EMPEmitterEnergyDamage = Utils.getString( "sms_descriptions", "EMPEmitterEnergyDamage");
         String EMPEmitterFragDamage = Utils.getString( "sms_descriptions", "EMPEmitterFragDamage");
-        String MaxAutomatedCR = Utils.getString( "sms_descriptions", "MaxAutomatedCR");
+        String MaxCRFloor = Utils.getString( "sms_descriptions", "MaxCRFloor");
         String TimeFlowNearbyEnemies = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemies");
         String TimeFlowNearbyEnemiesPost = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesPost");
         String TimeFlowNearbyEnemiesTitle = Utils.getString( "sms_descriptions", "TimeFlowNearbyEnemiesTitle");

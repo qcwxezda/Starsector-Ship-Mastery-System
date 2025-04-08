@@ -100,7 +100,7 @@ MinimumCR,4,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumCR
 NavRelayBoost,4,combat,,1,shipmastery.mastery.impl.combat.NavRelayBoost
 ECMPackageBoost,4,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,4,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
-MaxAutomatedCR,4,combat unique,,1,shipmastery.mastery.impl.combat.MaxAutomatedCR
+MaxCRFloor,4,combat unique,,0.4,shipmastery.mastery.impl.combat.MaxCRFloor
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
 WeakerDesignCompromises,4,combat unique,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
 VambraceBonuses,4,combat doesnt_affect_modules,,0.05,shipmastery.mastery.impl.combat.VambraceBonuses

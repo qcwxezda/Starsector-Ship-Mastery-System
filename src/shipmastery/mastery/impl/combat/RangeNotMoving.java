@@ -1,5 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.GameState;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
@@ -64,6 +66,7 @@ public class RangeNotMoving extends BaseMasteryEffect {
 
         @Override
         public void advance(float amount) {
+            if (Global.getCurrentState() != GameState.COMBAT) return;
             float moveSpeed = ship.getVelocity().length();
             if (moveSpeed <= INCREASE_SPEED_LIMIT) {
                 currentIncrease += increasePerSecond * amount;

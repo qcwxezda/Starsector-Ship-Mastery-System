@@ -46,7 +46,7 @@
     "built_in_mod": "automated",
     "levels": {
       "8": {
-        "A": ["SModCapacity", "IgnoreNoBuildIn 1 neural_integrator", "BuiltInNeuralIntegrator"],
+        "A": ["SModCapacity", "BuiltInNeuralIntegrator"],
         "B": "ScaleOtherMasteries"
       }
     }
@@ -56,7 +56,7 @@
     "preset": "automated",
     "hint_or_tag": "derelict",
     "levels": {
-      "max": "MaxAutomatedCR"
+      "max": "MaxCRFloor"
     }
   },
 
