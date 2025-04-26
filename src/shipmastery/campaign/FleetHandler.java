@@ -319,6 +319,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         float bonus = data.averageModifier();
         float averageLevel = commander.getStats().getLevel()/3f + bonus + getNPCLevelModifier(progression);
+        float masteryStrength = getNPCStrengthModifier(progression);
+        commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(FleetHandler.class.getName(), 100f*masteryStrength);
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {
@@ -352,6 +354,10 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static float getNPCLevelModifier(float progression) {
         return (1f - progression) * Settings.NPC_MASTERY_LEVEL_MODIFIER + progression * Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP;
+    }
+
+    public static float getNPCStrengthModifier(float progression) {
+        return (1f - progression) * Settings.NPC_MASTERY_BONUS_MODIFIER + progression * Settings.NPC_MASTERY_BONUS_MODIFIER_CAP;
     }
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {

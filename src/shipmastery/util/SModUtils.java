@@ -25,10 +25,16 @@ public abstract class SModUtils {
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
+        return getMPCost(spec, ship, false);
+    }
+
+    public static int getMPCost(HullModSpecAPI spec, ShipAPI ship, boolean usingSP) {
         ShipVariantAPI variant = ship.getVariant();
         if (variant == null) return 0;
         // Engineering override reduces cost to 0
         if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)) return 0;
+        // If using SP, cost is also 0
+        if (usingSP) return 0;
         // Built-in mods always have static cost
         if (isHullmodBuiltIn(spec, variant)) {
             return 1;
@@ -54,6 +60,10 @@ public abstract class SModUtils {
     }
 
     public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {
+        return getCreditsCost(spec, ship, false);
+    }
+
+    public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship, boolean usingSP) {
         ShipVariantAPI variant = ship.getVariant();
         if (variant == null) return 0;
         int hullSizeOrd = Utils.hullSizeToInt(ship.getHullSize());
@@ -73,6 +83,11 @@ public abstract class SModUtils {
         // Engineering override reduces by additional factor
         if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)) {
             cost *= EngineeringOverride.CREDITS_COST_MULT;
+        }
+
+        // Using SP reduces by additional factor
+        if (usingSP) {
+            cost *= 0.1f;
         }
 
         cost *= TransientSettings.SMOD_CREDITS_COST_MULT.getModifiedValue();

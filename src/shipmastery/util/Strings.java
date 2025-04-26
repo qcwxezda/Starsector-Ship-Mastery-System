@@ -41,8 +41,10 @@ public interface Strings {
         String masteryTab = Utils.getString("sms_masteryPanel", "masteryTab");
         String creditsDisplay = Utils.getString("sms_masteryPanel", "creditsDisplay");
         String masteryPointsDisplay = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
+        String storyPointsDisplay = Utils.getString("sms_masteryPanel", "storyPointsDisplay");
         String hullmodListsEmptyHint = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
         String clearButton = Utils.getString("sms_masteryPanel", "clearButton");
+        String useSPButton = Utils.getString("sms_masteryPanel", "useSPButton");
         String builtInDisplay = Utils.getString("sms_masteryPanel", "builtInDisplay");
         String doubleClickHint = Utils.getString("sms_masteryPanel", "doubleClickHint");
         String yes = Utils.getString("sms_masteryPanel", "yes");
@@ -51,6 +53,7 @@ public interface Strings {
         String limitReached = Utils.getString("sms_masteryPanel", "limitReached");
         String notEnoughCredits = Utils.getString("sms_masteryPanel", "notEnoughCredits");
         String notEnoughMasteryPoints = Utils.getString("sms_masteryPanel", "notEnoughMasteryPoints");
+        String notEnoughStoryPoints = Utils.getString("sms_masteryPanel", "notEnoughStoryPoints");
         String dismissWindow = Utils.getString("sms_masteryPanel", "dismissWindow");
         String hullmodsTab = Utils.getString("sms_masteryPanel", "hullmodsTab");
         String unknownMastery = Utils.getString("sms_masteryPanel", "unknownMastery");

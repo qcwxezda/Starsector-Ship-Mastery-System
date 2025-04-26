@@ -28,7 +28,7 @@ public class SModTableRowPressed extends TriggerableProxy {
     final ShipAPI module;
     final ShipAPI root;
     long lastClickTime = 0;
-
+    public static final float CREDITS_FOR_NO_BONUS_XP = 250000f;
 
     public SModTableRowPressed(MasteryPanel masteryPanel, ShipAPI module, ShipAPI root) {
         super(ClassRefs.uiTableDelegateClass, ClassRefs.uiTableDelegateMethodName);
@@ -84,22 +84,44 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
                     else {
                         if (module.getFleetMember() != null && cur >= limit && !logisticDontTrack) {
-                            final int finalLimit = limit;
-                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - finalLimit), 0f);
+                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit), 0f);
                         }
                         variant.addPermaMod(rowData.hullModSpecId, true);
+                        float bonusXPFraction = 0f;
+                        if (masteryPanel.isUsingSP()) {
+                            float origCreditsCost = SModUtils.getCreditsCost(spec, module);
+                            float diff = origCreditsCost - rowData.creditsCost;
+                            bonusXPFraction = 1f - Math.min(1f, diff / CREDITS_FOR_NO_BONUS_XP);
+                            Global.getSector().getPlayerStats().spendStoryPoints(
+                                    1,
+                                    true,
+                                    null,
+                                    true,
+                                    bonusXPFraction,
+                                    String.format(
+                                            Strings.RefitScreen.sModAutofitSPText,
+                                            module.getName(),
+                                            module.getHullSpec().getNameWithDesignationWithDashClass(),
+                                            spec.getDisplayName()));
+                        }
                         if (module.getFleetMember() != null) {
                             ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
                             record.getSMods().add(rowData.hullModSpecId);
-                            record.setSPSpent(0);
+                            record.setSPSpent(masteryPanel.isUsingSP() ? 1 : 0);
                             record.setMPSpent(rowData.mpCost);
+                            record.setBonusXPFractionGained(bonusXPFraction);
                             record.setCreditsSpent(rowData.creditsCost);
                             PlaythroughLog.getInstance().getSModsInstalled().add(record);
                         }
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                                Strings.MasteryPanel.builtInConfirm + name, Settings.MASTERY_COLOR);
+                                Strings.MasteryPanel.builtInConfirm + name, masteryPanel.isUsingSP() ? Misc.getStoryBrightColor() : Settings.MASTERY_COLOR);
                     }
-                    Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
+
+                    if (masteryPanel.isUsingSP()) {
+                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+                    } else {
+                        Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
+                    }
 
                     // If engineering override is installed, it becomes permanent
                     if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && !variant.getPermaMods().contains(Strings.Hullmods.ENGINEERING_OVERRIDE)) {

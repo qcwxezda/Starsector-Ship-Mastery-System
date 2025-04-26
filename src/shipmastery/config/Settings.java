@@ -31,6 +31,8 @@ public class Settings {
     public static Integer NPC_MASTERY_LEVEL_MODIFIER;
     /** Hard cap for progression purposes */
     public static Integer NPC_MASTERY_LEVEL_MODIFIER_CAP;
+    public static Float NPC_MASTERY_BONUS_MODIFIER;
+    public static Float NPC_MASTERY_BONUS_MODIFIER_CAP;
     public static Boolean NPC_PROGRESSION_ENABLED;
     /** How long it takes for NPC mastery stats to reach cap, measured in total player MP gain across all combat ships*/
     public static Integer NPC_TOTAL_PROGRESSION_MP;
@@ -49,6 +51,8 @@ public class Settings {
         DOUBLE_CLICK_INTERVAL = (float) json.getDouble("doubleClickInterval");
         NPC_MASTERY_LEVEL_MODIFIER = json.getInt("npcMasteryLevelModifier");
         NPC_MASTERY_LEVEL_MODIFIER_CAP = json.getInt("npcMasteryLevelModifierCap");
+        NPC_MASTERY_BONUS_MODIFIER = (float) json.getDouble("npcMasteryBonus");
+        NPC_MASTERY_BONUS_MODIFIER_CAP = (float) json.getDouble("npcMasteryBonusCap");
 
         NPC_PROGRESSION_ENABLED = json.getBoolean("progressionEnabled");
         NPC_TOTAL_PROGRESSION_MP = json.getInt("npcTotalProgressionMP");

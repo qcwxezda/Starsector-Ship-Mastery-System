@@ -31,6 +31,7 @@ import shipmastery.ui.triggers.ConfirmMasteryChangesPressed;
 import shipmastery.ui.triggers.SModTableHeaderPressed;
 import shipmastery.ui.triggers.SModTableRowPressed;
 import shipmastery.ui.triggers.TabButtonPressed;
+import shipmastery.ui.triggers.UseSPButtonPressed;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
@@ -77,7 +78,7 @@ public class MasteryPanel {
     MasteryDisplay savedMasteryDisplay;
     TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, createConstructDisplay, rerollMasteryDisplay, enhanceMasteryDisplay;
     int currentMastery, maxMastery;
-    boolean hasLogisticBuiltIn = false, hasLogisticEnhanceBonus = false;
+    boolean hasLogisticBuiltIn = false, hasLogisticEnhanceBonus = false, usingSP = false;
 
     public MasteryPanel(RefitHandler handler) {
 
@@ -87,7 +88,6 @@ public class MasteryPanel {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.cantOpenPanel, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
         }
-
 
         rootPanel = dialogData.panel;
         this.handler = handler;
@@ -219,9 +219,8 @@ public class MasteryPanel {
 
         int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
         String masteryPointsString = Strings.MasteryPanel.masteryPointsDisplay + masteryPointsAmt;
-        float masteryPointsStringWidth = Global.getSettings().computeStringWidth(masteryPointsString + 10f,
+        float masteryPointsStringWidth = 10f + Global.getSettings().computeStringWidth(masteryPointsString,
                                                                                  "graphics/fonts/orbitron20aabold.fnt");
-
         TooltipMakerAPI masteryPoints = labelsPanel.createUIElement(masteryPointsStringWidth, 30f, false);
         masteryPoints.setParaOrbitronLarge();
         LabelAPI masteryPointsLabel = masteryPoints.addPara(masteryPointsString, 10f);
@@ -229,8 +228,20 @@ public class MasteryPanel {
         masteryPointsLabel.setHighlight("" + masteryPointsAmt);
         masteryPointsLabel.setHighlightColor(Settings.MASTERY_COLOR);
 
+        int storyPointsAmt = Global.getSector().getPlayerStats().getStoryPoints();
+        String storyPointsString = Strings.MasteryPanel.storyPointsDisplay + storyPointsAmt;
+        float storyPointsStringWidth = 10f + Global.getSettings().computeStringWidth(masteryPointsString,
+                "graphics/fonts/orbitron20aabold.fnt");
+        TooltipMakerAPI storyPoints = labelsPanel.createUIElement(storyPointsStringWidth, 30f, false);
+        storyPoints.setParaOrbitronLarge();
+        LabelAPI storyPointsLabel = storyPoints.addPara(storyPointsString, 10f);
+        storyPointsLabel.setAlignment(Alignment.LMID);
+        storyPointsLabel.setHighlight("" + storyPointsAmt);
+        storyPointsLabel.setHighlightColor(Misc.getStoryBrightColor());
+
         labelsPanel.addUIElement(credits).inBL(20f, 10f);
-        labelsPanel.addUIElement(masteryPoints).inBMid(10f);
+        labelsPanel.addUIElement(masteryPoints).inBL(280f, 10f);
+        labelsPanel.addUIElement(storyPoints).inBL(610f, 10f);
         return labelsPanel;
     }
 
@@ -261,9 +272,14 @@ public class MasteryPanel {
 
         TooltipMakerAPI buildInListHeader = thisShipPanel.createUIElement(width - 25f, 25f, false);
         UITable headerTable =
-                (UITable) buildInListHeader.beginTable(Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                       Misc.getBrightPlayerColor(), tableEntryHeight, false, true,
-                                                       columnData);
+                (UITable) buildInListHeader.beginTable(
+                        usingSP ? Misc.getStoryOptionColor() : Misc.getBasePlayerColor(),
+                        usingSP ? Misc.getStoryDarkColor() : Misc.getDarkPlayerColor(),
+                        usingSP ? Misc.getStoryBrightColor() : Misc.getBrightPlayerColor(),
+                        tableEntryHeight,
+                        false,
+                        true,
+                        columnData);
         Object header = ReflectionUtils.invokeMethod(headerTable, "getHeader");
         List<?> headerChildren = (List<?>) ReflectionUtils.invokeMethod(header, "getChildrenNonCopy");
         for (int i = 0; i < headerChildren.size(); i++) {
@@ -278,9 +294,14 @@ public class MasteryPanel {
         buildInListHeader.addTable("", -1, 0f);
 
         TooltipMakerAPI buildInList = thisShipPanel.createUIElement(width - 25f, height - 75f, true);
-        UITable table = (UITable) buildInList.beginTable(Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                         Misc.getBrightPlayerColor(), tableEntryHeight, true, false,
-                                                         columnData);
+        UITable table = (UITable) buildInList.beginTable(
+                usingSP ? Misc.getStoryOptionColor() : Misc.getBasePlayerColor(),
+                usingSP ? Misc.getStoryDarkColor() : Misc.getDarkPlayerColor(),
+                usingSP ? Misc.getStoryBrightColor() : Misc.getBrightPlayerColor(),
+                tableEntryHeight,
+                true,
+                false,
+                columnData);
         ReflectionUtils.invokeMethodExtWithClasses(table, "setRowClickDelegate", false,
                                                    new Class[]{ClassRefs.uiTableDelegateClass},
                                                    new SModTableRowPressed(this, module, root).getProxy());
@@ -307,10 +328,17 @@ public class MasteryPanel {
         if (moduleVariant.getSMods().isEmpty()) {
             resetButton.setEnabled(false);
         }
-
         if (!TransientSettings.SMOD_REMOVAL_ENABLED && !Settings.CLEAR_SMODS_ALWAYS_ENABLED) {
             ReflectionUtils.invokeMethod(resetButton, "setOpacity", 0f);
         }
+
+        float useSPButtonW = 200f, useSPButtonH = 30f;
+        TooltipMakerAPI useSPButtonTTM = thisShipPanel.createUIElement(useSPButtonW, useSPButtonH, false);
+        useSPButtonTTM.setAreaCheckboxFont(Fonts.ORBITRON_20AABOLD);
+        ButtonAPI useSPButton = useSPButtonTTM.addAreaCheckbox(Strings.MasteryPanel.useSPButton, null, Misc.getStoryOptionColor(), Misc.getStoryDarkColor(),
+                Misc.getStoryBrightColor(), useSPButtonW, useSPButtonH, 0f);
+        ReflectionUtils.setButtonListener(useSPButton, new UseSPButtonPressed(this));
+        useSPButton.setChecked(isUsingSP());
 
         float modularCountW = 200f, modularCountH = 40f;
         int nSMods = moduleVariant.getSMods().size();
@@ -336,8 +364,9 @@ public class MasteryPanel {
         thisShipPanel.addUIElement(buildInListHeader).inTMid(20f);
 
         thisShipPanel.addUIElement(resetButtonTTM).inTR(30f, -20f);
+        thisShipPanel.addUIElement(useSPButtonTTM).inTL(13f, -20f);
 
-        thisShipPanel.addUIElement(hintTextTTM).inTL(20f, -5f);
+        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, -5f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
         return thisShipPanel;
     }
@@ -467,11 +496,7 @@ public class MasteryPanel {
     }
 
     LabelAPI label(String str, Color color) {
-        return label(str, color, tableFont);
-    }
-
-    LabelAPI label(String str, Color color, String font) {
-        LabelAPI label = Global.getSettings().createLabel(str, font);
+        LabelAPI label = Global.getSettings().createLabel(str, MasteryPanel.tableFont);
         label.setColor(color);
         return label;
     }
@@ -482,9 +507,9 @@ public class MasteryPanel {
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
         String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
-        int mpCost = SModUtils.getMPCost(spec, module);
+        int mpCost = SModUtils.getMPCost(spec, module, usingSP);
         String mpCostStr = "" + mpCost;
-        int creditsCost = SModUtils.getCreditsCost(spec, module);
+        int creditsCost = SModUtils.getCreditsCost(spec, module, usingSP);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
         Color masteryColor = Settings.MASTERY_COLOR;
@@ -562,12 +587,24 @@ public class MasteryPanel {
 
         int credits = (int) Utils.getPlayerCredits().get();
         int mp = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
+        int sp = Global.getSector().getPlayerStats().getStoryPoints();
 
         String notEnoughCredits = Strings.MasteryPanel.notEnoughCredits;
         String notEnoughMasteryPoints = Strings.MasteryPanel.notEnoughMasteryPoints;
-        if (mpCost > mp && creditsCost > credits) return notEnoughMasteryPoints + ", " + notEnoughCredits;
-        if (mpCost > mp) return notEnoughMasteryPoints;
-        if (creditsCost > credits) return notEnoughCredits;
+        String notEnoughStoryPoints = Strings.MasteryPanel.notEnoughStoryPoints;
+
+        StringBuilder sb = new StringBuilder();
+        if (sp < 1 && usingSP) sb.append(notEnoughStoryPoints);
+        if (mpCost > mp) {
+            if (!sb.isEmpty()) sb.append("; ");
+            sb.append(notEnoughMasteryPoints);
+        }
+        if (creditsCost > credits) {
+            if (!sb.isEmpty()) sb.append("; ");
+            sb.append(notEnoughCredits);
+        }
+
+        if (!sb.isEmpty()) return sb.toString();
         return null;
     }
 
@@ -649,5 +686,13 @@ public class MasteryPanel {
         }
         currentColumnName = columnName;
         forceRefresh(false, false, true, false);
+    }
+
+    public boolean isUsingSP() {
+        return usingSP;
+    }
+
+    public void setUsingSP(boolean usingSP) {
+        this.usingSP = usingSP;
     }
 }

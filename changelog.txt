@@ -1,3 +1,9 @@
+0.14.3 (dev)
+---------
+- Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
+    - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
+- Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
+
 0.14.2
 ---------
 - MP is no longer gained from mothballed ships.

@@ -37,7 +37,6 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                 selectable.add(fm);
             }
         }
-
         dialog.showFleetMemberPickerDialog(
                 Strings.Misc.selectAShip,
                 Strings.MasteryPanel.confirmText2,
