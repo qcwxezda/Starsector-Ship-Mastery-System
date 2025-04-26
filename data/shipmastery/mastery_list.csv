@@ -62,6 +62,7 @@ TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracki
 ArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,4,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
 BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.BackArmorBoost
+FrontArmorBoost,2,combat unique,,0.15,shipmastery.mastery.impl.combat.FrontArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentingSpeedBoost
 RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNotMoving

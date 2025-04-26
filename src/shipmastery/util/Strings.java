@@ -314,6 +314,8 @@ public interface Strings {
         String DroneStrikeRegenPost = Utils.getString( "sms_descriptions", "DroneStrikeRegenPost");
         String BackArmorBoost = Utils.getString( "sms_descriptions", "BackArmorBoost");
         String BackArmorBoostPost = Utils.getString( "sms_descriptions", "BackArmorBoostPost");
+        String FrontArmorBoost = Utils.getString( "sms_descriptions", "FrontArmorBoost");
+        String FrontArmorBoostPost = Utils.getString( "sms_descriptions", "FrontArmorBoostPost");
         String FlareLauncherWhileVenting = Utils.getString( "sms_descriptions", "FlareLauncherWhileVenting");
         String FlareLauncherWhileVentingPost = Utils.getString( "sms_descriptions", "FlareLauncherWhileVentingPost");
         String ShieldEfficiencyNearbyEnemies = Utils.getString( "sms_descriptions", "ShieldEfficiencyNearbyEnemies");

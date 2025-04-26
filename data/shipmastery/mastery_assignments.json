@@ -673,7 +673,7 @@
     "levels": {
       "max": {
         "A": "DroneStrikeRegen",
-        "B": "BackArmorBoost"
+        "B": "FrontArmorBoost"
       }
     }
   },
