@@ -157,13 +157,19 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
             if (modifyFlat && !stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (!modifyFlat && stat.tags.contains(StatTags.TAG_MODIFY_FLAT)) continue;
             if (stat.tier > maxTier) continue;
-            boolean duplicateArg = false;
-            List<String[]> usedArgs = getAllUsedArgs();
-            for (String[] args : usedArgs) {
+            int duplicateCount = 0;
+            List<String[]> allUsedArgs = getAllUsedArgs();
+            for (String[] args : allUsedArgs) {
                 // Avoid duplicate stat buffs
                 if (args.length >= 2 && args[1].equals(stat.id)) {
-                    duplicateArg = true;
-                    break;
+                    duplicateCount++;
+                }
+            }
+            List<String[]> usedArgsThisLevel = getUsedArgs(getLevel());
+            for (String[] args : usedArgsThisLevel) {
+                // Strongly avoid duplicates within the same level
+                if (args.length >= 2 && args[1].equals(stat.id)) {
+                    duplicateCount += 2;
                 }
             }
 
@@ -174,7 +180,7 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
                 // try to prioritize higher tier stats, if applicable
                 float tierMult = stat.tier * stat.tier;
                 // Strongly avoid duplicate arguments
-                if (duplicateArg) weight *= 0.0001f;
+                weight *= (float) Math.pow(0.01f, duplicateCount);
                 if (maxTier - stat.tier >= 2) tierMult *= 0.01f;
                 picker.add(stat, randomMode ? Math.max(1f, weight) : weight * tierMult);
             }

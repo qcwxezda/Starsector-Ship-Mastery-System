@@ -15,7 +15,6 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
-import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.Utils;
 
 import java.util.HashMap;
@@ -61,15 +60,15 @@ public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageG
         commander.getStats().setSkillLevel(Skills.COORDINATED_MANEUVERS, 1);
         commander.getStats().setSkillLevel(Skills.BEST_OF_THE_BEST, 1);
         fleet.setCommander(commander);
-        Map<String, Map<Integer, Boolean>> masteries = new HashMap<>();
+        Map<String, Map<Integer, String>> masteries = new HashMap<>();
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
-            Map<Integer, Boolean> levels = new HashMap<>();
+            Map<Integer, String> levels = new HashMap<>();
             for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-                List<MasteryEffect> option2 = ShipMastery.getMasteryEffects(spec, i, true);
-                boolean isOption2 = Misc.random.nextBoolean();
-                levels.put(i, !option2.isEmpty() && isOption2);
+                List<String> options = ShipMastery.getMasteryOptionIds(spec, i);
+                if (options.isEmpty()) continue;
+                levels.put(i, options.get(random.nextInt(options.size())));
             }
             masteries.put(spec.getHullId(), levels);
         }

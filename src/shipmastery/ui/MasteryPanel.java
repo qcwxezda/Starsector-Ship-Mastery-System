@@ -388,7 +388,7 @@ public class MasteryPanel {
         }
     }
 
-    public Map<Integer, Boolean> getSelectedMasteryButtons() {
+    public Map<Integer, String> getSelectedMasteryButtons() {
         return savedMasteryDisplay == null ? new HashMap<>() : savedMasteryDisplay.getSelectedLevels();
     }
 
@@ -456,7 +456,7 @@ public class MasteryPanel {
         TooltipMakerAPI masteryDisplayTTM =
                 masteryPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
 
-        float pad = 25f;
+        float pad = 45f;
         MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, () -> showUpgradeOrConfirmation(canEnhance));
         display.create(masteryDisplayTTM);
         masteryDisplayTTM.setHeightSoFar(display.getTotalHeight() - pad);

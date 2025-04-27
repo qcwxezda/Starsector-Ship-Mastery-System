@@ -2,17 +2,17 @@ id,description,tier,default_amount,tags,location
 ### Note: default amount should be a buff, as whether it's negative or positive determines highlight color ####
 #### LOGISTICS ####
 MaxBurnLevel,maximum burn level,,0.5,modify_flat require_integer,shipmastery.stats.logistics.MaxBurnLevel
-CargoCapacity,cargo capacity,,0.25,,shipmastery.stats.logistics.CargoCapacity
-FuelCapacity,fuel capacity,,0.25,,shipmastery.stats.logistics.FuelCapacity
-CrewCapacity,crew capacity,,0.25,,shipmastery.stats.logistics.CrewCapacity
-FuelUsage,fuel usage,,-0.25,,shipmastery.stats.logistics.FuelUsage
-SupplyUsage,supplies maintenance,,-0.25,,shipmastery.stats.logistics.SupplyUsage
+CargoCapacity,cargo capacity,,0.2,,shipmastery.stats.logistics.CargoCapacity
+FuelCapacity,fuel capacity,,0.2,,shipmastery.stats.logistics.FuelCapacity
+CrewCapacity,crew capacity,,0.2,,shipmastery.stats.logistics.CrewCapacity
+FuelUsage,fuel usage,,-0.2,,shipmastery.stats.logistics.FuelUsage
+SupplyUsage,supplies maintenance,,-0.2,,shipmastery.stats.logistics.SupplyUsage
 CRPerDeployment,combat readiness lost per deployment,,-0.2,,shipmastery.stats.logistics.CRPerDeployment
 CRRecoveryRate,combat readiness recovery rate,,0.3,,shipmastery.stats.logistics.CRRecoveryRate
 CRMax,maximum combat readiness,2,0.08,modify_flat display_as_percent,shipmastery.stats.logistics.CRMax
 CrewLoss,crew loss,,-0.3,,shipmastery.stats.logistics.CrewLoss
-SensorProfile,sensor profile,,-0.25,,shipmastery.stats.logistics.SensorProfile
-SensorStrength,sensor strength,,0.3,,shipmastery.stats.logistics.SensorStrength
+SensorProfile,sensor profile,,-0.2,,shipmastery.stats.logistics.SensorProfile
+SensorStrength,sensor strength,,0.25,,shipmastery.stats.logistics.SensorStrength
 DModAcquireProbability,the probability of gaining d-mods when destroyed,,-0.3,,shipmastery.stats.logistics.DModAcquireProbability
 #### COMBAT ####
 MaxSpeed,maximum speed in combat,2,0.1,,shipmastery.stats.combat.MaxSpeed

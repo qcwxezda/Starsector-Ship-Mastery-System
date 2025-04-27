@@ -123,7 +123,7 @@ public interface MasteryEffect {
     /** Level and index in the mastery list of that particular level that this mastery resides in. */
     int getLevel();
     int getIndex();
-    boolean isOption2();
+    String getOptionId();
 
     /** Generate random arguments, if the mastery effect takes required arguments.
      *  Return null to indicate a failure and that this effect should not be selected.

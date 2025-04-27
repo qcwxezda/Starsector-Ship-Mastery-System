@@ -8,6 +8,7 @@ import shipmastery.util.Utils;
 
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class ConfirmMasteryChangesPressed extends ActionListener {
@@ -22,31 +23,31 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
     @Override
     public void trigger(Object... args) {
-        Map<Integer, Boolean> activeSet = ShipMastery.getPlayerActiveMasteriesCopy(spec);
-        Map<Integer, Boolean> newSet = masteryPanel.getSelectedMasteryButtons();
-        NavigableMap<Integer, Boolean> toActivate = new TreeMap<>();
-        NavigableMap<Integer, Boolean> toDeactivate = new TreeMap<>();
+        Map<Integer, String> activeSet = ShipMastery.getPlayerActiveMasteriesCopy(spec);
+        Map<Integer, String> newSet = masteryPanel.getSelectedMasteryButtons();
+        NavigableMap<Integer, String> toActivate = new TreeMap<>();
+        NavigableMap<Integer, String> toDeactivate = new TreeMap<>();
 
-        for (Map.Entry<Integer, Boolean> entry : activeSet.entrySet()) {
+        for (Map.Entry<Integer, String> entry : activeSet.entrySet()) {
             int level = entry.getKey();
-            boolean wasOption2 = entry.getValue();
-            if (!newSet.containsKey(level) || newSet.get(level) != wasOption2) {
-                toDeactivate.put(level, wasOption2);
+            String active = entry.getValue();
+            if (!newSet.containsKey(level) || !Objects.equals(active, newSet.get(level))) {
+                toDeactivate.put(level, active);
             }
         }
 
-        for (Map.Entry<Integer, Boolean> entry : newSet.entrySet()) {
+        for (Map.Entry<Integer, String> entry : newSet.entrySet()) {
             int level = entry.getKey();
-            boolean isOption2 = entry.getValue();
-            if (!activeSet.containsKey(level) || activeSet.get(level) != isOption2) {
-                toActivate.put(level, isOption2);
+            String newId = entry.getValue();
+            if (!activeSet.containsKey(level) || !Objects.equals(activeSet.get(level), newId)) {
+                toActivate.put(level, newId);
             }
         }
 
-        for (Map.Entry<Integer, Boolean> entry : toDeactivate.descendingMap().entrySet()) {
+        for (Map.Entry<Integer, String> entry : toDeactivate.descendingMap().entrySet()) {
             ShipMastery.deactivatePlayerMastery(spec, entry.getKey(), entry.getValue());
         }
-        for (Map.Entry<Integer, Boolean> entry : toActivate.entrySet()) {
+        for (Map.Entry<Integer, String> entry : toActivate.entrySet()) {
             ShipMastery.activatePlayerMastery(spec, entry.getKey(), entry.getValue());
         }
 

@@ -7,17 +7,16 @@ import shipmastery.mastery.MasteryEffect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /** Data for a specific mastery level. One instance per ship hull type per level. */
 public class MasteryLevelData {
     /** Reloaded when save file changes */
-    final List<MasteryEffect> effectsListOption1 = new ArrayList<>();
-
-    final List<MasteryEffect> effectsListOption2 = new ArrayList<>();
-
+    final SortedMap<String, List<MasteryEffect>> effectsLists = new TreeMap<>();
     /** Created once on game load */
-    final List<MasteryGenerator> generatorsOption1 = new ArrayList<>();
-    final List<MasteryGenerator> generatorsOption2 = new ArrayList<>();
+    final SortedMap<String, List<MasteryGenerator>> generatorsLists = new TreeMap<>();
+
     final String hullOrPresetName;
     final ShipHullSpecAPI spec;
     final int level;
@@ -26,11 +25,14 @@ public class MasteryLevelData {
         if (spec == null) {
             throw new RuntimeException(hullOrPresetName + " is a preset; can't generate masteries for a preset");
         }
-        for (int i = 0; i < generatorsOption1.size(); i++) {
-            effectsListOption1.add(generatorsOption1.get(i).generate(spec, level, i, false, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
-        }
-        for (int i = 0; i < generatorsOption2.size(); i++) {
-            effectsListOption2.add(generatorsOption2.get(i).generate(spec, level, i, true, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+        for (var entry : generatorsLists.entrySet()) {
+            String key = entry.getKey();
+            List<MasteryGenerator> generators = entry.getValue();
+            List<MasteryEffect> effects = new ArrayList<>();
+            for (int i = 0; i < generators.size(); i++) {
+                effects.add(generators.get(i).generate(spec, level, i, key, seedPrefix, avoidWhenGenerating, paramsToAvoidWhenGenerating));
+            }
+            effectsLists.put(key, effects);
         }
     }
 
@@ -47,32 +49,23 @@ public class MasteryLevelData {
         this.level = level;
     }
 
-    public void addGeneratorToOption1(MasteryGenerator generator) {
-        generatorsOption1.add(generator);
+    public void addGeneratorToList(String id, MasteryGenerator generator) {
+        generatorsLists.computeIfAbsent(id, k -> new ArrayList<>()).add(generator);
     }
 
-    public void addGeneratorToOption2(MasteryGenerator generator) {
-        generatorsOption2.add(generator);
+    public List<MasteryGenerator> getGenerators(String id) {
+        return generatorsLists.getOrDefault(id, new ArrayList<>());
     }
 
-    public List<MasteryGenerator> getGeneratorsOption1() {
-        return generatorsOption1;
+    public SortedMap<String, List<MasteryGenerator>> getGeneratorsLists() {
+        return generatorsLists;
     }
 
-    public List<MasteryGenerator> getGeneratorsOption2() {
-        return generatorsOption2;
-    }
-
-    public List<MasteryEffect> getEffectsListOption1() {
-        return effectsListOption1;
-    }
-
-    public List<MasteryEffect> getEffectsListOption2() {
-        return effectsListOption2;
+    public SortedMap<String, List<MasteryEffect>> getEffectsLists() {
+        return effectsLists;
     }
 
     public void clear() {
-        effectsListOption1.clear();
-        effectsListOption2.clear();
+        effectsLists.clear();
     }
 }

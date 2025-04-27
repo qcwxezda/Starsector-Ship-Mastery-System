@@ -453,7 +453,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         final ShipVariantAPI moduleVariant;
 
         /** Active masteries at the time of selection -- if these change, need to refresh the ship */
-        final NavigableMap<Integer, Boolean> activeMasteries;
+        final NavigableMap<Integer, String> activeMasteries;
 
         ShipInfo(ShipAPI moduleShip, ShipAPI rootShip) {
             if (rootShip == null) {

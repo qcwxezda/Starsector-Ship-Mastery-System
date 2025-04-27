@@ -193,6 +193,9 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
                     && !spec.hasTag(Tags.AUTOMATED_RECOVERABLE)) {
                 iter.remove();
             }
+            else if (spec.getTags().contains(Tags.RESTRICTED)) {
+                iter.remove();
+            }
             else if (ShipAPI.HullSize.FIGHTER.equals(spec.getHullSize())) {
                 iter.remove();
             }

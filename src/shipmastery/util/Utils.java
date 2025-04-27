@@ -644,8 +644,11 @@ public abstract class Utils {
             if (spec != getRestoredHullSpec(spec)) continue;
 
             for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-                List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
-                effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
+                List<String> optionIds = ShipMastery.getMasteryOptionIds(spec, i);
+                List<MasteryEffect> effects = new ArrayList<>();
+                for (String id : optionIds) {
+                    effects.addAll(ShipMastery.getMasteryEffects(spec, i, id));
+                }
                 for (MasteryEffect effect : effects) {
                     String shortId = ShipMastery.getId(effect.getClass());
                     MasteryInfo info = ShipMastery.getMasteryInfo(shortId);

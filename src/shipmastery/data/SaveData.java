@@ -15,7 +15,7 @@ public class SaveData {
     /**
      * Set of mastery levels whose effects are active
      */
-    public final NavigableMap<Integer, Boolean> activeLevels;
+    public final NavigableMap<Integer, String> activeLevels;
 
     public SaveData(float points, int level) {
         this.points = points;
@@ -23,8 +23,8 @@ public class SaveData {
         activeLevels = new TreeMap<>();
     }
 
-    public void activateLevel(int level, boolean isOption2) {
-        activeLevels.put(level, isOption2);
+    public void activateLevel(int level, String id) {
+        activeLevels.put(level, id);
     }
 
     public void deactivateLevel(int level) {

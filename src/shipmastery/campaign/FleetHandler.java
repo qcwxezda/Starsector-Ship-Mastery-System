@@ -42,7 +42,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
-    /** Can be used to set custom mastery levels. Place in commander's memory. Expects a Map<String, Map<Integer, Boolean>>
+    /** Can be used to set custom mastery levels. Place in commander's memory. Expects a Map<String, Map<Integer, String>>
      *  hull spec id -> level -> which option is activated */
     public static final String CUSTOM_MASTERIES_KEY = "$sms_CustomMasteryData";
     /** Can be used to set custom difficulty progression (between 0 and 1). Place in commander's memory. Mostly used
@@ -51,19 +51,19 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     /** Variant tag placed on NPC variants to indicate that this handler has processed the fleet. Importantly, the tag will
      *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
     public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
-    public static final Map<String, Map<String, NavigableMap<Integer, Boolean>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
+    public static final Map<String, Map<String, NavigableMap<Integer, String>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
 
     public FleetHandler() {
         super(false);
     }
 
-    public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, Boolean> levels) {
-        Map<String, NavigableMap<Integer, Boolean>> subMap = NPC_MASTERY_CACHE.computeIfAbsent(commander.getId(), k -> new HashMap<>());
+    public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, String> levels) {
+        Map<String, NavigableMap<Integer, String>> subMap = NPC_MASTERY_CACHE.computeIfAbsent(commander.getId(), k -> new HashMap<>());
         subMap.put(Utils.getRestoredHullSpecId(spec), levels);
     }
 
-    public static NavigableMap<Integer, Boolean> getCachedNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec) {
-        Map<String, NavigableMap<Integer, Boolean>> subMap = NPC_MASTERY_CACHE.get(commander.getId());
+    public static NavigableMap<Integer, String> getCachedNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec) {
+        Map<String, NavigableMap<Integer, String>> subMap = NPC_MASTERY_CACHE.get(commander.getId());
         if (subMap == null) return null;
         return subMap.get(Utils.getRestoredHullSpecId(spec));
     }
@@ -127,12 +127,12 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
             float maxBeforeModification = fm.getRepairTracker().getMaxCR();
             float crBeforeModification = fm.getRepairTracker().getCR();
-            NavigableMap<Integer, Boolean> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
+            NavigableMap<Integer, String> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
             fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
 
             final ShipVariantAPI variant = fm.getVariant();
             boolean repeatAutofit = false;
-            for (Map.Entry<Integer, Boolean> entry : masteries.entrySet()) {
+            for (Map.Entry<Integer, String> entry : masteries.entrySet()) {
                 for (MasteryEffect effect : ShipMastery.getMasteryEffects(spec, entry.getKey(), entry.getValue())) {
                     effect.applyEffectsBeforeShipCreation(variant.getHullSize(), stats);
                     repeatAutofit |= effect.hasTag(MasteryTags.TRIGGERS_AUTOFIT);
@@ -282,23 +282,23 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         return fleet.getFlagship();
     }
 
-    public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec) {
+    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec) {
         return getActiveMasteriesForCommander(commander, spec, getFlagship(commander));
     }
 
-    public static NavigableMap<Integer, Boolean> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec, FleetMemberAPI flagship) {
+    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec, FleetMemberAPI flagship) {
         if (commander == null || commander.isDefault()) return new TreeMap<>();
         if (commander.isPlayer()) return ShipMastery.getPlayerActiveMasteriesCopy(spec);
 
-        NavigableMap<Integer, Boolean> cachedMasteries = getCachedNPCMasteries(commander, spec);
+        NavigableMap<Integer, String> cachedMasteries = getCachedNPCMasteries(commander, spec);
         if (cachedMasteries != null) return cachedMasteries;
 
         spec = Utils.getRestoredHullSpec(spec);
-        NavigableMap<Integer, Boolean> map = new TreeMap<>();
+        NavigableMap<Integer, String> map = new TreeMap<>();
         if (commander.getMemoryWithoutUpdate().contains(CUSTOM_MASTERIES_KEY)) {
             //noinspection unchecked
-            Map<String, Map<Integer, Boolean>> custom =
-                    (Map<String, Map<Integer, Boolean>>) commander.getMemoryWithoutUpdate().get(CUSTOM_MASTERIES_KEY);
+            Map<String, Map<Integer, String>> custom =
+                    (Map<String, Map<Integer, String>>) commander.getMemoryWithoutUpdate().get(CUSTOM_MASTERIES_KEY);
             if (custom.containsKey(spec.getHullId())) {
                 map.putAll(custom.get(spec.getHullId()));
             }
@@ -334,15 +334,10 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             if (level > cap) break;
             // Mapping might already exist due to custom masteries
             if (map.containsKey(level)) continue;
-
-            boolean isOption2 = random.nextBoolean();
-            if (!isOption2) {
-                map.put(level, false);
-            }
-            else {
-                List<MasteryEffect> option2 = ShipMastery.getMasteryEffects(spec, level, true);
-                map.put(level, !option2.isEmpty());
-            }
+            List<String> allKeys = ShipMastery.getMasteryOptionIds(spec, level);
+            if (allKeys.isEmpty()) continue;
+            String optionId = allKeys.get(random.nextInt(allKeys.size()));
+            map.put(level, optionId);
         }
 
         // Once NPC mastery levels have been generated for the first time, activate the corresponding masteries

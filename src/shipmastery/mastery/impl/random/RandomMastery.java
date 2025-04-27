@@ -56,8 +56,10 @@ public class RandomMastery extends BaseMasteryEffect {
         Set<Class<?>> seenNotUnique = new HashSet<>();
         int maxTier = args.length >= 2 ? Integer.parseInt(args[1]) : 1;
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-            List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
-            effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
+            List<MasteryEffect> effects = new ArrayList<>();
+            for (String id : ShipMastery.getMasteryOptionIds(spec, i)) {
+                effects.addAll(ShipMastery.getMasteryEffects(spec, i, id));
+            }
             for (MasteryEffect effect : effects) {
                 // Don't want same effects in a single level even if not unique
                 if (effect != null && (effect.hasTag(MasteryTags.UNIQUE) || (i == level && !effect.hasTag(MasteryTags.VARYING)))) {
@@ -67,8 +69,10 @@ public class RandomMastery extends BaseMasteryEffect {
                 }
             }
             // Check the generators for masteries that haven't yet been generated
-            List<MasteryGenerator> generators = new ArrayList<>(ShipMastery.getGenerators(spec, i, false));
-            generators.addAll(ShipMastery.getGenerators(spec, i ,true));
+            List<MasteryGenerator> generators = new ArrayList<>();
+            for (String id : ShipMastery.getMasteryOptionIds(spec, i)) {
+                generators.addAll(ShipMastery.getGenerators(spec, i, id));
+            }
             for (MasteryGenerator generator : generators) {
                 Set<String> tags = generator.tags;
                 if ((i == level && !tags.contains(MasteryTags.VARYING)) || tags.contains(MasteryTags.UNIQUE)) {
@@ -112,7 +116,7 @@ public class RandomMastery extends BaseMasteryEffect {
             // Fallback if there's literally nothing to pick
             if (effectPicker.isEmpty()) {
                 MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-                return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<>(), new HashSet<>());
+                return generator.generate(getHullSpec(), getLevel(), getIndex(), getOptionId(), 0, new HashSet<>(), new HashSet<>());
             }
             tries++;
 
@@ -122,7 +126,7 @@ public class RandomMastery extends BaseMasteryEffect {
             params.add("" + getStrength((PersonAPI) null) * selected.defaultStrength);
 
             MasteryGenerator generator = new MasteryGenerator(selected, null);
-            effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), isOption2());
+            effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), getOptionId());
             // Try a few times to get something not in the seen params list
             for (int i = 0; i < 4; i++) {
                 additionalParams = effect.generateRandomArgs(getHullSpec(), maxTier, makeSeed() + 12335231*i);
@@ -141,7 +145,7 @@ public class RandomMastery extends BaseMasteryEffect {
         // Fallback if there's literally nothing to pick
         if (additionalParams == null) {
             MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("ModifyStatsMult"), new String[] {"0.1", "FluxCapacity"});
-            return generator.generate(getHullSpec(), getLevel(), getIndex(), isOption2(), 0, new HashSet<>(), new HashSet<>());
+            return generator.generate(getHullSpec(), getLevel(), getIndex(), getOptionId(), 0, new HashSet<>(), new HashSet<>());
         }
 
         params.addAll(additionalParams);
@@ -165,7 +169,7 @@ public class RandomMastery extends BaseMasteryEffect {
                 getId() + "_" +
                 level + "_" +
                 index + "_" +
-                isOption2() + "_" +
+                getOptionId() + "_" +
                 getHullSpec().getHullId() + "_" + MasteryUtils.getRandomMasterySeed()).hashCode();
     }
 }

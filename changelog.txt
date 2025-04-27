@@ -1,9 +1,18 @@
-0.14.3 (dev)
+0.15.0 (dev)
 ---------
+
+*** NOT SAVE COMPATIBLE WITH PREVIOUS VERSIONS ***
+
+- Framework now supports more than 2 options per mastery level.
+- The presets for levels 1, 3, 5, 7, and 9 now have 3 options each.
+    - Fixed max-level assignments still only have 2 options each.
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
 - Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
-- Removed back-armor-boost mastery (outside of random mode), replaced with front-armor-boost mastery.
+- Removed back-armor-boost mastery (outside random mode), replaced with front-armor-boost mastery.
+- Slightly nerfed most logistics mastery bonuses.
+- Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
+- Decreased the probability that the same random stat mastery will be chosen within the same level.
 
 0.14.2
 ---------

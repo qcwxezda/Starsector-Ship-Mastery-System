@@ -4,11 +4,13 @@
     "levels": {
       "1": {
         "A": "RandomMastery 1 1",
-        "B": "RandomMastery 1 1"
+        "B": "RandomMastery 1 1",
+        "C": "RandomMastery 1 1"
       },
       "2": {
         "A": "RandomMastery 1 2",
-        "B": "RandomMastery 1 2"
+        "B": "RandomMastery 1 2",
+        "C": "RandomMastery 1 2"
       },
       "3": [
         "SModCapacity",
@@ -16,11 +18,13 @@
       ],
       "4": {
         "A": "RandomMastery 1 2",
-        "B": "RandomMastery 1 2"
+        "B": "RandomMastery 1 2",
+        "C": "RandomMastery 1 2"
       },
       "5": {
         "A": "RandomMastery 1 3",
-        "B": "RandomMastery 1 3"
+        "B": "RandomMastery 1 3",
+        "C": "RandomMastery 1 3"
       },
       "6": [
         "SModCapacity",
@@ -28,7 +32,8 @@
       ],
       "7": {
         "A": "RandomMastery 1 3",
-        "B": "RandomMastery 1 3"
+        "B": "RandomMastery 1 3",
+        "C": "RandomMastery 1 3"
       },
       "8": {
         "A": "SModCapacity",
@@ -36,7 +41,8 @@
       },
       "9": {
         "A": "RandomMastery 1 4",
-        "B": "RandomMastery 1 4"
+        "B": "RandomMastery 1 4",
+        "C": "RandomMastery 1 4"
       }
     }
   },

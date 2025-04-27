@@ -25,13 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class MasteryDisplay implements CustomUIElement {
 
     final float w, h;
-    final NavigableMap<Integer, Boolean> activeLevels;
-    final NavigableMap<Integer, Boolean> selectedLevels;
+    final NavigableMap<Integer, String> activeLevels;
+    final NavigableMap<Integer, String> selectedLevels;
     final ShipAPI selectedModule, rootShip;
     final ShipHullSpecAPI rootSpec;
     final FleetMemberAPI rootFleetMember;
@@ -45,8 +46,7 @@ public class MasteryDisplay implements CustomUIElement {
     static final float MIN_DESC_HEIGHT = 80f;
     static final float BUTTON_WIDTH = 35f;
 
-    final Map<Integer, ButtonAPI> option1Buttons = new HashMap<>();
-    final Map<Integer, ButtonAPI> option2Buttons = new HashMap<>();
+    final Map<Integer, Map<String, ButtonAPI>> buttonsByLevelAndId = new HashMap<>();
 
     public MasteryDisplay(ShipAPI selectedModule, ShipAPI rootShip, float width, float height, float pad, boolean resetScrollbar, Action onButtonClick) {
         w = width;
@@ -84,18 +84,14 @@ public class MasteryDisplay implements CustomUIElement {
         }
     }
 
-    public void selectMasteryItem(int level, boolean isOption2) {
-        selectedLevels.put(level, isOption2);
-        // If the other button is checked, need to uncheck it
-        if (isOption2 && option1Buttons.containsKey(level)) {
-            ButtonAPI button = option1Buttons.get(level);
-            button.setChecked(false);
-            button.setHighlightBrightness(0.25f);
-        }
-        else if (option2Buttons.containsKey(level)) {
-            ButtonAPI button = option2Buttons.get(level);
-            button.setChecked(false);
-            button.setHighlightBrightness(0.25f);
+    public void selectMasteryItem(int level, String id) {
+        selectedLevels.put(level, id);
+        // If another button is checked, need to uncheck it
+        for (var entry : buttonsByLevelAndId.get(level).entrySet()) {
+            if (!entry.getKey().equals(id)) {
+                entry.getValue().setChecked(false);
+                entry.getValue().setHighlightBrightness(0.25f);
+            }
         }
         onButtonClick.perform();
     }
@@ -105,33 +101,41 @@ public class MasteryDisplay implements CustomUIElement {
         onButtonClick.perform();
     }
 
-    public NavigableMap<Integer, Boolean> getSelectedLevels() {
+    public NavigableMap<Integer, String> getSelectedLevels() {
         return selectedLevels;
     }
 
-    public NavigableMap<Integer, Boolean> getActiveLevels() {
+    public NavigableMap<Integer, String> getActiveLevels() {
         return activeLevels;
     }
 
     @Override
     public void create(TooltipMakerAPI tooltip) {
         int maxMastery = ShipMastery.getMaxMasteryLevel(rootSpec);
-
         for (int i = 1; i <= maxMastery; i++) {
-            CustomPanelAPI descriptionPanel1 = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
-            TooltipMakerAPI description1 = descriptionPanel1.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
-            List<MasteryEffect> effects1 = ShipMastery.getMasteryEffects(rootSpec, i, false);
-            List<MasteryEffect> effects2 = ShipMastery.getMasteryEffects(rootSpec, i, true);
-            float height = addEffectsDisplay(effects1, i, false, descriptionPanel1, description1, !effects2.isEmpty());
-            tooltip.addComponent(descriptionPanel1).inTL(0f, totalHeight);
-            if (!effects2.isEmpty()) {
-                CustomPanelAPI descriptionPanel2 = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
-                TooltipMakerAPI description2 = descriptionPanel2.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
-                tooltip.addComponent(descriptionPanel2).inTL(0f, totalHeight + height - 2f);
-                height += addEffectsDisplay(effects2, i, true, descriptionPanel2, description2, true);
+            List<String> optionIds = ShipMastery.getMasteryOptionIds(rootSpec, i);
+            boolean singleOption = optionIds.size() == 1;
+            float height = 0f;
+            for (String optionId : optionIds) {
+                CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
+                TooltipMakerAPI description = descriptionPanel.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
+                tooltip.addComponent(descriptionPanel).inTL(0f, totalHeight + height);
+                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption);
             }
             totalHeight += paddingBetweenLevels + height;
         }
+//        for (int i = 1; i <= maxMastery; i++) {
+//            List<String> optionIds = ShipMastery.getMasteryOptionIds(rootSpec, i);
+//            boolean singleOption = optionIds.size() == 1;
+//            float height = 0f;
+//            for (String optionId : optionIds) {
+//                CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
+//                TooltipMakerAPI description = descriptionPanel.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
+//                tooltip.addComponent(descriptionPanel).inTL((w+25f)*(i-1) - 1000f, height);
+//                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption);
+//            }
+//            totalHeight += paddingBetweenLevels + height;
+//        }
         savedTooltip = tooltip;
     }
 
@@ -158,7 +162,7 @@ public class MasteryDisplay implements CustomUIElement {
     }
 
     /** Returns the final height of the description. */
-    float addEffectsDisplay(final List<MasteryEffect> effects, int level, boolean isOption2, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter) {
+    float addEffectsDisplay(final List<MasteryEffect> effects, int level, String optionId, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter) {
         int currentMastery = ShipMastery.getPlayerMasteryLevel(rootSpec);
         boolean alwaysShow = true;
         for (MasteryEffect effect : effects) {
@@ -188,13 +192,9 @@ public class MasteryDisplay implements CustomUIElement {
         if (level > currentMastery) {
             descOutline.setButtonPressedSound(null);
         }
-        if (isOption2) {
-            option2Buttons.put(level, descOutline);
-        }
-        else {
-            option1Buttons.put(level, descOutline);
-        }
-        ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, rootSpec, level, isOption2));
+
+        buttonsByLevelAndId.computeIfAbsent(level, k -> new HashMap<>()).put(optionId, descOutline);
+        ReflectionUtils.setButtonListener(descOutline, new MasteryEffectButtonPressed(this, rootSpec, level, optionId));
 
         boolean hasTooltip = false;
         for (MasteryEffect effect : effects) {
@@ -226,8 +226,7 @@ public class MasteryDisplay implements CustomUIElement {
         }
 
         TooltipMakerAPI levelButtonTTM = innerPanel.createUIElement(BUTTON_WIDTH, descH, false);
-        String optionLetter = isOption2 ? "B" : "A";
-        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox(level + (showOptionLetter ? optionLetter : ""), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox(level + (showOptionLetter ? optionId : ""), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                                                Misc.getBrightPlayerColor(), BUTTON_WIDTH, descH, 0f);
         levelButton.setClickable(false);
         levelButton.setGlowBrightness(0.3f);
@@ -250,7 +249,7 @@ public class MasteryDisplay implements CustomUIElement {
         ((Fader) ReflectionUtils.invokeMethod(descOutline, "getHighlightFader")).forceIn();
         ((Fader) ReflectionUtils.invokeMethod(levelButton, "getHighlightFader")).forceIn();
 
-        if (activeLevels.containsKey(level) && activeLevels.get(level) == isOption2) {
+        if (activeLevels.containsKey(level) && Objects.equals(optionId, activeLevels.get(level))) {
             descOutline.setChecked(true);
             descOutline.setHighlightBrightness(0f);
             levelButton.setChecked(true);

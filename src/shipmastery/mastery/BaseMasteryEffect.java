@@ -27,7 +27,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     private final Set<String> tags = new HashSet<>();
     private int priority = 0;
     private ShipHullSpecAPI spec;
-    private Boolean isOption2 = null;
+    private String optionId = null;
     private String ID = null;
     /** Same as id but can be accessed directly without a getter */
     protected String id = null;
@@ -74,12 +74,22 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         ShipHullSpecAPI spec = getHullSpec();
         List<String[]> usedArgs = new ArrayList<>();
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-            List<MasteryEffect> effects = new ArrayList<>(ShipMastery.getMasteryEffects(spec, i, false));
-            effects.addAll(ShipMastery.getMasteryEffects(spec, i, true));
-            for (MasteryEffect effect : effects) {
-                if (getClass().isAssignableFrom(effect.getClass())) {
-                    usedArgs.add(effect.getArgs());
-                }
+            usedArgs.addAll(getUsedArgs(i));
+        }
+        return usedArgs;
+    }
+
+    protected List<String[]> getUsedArgs(int level) {
+        ShipHullSpecAPI spec = getHullSpec();
+        List<String[]> usedArgs = new ArrayList<>();
+        List<MasteryEffect> effects = new ArrayList<>();
+        List<String> optionIds = ShipMastery.getMasteryOptionIds(spec, level);
+        for (String optionId : optionIds) {
+            effects.addAll(ShipMastery.getMasteryEffects(spec, level, optionId));
+        }
+        for (MasteryEffect effect : effects) {
+            if (getClass().isAssignableFrom(effect.getClass())) {
+                usedArgs.add(effect.getArgs());
             }
         }
         return usedArgs;
@@ -266,15 +276,15 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public final boolean isOption2() {
-        return isOption2 != null && isOption2;
+    public final String getOptionId() {
+        return optionId;
     }
 
-    public final void setIsOption2(boolean isOption2) {
-        if (this.isOption2 != null) {
+    public final void setOptionId(String id) {
+        if (optionId != null) {
             throw new RuntimeException("Changing the option index of a mastery effect is not allowed");
         }
-        this.isOption2 = isOption2;
+        optionId = id;
     }
 
     @Override

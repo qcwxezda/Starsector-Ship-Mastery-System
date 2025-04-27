@@ -79,15 +79,15 @@ public abstract class MasteryUtils {
      *       and another effect increased the strength of a different effect so that it is now stronger than the previously strongest
      *       effect, we could have a scenario in which endRefit doesn't exactly undo beginRefit.
      * */
-    public static void applyMasteryEffects(ShipHullSpecAPI spec, Map<Integer, Boolean> levelsToApply, boolean reverseOrder, MasteryAction action) {
+    public static void applyMasteryEffects(ShipHullSpecAPI spec, Map<Integer, String> levelsToApply, boolean reverseOrder, MasteryAction action) {
         if (levelsToApply.isEmpty()) return;
         // Effect id -> the actual effect to be executed
         Map<Class<?>, MasteryEffect> uniqueEffects = new HashMap<>();
         // Sort the levels set so that lower mastery levels are applied first
-        Map<Integer, Boolean> sortedLevels = new TreeMap<>(levelsToApply);
+        Map<Integer, String> sortedLevels = new TreeMap<>(levelsToApply);
         PriorityQueue<MasteryEffectData> priorityOrder = new PriorityQueue<>(10, reverseOrder ? Collections.reverseOrder() : null);
 
-        for (Map.Entry<Integer, Boolean> levelData : sortedLevels.entrySet()) {
+        for (Map.Entry<Integer, String> levelData : sortedLevels.entrySet()) {
             List<MasteryEffect> masteryEffects = ShipMastery.getMasteryEffects(spec, levelData.getKey(), levelData.getValue());
             for (int j = 0; j < masteryEffects.size(); j++) {
                 MasteryEffect effect = masteryEffects.get(j);
@@ -151,7 +151,7 @@ public abstract class MasteryUtils {
 
     public static void applyAllActiveMasteryEffects(PersonAPI commander, ShipHullSpecAPI spec, MasteryAction action) {
         if (commander == null) return;
-        Map<Integer, Boolean> levelsToApply = FleetHandler.getActiveMasteriesForCommander(commander, spec);
+        Map<Integer, String> levelsToApply = FleetHandler.getActiveMasteriesForCommander(commander, spec);
         applyMasteryEffects(spec, levelsToApply, false, action);
     }
 

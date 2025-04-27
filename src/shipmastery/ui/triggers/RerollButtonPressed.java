@@ -42,8 +42,11 @@ public class RerollButtonPressed extends ActionListener {
 
         List<Integer> randomizedLevels = new ArrayList<>();
         for (int i  = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-            List<MasteryGenerator> gens = new ArrayList<>(ShipMastery.getGenerators(spec, i, false));
-            gens.addAll(ShipMastery.getGenerators(spec, i, true));
+            List<String> optionIds = ShipMastery.getMasteryOptionIds(spec, i);
+            List<MasteryGenerator> gens = new ArrayList<>();
+            for (String id : optionIds) {
+                gens.addAll(ShipMastery.getGenerators(spec, i, id));
+            }
             boolean affected = false;
             for (MasteryGenerator gen : gens) {
                 if (RandomMastery.class.isAssignableFrom(gen.effectClass)) {

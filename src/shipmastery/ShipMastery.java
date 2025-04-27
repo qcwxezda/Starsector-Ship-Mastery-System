@@ -20,20 +20,7 @@ import shipmastery.util.MasteryUtils;
 import shipmastery.util.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public abstract class ShipMastery {
@@ -102,18 +89,18 @@ public abstract class ShipMastery {
             data.level++;
         }
 
-        List<MasteryEffect> effects1 = getMasteryEffects(spec, data.level, false);
-        List<MasteryEffect> effects2 = getMasteryEffects(spec, data.level, true);
-        if (effects2.isEmpty()) {
+        List<String> optionIds = getMasteryOptionIds(spec, data.level);
+        if (optionIds.size() == 1) {
             boolean autoActivate = true;
-            for (MasteryEffect effect : effects1) {
+            String optionId = optionIds.get(0);
+            for (MasteryEffect effect : getMasteryEffects(spec, data.level, optionId)) {
                 if (!MasteryUtils.isAutoActivate(effect)) {
                     autoActivate = false;
                     break;
                 }
             }
             if (autoActivate) {
-                activatePlayerMastery(spec, data.level, false);
+                activatePlayerMastery(spec, data.level, optionId);
             }
         }
 
@@ -184,23 +171,23 @@ public abstract class ShipMastery {
         data.points = Math.max(0f, data.points);
     }
 
-    public static void activatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static void activatePlayerMastery(ShipHullSpecAPI spec, int level, String optionId) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
-        data.activateLevel(level, isOption2);
-        List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
+        data.activateLevel(level, optionId);
+        List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onActivate(Global.getSector().getPlayerPerson());
         }
     }
 
-    public static void deactivatePlayerMastery(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static void deactivatePlayerMastery(ShipHullSpecAPI spec, int level, String optionId) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
         data.deactivateLevel(level);
-        List<MasteryEffect> effects = getMasteryEffects(spec, level, isOption2);
+        List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onDeactivate(Global.getSector().getPlayerPerson());
         }
@@ -209,26 +196,32 @@ public abstract class ShipMastery {
     /**
      * Returns a copy of the original data
      */
-    public static NavigableMap<Integer, Boolean> getPlayerActiveMasteriesCopy(ShipHullSpecAPI spec) {
+    public static NavigableMap<Integer, String> getPlayerActiveMasteriesCopy(ShipHullSpecAPI spec) {
         if (SAVE_DATA_TABLE == null || spec == null) return new TreeMap<>();
 
         SaveData data = SAVE_DATA_TABLE.get(Utils.getRestoredHullSpecId(spec));
         return data == null ? new TreeMap<>() : new TreeMap<>(data.activeLevels);
     }
 
+    public static List<String> getMasteryOptionIds(ShipHullSpecAPI spec, int level) {
+        MasteryLevelData levelData = getLevelData(spec, level);
+        if (levelData == null) return new ArrayList<>();
+        return new ArrayList<>(levelData.getEffectsLists().keySet());
+    }
+
     /**
      * This function is 1-indexed
      */
-    public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return isOption2 ? levelData.getEffectsListOption2() : levelData.getEffectsListOption1();
+        return levelData.getEffectsLists().get(optionId);
     }
 
-    public static List<MasteryGenerator> getGenerators(ShipHullSpecAPI spec, int level, boolean isOption2) {
+    public static List<MasteryGenerator> getGenerators(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return isOption2 ? levelData.getGeneratorsOption2() : levelData.getGeneratorsOption1();
+        return levelData.getGeneratorsLists().get(optionId);
     }
 
 
@@ -296,14 +289,10 @@ public abstract class ShipMastery {
         return new MasteryGenerator(info, params);
     }
 
-    public static void processLevelData(Object generator, MasteryLevelData data, boolean isOption2)
+    public static void processLevelData(Object generator, MasteryLevelData data, String optionId)
             throws JSONException {
         if (generator instanceof String) {
-            if (isOption2) {
-                data.addGeneratorToOption2(makeGenerator((String) generator));
-            } else {
-                data.addGeneratorToOption1(makeGenerator((String) generator));
-            }
+            data.addGeneratorToList(optionId, makeGenerator((String) generator));
         }
         // Array of strings means no options, just a list of mastery effects
         else if (generator instanceof JSONArray array) {
@@ -311,19 +300,17 @@ public abstract class ShipMastery {
             for (int i = 0; i < array.length(); i++) {
                 try {
                     String effectString = array.getString(i);
-                    if (isOption2) {
-                        data.addGeneratorToOption2(makeGenerator(effectString));
-                    } else {
-                        data.addGeneratorToOption1(makeGenerator(effectString));
-                    }
+                    data.addGeneratorToList(optionId, makeGenerator(effectString));
                 } catch (JSONException e) {
                     throw new RuntimeException(array.getString(i) + " is not a string");
                 }
             }
         }
         else if (generator instanceof JSONObject json) {
-            processLevelData(json.get("A"), data, false);
-            processLevelData(json.get("B"), data, true);
+            for (var it = json.keys(); it.hasNext(); ) {
+                if (!(it.next() instanceof String key)) continue;
+                processLevelData(json.get(key), data, key);
+            }
         }
         else {
             throw new RuntimeException("Unable to parse generator: " + generator);
@@ -395,7 +382,7 @@ public abstract class ShipMastery {
                     level = Integer.parseInt(levelStr);
                 }
                 MasteryLevelData levelData = new MasteryLevelData(name, level);
-                processLevelData(levels.get(levelStr), levelData, false);
+                processLevelData(levels.get(levelStr), levelData, "");
                 levelDataMap.put(level, levelData);
             }
         }
@@ -406,11 +393,10 @@ public abstract class ShipMastery {
                 MasteryLevelData levelData = entry.getValue();
                 if (!levelDataMap.containsKey(level)) {
                     MasteryLevelData copy = new MasteryLevelData(name, level);
-                    for (MasteryGenerator generator : levelData.getGeneratorsOption1()) {
-                        copy.addGeneratorToOption1(generator);
-                    }
-                    for (MasteryGenerator generator : levelData.getGeneratorsOption2()) {
-                        copy.addGeneratorToOption2(generator);
+                    for (var entry2 : levelData.getGeneratorsLists().entrySet()) {
+                        for (MasteryGenerator generator : entry2.getValue()) {
+                            copy.addGeneratorToList(entry2.getKey(), generator);
+                        }
                     }
                     levelDataMap.put(level, copy);
                 }
@@ -496,7 +482,7 @@ public abstract class ShipMastery {
                         else {
                             generator = new MasteryGenerator(randomInfo, new String[] {"1", "9999999"});
                         }
-                        levelData.addGeneratorToOption1(generator);
+                        levelData.addGeneratorToList("A", generator);
                         data.setLevelData(i, levelData);
                     }
                     masteryMap.put(id, data);
@@ -534,7 +520,7 @@ public abstract class ShipMastery {
             for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
                 if (spec != Utils.getRestoredHullSpec(spec)) continue;
 
-                MasteryEffect dummy = dummyGenerator.generateDontInit(spec, 1, 0, false);
+                MasteryEffect dummy = dummyGenerator.generateDontInit(spec, 1, 0, "A");
                 Float weight = dummy.getSelectionWeight(spec);
                 weights.put(spec.getHullId(), weight);
             }
@@ -569,17 +555,13 @@ public abstract class ShipMastery {
         for (int i : levels) {
             MasteryLevelData levelData = data.getDataForLevel(i);
             if (levelData != null) {
-                for (MasteryEffect effect : levelData.getEffectsListOption1()) {
-                    seenEffectClasses.add(effect.getClass());
-                    String[] args = effect.getArgs();
-                    // First arg is strength, that shouldn't be avoided when avoiding repeats
-                    seenParams.addAll(Arrays.asList(args).subList(1, args.length));
-                }
-                for (MasteryEffect effect : levelData.getEffectsListOption2()) {
-                    seenEffectClasses.add(effect.getClass());
-                    String[] args = effect.getArgs();
-                    // First arg is strength, that shouldn't be avoided when avoiding repeats
-                    seenParams.addAll(Arrays.asList(args).subList(1, args.length));
+                for (var entry : levelData.getEffectsLists().entrySet()) {
+                    for (MasteryEffect effect : entry.getValue()) {
+                        seenEffectClasses.add(effect.getClass());
+                        String[] args = effect.getArgs();
+                        // First arg is strength, that shouldn't be avoided when avoiding repeats
+                        seenParams.addAll(Arrays.asList(args).subList(1, args.length));
+                    }
                 }
                 levelData.clear();
             }
@@ -597,16 +579,9 @@ public abstract class ShipMastery {
     }
 
     public static void activatePlayerMasteries() {
-
-//        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(REROLL_SEQUENCE_MAP);
-//        if (rerollMap == null) rerollMap = new HashMap<>();
         for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
             ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
             if (spec != restoredSpec) continue;
-//            if (!onlyGenerateRerolled || rerollMap.containsKey(spec.getHullId()) || rerolledSpecs.contains(spec.getHullId())) {
-//                generateMasteries(spec);
-//            }
-
             clearInvalidActiveLevels(spec);
             MasteryUtils.applyAllActiveMasteryEffects(
                     Global.getSector().getPlayerPerson(), spec, effect -> effect.onActivate(Global.getSector().getPlayerPerson()));
@@ -630,16 +605,16 @@ public abstract class ShipMastery {
         spec = Utils.getRestoredHullSpec(spec);
         SaveData data = SAVE_DATA_TABLE.get(spec.getHullId());
         if (data == null) return;
-        Iterator<Map.Entry<Integer, Boolean>> itr = data.activeLevels.entrySet().iterator();
+        Iterator<Map.Entry<Integer, String>> itr = data.activeLevels.entrySet().iterator();
         while (itr.hasNext()) {
-            Map.Entry<Integer, Boolean> next = itr.next();
+            Map.Entry<Integer, String> next = itr.next();
             if (next.getKey() > getMaxMasteryLevel(spec)) {
                 itr.remove();
                 continue;
             }
-            // clear nonexistent "option 2" mastery selections
+            // clear nonexistent mastery selections
             MasteryLevelData levelData = getLevelDataNoGenerate(spec, next.getKey());
-            if (levelData == null || (levelData.getGeneratorsOption2().isEmpty() && next.getValue())) {
+            if (levelData == null || (levelData.getGenerators(next.getValue()).isEmpty())) {
                 itr.remove();
             }
         }

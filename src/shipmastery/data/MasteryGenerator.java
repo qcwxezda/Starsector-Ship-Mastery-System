@@ -29,10 +29,10 @@ public class MasteryGenerator {
         }
     }
 
-    public MasteryEffect generateDontInit(ShipHullSpecAPI spec, int level, int index, boolean isOption2)
+    public MasteryEffect generateDontInit(ShipHullSpecAPI spec, int level, int index, String optionId)
             throws IllegalAccessException, NoSuchMethodException {
         BaseMasteryEffect effect = (BaseMasteryEffect) Utils.instantiateClassNoParams(effectClass);
-        effect.setIsOption2(isOption2);
+        effect.setOptionId(optionId);
         effect.setPriority(priority);
         effect.setHullSpec(spec);
         effect.setId(MasteryUtils.makeEffectId(effect, level, index));
@@ -45,7 +45,7 @@ public class MasteryGenerator {
     public static MasteryEffect copyEffect(Class<?> effectClass, MasteryEffect other, String... args)
             throws IllegalAccessException, NoSuchMethodException {
         BaseMasteryEffect effect = (BaseMasteryEffect) Utils.instantiateClassNoParams(effectClass);
-        effect.setIsOption2(other.isOption2());
+        effect.setOptionId(other.getOptionId());
         effect.setPriority(other.getPriority());
         effect.setHullSpec(other.getHullSpec());
         effect.setId(MasteryUtils.makeEffectId(effect, other.getLevel(), other.getIndex()));
@@ -59,11 +59,11 @@ public class MasteryGenerator {
             ShipHullSpecAPI spec,
             int level,
             int index,
-            boolean isOption2,
+            String optionId,
             int seedPrefix,
             Set<Class<?>> avoidWhenGeneratingRandom,
             Set<String> paramsToAvoidWhenGenerating) throws InstantiationException, IllegalAccessException, NoSuchMethodException {
-        MasteryEffect effect = generateDontInit(spec, level, index, isOption2);
+        MasteryEffect effect = generateDontInit(spec, level, index, optionId);
 
         if (effect instanceof RandomMastery) {
             ((RandomMastery) effect).setSeedPrefix(seedPrefix);
