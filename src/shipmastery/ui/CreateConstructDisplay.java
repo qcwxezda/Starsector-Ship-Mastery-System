@@ -19,6 +19,8 @@ public class CreateConstructDisplay implements CustomUIElement {
     final ShipHullSpecAPI spec;
     final MasteryPanel panel;
 
+    public ButtonAPI constructButton;
+
     public CreateConstructDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;
         this.panel = panel;
@@ -32,7 +34,7 @@ public class CreateConstructDisplay implements CustomUIElement {
         constructLabel.setAlignment(Alignment.MID);
         constructLabel.getPosition().setXAlignOffset(5f);
         String buttonText = KnowledgeConstructPlugin.NUM_POINTS_GAINED + " MP";
-        ButtonAPI constructButton =
+        constructButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);
         ReflectionUtils.setButtonListener(constructButton, new ConstructButtonPressed(panel, spec));

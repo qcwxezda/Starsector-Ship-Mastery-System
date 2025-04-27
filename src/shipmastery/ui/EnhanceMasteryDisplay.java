@@ -21,6 +21,7 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
 
     public static final String ENHANCE_MAP = "$sms_EnhanceMap";
     public static final String ENHANCE_MODIFIER_ID = "sms_enhancement";
+    public ButtonAPI enhanceButton;
 
     public EnhanceMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;
@@ -37,7 +38,7 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
         int cost = MasteryUtils.getEnhanceMPCost(spec);
         int spCost = MasteryUtils.getEnhanceSPCost(spec);
         String buttonText = spCost > 0 ? cost + " MP + " + spCost + " SP" : cost + " MP";
-        ButtonAPI enhanceButton =
+        enhanceButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);
         ReflectionUtils.setButtonListener(enhanceButton, new EnhanceButtonPressed(panel, spec));

@@ -101,6 +101,7 @@ public class OrionDeviceDamage extends ShipSystemEffect {
                     if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
                     if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
                     Pair<Vector2f, Boolean> collisionPoint = CollisionUtils.rayCollisionCheckEntity(location, entity.getLocation(), entity);
+                    if (collisionPoint.one == null) continue;
                     Global.getCombatEngine().applyDamage(
                             proj,
                             entity,

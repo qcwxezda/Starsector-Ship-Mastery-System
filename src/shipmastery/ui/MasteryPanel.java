@@ -56,7 +56,7 @@ public class MasteryPanel {
     UIPanelAPI rootPanel;
     static final String tableFont = Fonts.INSIGNIA_LARGE;
     static final String checkboxFont = Fonts.ORBITRON_24AABOLD;
-    public final static Float[] columnWidths = new Float[]{50f, 350f, 150f, 75f, 75f, 150f, 100f};
+    public final static Float[] columnWidths = new Float[]{50f, 400f, 175f, 100f, 100f, 200f, 125f};
     public final static String[] columnNames =
             new String[]{
                     Strings.MasteryPanel.iconHeader,
@@ -83,7 +83,7 @@ public class MasteryPanel {
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, null, 1000f, 700f, null);
+                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, null, 1200f, 800f, null);
         if (dialogData == null) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.cantOpenPanel, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
@@ -98,9 +98,7 @@ public class MasteryPanel {
         if (rootPanel == null) return;
 
         handler.injectRefitScreen(shouldSync, shouldSaveIfSynced);
-        if (useSavedScrollerLocation) {
-            savedMasteryDisplay.saveScrollerHeight();
-        }
+        savedMasteryDisplay.saveScrollerHeight();
 
         generateDialog(rootPanel, true, useSavedScrollerLocation, scrollToStart);
     }
@@ -112,12 +110,16 @@ public class MasteryPanel {
             isShowingMasteryPanel = false;
             masteryButton.setChecked(false);
             sModButton.setChecked(true);
+            masteryButton.setShortcut(Keyboard.KEY_TAB, false);
+            sModButton.setShortcut(-1, false);
         } else if (button == masteryButton) {
             ReflectionUtils.invokeMethod(sModPanel, "setOpacity", 0f);
             ReflectionUtils.invokeMethod(masteryPanel, "setOpacity", 1f);
             isShowingMasteryPanel = true;
             sModButton.setChecked(false);
             masteryButton.setChecked(true);
+            sModButton.setShortcut(Keyboard.KEY_TAB, false);
+            masteryButton.setShortcut(-1, false);
         }
     }
 
@@ -161,7 +163,7 @@ public class MasteryPanel {
         thisShipTab.setAreaCheckboxFont(checkboxFont);
         sModButton = thisShipTab.addAreaCheckbox(Strings.MasteryPanel.hullmodsTab, null, Misc.getBasePlayerColor(),
                                                  Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
-        sModButton.setShortcut(Keyboard.KEY_1, false);
+
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
         thisShipTab.setAreaCheckboxFontDefault();
 
@@ -191,7 +193,7 @@ public class MasteryPanel {
         masteryButton =
                 hullTypeTab.addAreaCheckbox(Strings.MasteryPanel.masteryTab, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                             Misc.getBrightPlayerColor(), w, h, 0f);
-        masteryButton.setShortcut(Keyboard.KEY_2, false);
+
         ReflectionUtils.setButtonListener(masteryButton, tabButtonListener);
         hullTypeTab.setAreaCheckboxFontDefault();
 
@@ -240,8 +242,8 @@ public class MasteryPanel {
         storyPointsLabel.setHighlightColor(Misc.getStoryBrightColor());
 
         labelsPanel.addUIElement(credits).inBL(20f, 10f);
-        labelsPanel.addUIElement(masteryPoints).inBL(280f, 10f);
-        labelsPanel.addUIElement(storyPoints).inBL(610f, 10f);
+        labelsPanel.addUIElement(masteryPoints).inBL(380f, 10f);
+        labelsPanel.addUIElement(storyPoints).inBL(810f, 10f);
         return labelsPanel;
     }
 
@@ -314,8 +316,8 @@ public class MasteryPanel {
         }
 
         buildInList.addTable(Strings.MasteryPanel.hullmodListsEmptyHint, -1, -buildInList.getHeightSoFar() + 10f);
-        if (table.getRows().size() < 13) {
-            table.autoSizeToRows(13);
+        if (table.getRows().size() < 15) {
+            table.autoSizeToRows(15);
         }
 
         float resetButtonW = 150f, resetButtonH = 30f;
@@ -366,7 +368,7 @@ public class MasteryPanel {
         thisShipPanel.addUIElement(resetButtonTTM).inTR(30f, -20f);
         thisShipPanel.addUIElement(useSPButtonTTM).inTL(13f, -20f);
 
-        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, -5f);
+        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, 20f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
         return thisShipPanel;
     }
@@ -446,30 +448,35 @@ public class MasteryPanel {
 
         ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
 
-        float containerW = 600f, containerH = height - 36f;
+        float containerW = 800f, containerH = height - 36f;
         TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH, false);
         new MasteryDisplayOutline(containerW, containerH).create(masteryContainer);
         masteryPanel.addUIElement(masteryContainer).inRMid(50f);
 
         float containerPadX = 4f, containerPadY = 8f;
         float masteryDisplayWidth = containerW + 50f - containerPadX, masteryDisplayHeight = containerH + 2f - containerPadY;
-        TooltipMakerAPI masteryDisplayTTM =
-                masteryPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
+        float pad = 120f;
 
-        float pad = 45f;
-        MasteryDisplay display = new MasteryDisplay(module, root, containerW, containerH, pad, !useSavedScrollerLocation, () -> showUpgradeOrConfirmation(canEnhance));
+        MasteryDisplay display = new MasteryDisplay(this, module, root, containerW, containerH, pad, !useSavedScrollerLocation, () -> showUpgradeOrConfirmation(canEnhance));
+        CustomPanelAPI masteryDisplayPanel = masteryPanel.createCustomPanel(masteryDisplayWidth, masteryDisplayHeight, display.new MasteryDisplayPlugin());
+        TooltipMakerAPI masteryDisplayTTM =
+                masteryDisplayPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
+
         display.create(masteryDisplayTTM);
         masteryDisplayTTM.setHeightSoFar(display.getTotalHeight() - pad);
-        masteryPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
+        masteryDisplayPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
+        masteryPanel.addComponent(masteryDisplayPanel).inTR(0f, 0f);
 
-        if (savedMasteryDisplay != null && useSavedScrollerLocation) {
+        if (savedMasteryDisplay != null) {
             display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight() - containerH - pad)));
         }
-        else if (!scrollToStart) {
-            display.scrollToHeight(Math.max(0f, Math.min(display.getScrollToHeight() - pad, display.getTotalHeight() - containerH - pad)));
-        }
-        else {
-            display.scrollToHeight(0f);
+        if (!useSavedScrollerLocation) {
+            if (scrollToStart) {
+                display.scrollToLevel(1);
+            }
+            else {
+                display.scrollToLevel(display.getLevelToScrollTo());
+            }
         }
 
         savedMasteryDisplay = display;

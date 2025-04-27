@@ -42,6 +42,7 @@ public interface Strings {
         String creditsDisplay = Utils.getString("sms_masteryPanel", "creditsDisplay");
         String masteryPointsDisplay = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
         String storyPointsDisplay = Utils.getString("sms_masteryPanel", "storyPointsDisplay");
+        String levelText = Utils.getString("sms_masteryPanel", "levelText");
         String hullmodListsEmptyHint = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
         String clearButton = Utils.getString("sms_masteryPanel", "clearButton");
         String useSPButton = Utils.getString("sms_masteryPanel", "useSPButton");

@@ -18,6 +18,7 @@ public class RerollMasteryDisplay implements CustomUIElement {
 
     final ShipHullSpecAPI spec;
     final MasteryPanel panel;
+    public ButtonAPI rerollButton;
 
     public RerollMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {
         this.spec = spec;
@@ -34,7 +35,7 @@ public class RerollMasteryDisplay implements CustomUIElement {
         int cost = MasteryUtils.getRerollMPCost(spec);
         int spCost = MasteryUtils.getRerollSPCost(spec);
         String buttonText = cost + " MP + " + spCost + " SP";
-        ButtonAPI rerollButton =
+        rerollButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);
         ReflectionUtils.setButtonListener(rerollButton, new RerollButtonPressed(panel, spec));

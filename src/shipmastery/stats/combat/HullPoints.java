@@ -13,9 +13,8 @@ public class HullPoints extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        // No civilian ships
-        if (spec.isCivilianNonCarrier()) return null;
-        if (spec.getHitpoints() <= 1500f) return 0f;
+        if (spec.getHitpoints() <= 750f) return 0f;
+        if (spec.getHitpoints() <= 1500f) return 0.5f;
         return 1f;
     }
 }

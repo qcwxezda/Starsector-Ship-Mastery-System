@@ -14,8 +14,6 @@ public class ArmorPoints extends ShipStat {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        // No civilian ships
-        if (spec.isCivilianNonCarrier()) return null;
         return Utils.getSelectionWeightScaledByValueDecreasing(Utils.getShieldToHullArmorRatio(spec), 0f, 1f, 2.5f);
     }
 }

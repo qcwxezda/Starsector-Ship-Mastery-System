@@ -15,7 +15,7 @@ public class SupplyUsage extends ShipStat {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         float weight = Utils.getSelectionWeightScaledByValueIncreasing(
                 spec.getSuppliesPerMonth(),
-                5f,
+                0.5f,
                 15f,
                 50f);
         if (!spec.isCivilianNonCarrier()) weight /= 2f;
