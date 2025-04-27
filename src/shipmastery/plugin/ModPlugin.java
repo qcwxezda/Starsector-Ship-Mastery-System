@@ -126,6 +126,9 @@ public class ModPlugin extends BaseModPlugin {
                     ShipMastery.clearRerolledMasteries();
                 }
             }
+            catch (ClassCastException e) {
+                throw new RuntimeException("This version of Ship Mastery System is not save-compatible with versions prior to 0.15.0.", e);
+            }
             catch (Exception e) {
                 throw new RuntimeException(e);
             }
