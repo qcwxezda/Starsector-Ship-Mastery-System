@@ -145,12 +145,32 @@ public class MasteryDisplay implements CustomUIElement {
         scrollToLevel(level, false);
     }
 
+    public int getNearestLevelToScroller() {
+        if (savedTooltip == null) return 0;
+        float scrollHeight = savedTooltip.getExternalScroller().getYOffset();
+        int left = 1, right = scrollerHeights.size();
+        float diff;
+        while (left < right) {
+            int mid = (left+right)/2;
+            diff = getScrollerPositionForLevel(mid+1) - scrollHeight;
+            if (diff > 0f) {
+                right = mid;
+            } else {
+                left = mid+1;
+            }
+        }
+
+        diff = getScrollerPositionForLevel(left) - scrollHeight;
+        float nextDiff = getScrollerPositionForLevel(left+1) - scrollHeight;
+        return left < scrollerHeights.size() && Math.abs(nextDiff) < Math.abs(diff) ? left+1 : left;
+    }
+
     public void snapToNearestNextLevel() {
         if (savedTooltip == null) return;
         float scrollHeight = savedTooltip.getExternalScroller().getYOffset();
         int snapTo = ShipMastery.getMaxMasteryLevel(rootSpec);
         for (int i = 0; i < scrollerHeights.size(); i++) {
-            if (getScrollerPositionForLevel(i+1)> scrollHeight) {
+            if (getScrollerPositionForLevel(i+1) > scrollHeight) {
                 snapTo = i+1;
                 break;
             }
@@ -174,8 +194,9 @@ public class MasteryDisplay implements CustomUIElement {
     @Override
     public void create(TooltipMakerAPI tooltip) {
         int maxMastery = ShipMastery.getMaxMasteryLevel(rootSpec);
-        tooltip.addSpacer(paddingBetweenLevels);
-        totalHeight += paddingBetweenLevels;
+        float spacerHeight = h/2f - MIN_DESC_HEIGHT/2f;
+        tooltip.addSpacer(spacerHeight);
+        totalHeight += spacerHeight;
         for (int i = 1; i <= maxMastery; i++) {
             List<String> optionIds = ShipMastery.getMasteryOptionIds(rootSpec, i);
             boolean singleOption = optionIds.size() == 1;
@@ -196,8 +217,8 @@ public class MasteryDisplay implements CustomUIElement {
             contentHeights.add(height);
             scrollerHeights.add(totalHeight-height);
         }
-        tooltip.addSpacer(paddingBetweenLevels);
-        totalHeight += paddingBetweenLevels;
+        tooltip.addSpacer(spacerHeight);
+        totalHeight += spacerHeight;
         savedTooltip = tooltip;
     }
 
@@ -368,15 +389,9 @@ public class MasteryDisplay implements CustomUIElement {
                     else if (val >= Keyboard.KEY_1 && val <= Keyboard.KEY_0) {
                         scrollToLevel(val-1);
                     }
-                    else if (val == Keyboard.KEY_G) {
+                    else if (val == Keyboard.KEY_G || val == Keyboard.KEY_SPACE) {
                         if (!activeLevels.equals(selectedLevels)) {
                             event.consume();
-                            new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
-                        }
-                    }
-                    else if (val == Keyboard.KEY_SPACE) {
-                        event.consume();
-                        if (!activeLevels.equals(selectedLevels)) {
                             new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
                         }
                     }

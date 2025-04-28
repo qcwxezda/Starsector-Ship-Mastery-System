@@ -1,8 +1,9 @@
-package shipmastery.mastery.impl.combat;
+package shipmastery.mastery.impl.unused;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -65,5 +66,10 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
         tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.absValueAsPercent(1f - MAX_HULL_MODIFIER),
                         Utils.absValueAsPercent(1f - MIN_HULL_MODIFIER));
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return null;
     }
 }

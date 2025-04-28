@@ -1,4 +1,4 @@
-package shipmastery.mastery.impl.logistics;
+package shipmastery.mastery.impl.unused;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -17,10 +17,10 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated
 public class SModsOverCapacity extends AdditiveMasteryEffect {
     static final float DP_PENALTY_PER_SMOD = 0.05f;
     // Map fleet member id to set of over-max numbers
@@ -66,15 +66,15 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
         }
     }
 
-    public static void trackOverCapacityMod(FleetMemberAPI fm, int id) {
-        Set<Integer> ids = overCapacityMap.computeIfAbsent(fm.getId(), k -> new HashSet<>());
-        ids.add(id);
-    }
+//    public static void trackOverCapacityMod(FleetMemberAPI fm, int id) {
+//        Set<Integer> ids = overCapacityMap.computeIfAbsent(fm.getId(), k -> new HashSet<>());
+//        ids.add(id);
+//    }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        // Don't select this normally
-        return 0f;
+        // Don't select this
+        return null;
     }
 
     @Override

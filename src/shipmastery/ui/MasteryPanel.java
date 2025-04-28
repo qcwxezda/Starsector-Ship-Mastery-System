@@ -25,6 +25,7 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
+import shipmastery.hullmods.EngineeringOverride;
 import shipmastery.ui.triggers.CancelMasteryChangesPressed;
 import shipmastery.ui.triggers.ClearSModsPressed;
 import shipmastery.ui.triggers.ConfirmMasteryChangesPressed;
@@ -110,7 +111,7 @@ public class MasteryPanel {
             isShowingMasteryPanel = false;
             masteryButton.setChecked(false);
             sModButton.setChecked(true);
-            masteryButton.setShortcut(Keyboard.KEY_TAB, false);
+            masteryButton.setShortcut(Keyboard.KEY_Q, false);
             sModButton.setShortcut(-1, false);
         } else if (button == masteryButton) {
             ReflectionUtils.invokeMethod(sModPanel, "setOpacity", 0f);
@@ -118,7 +119,7 @@ public class MasteryPanel {
             isShowingMasteryPanel = true;
             sModButton.setChecked(false);
             masteryButton.setChecked(true);
-            sModButton.setShortcut(Keyboard.KEY_TAB, false);
+            sModButton.setShortcut(Keyboard.KEY_Q, false);
             masteryButton.setShortcut(-1, false);
         }
     }
@@ -339,12 +340,33 @@ public class MasteryPanel {
         useSPButtonTTM.setAreaCheckboxFont(Fonts.ORBITRON_20AABOLD);
         ButtonAPI useSPButton = useSPButtonTTM.addAreaCheckbox(Strings.MasteryPanel.useSPButton, null, Misc.getStoryOptionColor(), Misc.getStoryDarkColor(),
                 Misc.getStoryBrightColor(), useSPButtonW, useSPButtonH, 0f);
+        useSPButtonTTM.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object tooltipParam) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object tooltipParam) {
+                return 400f;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                tooltip.addPara("Story points may be used to negate the MP cost of building in hullmods. In addition, exceptional measures drastically reduce the credits needed to perform a successful build-in by %1$s.\n\nWhen using story points, you may always build in at least %2$s S-mod (%3$s with %4$s) regardless of this ship's current S-mod capacity.", 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercentNoDecimal(1f-SModUtils.CREDITS_COST_MULT_SP), "" + 1, "" + (1+EngineeringOverride.NUM_ADDITIONAL_SMODS), Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).getDisplayName());
+            }
+        }, TooltipMakerAPI.TooltipLocation.ABOVE);
         ReflectionUtils.setButtonListener(useSPButton, new UseSPButtonPressed(this));
         useSPButton.setChecked(isUsingSP());
 
         float modularCountW = 200f, modularCountH = 40f;
         int nSMods = moduleVariant.getSMods().size();
-        int sModLimit = Misc.getMaxPermanentMods(module);
+
+
+        var limit = getSModLimit(module);
+        int sModLimit = limit.one;
+        boolean limitEnhancedBySP = limit.two;
+
         //if (hasLogisticBuiltIn && hasLogisticEnhanceBonus) sModLimit++;
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
         modularCountTTM.setParaOrbitronVeryLarge();
@@ -354,7 +376,7 @@ public class MasteryPanel {
         modularCount.setAlignment(Alignment.RMID);
         modularCount.setHighlight("" + nSMods, "" + sModLimit);
         modularCount.setHighlightColors(Misc.getHighlightColor(),
-                hasLogisticBuiltIn && hasLogisticEnhanceBonus ?
+                hasLogisticBuiltIn && hasLogisticEnhanceBonus || limitEnhancedBySP ?
                         Misc.getStoryBrightColor() :
                         Misc.getHighlightColor());
 
@@ -371,6 +393,23 @@ public class MasteryPanel {
         thisShipPanel.addUIElement(hintTextTTM).inBL(20f, 20f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
         return thisShipPanel;
+    }
+
+    public Pair<Integer, Boolean> getSModLimit(ShipAPI ship) {
+        int sModLimit = Misc.getMaxPermanentMods(ship);
+        if (ship.getVariant() == null) return new Pair<>(sModLimit, false);
+        boolean limitEnhancedBySP = false;
+        if (usingSP) {
+            if (sModLimit < 1) {
+                sModLimit = 1;
+                limitEnhancedBySP = true;
+            }
+            if (module.getVariant().hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && sModLimit < 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS) {
+                sModLimit = 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS;
+                limitEnhancedBySP = true;
+            }
+        }
+        return new Pair<>(sModLimit, limitEnhancedBySP);
     }
 
     void showUpgradeOrConfirmation(boolean canEnhance) {
@@ -448,10 +487,10 @@ public class MasteryPanel {
 
         ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
 
-        float containerW = 800f, containerH = height - 36f;
-        TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH, false);
-        new MasteryDisplayOutline(containerW, containerH).create(masteryContainer);
-        masteryPanel.addUIElement(masteryContainer).inRMid(50f);
+        float containerW = 800f, containerH = height - 66f;
+        TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH+2f, false);
+        new MasteryDisplayOutline(containerW, containerH+2f).create(masteryContainer);
+        masteryPanel.addUIElement(masteryContainer).inTR(51f, 17f);
 
         float containerPadX = 4f, containerPadY = 8f;
         float masteryDisplayWidth = containerW + 50f - containerPadX, masteryDisplayHeight = containerH + 2f - containerPadY;
@@ -467,6 +506,9 @@ public class MasteryPanel {
         masteryDisplayPanel.addUIElement(masteryDisplayTTM).inTR(50f, 18f);
         masteryPanel.addComponent(masteryDisplayPanel).inTR(0f, 0f);
 
+        // No top/bottom shadows
+        ReflectionUtils.invokeMethod(masteryDisplayTTM.getExternalScroller(), "setMaxShadowHeight", 0f);
+
         if (savedMasteryDisplay != null) {
             display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight()-containerH-pad+6f)));
         }
@@ -480,6 +522,26 @@ public class MasteryPanel {
         }
 
         savedMasteryDisplay = display;
+
+        float buttonW = 40f, buttonH = 35f, buttonPad = 25f;
+        int maxButtons = (int) (containerW / (buttonW + buttonPad));
+        int buttonsPerRow;
+        int numButtons;
+        if (maxButtons < maxMastery) {
+            buttonW = 28f; buttonH = 24f; buttonPad = 4f;
+            buttonsPerRow = Math.min(maxMastery, (int) (containerW / (buttonW + buttonPad)));
+            numButtons = Math.min(maxMastery, 2 * buttonsPerRow);
+        } else {
+            numButtons = buttonsPerRow = maxMastery;
+        }
+
+        float buttonsW = buttonsPerRow * (buttonW + buttonPad);
+        var masteryButtons = new MasteryDisplayLevelButtons(display, restoredHullSpec, numButtons, buttonsPerRow, buttonW, buttonH, buttonPad);
+        CustomPanelAPI masteryButtonsPanel = masteryPanel.createCustomPanel(containerW, buttonH, masteryButtons);
+        TooltipMakerAPI levelButtonsTTM = masteryButtonsPanel.createUIElement(buttonsW, buttonH, false);
+        masteryButtons.create(levelButtonsTTM);
+        masteryButtonsPanel.addUIElement(levelButtonsTTM).inTMid(0f);
+        masteryPanel.addComponent(masteryButtonsPanel).inTR(54f-buttonPad/2f,containerH + 25f + buttonH);
 
         int maxLevel = ShipMastery.getPlayerMasteryLevel(root.getHullSpec());
         Set<Integer> assignedLevels = ShipMastery.getPlayerActiveMasteriesCopy(root.getHullSpec()).keySet();
@@ -587,7 +649,7 @@ public class MasteryPanel {
         if (Global.getSettings().isDevMode()) return null;
 
         int logisticsEnhanceBonus = hasLogisticEnhanceBonus && !hasLogisticBuiltIn && spec.hasUITag(HullMods.TAG_UI_LOGISTICS) ? 1 : 0;
-        if (module.getVariant().getSMods().size() >= Misc.getMaxPermanentMods(module)
+        if (module.getVariant().getSMods().size() >= getSModLimit(module).one
                 + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() + logisticsEnhanceBonus && modular) {
             return Strings.MasteryPanel.limitReached;
         }

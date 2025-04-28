@@ -40,7 +40,6 @@ public abstract class ShipMastery {
     public static final String PRESET_CHECK_KEY = "presetCheckScript";
     private static SaveDataTable SAVE_DATA_TABLE;
 
-
     /**
      * Ship stat id -> singleton object
      */
@@ -328,7 +327,7 @@ public abstract class ShipMastery {
         }
 
         if (presetChain.contains(name)) {
-            throw new RuntimeException("Circular preset dependency: " + presetChain);
+            throw new RuntimeException("Circular mastery preset dependency: " + presetChain + " -> " + name);
         }
 
         Map<Integer, Pair<MasteryLevelData, Boolean>> levelDataMap = new HashMap<>();
@@ -346,7 +345,10 @@ public abstract class ShipMastery {
             if (presetStringOrArray instanceof String str) {
                 presets.add(str);
             } else {
-                presets.addAll((List<String>) presetStringOrArray);
+                JSONArray jsonArray  = (JSONArray) presetStringOrArray;
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    presets.add(jsonArray.getString(i));
+                }
             }
         }
 
@@ -357,6 +359,7 @@ public abstract class ShipMastery {
             if (Utils.allHullSpecIds.contains(name)) {
                 List<Pair<String, Float>> presetsWithScore = new ArrayList<>();
                 for (var entry : presetNameToCheckerMap.entrySet()) {
+                    if (entry.getValue() == null) continue;
                     float score = entry.getValue().computeScore(Global.getSettings().getHullSpec(name));
                     if (score > 0f) {
                         presetsWithScore.add(new Pair<>(entry.getKey(), score));
@@ -376,6 +379,10 @@ public abstract class ShipMastery {
 
         Map<String, Map<Integer, Pair<MasteryLevelData, Boolean>>> presetLevelData = new LinkedHashMap<>();
         for (String preset : presets) {
+            // Check that the preset is actually a preset
+            if (!presetNameToCheckerMap.containsKey(preset)) {
+                throw new RuntimeException("Unknown mastery preset: " + preset);
+            }
             var data = initMasteries(preset, presetChain, cachedPresetData, savedMaxLevel);
             presetLevelData.put(preset, data);
             if (maxLevel == null) {
@@ -467,6 +474,8 @@ public abstract class ShipMastery {
                 String className = obj.getString(PRESET_CHECK_KEY);
                 presetNameToCheckerMap.put(name,
                         (PresetCheckScript) Utils.instantiateClassNoParams(Global.getSettings().getScriptClassLoader().loadClass(className)));
+            } else {
+                presetNameToCheckerMap.put(name, null);
             }
         }
 
@@ -482,7 +491,7 @@ public abstract class ShipMastery {
                 spec = Utils.getRestoredHullSpec(spec);
                 String id = spec.getHullId();
                 if (!masteryMap.containsKey(id)) {
-                    initMasteries(id, new HashSet<>(), new HashMap<>(), new IntRef());
+                    initMasteries(id, new LinkedHashSet<>(), new HashMap<>(), new IntRef());
                 }
             }
         }

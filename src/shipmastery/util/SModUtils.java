@@ -19,6 +19,7 @@ public abstract class SModUtils {
     public static final int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
     public static final float CREDITS_HARD_CAP = 9999999f;
     public static final int MP_HARD_CAP = 99;
+    public static final float CREDITS_COST_MULT_SP = 0.1f;
 
     public static final int ADDITIONAL_MP_PER_SMOD = 0;
     public static final float DP_PER_EXTRA_MP = 25f;
@@ -87,7 +88,7 @@ public abstract class SModUtils {
 
         // Using SP reduces by additional factor
         if (usingSP) {
-            cost *= 0.1f;
+            cost *= CREDITS_COST_MULT_SP;
         }
 
         cost *= TransientSettings.SMOD_CREDITS_COST_MULT.getModifiedValue();

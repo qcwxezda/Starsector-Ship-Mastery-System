@@ -9,7 +9,7 @@ SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.im
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.25,shipmastery.mastery.impl.logistics.RestorationCost
 SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
-SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.logistics.SModsOverCapacity
+SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.unused.SModsOverCapacity
 ScaleOtherMasteries,4,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,4,no_disable no_auto_activate logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
@@ -44,7 +44,7 @@ FluxByShieldUpkeep,2,negative_strength_allowed combat,1,0.25,shipmastery.mastery
 RangeIfNoBonuses,2,negative_strength_allowed unique combat,1,0.25,shipmastery.mastery.impl.combat.RangeIfNoBonuses
 EmptyMountsReduceFlux,3,unique combat,,0.01,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
 # Doesn't work
-# MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.combat.MaxOPForHull
+# MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.unused.MaxOPForHull
 DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.2,shipmastery.mastery.impl.combat.DPIfOnlyShip
 PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,4,combat unique doesnt_affect_modules prefix_flagship_only,,7,shipmastery.mastery.impl.combat.ShieldDeflection
@@ -59,13 +59,13 @@ HitAngleDR,3,combat unique negative_strength_allowed,,-0.2,shipmastery.mastery.i
 TPCUpgrade,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
-ArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.ArmorRepair
+ArmorRepair,4,combat unique,,0.03,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,4,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
-BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.unused.BackArmorBoost
+BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.unused.BackArmorBoost
 FrontArmorBoost,2,combat unique,,0.15,shipmastery.mastery.impl.combat.FrontArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentingSpeedBoost
-RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.combat.unused.RangeNotMoving
+RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.unused.RangeNotMoving
 SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 TimeFlowNearbyEnemies,4,combat,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
@@ -88,7 +88,7 @@ ExtraMiningDrones,3,combat unique,,4,shipmastery.mastery.impl.combat.ExtraMining
 LimitedArmorRegen,3,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
 HammerLingeringDamage,3,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
 PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
-PhasedArmorRepair,4,combat unique,,0.015,shipmastery.mastery.impl.combat.PhasedArmorRepair
+PhasedArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.PhasedArmorRepair
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,4,combat unique,,0.5,shipmastery.mastery.impl.combat.BDeckExtraCharges
 FighterCountDR,3,combat unique doesnt_affect_modules,,0.03,shipmastery.mastery.impl.combat.FighterCountDR

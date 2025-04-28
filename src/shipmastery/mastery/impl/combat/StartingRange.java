@@ -1,6 +1,8 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -80,5 +82,12 @@ public class StartingRange extends BaseMasteryEffect {
                 );
             }
         }
+    }
+
+    @Override
+    public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        Utils.WeaponSlotCount wsc = Utils.countWeaponSlots(spec);
+        if (wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f) >= 0.8f) return null;
+        return 1f;
     }
 }

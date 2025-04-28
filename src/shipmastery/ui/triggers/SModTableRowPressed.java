@@ -3,7 +3,6 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
@@ -11,7 +10,6 @@ import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.mastery.impl.logistics.SModsOverCapacity;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.ReflectionUtils;
@@ -49,14 +47,14 @@ public class SModTableRowPressed extends TriggerableProxy {
         ShipVariantAPI rootVariant = root.getVariant();
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(rowData.hullModSpecId);
 
-        final int cur = variant.getSMods().size();
-        int limit = SModUtils.getMaxSMods(module.getMutableStats());
+//        final int cur = variant.getSMods().size();
+//        int limit = masteryPanel.getSModLimit(module).one;
 
         // Don't track as over-capacity if it's from the lvl 3 enhancement bonus
-        boolean isLogistic = spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
-        boolean hasLogisticsBonus = rootVariant != null && SModUtils.hasBonusLogisticSlot(variant);
-        boolean hasLogistics = SModUtils.hasLogisticSMod(variant);
-        boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);
+//        boolean isLogistic = spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
+//        boolean hasLogisticsBonus = rootVariant != null && SModUtils.hasBonusLogisticSlot(variant);
+//        boolean hasLogistics = SModUtils.hasLogisticSMod(variant);
+        // boolean logisticDontTrack = (isLogistic && hasLogisticsBonus && !hasLogistics);
         //if (hasLogisticsBonus && hasLogistics) limit++;
 
         final ButtonAPI button = (ButtonAPI) ReflectionUtils.invokeMethod(row, "getButton");
@@ -65,9 +63,9 @@ public class SModTableRowPressed extends TriggerableProxy {
             if (!button.isHighlighted()) {
                 exclusiveHighlight(args[0], row);
 
-                if (rowData.isModular && cur >= limit && !logisticDontTrack && !Global.getSettings().isDevMode()) {
-                    Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
-                }
+//                if (rowData.isModular && cur >= limit && !logisticDontTrack && !Global.getSettings().isDevMode()) {
+//                    Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.buildInOverMaxWarning, Misc.getNegativeHighlightColor());
+//                }
 
                 DeferredActionPlugin.performLater(button::unhighlight, Settings.DOUBLE_CLICK_INTERVAL);
 
@@ -83,9 +81,9 @@ public class SModTableRowPressed extends TriggerableProxy {
                                 Strings.MasteryPanel.enhanceConfirm + name, Settings.MASTERY_COLOR);
                     }
                     else {
-                        if (module.getFleetMember() != null && cur >= limit && !logisticDontTrack) {
-                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit), 0f);
-                        }
+//                        if (module.getFleetMember() != null && cur >= limit && !logisticDontTrack) {
+//                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit), 0f);
+//                        }
                         variant.addPermaMod(rowData.hullModSpecId, true);
                         float bonusXPFraction = 0f;
                         if (masteryPanel.isUsingSP()) {
