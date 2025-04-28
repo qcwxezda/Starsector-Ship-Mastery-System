@@ -353,7 +353,14 @@ public class MasteryPanel {
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                tooltip.addPara("Story points may be used to negate the MP cost of building in hullmods. In addition, exceptional measures drastically reduce the credits needed to perform a successful build-in by %1$s.\n\nWhen using story points, you may always build in at least %2$s S-mod (%3$s with %4$s) regardless of this ship's current S-mod capacity.", 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercentNoDecimal(1f-SModUtils.CREDITS_COST_MULT_SP), "" + 1, "" + (1+EngineeringOverride.NUM_ADDITIONAL_SMODS), Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).getDisplayName());
+                tooltip.addPara(
+                        Strings.MasteryPanel.useSPHint,
+                        0f,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Utils.asPercentNoDecimal(1f-SModUtils.CREDITS_COST_MULT_SP),
+                        "" + 1,
+                        "" + (1+EngineeringOverride.NUM_ADDITIONAL_SMODS),
+                        Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).getDisplayName());
             }
         }, TooltipMakerAPI.TooltipLocation.ABOVE);
         ReflectionUtils.setButtonListener(useSPButton, new UseSPButtonPressed(this));

@@ -93,7 +93,8 @@
     "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
     "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP.",
     "unassignedWarningTextPlural": "%1$s unassigned levels",
-    "unassignedWarningTextSingular": "%1$s unassigned level"
+    "unassignedWarningTextSingular": "%1$s unassigned level",
+    "useSPHint": "Story points may be used to negate the MP cost of building in hullmods. In addition, exceptional measures drastically reduce the cost of building in hullmods, cutting credits expenditure by %1$s.\n\nWhen using story points, you may always build in at least %2$s S-mod (%3$s with %4$s) regardless of this ship's current S-mod capacity."
   },
 
   "sms_descriptions": {

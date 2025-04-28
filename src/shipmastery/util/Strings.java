@@ -97,6 +97,7 @@ public interface Strings {
         String enhanceMasteryConfirmText2NoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2NoSP");
         String unassignedWarningTextPlural = Utils.getString("sms_masteryPanel", "unassignedWarningTextPlural");
         String unassignedWarningTextSingular = Utils.getString("sms_masteryPanel", "unassignedWarningTextSingular");
+        String useSPHint = Utils.getString("sms_masteryPanel", "useSPHint");
     }
 
     interface Misc {
