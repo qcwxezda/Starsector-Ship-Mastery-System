@@ -89,7 +89,9 @@ public class MasteryDisplay implements CustomUIElement {
     }
 
     public void saveScrollerHeight() {
-        savedScrollerHeight = savedTooltip == null ? 0f : savedTooltip.getExternalScroller().getYOffset();
+        Object container = ReflectionUtils.invokeMethod(savedTooltip.getExternalScroller(), "getContentContainer");
+        float offsetY = (float) ReflectionUtils.invokeMethod(container, "getYOffset");
+        savedScrollerHeight = savedTooltip == null ? 0f : offsetY;
     }
 
     public void scrollToHeight(float height) {
@@ -131,8 +133,16 @@ public class MasteryDisplay implements CustomUIElement {
         return scrollerHeights.get(level-1)-h/2f+Math.min(contentHeights.get(level-1)/2f,h/2f-100f)-100f;
     }
 
+    public void scrollToLevel(int level, boolean instant) {
+        if (instant) {
+            savedTooltip.getExternalScroller().setYOffset(Math.max(0f, Math.min(getScrollerPositionForLevel(level), totalHeight-h-paddingBetweenLevels+6f)));
+        } else {
+            ReflectionUtils.invokeMethod(savedTooltip.getExternalScroller(), "scrollToY", getScrollerPositionForLevel(level));
+        }
+    }
+
     public void scrollToLevel(int level) {
-        ReflectionUtils.invokeMethod(savedTooltip.getExternalScroller(), "scrollToY", getScrollerPositionForLevel(level));
+        scrollToLevel(level, false);
     }
 
     public void snapToNearestNextLevel() {
@@ -358,9 +368,15 @@ public class MasteryDisplay implements CustomUIElement {
                     else if (val >= Keyboard.KEY_1 && val <= Keyboard.KEY_0) {
                         scrollToLevel(val-1);
                     }
-                    else if (val == Keyboard.KEY_SPACE || val == Keyboard.KEY_G) {
+                    else if (val == Keyboard.KEY_G) {
                         if (!activeLevels.equals(selectedLevels)) {
                             event.consume();
+                            new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
+                        }
+                    }
+                    else if (val == Keyboard.KEY_SPACE) {
+                        event.consume();
+                        if (!activeLevels.equals(selectedLevels)) {
                             new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
                         }
                     }

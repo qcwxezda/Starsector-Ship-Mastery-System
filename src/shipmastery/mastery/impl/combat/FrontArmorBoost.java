@@ -10,10 +10,13 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class FrontArmorBoost extends BaseMasteryEffect {
+
+    public static final float[] HULL_SIZE_MULTS = {2f, 1.66666667f, 1.3333333f, 1f};
+
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FrontArmorBoost).params(
-                Utils.asPercent(getStrength(selectedModule)));
+                Utils.asPercentOneDecimal(getStrength(selectedModule)*HULL_SIZE_MULTS[Utils.hullSizeToInt(selectedModule.getHullSize())]));
     }
 
     @Override
@@ -24,7 +27,7 @@ public class FrontArmorBoost extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        float strength = getStrength(ship);
+        float strength = getStrength(ship)*HULL_SIZE_MULTS[Utils.hullSizeToInt(ship.getHullSize())];
         float[][] grid = ship.getArmorGrid().getGrid();
         for (int i = 0; i < grid[0].length; i++) {
             float effectLevel = Math.max(0f, 2f * (i - (float) grid[0].length / 2f) / grid[0].length);

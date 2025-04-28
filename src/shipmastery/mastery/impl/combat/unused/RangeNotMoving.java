@@ -1,4 +1,4 @@
-package shipmastery.mastery.impl.combat;
+package shipmastery.mastery.impl.combat.unused;
 
 import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
@@ -99,6 +99,6 @@ public class RangeNotMoving extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
-        return 1f;
+        return 0f;
     }
 }

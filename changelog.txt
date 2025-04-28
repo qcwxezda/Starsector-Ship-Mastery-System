@@ -9,6 +9,13 @@
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
 - Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
+- Added 6 mastery effects.
+- Added ability for a single hull spec to have multiple presets:
+    - If a "preset" string or array is given in the assignment, then only the presets provided are used.
+        - They are processed in the order they are declared, so if multiple presets have conflicting entries, the earliest one wins.
+    - If no "preset" string or array is given, then all presets with a "presetCheckScript" field are checked for eligibility.
+        - All eligible presets (those with computeScore(spec) > 0) are used, in order of descending score.
+        - If no preset is eligible, then "_DEFAULT_" is used.
 - UI modifications:
     - Made the mastery dialog box bigger (again).
     - Increased padding between levels in mastery display and added level headers.
@@ -21,10 +28,12 @@
     - Additional shortcuts:
         - space, G: confirm mastery changes
         - escape: cancel mastery changes
+        - Note: space will no longer dismiss the entire mastery screen if inside the mastery tab
     - Advancing mastery level no longer has a confirmation.
 - Civilian ships can now roll armor, hull, and top speed stat masteries.
 - Lowered the tier of some stat masteries, allowing them to appear at lower levels.
-- Removed back-armor-boost mastery (outside random mode), replaced with front-armor-boost mastery.
+- Removed back-armor-boost mastery (except random mode).
+- Removed range-if-not-moving mastery (except random mode).
 - Slightly nerfed most logistics mastery bonuses.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
 - Decreased the probability that the same random stat mastery will be chosen within the same level.

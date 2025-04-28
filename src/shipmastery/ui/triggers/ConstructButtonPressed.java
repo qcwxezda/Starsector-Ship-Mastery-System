@@ -13,6 +13,7 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
+import shipmastery.util.IntRef;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 
@@ -25,10 +26,6 @@ public class ConstructButtonPressed extends ActionListener {
     private LabelAPI confirmLabel;
     private final IntRef count = new IntRef();
     private final int maxCount;
-
-    public static class IntRef {
-        public int value = 1;
-    }
 
     public ConstructButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;

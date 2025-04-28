@@ -61,11 +61,11 @@ TPCChaining,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 ArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,4,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
-BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.BackArmorBoost
+BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.unused.BackArmorBoost
 FrontArmorBoost,2,combat unique,,0.15,shipmastery.mastery.impl.combat.FrontArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentingSpeedBoost
-RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.combat.RangeNotMoving
+RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.combat.unused.RangeNotMoving
 SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 TimeFlowNearbyEnemies,4,combat,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
@@ -105,6 +105,11 @@ MaxCRFloor,4,combat unique,,0.4,shipmastery.mastery.impl.combat.MaxCRFloor
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
 WeakerDesignCompromises,4,combat unique,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
 VambraceBonuses,4,combat doesnt_affect_modules,,0.05,shipmastery.mastery.impl.combat.VambraceBonuses
+StartingRange,2,combat,,1,shipmastery.mastery.impl.combat.StartingRange
+LatentDR,2,combat,,1,shipmastery.mastery.impl.combat.LatentDR
+DamagePerShipDestroyed,3,combat,,1,shipmastery.mastery.impl.combat.DamagePerShipDestroyed
+FlatArmorHullDamage,3,combat,,1,shipmastery.mastery.impl.combat.FlatArmorHullDamage
+VentingRepairs,2,combat,,1,shipmastery.mastery.impl.combat.VentingRepairs
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,4,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,4,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion

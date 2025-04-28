@@ -7,15 +7,16 @@ import shipmastery.ShipMastery;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
+import shipmastery.util.IntRef;
 import shipmastery.util.Strings;
 
 public class ConfirmCreateConstruct extends DialogDismissedListener{
 
     final MasteryPanel masteryPanel;
     final ShipHullSpecAPI spec;
-    final ConstructButtonPressed.IntRef count;
+    final IntRef count;
 
-    public ConfirmCreateConstruct(MasteryPanel masteryPanel, ShipHullSpecAPI spec, ConstructButtonPressed.IntRef count) {
+    public ConfirmCreateConstruct(MasteryPanel masteryPanel, ShipHullSpecAPI spec, IntRef count) {
         this.masteryPanel = masteryPanel;
         this.spec = spec;
         this.count = count;

@@ -427,7 +427,21 @@
     "CombatBurnRegenTitle": "Enhanced Combat Burn",
     "CombatBurnRegenDesc1": "+%1$s max speed",
     "CombatBurnRegenDesc2": "%1$s second(s) until recharge",
-    "CombatBurnRegenDesc3": "weapon recharge available"
+    "CombatBurnRegenDesc3": "weapon recharge available",
+    "StartingRange": "Gain a decaying %1$s ballistic and energy weapon range that steadily degrades over %2$s of this ship's peak CR timer.",
+    "StartingRangePost": "Ships with a peak CR timer exceeding %1$s seconds are treated as having %2$s seconds of peak CR for this effect.",
+    "StartingRangeTitle": "Decaying Targeter",
+    "StartingRangeDesc1": "+%1$s ballistic and energy range",
+    "LatentDR": "Reduces all damage taken by up to %1$s depending on the amount of time this ship has been deployed. The maximum effect is reached at %2$s of this ship's peak CR timer.",
+    "LatentDRPost": "Ships with a peak CR timer exceeding %1$s seconds are treated as having %2$s seconds of peak CR for this effect.",
+    "DamagePerShipDestroyed": "Upon destroying an enemy ship, increases all damage dealt by %1$s multiplied by the ratio of the destroyed ship's DP to this ship's DP, up to a maximum of %2$s.",
+    "DamagePerShipDestroyedPost": "This effect is capped at %1$s increased damage.",
+    "DamagePerShipDestroyedTitle": "Kill Streak",
+    "DamagePerShipDestroyedDesc1": "+%1$s damage dealt",
+    "FlatArmorHullDamage": "Gain up to %1$s effective armor for damage reduction purposes only, depending on the amount of hull damage this ship has taken.",
+    "FlatArmorHullDamagePost": "Maximum effect is reached after taking hull damage equal to %1$s of this ship's maximum hull points.",
+    "VentingRepairs": "After venting at least %1$s of this ship's flux capacity uninterrupted, repair all of this ship's damaged weapons and engines.",
+    "VentingRepairsPost": "This effect has a cooldown of %1$s seconds."
   },
 
   "sms_messages": {

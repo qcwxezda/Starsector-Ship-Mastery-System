@@ -498,5 +498,19 @@ public interface Strings {
         String CombatBurnRegenDesc1 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc1");
         String CombatBurnRegenDesc2 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc2");
         String CombatBurnRegenDesc3 = Utils.getString( "sms_descriptions", "CombatBurnRegenDesc3");
+        String StartingRange = Utils.getString( "sms_descriptions", "StartingRange");
+        String StartingRangePost = Utils.getString( "sms_descriptions", "StartingRangePost");
+        String StartingRangeTitle = Utils.getString( "sms_descriptions", "StartingRangeTitle");
+        String StartingRangeDesc1 = Utils.getString( "sms_descriptions", "StartingRangeDesc1");
+        String LatentDR = Utils.getString( "sms_descriptions", "LatentDR");
+        String LatentDRPost = Utils.getString( "sms_descriptions", "LatentDRPost");
+        String DamagePerShipDestroyed = Utils.getString( "sms_descriptions", "DamagePerShipDestroyed");
+        String DamagePerShipDestroyedPost = Utils.getString( "sms_descriptions", "DamagePerShipDestroyedPost");
+        String DamagePerShipDestroyedTitle = Utils.getString( "sms_descriptions", "DamagePerShipDestroyedTitle");
+        String DamagePerShipDestroyedDesc1 = Utils.getString( "sms_descriptions", "DamagePerShipDestroyedDesc1");
+        String FlatArmorHullDamage = Utils.getString( "sms_descriptions", "FlatArmorHullDamage");
+        String FlatArmorHullDamagePost = Utils.getString( "sms_descriptions", "FlatArmorHullDamagePost");
+        String VentingRepairs = Utils.getString( "sms_descriptions", "VentingRepairs");
+        String VentingRepairsPost = Utils.getString( "sms_descriptions", "VentingRepairsPost");
     }
 }

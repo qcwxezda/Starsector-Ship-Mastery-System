@@ -49,7 +49,7 @@
 
   "automated": {
     "preset": "_DEFAULT_",
-    "built_in_mod": "automated",
+    "presetCheckScript": "shipmastery.mastery.preset.AutomatedCheck",
     "levels": {
       "8": {
         "A": ["SModCapacity", "BuiltInNeuralIntegrator"],
@@ -60,9 +60,53 @@
 
   "derelict_drone": {
     "preset": "automated",
-    "hint_or_tag": "derelict",
+    "presetCheckScript": "shipmastery.mastery.preset.DerelictDroneCheck",
     "levels": {
       "max": "MaxCRFloor"
+    }
+  },
+
+  "phase": {
+    "preset": "_DEFAULT_",
+    "presetCheckScript": "shipmastery.mastery.preset.PhaseCheck",
+    "levels": {
+      "8": {
+        "A": ["SModCapacity","IgnoreNoBuildIn 1 phase_anchor"],
+        "B": "ScaleOtherMasteries"
+      }
+    }
+  },
+
+  "logistic_cargo": {
+    "preset": "_DEFAULT_",
+    "presetCheckScript": "shipmastery.mastery.preset.LogisticCargoCheck",
+    "levels": {
+      "max": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedCargoBoost"
+      }
+    }
+  },
+
+  "logistic_fuel": {
+    "preset": "_DEFAULT_",
+    "presetCheckScript": "shipmastery.mastery.preset.LogisticFuelCheck",
+    "levels": {
+      "max": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedFuelBoost"
+      }
+    }
+  },
+
+  "logistic_crew": {
+    "preset": "_DEFAULT_",
+    "presetCheckScript": "shipmastery.mastery.preset.LogisticCrewCheck",
+    "levels": {
+      "max": {
+        "A": "EfficiencyOverhaulBoost",
+        "B": "ExpandedCrewBoost"
+      }
     }
   },
 
@@ -95,50 +139,6 @@
       "8": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
       "9": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"],
       "10": ["ModifyStatsMult 1 HullPoints 0.05", "ModifyStatsFlat 1 EffectiveArmorBonus 10"]
-    }
-  },
-
-  # spec.isPhase() is hard coded here
-  "phase": {
-    "preset": "_DEFAULT_",
-    "levels": {
-      "max": {
-        "A": ["SModCapacity","IgnoreNoBuildIn 1 phase_anchor"],
-        "B": "ScaleOtherMasteries"
-      }
-    }
-  },
-
-  "logistic_cargo": {
-    "preset": "_DEFAULT_",
-    "hint_or_tag": "FREIGHTER",
-    "levels": {
-      "max": {
-        "A": "EfficiencyOverhaulBoost",
-        "B": "ExpandedCargoBoost"
-      }
-    }
-  },
-
-  "logistic_fuel": {
-    "preset": "_DEFAULT_",
-    "hint_or_tag": "TANKER",
-    "levels": {
-      "max": {
-        "A": "EfficiencyOverhaulBoost",
-        "B": "ExpandedFuelBoost"
-      }
-    }
-  },
-
-  "logistic_crew": {
-    "preset": "_DEFAULT_",
-    "hint_or_tag": "LINER",
-    "levels": {
-      "max": {
-        "A": "EfficiencyOverhaulBoost",
-        "B": "ExpandedCrewBoost"
-      }
     }
   }
 }

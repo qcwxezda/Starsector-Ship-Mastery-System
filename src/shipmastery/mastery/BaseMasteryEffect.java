@@ -79,7 +79,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         return usedArgs;
     }
 
-    protected List<String[]> getUsedArgs(int level) {
+    protected final List<String[]> getUsedArgs(int level) {
         ShipHullSpecAPI spec = getHullSpec();
         List<String[]> usedArgs = new ArrayList<>();
         List<MasteryEffect> effects = new ArrayList<>();

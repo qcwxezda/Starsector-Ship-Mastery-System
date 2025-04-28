@@ -232,7 +232,7 @@ public class MasteryPanel {
 
         int storyPointsAmt = Global.getSector().getPlayerStats().getStoryPoints();
         String storyPointsString = Strings.MasteryPanel.storyPointsDisplay + storyPointsAmt;
-        float storyPointsStringWidth = 10f + Global.getSettings().computeStringWidth(masteryPointsString,
+        float storyPointsStringWidth = 10f + Global.getSettings().computeStringWidth(storyPointsString,
                 "graphics/fonts/orbitron20aabold.fnt");
         TooltipMakerAPI storyPoints = labelsPanel.createUIElement(storyPointsStringWidth, 30f, false);
         storyPoints.setParaOrbitronLarge();
@@ -468,14 +468,14 @@ public class MasteryPanel {
         masteryPanel.addComponent(masteryDisplayPanel).inTR(0f, 0f);
 
         if (savedMasteryDisplay != null) {
-            display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight() - containerH - pad)));
+            display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight()-containerH-pad+6f)));
         }
         if (!useSavedScrollerLocation) {
             if (scrollToStart) {
-                display.scrollToLevel(1);
+                display.scrollToLevel(1, savedMasteryDisplay == null);
             }
             else {
-                display.scrollToLevel(display.getLevelToScrollTo());
+                display.scrollToLevel(display.getLevelToScrollTo(), savedMasteryDisplay == null);
             }
         }
 

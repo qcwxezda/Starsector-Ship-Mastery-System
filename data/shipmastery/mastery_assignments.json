@@ -709,7 +709,7 @@
     "levels": {
       "max": {
         "A": "HEFRangeRoF",
-        "B": "RangeNotMoving"
+        "B": "StartingRange"
       }
     }
   },
