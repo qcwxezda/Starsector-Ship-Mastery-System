@@ -84,7 +84,7 @@ public class MasteryPanel {
     public MasteryPanel(RefitHandler handler) {
 
         ReflectionUtils.GenericDialogData dialogData =
-                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, null, 1200f, 800f, null);
+                ReflectionUtils.showGenericDialog("", Strings.MasteryPanel.dismissWindow, null, 1200f, 700f, null);
         if (dialogData == null) {
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(Strings.MasteryPanel.cantOpenPanel, Settings.NEGATIVE_HIGHLIGHT_COLOR);
             return;
@@ -317,8 +317,8 @@ public class MasteryPanel {
         }
 
         buildInList.addTable(Strings.MasteryPanel.hullmodListsEmptyHint, -1, -buildInList.getHeightSoFar() + 10f);
-        if (table.getRows().size() < 15) {
-            table.autoSizeToRows(15);
+        if (table.getRows().size() < 13) {
+            table.autoSizeToRows(13);
         }
 
         float resetButtonW = 150f, resetButtonH = 30f;
@@ -348,7 +348,7 @@ public class MasteryPanel {
 
             @Override
             public float getTooltipWidth(Object tooltipParam) {
-                return 400f;
+                return 425f;
             }
 
             @Override
@@ -358,6 +358,7 @@ public class MasteryPanel {
                         0f,
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Utils.asPercentNoDecimal(1f-SModUtils.CREDITS_COST_MULT_SP),
+                        Misc.getDGSCredits(SModTableRowPressed.CREDITS_FOR_NO_BONUS_XP),
                         "" + 1,
                         "" + (1+EngineeringOverride.NUM_ADDITIONAL_SMODS),
                         Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).getDisplayName());
@@ -397,7 +398,7 @@ public class MasteryPanel {
         thisShipPanel.addUIElement(resetButtonTTM).inTR(30f, -20f);
         thisShipPanel.addUIElement(useSPButtonTTM).inTL(13f, -20f);
 
-        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, 20f);
+        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, -2f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
         return thisShipPanel;
     }

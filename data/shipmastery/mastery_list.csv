@@ -31,7 +31,7 @@ ModifyStatsFlat,,varying negative_strength_allowed scale_selection_weight,,1,shi
 ModifyStatsEffect,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsEffect
 #### COMBAT ####
 ApplyOfficerSkill,2,varying combat,,1,shipmastery.mastery.impl.combat.ApplyOfficerSkill
-ShieldHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
+ShieldHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
 ArmorHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ArmorHullmodPackage
 HullHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.HullHullmodPackage
 EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.EngineHullmodPackage

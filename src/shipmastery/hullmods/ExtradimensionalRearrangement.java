@@ -38,12 +38,12 @@ public class ExtradimensionalRearrangement extends BaseHullMod {
 
         if (ship == null || ship.getFleetMemberId() == null) return;
         float[] params = getParams(ship.getFleetMemberId().hashCode());
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect2, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[0]/100f));
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect3, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[1]/100f));
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect4, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[2]/100f));
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect5, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[3]/100f));
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect6, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[4]/100f));
-        tooltip.addPara(Strings.Hullmods.rearrangementEffect7, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercentOneDecimal(-params[5]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect2, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[0]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect3, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[1]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect4, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[2]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect5, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[3]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect6, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[4]/100f));
+        tooltip.addPara(Strings.Hullmods.rearrangementEffect7, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[5]/100f));
     }
 
     private float[] getParams(int seed) {

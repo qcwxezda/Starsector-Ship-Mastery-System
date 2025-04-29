@@ -3,11 +3,17 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class BuiltInHSA extends HullmodPackage {
+
+    public static final float REQ_NOT_MET_MULT = 1f/3f;
+
     @Override
     protected String getDescriptionString() {
         return Strings.Descriptions.BuiltInHSA;
@@ -19,6 +25,11 @@ public class BuiltInHSA extends HullmodPackage {
                 Utils.getHullmodName(HullMods.HIGH_SCATTER_AMP),
                 Utils.asInt(getStrength(selectedModule))
         };
+    }
+
+    @Override
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(Strings.Descriptions.BuiltInHSAPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asInt(getStrength(selectedModule)*REQ_NOT_MET_MULT));
     }
 
     @Override
@@ -36,6 +47,11 @@ public class BuiltInHSA extends HullmodPackage {
     @Override
     protected void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         stats.getBeamWeaponRangeBonus().modifyFlat(id, getStrength(stats));
+    }
+
+    @Override
+    protected void applyIfRequirementNotMet(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        stats.getBeamWeaponRangeBonus().modifyFlat(id, getStrength(stats)*REQ_NOT_MET_MULT);
     }
 
     @Override

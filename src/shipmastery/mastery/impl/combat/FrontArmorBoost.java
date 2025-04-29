@@ -16,7 +16,7 @@ public class FrontArmorBoost extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FrontArmorBoost).params(
-                Utils.asPercentOneDecimal(getStrength(selectedModule)*HULL_SIZE_MULTS[Utils.hullSizeToInt(selectedModule.getHullSize())]));
+                Utils.asPercent(getStrength(selectedModule)*HULL_SIZE_MULTS[Utils.hullSizeToInt(selectedModule.getHullSize())]));
     }
 
     @Override

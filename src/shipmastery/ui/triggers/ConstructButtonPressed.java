@@ -24,8 +24,12 @@ public class ConstructButtonPressed extends ActionListener {
 
     private ButtonAPI min, less, more, max;
     private LabelAPI confirmLabel;
-    private final IntRef count = new IntRef();
+    private LabelAPI spInfoLabel;
+    private final IntRef count = new IntRef(1);
     private final int maxCount;
+    private final IntRef spGained = new IntRef();
+    public static final int CONSTRUCTS_PER_SP = 5;
+    public static final String CONSTRUCTS_MADE_KEY = "$sms_constructsMade";
 
     public ConstructButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
@@ -39,22 +43,37 @@ public class ConstructButtonPressed extends ActionListener {
         float credits = KnowledgeConstructPlugin.getPrice(spec);
         String creditsStr = Misc.getDGSCredits(credits);
 
+        int constructsMade = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_MADE_KEY, 0);
+
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 "",
                 Strings.MasteryPanel.confirmText2,
                 Strings.MasteryPanel.cancelText,
-                500f,
-                150f,
-                new ConfirmCreateConstruct(masteryPanel, spec, count)
+                550f,
+                170f,
+                new ConfirmCreateConstruct(masteryPanel, spec, count, spGained)
         );
 
         if (dialogData != null) {
-            CustomPanelAPI selector = Global.getSettings().createCustom(500f, 100f, null);
-            TooltipMakerAPI tooltip = selector.createUIElement(475f, 50f, false);
+            CustomPanelAPI selector = Global.getSettings().createCustom(550f, 100f, null);
+            TooltipMakerAPI tooltip = selector.createUIElement(525f, 50f, false);
             tooltip.setParaInsigniaLarge();
-            confirmLabel = tooltip.addPara(String.format(Strings.MasteryPanel.createConstructConfirmTextSingular, amount, 1, creditsStr), 0f);
+            confirmLabel = tooltip.addPara(String.format(Strings.MasteryPanel.createConstructConfirmTextSingular, amount, 1, creditsStr), 5f);
             confirmLabel.setHighlight(amount, creditsStr);
             confirmLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
+            boolean nextConstructGrantsSP = (constructsMade+1) % CONSTRUCTS_PER_SP == 0;
+            spGained.value = nextConstructGrantsSP ? 1 : 0;
+            tooltip.setParaFontDefault();
+            spInfoLabel = tooltip.addPara(
+                    String.format(
+                            nextConstructGrantsSP ?
+                                    Strings.MasteryPanel.createConstructSPTextSingular :
+                                    Strings.MasteryPanel.createConstructSPTextPlural,
+                            CONSTRUCTS_PER_SP,
+                            "" + spGained.value),
+                    25f);
+            spInfoLabel.setHighlight("" + CONSTRUCTS_PER_SP, "" + spGained.value);
+            spInfoLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getStoryBrightColor());
             selector.addUIElement(tooltip).inTL(8f, 8f);
             TooltipMakerAPI buttons = selector.createUIElement(200f, 50f, false);
             buttons.setButtonFontOrbitron20();
@@ -98,7 +117,7 @@ public class ConstructButtonPressed extends ActionListener {
                 }
             });
 
-            selector.addUIElement(buttons).inBMid(-135f);
+            selector.addUIElement(buttons).inBMid(-155f);
             dialogData.panel.addComponent(selector).inTL(0f, 0f);
             updatePanel();
         }
@@ -116,6 +135,21 @@ public class ConstructButtonPressed extends ActionListener {
                 creditsStr));
         confirmLabel.setHighlight(amount, creditsStr);
         confirmLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
+
+        int constructsMade = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_MADE_KEY, 0);
+        spGained.value = count.value / CONSTRUCTS_PER_SP;
+        int rem = count.value % CONSTRUCTS_PER_SP;
+        if (constructsMade % CONSTRUCTS_PER_SP + rem >= CONSTRUCTS_PER_SP) {
+            spGained.value++;
+        }
+
+        spInfoLabel.setText(String.format(
+                spGained.value == 1 ? Strings.MasteryPanel.createConstructSPTextSingular : Strings.MasteryPanel.createConstructSPTextPlural,
+                CONSTRUCTS_PER_SP,
+                spGained.value
+        ));
+        spInfoLabel.setHighlight("" + CONSTRUCTS_PER_SP, "" + spGained.value);
+        spInfoLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getStoryBrightColor());
 
         min.setEnabled(count.value != 1);
         less.setEnabled(count.value > 1);

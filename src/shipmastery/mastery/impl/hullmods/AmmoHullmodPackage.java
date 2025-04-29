@@ -3,14 +3,25 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class AmmoHullmodPackage extends HullmodPackage {
+
+    public static final float REGEN_MULTIPLIER = 0.6f;
+
     @Override
     protected String getDescriptionString() {
         return Strings.Descriptions.AmmoHullmodPackage;
+    }
+
+    @Override
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(Strings.Descriptions.AmmoHullmodPackagePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercentNoDecimal(getStrength(selectedModule)));
     }
 
     @Override
@@ -18,7 +29,8 @@ public class AmmoHullmodPackage extends HullmodPackage {
         return new String[] {
                 Utils.getHullmodName(HullMods.MISSLERACKS),
                 Utils.getHullmodName(HullMods.MAGAZINES),
-                Utils.asPercent(getStrength(selectedModule))
+                Utils.asPercentNoDecimal(getStrength(selectedModule)),
+                Utils.asPercentNoDecimal(getStrength(selectedModule)*REGEN_MULTIPLIER)
         };
     }
 
@@ -41,6 +53,19 @@ public class AmmoHullmodPackage extends HullmodPackage {
         stats.getBallisticAmmoBonus().modifyMult(id, 1f + strength);
         stats.getEnergyAmmoBonus().modifyMult(id, 1f + strength);
         stats.getMissileAmmoBonus().modifyMult(id, 1f + strength);
+
+        float regenStrength = strength*REGEN_MULTIPLIER;
+        stats.getBallisticAmmoRegenMult().modifyPercent(id, 100f*regenStrength);
+        stats.getEnergyAmmoRegenMult().modifyPercent(id, 100f*regenStrength);
+        stats.getMissileAmmoRegenMult().modifyPercent(id, 100f*regenStrength);
+    }
+
+    @Override
+    protected void applyIfRequirementNotMet(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        float strength = getStrength(stats);
+        stats.getBallisticAmmoBonus().modifyPercent(id, 100f*strength);
+        stats.getEnergyAmmoBonus().modifyPercent(id, 100f*strength);
+        stats.getMissileAmmoBonus().modifyPercent(id, 100f*strength);
     }
 
     @Override

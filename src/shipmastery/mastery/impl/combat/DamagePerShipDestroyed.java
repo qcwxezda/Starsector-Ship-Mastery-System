@@ -88,7 +88,7 @@ public class DamagePerShipDestroyed extends BaseMasteryEffect {
                         id,
                         "graphics/icons/hullsys/high_energy_focus.png",
                         Strings.Descriptions.DamagePerShipDestroyedTitle,
-                        String.format(Strings.Descriptions.DamagePerShipDestroyedDesc1, Utils.asPercentOneDecimal(cur)),
+                        String.format(Strings.Descriptions.DamagePerShipDestroyedDesc1, Utils.asPercent(cur)),
                         false);
             }
         }

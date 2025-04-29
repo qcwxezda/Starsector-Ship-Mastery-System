@@ -77,7 +77,7 @@ public class StartingRange extends BaseMasteryEffect {
                         id,
                         "graphics/icons/sensor_array.png",
                         Strings.Descriptions.StartingRangeTitle,
-                        String.format(Strings.Descriptions.StartingRangeDesc1, Utils.asPercentOneDecimal(rangeBoost)),
+                        String.format(Strings.Descriptions.StartingRangeDesc1, Utils.asPercent(rangeBoost)),
                         false
                 );
             }

@@ -67,6 +67,8 @@ public class MinimumCR extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
+        if (spec.isPhase()) return null;
+        if (spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) return null;
         switch (spec.getHullSize()) {
             case FRIGATE, DESTROYER -> {
                 return 2f;

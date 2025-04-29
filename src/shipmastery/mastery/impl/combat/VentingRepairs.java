@@ -13,7 +13,7 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class VentingRepairs extends BaseMasteryEffect {
-    public static final float BASE_FLUX_NEEDED = 0.8f;
+    public static final float BASE_FLUX_NEEDED = 0.7f;
     public static final float COOLDOWN_SECONDS = 20f;
 
     @Override

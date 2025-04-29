@@ -233,7 +233,16 @@ public abstract class Utils {
         return asPercent(Math.abs(num));
     }
 
-    public static String asPercent(float num) {return percentFormat.format(num);}
+    public static String asPercent(float num) {
+        if (num < 0.01f) {
+            return percentFormat.format(num);
+        }
+        else if (num < 0.1f) {
+            return asPercentOneDecimal(num);
+        } else {
+            return asPercentNoDecimal(num);
+        }
+    }
     public static String asPercentOneDecimal(float num) {return percentFormatOneDecimal.format(num);}
 
     public static String asPercentNoDecimal(float num) {return percentFormatNoDecimal.format(num);}

@@ -18,6 +18,14 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         ShipVariantAPI variant = stats.getVariant();
         if (variant == null) return;
+        if (hasRequiredCount(variant)) {
+            apply(hullSize, stats);
+        } else {
+            applyIfRequirementNotMet(hullSize, stats);
+        }
+    }
+
+    public boolean hasRequiredCount(ShipVariantAPI variant) {
         int count = 0;
         for (HullmodData data : getHullmodList()) {
             if (variant.hasHullMod(data.id) &&
@@ -27,9 +35,7 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
                 count++;
             }
         }
-        if (count >= getRequiredCount()) {
-            apply(hullSize, stats);
-        }
+        return count >= getRequiredCount();
     }
 
     protected abstract String getDescriptionString();
@@ -40,6 +46,8 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
 
     protected abstract int getRequiredCount();
     protected abstract void apply(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats);
+
+    protected void applyIfRequirementNotMet(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {}
 
     protected static class HullmodData {
         final String id;

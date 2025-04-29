@@ -88,8 +88,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                         float bonusXPFraction = 0f;
                         if (masteryPanel.isUsingSP()) {
                             float origCreditsCost = SModUtils.getCreditsCost(spec, module);
-                            float diff = origCreditsCost - rowData.creditsCost;
-                            bonusXPFraction = 1f - Math.min(1f, diff / CREDITS_FOR_NO_BONUS_XP);
+                            bonusXPFraction = 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
                             Global.getSector().getPlayerStats().spendStoryPoints(
                                     1,
                                     true,

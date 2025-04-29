@@ -3,6 +3,7 @@ package shipmastery.ui.triggers;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
@@ -15,11 +16,13 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
     final MasteryPanel masteryPanel;
     final ShipHullSpecAPI spec;
     final IntRef count;
+    final IntRef spGained;
 
-    public ConfirmCreateConstruct(MasteryPanel masteryPanel, ShipHullSpecAPI spec, IntRef count) {
+    public ConfirmCreateConstruct(MasteryPanel masteryPanel, ShipHullSpecAPI spec, IntRef count, IntRef spGained) {
         this.masteryPanel = masteryPanel;
         this.spec = spec;
         this.count = count;
+        this.spGained = spGained;
     }
 
     @Override
@@ -34,6 +37,16 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
                 count.value == 1 ? Strings.MasteryPanel.createConstructConfirmSingular :
                         String.format(Strings.MasteryPanel.createConstructConfirmPlural, count.value),
                 Settings.MASTERY_COLOR);
+
+        Global.getSector().getPersistentData().compute(ConstructButtonPressed.CONSTRUCTS_MADE_KEY, (k,v) -> v == null ? count.value : (int) v + count.value);
+        if (spGained.value > 0) {
+            Global.getSector().getPlayerStats().addStoryPoints(spGained.value);
+            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+                    String.format(spGained.value == 1 ? Strings.MasteryPanel.createConstructGainedSPSingular : Strings.MasteryPanel.createConstructGainedSPPlural, spGained.value),
+                    "" + spGained.value,
+                    Misc.getStoryBrightColor()
+            );
+        }
 
         Global.getSector().getPlayerFleet().getCargo().addSpecial(new SpecialItemData("sms_construct", spec.getHullId()), count.value);
         Global.getSoundPlayer().playUISound("sms_create_construct", 1f, 1f);

@@ -9,6 +9,8 @@
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
     - When using SP in this manner, you may always build in at least 1 S-mod (3 with engineering override) regardless of the ship's current capacity.
+- Creating (not consuming) knowledge constructs now grants 1 SP per 5 constructs.
+    - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
 - Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
 - Added 6 mastery effects.
 - Added ability for a single hull spec to have multiple presets:
@@ -50,6 +52,27 @@
         - No longer increases phase upkeep, instead reduces phased timeflow by 25%.
     - Engine-hullmod-package:
         - Now also increases top speed by an additional 10/8/6/5.
+        - This effect applies regardless of whether the hullmod requirements are met.
+    - Ammo-hullmod-package:
+        - Now also increases ammo regeneration by 60% of the max ammo bonus.
+        - Now increases ammo by a flat 25% if the hullmod requirements aren't met.
+    - Armor-hullmod-package:
+        - Now increases armor by a flat 8% if the hullmod requirements aren't met.
+    - Fighter-hullmod-package:
+        - Now also reduces replacement rate degradation by the same amount.
+        - If hullmod requirements aren't met, reduces replacement rate degradation by 10%.
+    - Flux-hullmod-package:
+        - If hullmod requirements aren't met, increase capacity and dissipation by 4%.
+    - Hull-hullmod-package:
+        - If hullmod requirements aren't met, reduces hull/armor damage taken by 4%.
+    - Shield-hullmod-package:
+        - Increased base reduction to 10%.
+        - If hullmod requirements aren't met, reduces shield damage taken by 5%.
+    - Built-in-neural-integrator:
+        - Removed hidden CR bonus.
+    - No-CR-degradation-below-threshold:
+        - Phase ships are no longer eligible.
+        - Ships with built-in SO are no longer eligible.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.
 - Fixed a rare possible issue with the Orion-Device-deals-damage mastery.

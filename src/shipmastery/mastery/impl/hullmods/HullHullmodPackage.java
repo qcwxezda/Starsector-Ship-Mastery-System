@@ -3,11 +3,17 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class HullHullmodPackage extends HullmodPackage {
+
+    public static final float REQ_NOT_MET_MULT = 0.4f;
+
     @Override
     protected String getDescriptionString() {
         return Strings.Descriptions.HullHullmodPackage;
@@ -20,6 +26,15 @@ public class HullHullmodPackage extends HullmodPackage {
                 Utils.getHullmodName(HullMods.BLAST_DOORS),
                 Utils.asPercent(getStrength(selectedModule))
         };
+    }
+
+    @Override
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(
+                Strings.Descriptions.HullHullmodPackagePost,
+                0f,
+                Settings.POSITIVE_HIGHLIGHT_COLOR,
+                Utils.asPercent(getStrength(selectedModule)*REQ_NOT_MET_MULT));
     }
 
     @Override
@@ -40,6 +55,13 @@ public class HullHullmodPackage extends HullmodPackage {
         float strength = getStrength(stats);
         stats.getHullDamageTakenMult().modifyMult(id, 1f - strength);
         stats.getArmorDamageTakenMult().modifyMult(id, 1f - strength);
+    }
+
+    @Override
+    protected void applyIfRequirementNotMet(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        float strength = getStrength(stats);
+        stats.getHullDamageTakenMult().modifyMult(id, 1f - strength*REQ_NOT_MET_MULT);
+        stats.getArmorDamageTakenMult().modifyMult(id, 1f - strength*REQ_NOT_MET_MULT);
     }
 
     @Override
