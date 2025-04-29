@@ -4,7 +4,7 @@
 *** NOT SAVE COMPATIBLE WITH PREVIOUS VERSIONS ***
 
 - Framework now supports more than 2 options per mastery level.
-- The presets for levels 1, 3, 5, 7, and 9 now have 3 options each.
+- The presets for levels 1, 2, 4, 5, 7, and 9 now have 3 options each.
     - Fixed max-level assignments still only have 2 options each.
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
