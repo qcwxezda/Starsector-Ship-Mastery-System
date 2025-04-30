@@ -8,11 +8,11 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.SharedUnlockData;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -33,7 +33,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
         if (dialog == null) return false;
         List<FleetMemberAPI> selectable = new ArrayList<>();
         for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
-            if (!fm.getVariant().hasHullMod("sms_randomModification")) {
+            if (!fm.getVariant().hasHullMod("sms_extradimensionalRearrangement1")) {
                 selectable.add(fm);
             }
         }
@@ -57,10 +57,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                             return;
                         }
                         FleetMemberAPI picked = fleetMembers.get(0);
-                        picked.getVariant().addPermaMod("sms_randomModification");
-                        if (SharedUnlockData.get().reportPlayerAwareOfHullmod("sms_randomModification", false)) {
-                            SharedUnlockData.get().saveIfNeeded();
-                        }
+                        picked.getVariant().addPermaMod("sms_extradimensionalRearrangement5");
 
                         picked.getRepairTracker().setCR(0);
                         memoryMap.get(MemKeys.LOCAL).set(SMS_USED_KEY, true);
@@ -71,6 +68,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                             cargo.addSpecial(
                                     new SpecialItemData("sms_construct", Utils.getRestoredHullSpecId(picked.getHullSpec())),
                                     3 + Misc.random.nextInt(3)); // 3-5
+                            cargo.addSpecial(new SpecialItemData("sms_superconstruct", KnowledgeConstructPlugin.BLANK_CONSTRUCT), 1f);
                             BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);
                         }
                         Global.getSoundPlayer().setSuspendDefaultMusicPlayback(true);

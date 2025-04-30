@@ -125,7 +125,7 @@ public class MasteryPanel {
     }
 
     void generateDialog(UIPanelAPI panel, boolean isRefresh, boolean useSavedScrollerLocation, boolean scrollToStart) {
-        Pair<ShipAPI, ShipAPI> moduleAndShip = handler.getSelectedShip();
+        Pair<ShipAPI, ShipAPI> moduleAndShip = handler.getSelectedShip(ReflectionUtils.getCoreUI());
         module = moduleAndShip.one;
         root = moduleAndShip.two;
         if (root == null || module == null) {

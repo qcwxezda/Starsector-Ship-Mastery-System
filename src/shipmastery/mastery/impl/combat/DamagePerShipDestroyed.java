@@ -55,14 +55,7 @@ public class DamagePerShipDestroyed extends BaseMasteryEffect {
         @Override
         public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
             if (target.isFighter() || target.getOwner() == ship.getOwner()) return;
-            boolean countAsKill = false;
-            for (ShipAPI source : recentlyDamagedBy) {
-                if (EngineUtils.shipIsOwnedBy(source, ship)) {
-                    countAsKill = true;
-                    break;
-                }
-            }
-            if (!countAsKill) return;
+            if (!EngineUtils.shipOrOwnerInSet(recentlyDamagedBy, ship)) return;
 
             var shipStats = ship.getMutableStats();
             float dp = shipStats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).computeEffective(shipStats.getSuppliesToRecover().getBaseValue());

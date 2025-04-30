@@ -12,7 +12,7 @@
 - Creating (not consuming) knowledge constructs now grants 1 SP per 5 constructs.
     - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
 - Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
-- Added 6 mastery effects.
+- Added 7 mastery effects.
 - Added ability for a single hull spec to have multiple presets:
     - If a "preset" string or array is given in the assignment, then only the presets provided are used.
         - They are processed in the order they are declared, so if multiple presets have conflicting entries, the earliest one wins.
@@ -73,7 +73,14 @@
     - No-CR-degradation-below-threshold:
         - Phase ships are no longer eligible.
         - Ships with built-in SO are no longer eligible.
+- Best of the best: nerfed mastery bonus from 30% to 25%.
+- Enhancing:
+    - Extra logistics S-mod moved from third enhance to first enhance.
+    - First 2 enhances give +7.5% each, next 2 only give +5% each.
+    - Can enhance 5 more times for 2% each, for extreme min-maxing.
+        - Enhances 6-10 also give -1% damage taken each.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
+- Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.
 - Fixed a rare possible issue with the Orion-Device-deals-damage mastery.
 

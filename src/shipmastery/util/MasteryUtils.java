@@ -21,7 +21,7 @@ import java.util.TreeMap;
 
 public abstract class MasteryUtils {
 
-    public static final int bonusLogisticSlotEnhanceNumber = 3;
+    public static final int bonusLogisticSlotEnhanceNumber = 1;
 
     public static int getRerollMPCost(ShipHullSpecAPI spec) {
         return 20;

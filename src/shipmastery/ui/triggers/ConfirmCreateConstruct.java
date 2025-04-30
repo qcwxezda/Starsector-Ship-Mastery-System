@@ -48,7 +48,7 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
             );
         }
 
-        Global.getSector().getPlayerFleet().getCargo().addSpecial(new SpecialItemData("sms_construct", spec.getHullId()), count.value);
+        Global.getSector().getPlayerFleet().getCargo().addSpecial(new SpecialItemData("sms_construct", KnowledgeConstructPlugin.PLAYER_CREATED_PREFIX + spec.getHullId()), count.value);
         Global.getSoundPlayer().playUISound("sms_create_construct", 1f, 1f);
 
         masteryPanel.forceRefresh(true, false, true, false);

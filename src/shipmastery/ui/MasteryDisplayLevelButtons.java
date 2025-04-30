@@ -7,6 +7,7 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -28,6 +29,7 @@ public class MasteryDisplayLevelButtons implements CustomUIElement, CustomUIPane
 
     private final List<ButtonAPI> buttons = new ArrayList<>();
     private int checkedButtonIndex = -1;
+    private final IntervalUtil updateInterval = new IntervalUtil(0.05f, 0.05f);
 
     MasteryDisplayLevelButtons(MasteryDisplay display, ShipHullSpecAPI spec, int numButtons, int buttonsPerRow, float buttonW, float buttonH, float buttonPad) {
         this.display = display;
@@ -98,6 +100,13 @@ public class MasteryDisplayLevelButtons implements CustomUIElement, CustomUIPane
 
     @Override
     public void advance(float amount) {
+        updateInterval.advance(amount);
+        if (updateInterval.intervalElapsed()) {
+            update();
+        }
+    }
+
+    private void update() {
         if (checkedButtonIndex >= 0) {
             buttons.get(checkedButtonIndex).setChecked(false);
         }
@@ -115,6 +124,7 @@ public class MasteryDisplayLevelButtons implements CustomUIElement, CustomUIPane
     public void buttonPressed(Object buttonId) {
         if (buttonId instanceof Integer) {
             display.scrollToLevel((int) buttonId);
+            update();
         }
     }
 }

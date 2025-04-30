@@ -99,6 +99,7 @@ public interface Strings {
         String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
         String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");
         String enhanceMasteryConfirmText2NoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2NoSP");
+        String enhanceMasteryConfirmText3 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText3");
         String unassignedWarningTextPlural = Utils.getString("sms_masteryPanel", "unassignedWarningTextPlural");
         String unassignedWarningTextSingular = Utils.getString("sms_masteryPanel", "unassignedWarningTextSingular");
         String useSPHint = Utils.getString("sms_masteryPanel", "useSPHint");
@@ -134,6 +135,10 @@ public interface Strings {
     interface Items {
         String knowledgeConstruct = Utils.getString("sms_items", "knowledgeConstruct");
         String knowledgeConstructRightClick = Utils.getString("sms_items", "knowledgeConstructRightClick");
+        String knowledgeConstructCantRightClick = Utils.getString("sms_items", "knowledgeConstructCantRightClick");
+        String superconstructRightClick = Utils.getString("sms_items", "superconstructRightClick");
+        String superconstructMessageDisplay1 = Utils.getString("sms_items", "superconstructMessageDisplay1");
+        String superconstructMessageDisplay2 = Utils.getString("sms_items", "superconstructMessageDisplay2");
     }
 
     interface Graveyard {
@@ -159,13 +164,27 @@ public interface Strings {
 
     interface Hullmods {
         String ENGINEERING_OVERRIDE = "sms_engineeringOverride";
-        String rearrangementEffect1 = Utils.getString("sms_hullmods", "rearrangementEffect1");
-        String rearrangementEffect2 = Utils.getString("sms_hullmods", "rearrangementEffect2");
-        String rearrangementEffect3 = Utils.getString("sms_hullmods", "rearrangementEffect3");
-        String rearrangementEffect4 = Utils.getString("sms_hullmods", "rearrangementEffect4");
-        String rearrangementEffect5 = Utils.getString("sms_hullmods", "rearrangementEffect5");
-        String rearrangementEffect6 = Utils.getString("sms_hullmods", "rearrangementEffect6");
-        String rearrangementEffect7 = Utils.getString("sms_hullmods", "rearrangementEffect7");
+        String rearrangement1Effect1 = Utils.getString("sms_hullmods", "rearrangement1Effect1");
+        String rearrangement1Effect2 = Utils.getString("sms_hullmods", "rearrangement1Effect2");
+        String rearrangement1Effect3 = Utils.getString("sms_hullmods", "rearrangement1Effect3");
+        String rearrangement1Effect4 = Utils.getString("sms_hullmods", "rearrangement1Effect4");
+        String rearrangement1Effect5 = Utils.getString("sms_hullmods", "rearrangement1Effect5");
+        String rearrangement1Effect6 = Utils.getString("sms_hullmods", "rearrangement1Effect6");
+        String rearrangement1Effect7 = Utils.getString("sms_hullmods", "rearrangement1Effect7");
+        String rearrangement2Effect = Utils.getString("sms_hullmods", "rearrangement2Effect");
+        String rearrangement3Effect1 = Utils.getString("sms_hullmods", "rearrangement3Effect1");
+        String rearrangement3Effect2Inc = Utils.getString("sms_hullmods", "rearrangement3Effect2Inc");
+        String rearrangement3Effect2Dec = Utils.getString("sms_hullmods", "rearrangement3Effect2Dec");
+        String rearrangement3Effect3Inc = Utils.getString("sms_hullmods", "rearrangement3Effect3Inc");
+        String rearrangement3Effect3Dec = Utils.getString("sms_hullmods", "rearrangement3Effect3Dec");
+        String rearrangement3Effect4 = Utils.getString("sms_hullmods", "rearrangement3Effect4");
+        String rearrangement4Effect = Utils.getString("sms_hullmods", "rearrangement4Effect");
+        String rearrangement5Effect = Utils.getString("sms_hullmods", "rearrangement5Effect");
+        String rearrangement5RetreatText = Utils.getString("sms_hullmods", "rearrangement5RetreatText");
+        String rearrangementD1Effect = Utils.getString("sms_hullmods", "rearrangementD1Effect");
+        String rearrangementD2Effect = Utils.getString("sms_hullmods", "rearrangementD2Effect");
+        String rearrangementD3Effect = Utils.getString("sms_hullmods", "rearrangementD3Effect");
+        String rearrangementD4Effect = Utils.getString("sms_hullmods", "rearrangementD4Effect");
         String engineeringOverrideDesc = Utils.getString("sms_hullmods", "engineeringOverrideDesc");
         String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
         String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
@@ -523,5 +542,7 @@ public interface Strings {
         String FlatArmorHullDamagePost = Utils.getString( "sms_descriptions", "FlatArmorHullDamagePost");
         String VentingRepairs = Utils.getString( "sms_descriptions", "VentingRepairs");
         String VentingRepairsPost = Utils.getString( "sms_descriptions", "VentingRepairsPost");
+        String BeamPartialHardFlux = Utils.getString( "sms_descriptions", "BeamPartialHardFlux");
+        String BeamPartialHardFluxPost = Utils.getString( "sms_descriptions", "BeamPartialHardFluxPost");
     }
 }

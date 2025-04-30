@@ -148,6 +148,16 @@ public abstract class EngineUtils {
                 ship.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP) == owner;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean shipOrOwnerInSet(Set<ShipAPI> set, ShipAPI ship) {
+        for (ShipAPI source : set) {
+            if (EngineUtils.shipIsOwnedBy(source, ship)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** If the argument is a ship, returns that ship.
      *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */

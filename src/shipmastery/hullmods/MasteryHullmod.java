@@ -39,6 +39,21 @@ public class MasteryHullmod extends BaseHullMod {
             }
         }
 
+        // Enhances 6-10 decrease damage taken by 1% each
+        final VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
+        final ShipHullSpecAPI rootSpec = info == null ? variant.getHullSpec() : info.root.getHullSpec();
+        int enhanceCount = MasteryUtils.getEnhanceCount(rootSpec);
+        float dr = 0f;
+        for (int i = 0; i < enhanceCount; i++) {
+            dr += Settings.ENHANCE_DR_AMOUNT[i];
+        }
+        if (dr > 0f) {
+            stats.getShieldDamageTakenMult().modifyMult(id, 1f-dr);
+            stats.getArmorDamageTakenMult().modifyMult(id, 1f-dr);
+            stats.getHullDamageTakenMult().modifyMult(id, 1f-dr);
+            stats.getEmpDamageTakenMult().modifyMult(id, 1f-dr);
+        }
+
         applyEffects(variant, (effect, commander, isModule) -> {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                 effect.applyEffectsBeforeShipCreation(hullSize, stats);

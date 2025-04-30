@@ -110,6 +110,7 @@ LatentDR,2,combat,,1,shipmastery.mastery.impl.combat.LatentDR
 DamagePerShipDestroyed,3,combat,,1,shipmastery.mastery.impl.combat.DamagePerShipDestroyed
 FlatArmorHullDamage,3,combat,,1,shipmastery.mastery.impl.combat.FlatArmorHullDamage
 VentingRepairs,2,combat,,1,shipmastery.mastery.impl.combat.VentingRepairs
+BeamPartialHardFlux,3,combat,,1,shipmastery.mastery.impl.combat.BeamPartialHardFlux
 #### SHIP SYSTEM ENHANCEMENTS ####
 HighFrequencyMotes,4,combat unique doesnt_affect_modules prefix_flagship_only,,1,shipmastery.mastery.impl.combat.shipsystems.HighFrequencyMotes
 EnergyMineConversion,4,combat unique doesnt_affect_modules,,100,shipmastery.mastery.impl.combat.shipsystems.EnergyMineConversion

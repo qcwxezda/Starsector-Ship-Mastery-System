@@ -41,28 +41,18 @@ public class MinimumCR extends BaseMasteryEffect {
         }
     }
 
-    static class MinimumCRScript implements AdvanceableListener {
-        final ShipAPI ship;
-        final float minimum;
-        final String id;
-
-        MinimumCRScript(final ShipAPI ship, float minimum, String id) {
-            this.ship = ship;
-            this.minimum = minimum;
-            this.id  = id;
-        }
-
+    record MinimumCRScript(ShipAPI ship, float minimum, String id) implements AdvanceableListener {
         @Override
-        public void advance(float amount) {
-            ship.setCurrentCR(Math.min(ship.getCRAtDeployment(), Math.max(ship.getCurrentCR(), minimum)));
-            if (ship.getCurrentCR() <= 0f) {
-                ship.getMutableStats().getCriticalMalfunctionChance().unmodify(id);
-                ship.getMutableStats().getWeaponMalfunctionChance().unmodify(id);
-                ship.getMutableStats().getEngineMalfunctionChance().unmodify(id);
-                ship.getMutableStats().getShieldMalfunctionChance().unmodify(id);
+            public void advance(float amount) {
+                ship.setCurrentCR(Math.min(ship.getCRAtDeployment(), Math.max(ship.getCurrentCR(), minimum)));
+                if (ship.getCurrentCR() <= 0f) {
+                    ship.getMutableStats().getCriticalMalfunctionChance().unmodify(id);
+                    ship.getMutableStats().getWeaponMalfunctionChance().unmodify(id);
+                    ship.getMutableStats().getEngineMalfunctionChance().unmodify(id);
+                    ship.getMutableStats().getShieldMalfunctionChance().unmodify(id);
+                }
             }
         }
-    }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {

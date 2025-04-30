@@ -48,10 +48,12 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         enhanceCount = enhanceCount == null ? 1 : enhanceCount + 1;
         enhanceMap.put(spec.getHullId(), enhanceCount);
 
-        // 3rd enhance does something different, so don't count it
-        if (enhanceCount >= 3) enhanceCount--;
+        float enhanceAmount = 0f;
+        for (int i = 0; i < enhanceCount; i++) {
+            enhanceAmount += Settings.ENHANCE_MASTERY_AMOUNT[i];
+        }
         Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
-                .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceCount * Settings.ENHANCE_AMOUNT);
+                .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);
 
         if (spCost > 0)
             Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);

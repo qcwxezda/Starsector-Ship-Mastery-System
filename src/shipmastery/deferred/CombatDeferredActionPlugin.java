@@ -19,6 +19,7 @@ public class CombatDeferredActionPlugin extends BaseEveryFrameCombatPlugin {
     public void init(CombatEngineAPI engine) {
         this.engine = engine;
         currentTime = 0f;
+        actionList.clear();
 
         engine.getCustomData().put(customDataKey, this);
     }

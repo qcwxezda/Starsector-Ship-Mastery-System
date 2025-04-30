@@ -82,8 +82,8 @@
     "modularHeader": "Modular?",
     "sModRefundTextCredits": "Refunded %1$s",
     "sModRefundTextMP": "Refunded %1$s MP",
-    "createConstructConfirmTextSingular": "Spend %1$s to create %2$s knowledge construct for this ship hull that has a value of %3$s?",
-    "createConstructConfirmTextPlural": "Spend %1$s to create %2$s knowledge constructs for this ship hull that have a value of %3$s?",
+    "createConstructConfirmTextSingular": "Spend %1$s to create %2$s knowledge construct for this hull spec that has a value of %3$s?",
+    "createConstructConfirmTextPlural": "Spend %1$s to create %2$s knowledge constructs for this hull spec that have a value of %3$s?",
     "createConstructSPTextSingular": "Gain a story point for every %1$s knowledge constructs created. This action will grant %2$s story point.",
     "createConstructSPTextPlural": "Gain a story point for every %1$s knowledge constructs created. This action will grant %2$s story points.",
     "createConstructGainedSPSingular": "Gained %1$s story point",
@@ -94,6 +94,7 @@
     "rerollMasteryComfirmTextNotApplicable": "The mastery levels containing randomized effects for this hull are: \n-  %1$s. \n\nOf those, all are currently active and ineligible for regeneration.",
     "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
     "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP. You have %3$s SP.",
+    "enhanceMasteryConfirmText3": "This will increase the effectiveness of all mastery bonuses by %1$s and reduce all damage taken by %2$s.\n\nCosts %3$s MP and %4$s SP. You have %5$s SP.",
     "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
     "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP.",
     "unassignedWarningTextPlural": "%1$s unassigned levels",
@@ -132,7 +133,7 @@
     "MaxOPForHullPost": "Hull reduction applied by this effect has a floor of %1$s and a cap of %2$s.",
     "DPIfOnlyShip": "If this is the only %1$s-class ship in your fleet, its DP cost is increased by %2$s.",
     "DPIfOnlyShipNeg": "If this is the only %1$s-class ship in your fleet, its DP cost is reduced by %2$s.",
-    "PeakCRMultipleShips": "Increases peak combat readiness duration by %1$s for each additional %2$s-class ship in your fleet.",
+    "PeakCRMultipleShips": "Increases peak performance time by %1$s for each additional %2$s-class ship in your fleet.",
     "PeakCRMultipleShipsNeg": "Decreases peak combat readiness duration by %1$s for each additional %2$s-class ship in your fleet.",
     "PeakCRMultipleShipsPost": "Effect stacks up to %1$s times and has a hard cap of %2$s increase to peak CR.",
     "ShieldDeflection": "Shield deflects all incoming projectiles for %1$s seconds when activated. Decreases shield unfolding rate by %2$s.",
@@ -443,16 +444,18 @@
     "StartingRangePost": "Ships with a peak CR timer exceeding %1$s seconds are treated as having %2$s seconds of peak CR for this effect.",
     "StartingRangeTitle": "Decaying Targeter",
     "StartingRangeDesc1": "+%1$s ballistic and energy range",
-    "LatentDR": "Reduces all damage taken by up to %1$s depending on the amount of time this ship has been deployed. The maximum effect is reached at %2$s of this ship's peak CR timer.",
+    "LatentDR": "Reduces all damage taken by up to %1$s depending on the amount of time this ship has been deployed. The maximum effect is reached after %2$s of this ship's peak CR timer has elapsed.",
     "LatentDRPost": "Ships with a peak CR timer exceeding %1$s seconds are treated as having %2$s seconds of peak CR for this effect.",
-    "DamagePerShipDestroyed": "Upon destroying an enemy ship, increases all damage dealt by %1$s multiplied by the ratio of the destroyed ship's DP to this ship's DP, up to a maximum of %2$s.",
+    "DamagePerShipDestroyed": "Upon destroying an enemy ship, increases all damage dealt by %1$s multiplied by the ratio of the destroyed ship's DP to this ship's DP, up to a maximum of %2$s per ship.",
     "DamagePerShipDestroyedPost": "This effect is capped at %1$s increased damage.",
     "DamagePerShipDestroyedTitle": "Kill Streak",
     "DamagePerShipDestroyedDesc1": "+%1$s damage dealt",
     "FlatArmorHullDamage": "Gain up to %1$s effective armor for damage reduction purposes only, depending on the amount of hull damage this ship has taken.",
     "FlatArmorHullDamagePost": "Maximum effect is reached after taking hull damage equal to %1$s of this ship's maximum hull points.",
     "VentingRepairs": "After venting at least %1$s of this ship's flux capacity uninterrupted, repair all of this ship's damaged weapons and engines.",
-    "VentingRepairsPost": "This effect has a cooldown of %1$s seconds."
+    "VentingRepairsPost": "This effect has a cooldown of %1$s seconds.",
+    "BeamPartialHardFlux": "Beams deal a proportion of their damage as hard flux based on distance traveled.",
+    "BeamPartialHardFluxPost": "Damage is %1$s hard-flux at %2$s of max weapon range, dropping off linearly to %3$s hard-flux at %4$s of max weapon range."
   },
 
   "sms_messages": {
@@ -461,13 +464,27 @@
   },
 
   "sms_hullmods": {
-    "rearrangementEffect1": "- Time flow multiplied by a factor of %1$s.",
-    "rearrangementEffect2": "- Max speed reduced by %1$s.",
-    "rearrangementEffect3": "- Maneuverability reduced by %1$s.",
-    "rearrangementEffect4": "- Flux capacity reduced by %1$s.",
-    "rearrangementEffect5": "- Flux dissipation reduced by %1$s.",
-    "rearrangementEffect6": "- Hull durability reduced by %1$s.",
-    "rearrangementEffect7": "- Armor durability reduced by %1$s.",
+    "rearrangement1Effect1": "- Time flow multiplied by a factor of %1$s.",
+    "rearrangement1Effect2": "- Max speed reduced by %1$s.",
+    "rearrangement1Effect3": "- Maneuverability reduced by %1$s.",
+    "rearrangement1Effect4": "- Flux capacity reduced by %1$s.",
+    "rearrangement1Effect5": "- Flux dissipation reduced by %1$s.",
+    "rearrangement1Effect6": "- Hull durability reduced by %1$s.",
+    "rearrangement1Effect7": "- Armor durability reduced by %1$s.",
+    "rearrangement2Effect": "Deal %1$s increased damage to ships per S-mod they have. Take %2$s increased damage per S-mod this ship has.\nIncreases S-mod capacity by %3$s.",
+    "rearrangement3Effect1": "Whenever this ship destroys an enemy ship in combat, damage taken is permanently reduced by %1$s, and damage dealt is permanently increased by %2$s. This effect can activate a maximum of %3$s times.",
+    "rearrangement3Effect2Inc": "- Damage taken is increased by %1$s.",
+    "rearrangement3Effect2Dec": "- Damage taken is decreased by %1$s.",
+    "rearrangement3Effect3Inc": "- Damage dealt is increased by %1$s.",
+    "rearrangement3Effect3Dec": "- Damage taken is decreased by %1$s.",
+    "rearrangement3Effect4": "- Ships destroyed: %1$s.",
+    "rearrangement4Effect": "This ship has been automated and its deployment points is reduced by %1$s/%2$s/%3$s/%4$s.",
+    "rearrangement5Effect": "Whenever this ship would be destroyed, it instead initiates an emergency long-range teleport, allowing it to instantly retreat from the battlefield. This procedure costs CR equal to the amount that would be needed to deploy the ship normally.\n\nWhen this ship executes an emergency retreat, it may be redeployed following a short delay, as long as it has the required CR.\n\nHull and armor are continuously repaired while this ship is in reserve, as long as at least one other ship is deployed on your side of the field. Hull is repaired at a rate of %1$s/%2$s/%3$s/%4$s of maximum hull per second. Armor is repaired at %5$s of that rate.\n\nIncreases the monthly maintenance supply cost by %6$s.",
+    "rearrangement5RetreatText": "Emergency retreat",
+    "rearrangementD1Effect": "Timeflow reduced by %1$s.",
+    "rearrangementD2Effect": "Deployment points increased by %1$s for each S-mod installed on this ship.",
+    "rearrangementD3Effect": "Take constant hull damage as soon as peak performance time expires.",
+    "rearrangementD4Effect": "Taking damage causes CR degradation.",
     "engineeringOverrideDesc": "Engineering Override hullmod",
     "engineeringOverrideWarning": "If a hullmod is built in or enhanced while this hullmod is installed, this hullmod will become permanent.",
     "engineeringOverridePermanent": "A hullmod has been built in or enhanced while this hullmod was installed. This hullmod is now permanent."
@@ -475,7 +492,11 @@
 
   "sms_items": {
     "knowledgeConstruct": "Knowledge Construct",
-    "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points"
+    "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points",
+    "knowledgeConstructCantRightClick": "Can only be sold",
+    "superconstructRightClick": "Right-click to gain %1$s mastery points and %2$s mastery effect strength for a hull spec in your fleet. The selected ship also gains %3$s additional S-mod slot.",
+    "superconstructMessageDisplay1": "Gained %1$s mastery effect strength.",
+    "superconstructMessageDisplay2": "Ship gained %1$s S-mod slot."
   },
 
   "sms_graveyard": {
