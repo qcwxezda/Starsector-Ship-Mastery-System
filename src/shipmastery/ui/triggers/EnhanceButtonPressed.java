@@ -34,14 +34,19 @@ public class EnhanceButtonPressed extends ActionListener {
 
         String amountStr = Utils.asPercent(Settings.ENHANCE_MASTERY_AMOUNT[count]);
         String drString = Utils.asPercent(dr);
+        String bonusXPString = Utils.asPercent(Settings.ENHANCE_BONUS_XP[count]);
         String format;
 
         if (isLogisticsBoost) {
-            format = String.format(stringToUse, mpCost, spCost, curSP);
+            format = String.format(stringToUse, mpCost, spCost, bonusXPString, curSP);
         } else if (!hasDR) {
-            format = String.format(stringToUse, amountStr, mpCost, spCost, curSP);
+            format = String.format(stringToUse, amountStr, mpCost, spCost, bonusXPString, curSP);
         } else {
-            format = String.format(stringToUse, amountStr, drString, mpCost, spCost, curSP);
+            if (spCost > 0) {
+                format = String.format(stringToUse, amountStr, drString, mpCost, spCost, bonusXPString, curSP);
+            } else {
+                format = String.format(stringToUse, amountStr, mpCost);
+            }
         }
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
@@ -49,23 +54,23 @@ public class EnhanceButtonPressed extends ActionListener {
                 Strings.MasteryPanel.confirmText2,
                 Strings.MasteryPanel.cancelText,
                 550f,
-                160f,
+                180f,
                 new ConfirmEnhanceMasteries(masteryPanel, spec)
         );
 
         if (dialogData != null) {
             dialogData.textLabel.setAlignment(Alignment.TL);
             if (isLogisticsBoost) {
-                dialogData.textLabel.setHighlight(mpCost + " MP", spCost + " SP", curSP + " SP");
-                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+                dialogData.textLabel.setHighlight(mpCost + " MP", spCost + " SP", bonusXPString, curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
             }
             else if (!hasDR) {
-                dialogData.textLabel.setHighlight(amountStr, mpCost + " MP", spCost + " SP", curSP + " SP");
-                dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+                dialogData.textLabel.setHighlight(amountStr, mpCost + " MP", spCost + " SP", bonusXPString, curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
             }
             else {
-                dialogData.textLabel.setHighlight(amountStr, drString, mpCost + " MP", spCost + " SP", curSP + " SP");
-                dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
+                dialogData.textLabel.setHighlight(amountStr, drString, mpCost + " MP", spCost + " SP", bonusXPString, curSP + " SP");
+                dialogData.textLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.MASTERY_COLOR, Misc.getStoryBrightColor(), Misc.getStoryBrightColor(), Misc.getStoryBrightColor());
             }
         }
     }

@@ -90,7 +90,9 @@ public class MasteryDisplayLevelButtons implements CustomUIElement, CustomUIPane
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {}
+    public void positionChanged(PositionAPI position) {
+        update();
+    }
 
     @Override
     public void renderBelow(float alphaMult) {}

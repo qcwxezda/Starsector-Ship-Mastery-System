@@ -79,6 +79,7 @@
     - First 2 enhances give +7.5% each, next 2 only give +5% each.
     - Can enhance 5 more times for 2% each, for extreme min-maxing.
         - Enhances 6-10 also give -1% damage taken each.
+    - Enhancing now grants bonus XP.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
 - Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.

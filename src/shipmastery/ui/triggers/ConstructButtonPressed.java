@@ -14,6 +14,7 @@ import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.IntRef;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 
@@ -34,12 +35,12 @@ public class ConstructButtonPressed extends ActionListener {
     public ConstructButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
         this.spec = spec;
-        maxCount = Math.max(1, (int) (ShipMastery.getPlayerMasteryPoints(spec) / 10f));
+        maxCount = Math.max(1, (int) (ShipMastery.getPlayerMasteryPoints(spec) / MasteryUtils.getConstructCost()));
     }
 
     @Override
     public void trigger(Object... args) {
-        String amount = KnowledgeConstructPlugin.NUM_POINTS_GAINED + " MP";
+        String amount = MasteryUtils.getConstructCost() + " MP";
         float credits = KnowledgeConstructPlugin.getPrice(spec);
         String creditsStr = Misc.getDGSCredits(credits);
 
@@ -124,7 +125,7 @@ public class ConstructButtonPressed extends ActionListener {
     }
 
     private void updatePanel() {
-        String amount = (count.value * KnowledgeConstructPlugin.NUM_POINTS_GAINED) + " MP";
+        String amount = (count.value * MasteryUtils.getConstructCost()) + " MP";
         int credits = count.value * KnowledgeConstructPlugin.getPrice(spec);
         String creditsStr = Misc.getDGSCredits(credits);
         confirmLabel.setText(String.format(

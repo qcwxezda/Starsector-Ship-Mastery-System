@@ -33,23 +33,8 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
 
     String skillId;
     private static MethodHandle applyPersonalToStats;
-    private static final Set<String> validSkillIds = new HashSet<>();
     private static final Set<String> supportDoctrineSkillIds = new HashSet<>();
     static {
-        validSkillIds.add(Skills.HELMSMANSHIP);
-        validSkillIds.add(Skills.COMBAT_ENDURANCE);
-        validSkillIds.add(Skills.IMPACT_MITIGATION);
-        validSkillIds.add(Skills.DAMAGE_CONTROL);
-        validSkillIds.add(Skills.FIELD_MODULATION);
-        validSkillIds.add(Skills.POINT_DEFENSE);
-        validSkillIds.add(Skills.TARGET_ANALYSIS);
-        validSkillIds.add(Skills.BALLISTIC_MASTERY);
-        validSkillIds.add(Skills.SYSTEMS_EXPERTISE);
-        validSkillIds.add(Skills.MISSILE_SPECIALIZATION);
-        validSkillIds.add(Skills.GUNNERY_IMPLANTS);
-        validSkillIds.add(Skills.ENERGY_WEAPON_MASTERY);
-        validSkillIds.add(Skills.ORDNANCE_EXPERTISE);
-        validSkillIds.add(Skills.POLARIZED_ARMOR);
         supportDoctrineSkillIds.add(Skills.HELMSMANSHIP);
         supportDoctrineSkillIds.add(Skills.COMBAT_ENDURANCE);
         supportDoctrineSkillIds.add(Skills.DAMAGE_CONTROL);
@@ -151,7 +136,7 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
         for (String id : skillIds) {
             SkillSpecAPI skill = Global.getSettings().getSkillSpec(id);
             if (skill.hasTag("deprecated")) continue;
-            if (validSkillIds.contains(id) && !seenIds.contains(id) && maxTier >= getSkillTier(id)) {
+            if (Utils.combatSkillIds.contains(id) && !seenIds.contains(id) && maxTier >= getSkillTier(id)) {
                 boolean valid = true;
                 switch (id) {
                     case Skills.FIELD_MODULATION:

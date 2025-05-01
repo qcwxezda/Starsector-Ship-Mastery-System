@@ -80,8 +80,6 @@ public class ShipDamageTracker implements DamageTakenModifier {
 
         setRecentlyDamagedBy(sourceShip, targetShip);
         if (target.getHitpoints() <= 0f) {
-            // CombatListenerUtil in base game copies the listener list when calling reportDamageApplied, so this is safe
-            targetShip.removeListenerOfClass(ShipDamageTracker.class);
             for (ShipAPI ship : Global.getCombatEngine().getShips()) {
                 if (ship.hasListenerOfClass(ShipDestroyedListener.class)) {
                     for (ShipDestroyedListener listener : ship.getListeners(ShipDestroyedListener.class)) {
@@ -89,6 +87,8 @@ public class ShipDamageTracker implements DamageTakenModifier {
                     }
                 }
             }
+            // CombatListenerUtil in base game copies the listener list when calling reportDamageApplied, so this is safe
+            targetShip.removeListenerOfClass(ShipDamageTracker.class);
         }
         return null;
     }

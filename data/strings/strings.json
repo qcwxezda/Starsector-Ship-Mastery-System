@@ -92,9 +92,9 @@
     "rerollMasteryConfirmTextApplicable": "The mastery levels containing randomized effects for this hull are: \n-  %1$s.\n\nOf those, the following levels are inactive and will be regenerated:\n-  %2$s.",
     "rerollMasteryConfirmTextApplicableCost": "Costs %1$s MP and %2$s SP. You have %3$s SP.",
     "rerollMasteryComfirmTextNotApplicable": "The mastery levels containing randomized effects for this hull are: \n-  %1$s. \n\nOf those, all are currently active and ineligible for regeneration.",
-    "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP. You have %4$s SP.",
-    "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP. You have %3$s SP.",
-    "enhanceMasteryConfirmText3": "This will increase the effectiveness of all mastery bonuses by %1$s and reduce all damage taken by %2$s.\n\nCosts %3$s MP and %4$s SP. You have %5$s SP.",
+    "enhanceMasteryConfirmText": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP and %3$s SP, and grants %4$s bonus XP. You have %5$s SP.",
+    "enhanceMasteryConfirmText2": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP and %2$s SP, and grants %3$s bonus XP. You have %4$s SP.",
+    "enhanceMasteryConfirmText3": "This will increase the effectiveness of all mastery bonuses by %1$s and reduce all damage taken by %2$s.\n\nCosts %3$s MP and %4$s SP, and grants %5$s bonus XP. You have %6$s SP.",
     "enhanceMasteryConfirmTextNoSP": "This will increase the effectiveness of all mastery bonuses by %1$s.\n\nCosts %2$s MP.",
     "enhanceMasteryConfirmText2NoSP": "This will allow the first built-in logistics hullmod per ship to no longer use an S-mod slot.\n\nCosts %1$s MP.",
     "unassignedWarningTextPlural": "%1$s unassigned levels",
@@ -479,8 +479,11 @@
     "rearrangement3Effect3Dec": "- Damage taken is decreased by %1$s.",
     "rearrangement3Effect4": "- Ships destroyed: %1$s.",
     "rearrangement4Effect": "This ship has been automated and its deployment points is reduced by %1$s/%2$s/%3$s/%4$s.",
-    "rearrangement5Effect": "Whenever this ship would be destroyed, it instead initiates an emergency long-range teleport, allowing it to instantly retreat from the battlefield. This procedure costs CR equal to the amount that would be needed to deploy the ship normally.\n\nWhen this ship executes an emergency retreat, it may be redeployed following a short delay, as long as it has the required CR.\n\nHull and armor are continuously repaired while this ship is in reserve, as long as at least one other ship is deployed on your side of the field. Hull is repaired at a rate of %1$s/%2$s/%3$s/%4$s of maximum hull per second. Armor is repaired at %5$s of that rate.\n\nIncreases the monthly maintenance supply cost by %6$s.",
-    "rearrangement5RetreatText": "Emergency retreat",
+    "rearrangement5Effect": "- Fleetwide sensor range increased multiplicatively by %1$s.\n- Fleetwide sensor profile reduced by %2$s.\n- Whenever your fleet destroys %3$s DP of enemy ships while this ship is on the battlefield, gain a story point.\n- Current progress: %4$s/%5$s.",
+    "rearrangement5Desc": "Extradimensional rearrangement",
+    "rearrangement5Message1": "Gained ",
+    "rearrangement5Message2Singular": " story point",
+    "rearrangement5Message2Plural": " story points",
     "rearrangementD1Effect": "Timeflow reduced by %1$s.",
     "rearrangementD2Effect": "Deployment points increased by %1$s for each S-mod installed on this ship.",
     "rearrangementD3Effect": "Take constant hull damage as soon as peak performance time expires.",
@@ -490,13 +493,42 @@
     "engineeringOverridePermanent": "A hullmod has been built in or enhanced while this hullmod was installed. This hullmod is now permanent."
   },
 
+  "sms_skills": {
+    "dimensionalLinkEffect": "Whenever this ship would be destroyed, it instead initiates an emergency long-range teleport, allowing it to instantly retreat from the battlefield. This procedure costs CR equal to the amount that would be needed to deploy the ship normally.\n\nWhen this ship executes an emergency retreat, it may be redeployed following a short delay, as long as it has the required CR.\n\nHull and armor are continuously repaired while this ship is in reserve, as long as at least one other ship is deployed on your side of the field. Hull is repaired at a rate of %1$s/%2$s/%3$s/%4$s of maximum hull per second. Armor is repaired at %5$s of that rate.\n\nIncreases the monthly maintenance supply cost by %6$s.",
+    "dimensionalLinkRetreatText": "Emergency retreat",
+    "sharedKnowledgeStandardEffect": "+1% damage dealt and -1% damage taken per ship spec's mastery level, up to a maximum of 10%",
+    "sharedKnowledgeEliteEffect": "+1% timeflow and -1% ballistic and energy weapon range per ship spec's enhance level, up to a maximum of 10%",
+    "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, excluding civilian ship types, up to a maximum of %5$s).",
+    "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
+    "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship type.",
+    "cyberneticAugmentationDesc3": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship types.",
+    "cyberneticAugmentationScope": "ship loadouts",
+    "bestOfTheBestScope": "all capital ships with officers, including flagship",
+    "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery bonuses by %1$s",
+    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, +%2$s hull integrity*, and +%3$s flux capacity*",
+    "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors.",
+    "bestOfTheBestCRDesc": "Best of the Best skill"
+  },
+
   "sms_items": {
     "knowledgeConstruct": "Knowledge Construct",
     "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points",
     "knowledgeConstructCantRightClick": "Can only be sold",
-    "superconstructRightClick": "Right-click to gain %1$s mastery points and %2$s mastery effect strength for a hull spec in your fleet. The selected ship also gains %3$s additional S-mod slot.",
-    "superconstructMessageDisplay1": "Gained %1$s mastery effect strength.",
-    "superconstructMessageDisplay2": "Ship gained %1$s S-mod slot."
+    "superconstruct1RightClick": "Right-click to gain %1$s mastery points and a permanent %2$s mastery effect strength for a hull spec in your fleet. The selected ship also gains %3$s additional S-mod slot.",
+    "superconstruct1MessageDisplay1": "Gained %1$s mastery effect strength.",
+    "superconstruct1MessageDisplay2": "Ship gained %1$s S-mod slot.",
+    "superconstruct2RightClick": "Right-click to gain a permanent %1$s mastery effect strength across all hull specs and reduce the MP cost of creating knowledge constructs to %2$s.",
+    "superconstruct2MessageDisplay1": "Gained %1$s global mastery effect strength.",
+    "superconstruct2MessageDisplay2": "Construct MP cost reduced to %1$s.",
+    "amorphousCorePersonalityHeading": "Amorphous Core",
+    "amorphousCorePersonalityText": "The %1$s's abilities are subdued, but they may be unleashed by a highly competent fleet commander. When piloting a ship, this AI core's skill level and automated points multiplier scale with the commander's expertise in that ship.\n\nAdditionally, its personality is malleable, and it will prefer to mimic the fleet's commander in that regard.",
+    "knowledgeCorePersonalityTableTitle1": "Attribute",
+    "knowledgeCorePersonalityTableTitle2": "Value",
+    "knowledgeCorePersonalityTableName1": "Max level",
+    "knowledgeCorePersonalityTableName2": "Automated points multiplier",
+    "knowledgeCorePersonalityTableName3": "Personality",
+    "knowledgeCorePersonalityHeading": "Knowledge Core",
+    "knowledgeCorePersonalityText": "In combat, the %1$s prefers to copy the personality of its fleet's commander, mimicking the default behavior of the fleet's aggression doctrine."
   },
 
   "sms_graveyard": {
@@ -527,18 +559,8 @@
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
     "shipMasteryEffect": "Mastery effect",
     "and": "and ",
-    "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery bonuses by %1$s",
     "scopePrefix": "Affects: %1$s",
-    "bestOfTheBestScope": "all capital ships with officers, including flagship",
-    "bestOfTheBestDesc2": "+%1$s maximum combat readiness, +%2$s hull integrity*, and +%3$s flux capacity*",
-    "bestOfTheBestDesc3": "*Hull integrity and flux capacity bonuses are applied after other modifiers, including from additional flux capacitors.",
-    "bestOfTheBestCRDesc": "Best of the Best skill",
     "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow",
-    "selectAShip": "Select a ship",
-    "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, excluding civilian ship types, up to a maximum of %5$s).",
-    "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
-    "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship type.",
-    "cyberneticAugmentationDesc3": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship types.",
-    "cyberneticAugmentationScope": "ship loadouts"
+    "selectAShip": "Select a ship"
   }
 }

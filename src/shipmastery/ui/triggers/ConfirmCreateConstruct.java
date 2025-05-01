@@ -9,6 +9,7 @@ import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.IntRef;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 
 public class ConfirmCreateConstruct extends DialogDismissedListener{
@@ -31,8 +32,7 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
         int option = (int) args[1];
         if (option == 1) return;
 
-        int amount = KnowledgeConstructPlugin.NUM_POINTS_GAINED;
-        ShipMastery.spendPlayerMasteryPoints(spec, amount * count.value);
+        ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getConstructCost() * count.value);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                 count.value == 1 ? Strings.MasteryPanel.createConstructConfirmSingular :
                         String.format(Strings.MasteryPanel.createConstructConfirmPlural, count.value),

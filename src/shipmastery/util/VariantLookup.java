@@ -114,8 +114,12 @@ public class VariantLookup extends BaseCampaignEventListener {
             this.root = root;
             rootUid = lookup.getUID(root);
             rootMember = member;
-            this.fleet = member.getFleetData().getFleet();
-            this.commander = fleet.getCommander();
+            var commanderTemp = member.getFleetCommanderForStats();
+            if (commanderTemp == null) {
+                commanderTemp = member.getFleetCommander();
+            }
+            this.commander = commanderTemp;
+            this.fleet = member.getFleetData() == null ? null : member.getFleetData().getFleet();
         }
     }
 }

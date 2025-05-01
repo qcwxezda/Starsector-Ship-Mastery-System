@@ -9,8 +9,8 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.ui.triggers.ConstructButtonPressed;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 
@@ -33,13 +33,14 @@ public class CreateConstructDisplay implements CustomUIElement {
         LabelAPI constructLabel = tooltip.addPara(Strings.MasteryPanel.createConstruct, 0f);
         constructLabel.setAlignment(Alignment.MID);
         constructLabel.getPosition().setXAlignOffset(5f);
-        String buttonText = KnowledgeConstructPlugin.NUM_POINTS_GAINED + " MP";
+        int cost = MasteryUtils.getConstructCost();
+        String buttonText = cost + " MP";
         constructButton =
                 tooltip.addButton(buttonText, null, Misc.getBrightPlayerColor(), Misc.getDarkPlayerColor(),
                                      Alignment.MID, CutStyle.TL_BR, 200f, 25f, 5f);
         ReflectionUtils.setButtonListener(constructButton, new ConstructButtonPressed(panel, spec));
         constructButton.setEnabled(Global.getSettings().isDevMode() ||
-                (ShipMastery.getPlayerMasteryPoints(spec) >= KnowledgeConstructPlugin.NUM_POINTS_GAINED)
+                (ShipMastery.getPlayerMasteryPoints(spec) >= cost)
         );
         constructButton.getPosition().setXAlignOffset(-5f);
     }

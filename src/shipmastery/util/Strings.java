@@ -112,19 +112,9 @@ public interface Strings {
         String and = Utils.getString("sms_misc", "and");
         String doesntAffectModules = Utils.getString("sms_misc", "doesntAffectModules");
         String flagshipOnly = Utils.getString("sms_misc", "flagshipOnly");
-        String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
-        String bestOfTheBestDesc2 = Utils.getString("sms_misc", "bestOfTheBestDesc2");
-        String bestOfTheBestDesc3 = Utils.getString("sms_misc", "bestOfTheBestDesc3");
-        String bestOfTheBestCRDesc = Utils.getString("sms_misc", "bestOfTheBestCRDesc");
         String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
-        String bestOfTheBestScope = Utils.getString("sms_misc", "bestOfTheBestScope");
         String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
         String selectAShip = Utils.getString("sms_misc", "selectAShip");
-        String cyberneticAugmentationDesc = Utils.getString("sms_misc", "cyberneticAugmentationDesc");
-        String cyberneticAugmentationDesc2 = Utils.getString("sms_misc", "cyberneticAugmentationDesc2");
-        String cyberneticAugmentationDesc3 = Utils.getString("sms_misc", "cyberneticAugmentationDesc3");
-        String cyberneticAugmentationDesc3Singular = Utils.getString("sms_misc", "cyberneticAugmentationDesc3Singular");
-        String cyberneticAugmentationScope = Utils.getString("sms_misc", "cyberneticAugmentationScope");
     }
 
     interface Messages {
@@ -136,9 +126,38 @@ public interface Strings {
         String knowledgeConstruct = Utils.getString("sms_items", "knowledgeConstruct");
         String knowledgeConstructRightClick = Utils.getString("sms_items", "knowledgeConstructRightClick");
         String knowledgeConstructCantRightClick = Utils.getString("sms_items", "knowledgeConstructCantRightClick");
-        String superconstructRightClick = Utils.getString("sms_items", "superconstructRightClick");
-        String superconstructMessageDisplay1 = Utils.getString("sms_items", "superconstructMessageDisplay1");
-        String superconstructMessageDisplay2 = Utils.getString("sms_items", "superconstructMessageDisplay2");
+        String superconstruct1RightClick = Utils.getString("sms_items", "superconstruct1RightClick");
+        String superconstruct1MessageDisplay1 = Utils.getString("sms_items", "superconstruct1MessageDisplay1");
+        String superconstruct1MessageDisplay2 = Utils.getString("sms_items", "superconstruct1MessageDisplay2");
+        String superconstruct2RightClick = Utils.getString("sms_items", "superconstruct2RightClick");
+        String superconstruct2MessageDisplay1 = Utils.getString("sms_items", "superconstruct2MessageDisplay1");
+        String superconstruct2MessageDisplay2 = Utils.getString("sms_items", "superconstruct2MessageDisplay2");
+        String amorphousCorePersonalityHeading = Utils.getString("sms_items", "amorphousCorePersonalityHeading");
+        String amorphousCorePersonalityText  = Utils.getString("sms_items", "amorphousCorePersonalityText");
+        String knowledgeCorePersonalityTableTitle1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle1");
+        String knowledgeCorePersonalityTableTitle2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle2");
+        String knowledgeCorePersonalityTableName1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName1");
+        String knowledgeCorePersonalityTableName2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName2");
+        String knowledgeCorePersonalityTableName3 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName3");
+        String knowledgeCorePersonalityHeading = Utils.getString("sms_items", "knowledgeCorePersonalityHeading");
+        String knowledgeCorePersonalityText = Utils.getString("sms_items", "knowledgeCorePersonalityText");
+    }
+
+    interface Skills {
+        String dimensionalLinkEffect = Utils.getString("sms_skills", "dimensionalLinkEffect");
+        String dimensionalLinkRetreatText = Utils.getString("sms_skills", "dimensionalLinkRetreatText");
+        String sharedKnowledgeStandardEffect = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect");
+        String sharedKnowledgeEliteEffect = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect");
+        String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
+        String bestOfTheBestDesc2 = Utils.getString("sms_skills", "bestOfTheBestDesc2");
+        String bestOfTheBestDesc3 = Utils.getString("sms_skills", "bestOfTheBestDesc3");
+        String bestOfTheBestCRDesc = Utils.getString("sms_skills", "bestOfTheBestCRDesc");
+        String bestOfTheBestScope = Utils.getString("sms_skills", "bestOfTheBestScope");
+        String cyberneticAugmentationDesc = Utils.getString("sms_skills", "cyberneticAugmentationDesc");
+        String cyberneticAugmentationDesc2 = Utils.getString("sms_skills", "cyberneticAugmentationDesc2");
+        String cyberneticAugmentationDesc3 = Utils.getString("sms_skills", "cyberneticAugmentationDesc3");
+        String cyberneticAugmentationDesc3Singular = Utils.getString("sms_skills", "cyberneticAugmentationDesc3Singular");
+        String cyberneticAugmentationScope = Utils.getString("sms_skills", "cyberneticAugmentationScope");
     }
 
     interface Graveyard {
@@ -180,7 +199,10 @@ public interface Strings {
         String rearrangement3Effect4 = Utils.getString("sms_hullmods", "rearrangement3Effect4");
         String rearrangement4Effect = Utils.getString("sms_hullmods", "rearrangement4Effect");
         String rearrangement5Effect = Utils.getString("sms_hullmods", "rearrangement5Effect");
-        String rearrangement5RetreatText = Utils.getString("sms_hullmods", "rearrangement5RetreatText");
+        String rearrangement5Message1 = Utils.getString("sms_hullmods", "rearrangement5Message1");
+        String rearrangement5Message2Singular = Utils.getString("sms_hullmods", "rearrangement5Message2Singular");
+        String rearrangement5Message2Plural = Utils.getString("sms_hullmods", "rearrangement5Message2Plural");
+        String rearrangement5Desc = Utils.getString("sms_hullmods", "rearrangement5Desc");
         String rearrangementD1Effect = Utils.getString("sms_hullmods", "rearrangementD1Effect");
         String rearrangementD2Effect = Utils.getString("sms_hullmods", "rearrangementD2Effect");
         String rearrangementD3Effect = Utils.getString("sms_hullmods", "rearrangementD3Effect");

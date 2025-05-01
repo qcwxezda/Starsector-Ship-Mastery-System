@@ -12,7 +12,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.campaign.items.KnowledgeConstructPlugin;
+import shipmastery.campaign.items.SuperconstructPlugin;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -68,7 +68,8 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                             cargo.addSpecial(
                                     new SpecialItemData("sms_construct", Utils.getRestoredHullSpecId(picked.getHullSpec())),
                                     3 + Misc.random.nextInt(3)); // 3-5
-                            cargo.addSpecial(new SpecialItemData("sms_superconstruct", KnowledgeConstructPlugin.BLANK_CONSTRUCT), 1f);
+                            cargo.addSpecial(new SpecialItemData("sms_superconstruct1", SuperconstructPlugin.ACTIVE_STRING), 1f);
+                            cargo.addSpecial(new SpecialItemData("sms_superconstruct2", SuperconstructPlugin.ACTIVE_STRING), 1f);
                             BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);
                         }
                         Global.getSoundPlayer().setSuspendDefaultMusicPlayback(true);

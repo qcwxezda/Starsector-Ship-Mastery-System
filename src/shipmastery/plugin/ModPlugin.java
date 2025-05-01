@@ -3,10 +3,14 @@ package shipmastery.plugin;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.PluginPick;
+import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
+import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
@@ -15,6 +19,9 @@ import shipmastery.campaign.PlayerFleetHandler;
 import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
+import shipmastery.campaign.items.AmorphousCorePlugin;
+import shipmastery.campaign.items.KnowledgeCorePlugin;
+import shipmastery.campaign.items.SubknowledgeCorePlugin;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
 import shipmastery.campaign.skills.CyberneticAugmentation;
@@ -161,6 +168,7 @@ public class ModPlugin extends BaseModPlugin {
             Global.getSector().addTransientListener(fleetHandler);
             listeners.addListener(new PlayerFleetHandler(), true);
 
+
             CyberneticAugmentation.refreshPlayerMasteredCount();
 
             // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
@@ -178,9 +186,13 @@ public class ModPlugin extends BaseModPlugin {
                 throw new RuntimeException("Failed to add refit autofit plugin", e);
             }
         }
+
         RecentBattlesTracker recentBattlesTracker = new RecentBattlesTracker();
         Global.getSector().addTransientListener(recentBattlesTracker);
         listeners.addListener(recentBattlesTracker, true);
+
+        registerCommodityTooltipPlugin(listeners);
+        registerAICorePlugin();
 
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();
@@ -193,6 +205,54 @@ public class ModPlugin extends BaseModPlugin {
         if (!plugins.hasPlugin(StationDefenderPlugin.class)) {
             plugins.addPlugin(new StationDefenderPlugin(), true);
         }
+    }
+
+    private static void registerCommodityTooltipPlugin(ListenerManagerAPI listeners) {
+        listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
+            if (stack.getCommodityId() == null) return;
+            String personalityName = Global.getSettings().getPersonaltySpec(KnowledgeCorePlugin.DEFAULT_PERSONALITY_ID).getDisplayName();
+            switch (stack.getCommodityId()) {
+                case "sms_amorphous_core" -> KnowledgeCorePlugin.createPersonalitySection(
+                        info,
+                        Strings.Items.amorphousCorePersonalityHeading,
+                        String.format(Strings.Items.amorphousCorePersonalityText, stack.getDisplayName()),
+                        AmorphousCorePlugin.MIN_LEVEL,
+                        AmorphousCorePlugin.MAX_DP_MULT,
+                        personalityName);
+                case "sms_knowledge_core" -> KnowledgeCorePlugin.createPersonalitySection(
+                        info,
+                        Strings.Items.knowledgeCorePersonalityHeading,
+                        String.format(Strings.Items.knowledgeCorePersonalityText, stack.getDisplayName()),
+                        KnowledgeCorePlugin.MAX_LEVEL,
+                        KnowledgeCorePlugin.DP_MULT,
+                        personalityName);
+                case "sms_subknowledge_core" -> KnowledgeCorePlugin.createPersonalitySection(
+                        info,
+                        Strings.Items.knowledgeCorePersonalityHeading,
+                        String.format(Strings.Items.knowledgeCorePersonalityText, stack.getDisplayName()),
+                        SubknowledgeCorePlugin.MAX_LEVEL,
+                        SubknowledgeCorePlugin.DP_MULT,
+                        personalityName);
+            }
+        }, true);
+    }
+
+    private static void registerAICorePlugin() {
+        Global.getSector().registerPlugin(new BaseCampaignPlugin() {
+            @Override
+            public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
+                if ("sms_amorphous_core".equals(commodityId)) {
+                    return new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
+                }
+                else if ("sms_knowledge_core".equals(commodityId)) {
+                    return new PluginPick<>(new KnowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
+                }
+                else if ("sms_subknowledge_core".equals(commodityId)) {
+                    return new PluginPick<>(new SubknowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
+                }
+                return null;
+            }
+        });
     }
 
     private static final String[] reflectionWhitelist = new String[] {

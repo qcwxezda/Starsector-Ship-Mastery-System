@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
+import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
@@ -22,6 +23,7 @@ import java.util.TreeMap;
 public abstract class MasteryUtils {
 
     public static final int bonusLogisticSlotEnhanceNumber = 1;
+    public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
 
     public static int getRerollMPCost(ShipHullSpecAPI spec) {
         return 20;
@@ -31,9 +33,13 @@ public abstract class MasteryUtils {
         return 1;
     }
 
+    public static int getConstructCost() {
+        return (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCT_MP_OVERRIDE_KEY, KnowledgeConstructPlugin.NUM_POINTS_GAINED);
+    }
+
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
-        return count < Settings.MAX_ENHANCES ? 20 + 5*count : Integer.MAX_VALUE;
+        return count < Settings.MAX_ENHANCES ? Math.min(40, 20 + 5*count) : Integer.MAX_VALUE;
     }
 
     public static int getEnhanceCount(ShipHullSpecAPI spec) {

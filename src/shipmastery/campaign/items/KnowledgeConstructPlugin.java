@@ -10,7 +10,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.SharedUnlockData;
-import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -35,13 +34,6 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     public static final int NUM_POINTS_GAINED = 10;
     public static final String PREF_IN_FLEET_TAG = "~pref_in_fleet";
     public static final String PLAYER_CREATED_PREFIX = "sms_PlayerCreated_";
-    // Basically a key; if any other string is used with a blank construct,
-    // it will not work. Also avoids rendering weirdness with the codex (which always passes in null)
-    public static final String BLANK_CONSTRUCT = "sms_BlankConstructActive";
-    public static final int SUPERCONSTRUCT_MP = 100;
-    public static final float SUPERCONSTRUCT_STRENGTH = 0.25f;
-    public static final int SUPERCONSTRUCT_SMODS = 1;
-    public boolean isUsableBlankSuperconstruct = false;
     private ShipHullSpecAPI spec;
     private boolean wasCreatedByPlayer = false;
     private boolean noSpecString = false;
@@ -54,10 +46,6 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             noSpecString = true;
             return;
         }
-        if (Objects.equals(getId(), "sms_superconstruct")) {
-            isUsableBlankSuperconstruct = Objects.equals(specStr, BLANK_CONSTRUCT);
-            return;
-        }
         if (specStr.startsWith(PLAYER_CREATED_PREFIX)) {
             wasCreatedByPlayer = true;
             specStr = specStr.substring(PLAYER_CREATED_PREFIX.length());
@@ -67,19 +55,17 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public boolean hasRightClickAction() {
-        return (spec != null && !wasCreatedByPlayer) || isUsableBlankSuperconstruct;
+        return spec != null && !wasCreatedByPlayer;
     }
 
-    @Override
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult,
-                       SpecialItemRendererAPI renderer) {
+                       SpecialItemRendererAPI renderer, Color bgColor) {
         float hw = w/2f, hh = h/2f;
         float cx = x + hw;
         float cy = y + hh;
 
         if (noSpecString) return;
         String hullId = spec == null ? null : spec.getHullId();
-        Color bgColor = Objects.equals(getId(), "sms_superconstruct") ? Global.getSector().getPlayerFaction().getBrightUIColor() : Global.getSector().getPlayerFaction().getDarkUIColor();
         bgColor = Misc.setAlpha(bgColor, 255);
 
         float tlX = cx;
@@ -90,7 +76,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         float trY = cy + hh*0.375f;
         float brX = cx + hw*0.649519f;
         float brY = cy - hh*0.375f;
-        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, false);
+        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, glowMult,false);
 
         trX = cx;
         trY = cy;
@@ -100,7 +86,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         tlY = cy + hh*0.375f;
         blX = cx - hw*0.649519f;
         blY = cy - hh*0.375f;
-        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, false);
+        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, glowMult, false);
 
         trY = cy + hh*0.75f;
         brX = cx + hw*0.649519f;
@@ -109,7 +95,13 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         tlY = cy + hh*0.375f;
         blX = cx;
         blY = cy;
-        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, true);
+        renderShipExt(renderer, hullId, bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, glowMult, true);
+    }
+
+    @Override
+    public void render(float x, float y, float w, float h, float alphaMult, float glowMult,
+                       SpecialItemRendererAPI renderer) {
+        render(x, y, w, h, alphaMult, glowMult, renderer,Global.getSector().getPlayerFaction().getDarkUIColor());
     }
 
     private void renderShipExt(
@@ -125,9 +117,10 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             float brX,
             float brY,
             float alphaMult,
+            float glowMult,
             boolean squishY) {
         renderer.renderBGWithCorners(bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY,
-                                     alphaMult*0.5f,  0.5f, true);
+                                     alphaMult*0.5f,  glowMult*0.5f, true);
         renderer.renderScanlinesWithCorners(blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, true);
         if (hullId != null) {
             renderer.renderShipWithCorners(hullId, null, blX, blY + (squishY ? 10f : 0f), tlX, tlY, trX, trY - (squishY ? 10f : 0f), brX, brY,
@@ -136,13 +129,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     }
 
     @Override
-    public boolean shouldRemoveOnRightClickAction() {
-        return !isUsableBlankSuperconstruct;
-    }
-
-    @Override
     public int getPrice(MarketAPI market, SubmarketAPI submarket) {
-        if (isUsableBlankSuperconstruct) return super.getPrice(market, submarket);
         if (spec == null) return 20000;
         return getPrice(spec);
     }
@@ -172,28 +159,19 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             tooltip.addPara(prefix + desc.getText1FirstPara(), opad);
         }
         this.addCostLabel(tooltip, opad, transferHandler, stackSource);
+        if (Objects.equals(getId(), "sms_superconstruct1") || Objects.equals(getId(), "sms_superconstruct2")) return;
 
         if (!hasRightClickAction() && !noSpecString) {
             tooltip.addPara(Strings.Items.knowledgeConstructCantRightClick, Misc.getGrayColor(), opad);
         }
-        else {
-            if (isUsableBlankSuperconstruct) {
-                tooltip.addPara(Strings.Items.superconstructRightClick, opad, b, Misc.getHighlightColor(), Utils.asInt(SUPERCONSTRUCT_MP), Utils.asPercent(SUPERCONSTRUCT_STRENGTH), Utils.asInt(SUPERCONSTRUCT_SMODS));
-            } else if (!noSpecString) {
-                tooltip.addPara(String.format(Strings.Items.knowledgeConstructRightClick, NUM_POINTS_GAINED), b, opad);
-            }
+        else if (!noSpecString) {
+            tooltip.addPara(String.format(Strings.Items.knowledgeConstructRightClick, NUM_POINTS_GAINED), b, opad);
         }
     }
 
     @Override
     public void performRightClickAction(RightClickActionHelper helper) {
-        if (isUsableBlankSuperconstruct) {
-            RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tBlankConstructClicked");
-            plugin.setCustom1(helper);
-            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, Global.getSector().getPlayerFleet(), () -> {});
-        }
-
-        else if (spec != null && !wasCreatedByPlayer) {
+        if (spec != null && !wasCreatedByPlayer) {
             ShipMastery.addPlayerMasteryPoints(spec, NUM_POINTS_GAINED, false, false);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             Global.getSector().getCampaignUI().getMessageDisplay()

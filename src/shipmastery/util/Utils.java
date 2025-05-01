@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +70,23 @@ public abstract class Utils {
     public static final Map<String, DifficultyData> difficultyDataMap = new HashMap<>();
     public static DifficultyData defaultDifficultyData;
     public static final String defaultFactionId = "<default>";
+    public static final Set<String> combatSkillIds = new LinkedHashSet<>() {};
+    static {
+        combatSkillIds.add(Skills.HELMSMANSHIP);
+        combatSkillIds.add(Skills.COMBAT_ENDURANCE);
+        combatSkillIds.add(Skills.IMPACT_MITIGATION);
+        combatSkillIds.add(Skills.DAMAGE_CONTROL);
+        combatSkillIds.add(Skills.FIELD_MODULATION);
+        combatSkillIds.add(Skills.POINT_DEFENSE);
+        combatSkillIds.add(Skills.TARGET_ANALYSIS);
+        combatSkillIds.add(Skills.BALLISTIC_MASTERY);
+        combatSkillIds.add(Skills.SYSTEMS_EXPERTISE);
+        combatSkillIds.add(Skills.MISSILE_SPECIALIZATION);
+        combatSkillIds.add(Skills.GUNNERY_IMPLANTS);
+        combatSkillIds.add(Skills.ENERGY_WEAPON_MASTERY);
+        combatSkillIds.add(Skills.ORDNANCE_EXPERTISE);
+        combatSkillIds.add(Skills.POLARIZED_ARMOR);
+    }
 
     public static final Set<String> allHullSpecIds = new HashSet<>();
 

@@ -21,7 +21,7 @@ public class BestOfTheBest {
 
     public static class Level0 implements DescriptionSkillEffect {
         public String getString() {
-            return Strings.Misc.bestOfTheBestDesc3;
+            return Strings.Skills.bestOfTheBestDesc3;
         }
         public Color[] getHighlightColors() {
             return null;
@@ -38,7 +38,7 @@ public class BestOfTheBest {
     public static class Level1 implements CharacterStatsSkillEffect {
         @Override
         public String getEffectDescription(float level) {
-            return String.format(Strings.Misc.bestOfTheBestDesc, Utils.asPercent(MASTERY_BONUS));
+            return String.format(Strings.Skills.bestOfTheBestDesc, Utils.asPercent(MASTERY_BONUS));
         }
 
         @Override
@@ -81,8 +81,7 @@ public class BestOfTheBest {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             if (isCapitalAndOfficer(stats)) {
-
-                stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, Strings.Misc.bestOfTheBestCRDesc);
+                stats.getMaxCombatReadiness().modifyFlat(id, CR_BONUS, Strings.Skills.bestOfTheBestCRDesc);
                 stats.getHullBonus().modifyMult(id, 1f + STATS_BONUS);
                 stats.getFluxCapacity().modifyMult(id, 1f + STATS_BONUS);
             }
@@ -101,9 +100,9 @@ public class BestOfTheBest {
             init(stats, skill);
             float opad = 10f;
 			Color c = Misc.getBasePlayerColor();
-            info.addPara(Strings.Misc.scopePrefix, opad + 5f, Misc.getGrayColor(), c, Strings.Misc.bestOfTheBestScope);
+            info.addPara(Strings.Misc.scopePrefix, opad + 5f, Misc.getGrayColor(), c, Strings.Skills.bestOfTheBestScope);
 			info.addSpacer(opad);
-            info.addPara(Strings.Misc.bestOfTheBestDesc2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
+            info.addPara(Strings.Skills.bestOfTheBestDesc2, 0f, hc, hc, Utils.asPercent(CR_BONUS), Utils.asPercent(STATS_BONUS), Utils.asPercent(STATS_BONUS));
         }
 
         @Override

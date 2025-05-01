@@ -1,0 +1,4 @@
+name,id,demand class,base price,export value,price variability,utility,origin,tags,stack size,cargo space,icon,sound id,sound id drop,order,economyTier,econUnitOrigUnused,econUnit,baseRaidDanger,eU * base value,iconWidthMult,plugin,desc
+Amorphous Core,sms_amorphous_core,ai_cores,,,0,500,,"nonecon, ai_core, sms_copy_player_personality, no_loss_from_combat, no_drop, hide_in_codex",1000,1,graphics/icons/cargo/sms_amorphous_core.png,ai_core_pickup,ui_alpha_core_drop,450,,,,EXTREME,,1,,
+Knowledge Core,sms_knowledge_core,ai_cores,,,0,75,,"nonecon, ai_core, sms_copy_player_personality, no_loss_from_combat, codex_unlockable",1000,1,graphics/icons/cargo/sms_knowledge_core.png,ai_core_pickup,ui_beta_core_drop,449,,,,HIGH,,1,,
+Subknowledge Core,sms_subknowledge_core,ai_cores,,,0,25,,"nonecon, ai_core, sms_copy_player_personality, no_loss_from_combat, codex_unlockable",1000,1,graphics/icons/cargo/sms_subknowledge_core.png,ai_core_pickup,ui_gamma_core_drop,448,,,,MEDIUM,,1,,

@@ -11,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
-import shipmastery.campaign.items.KnowledgeConstructPlugin;
+import shipmastery.campaign.items.SuperconstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.Strings;
@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_BlankConstructInteractionScript extends BaseCommandPlugin {
+public class sms_SuperconstructInteractionScript extends BaseCommandPlugin {
 
-    public static final String MODIFIER_ID = "sms_BlankConstruct";
+    public static final String MODIFIER_ID = "sms_Superconstruct1";
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
@@ -49,13 +49,13 @@ public class sms_BlankConstructInteractionScript extends BaseCommandPlugin {
                 }
                 FleetMemberAPI member = members.get(0);
                 ShipHullSpecAPI spec = Utils.getRestoredHullSpec(member.getHullSpec());
-                ShipMastery.addPlayerMasteryPoints(spec, KnowledgeConstructPlugin.SUPERCONSTRUCT_MP, false, false);
-                Global.getSector().getPlayerStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId()).modifyPercent(MODIFIER_ID, 100f*KnowledgeConstructPlugin.SUPERCONSTRUCT_STRENGTH);
+                ShipMastery.addPlayerMasteryPoints(spec, SuperconstructPlugin.SUPERCONSTRUCT1_MP, false, false);
+                Global.getSector().getPlayerStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId()).modifyPercent(MODIFIER_ID, 100f*SuperconstructPlugin.SUPERCONSTRUCT1_STRENGTH);
                 member.getVariant().addPermaMod("sms_superconstructHullmod", false);
                 var messageDisplay = Global.getSector().getCampaignUI().getMessageDisplay();
-                messageDisplay.addMessage(String.format(Strings.Messages.gainedMPSingle, KnowledgeConstructPlugin.SUPERCONSTRUCT_MP + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
-                messageDisplay.addMessage(String.format(Strings.Items.superconstructMessageDisplay1, Utils.asPercent(KnowledgeConstructPlugin.SUPERCONSTRUCT_STRENGTH)), Settings.MASTERY_COLOR);
-                messageDisplay.addMessage(String.format(Strings.Items.superconstructMessageDisplay2, "" + KnowledgeConstructPlugin.SUPERCONSTRUCT_SMODS), Settings.MASTERY_COLOR);
+                messageDisplay.addMessage(String.format(Strings.Messages.gainedMPSingle, SuperconstructPlugin.SUPERCONSTRUCT1_MP + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+                messageDisplay.addMessage(String.format(Strings.Items.superconstruct1MessageDisplay1, Utils.asPercent(SuperconstructPlugin.SUPERCONSTRUCT1_STRENGTH)), Settings.MASTERY_COLOR);
+                messageDisplay.addMessage(String.format(Strings.Items.superconstruct1MessageDisplay2, "" + SuperconstructPlugin.SUPERCONSTRUCT1_SMODS), Settings.MASTERY_COLOR);
                 Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
                 helper.removeFromClickedStackFirst(1);
                 dialog.dismiss();
