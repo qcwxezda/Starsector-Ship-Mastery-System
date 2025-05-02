@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.characters.PersonalityAPI;
 import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
@@ -28,12 +27,14 @@ import java.util.Random;
 
 import static shipmastery.campaign.items.AmorphousCorePlugin.*;
 
-public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements HullModFleetEffect {
+public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements HullModFleetEffect, KnowledgeCoreInterface {
 
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
     public static final int MAX_LEVEL = 6;
-    public static final float DP_MULT = 3.5f;
+    public static final float BASE_DP_MULT = 3.5f;
+    public static final float DP_MULT_PER_MISSING_SKILL = 0.5f;
+    public static final float MIN_DP_MULT = 1.5f;
 
     public PersonAPI initPerson(String aiCoreId, String factionId, String spritePath, float aiPointsMult) {
         PersonAPI person = Global.getFactory().createPerson();
@@ -61,7 +62,12 @@ public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements 
         return person;
     }
 
-    public int getMaxLevel() {
+    @Override
+    public String getCommodityId() {
+        return "sms_knowledge_core";
+    }
+
+    public int getBaseLevel() {
         return MAX_LEVEL;
     }
 
@@ -76,40 +82,57 @@ public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements 
     }
 
     public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {
-        return initPerson(aiCoreId, factionId, getPortraitSpritePath(), getAIPointsMult());
+        return initPerson(aiCoreId, factionId, getPortraitSpritePath(), getBaseAIPointsMult());
     }
 
     @Override
     public void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip) {
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(person.getAICoreId());
-        PersonalityAPI personality = person.getPersonalityAPI();
-        if (personality == null) personality = Global.getSettings().getPersonaltySpec(DEFAULT_PERSONALITY_ID);
+        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(getCommodityId());
         createPersonalitySection(
+                person,
                 tooltip,
-                Strings.Items.knowledgeCorePersonalityHeading,
-                String.format(Strings.Items.knowledgeCorePersonalityText, spec.getName()),
-                getMaxLevel(),
-                getAIPointsMult(),
-                personality.getDisplayName());
+                Strings.Items.knowledgeCorePersonalityText + "\n\n" + Strings.Items.knowledgeCorePersonalityText2,
+                Misc.getHighlightColor(),
+                spec.getName(),
+                Utils.asFloatOneDecimal(MIN_DP_MULT) + "x"
+        );
     }
 
-    public static void createPersonalitySection(TooltipMakerAPI tooltip, String header, String bodyFmt, int maxLevel, float autoPtsMult, String personalityName) {
+    protected final void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip, String body, Color highlightColor, String... params) {
+        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(getCommodityId());
+        if (spec == null) return;
+
+        int level;
+        float autoMult;
+        if (person == null) {
+            String defaultPersonality = getPlayerPersonalityId();
+            person = Global.getFactory().createPerson();
+            person.setAICoreId(getCommodityId());
+            person.setPersonality(defaultPersonality);
+            level = getBaseLevel();
+            autoMult = getBaseAIPointsMult();
+        } else {
+            level = person.getStats().getLevel();
+            autoMult = person.getMemoryWithoutUpdate().getFloat("$autoPointsMult");
+        }
+
         float opad = 10f;
         Color text = Global.getSector().getPlayerFaction().getBaseUIColor();
         Color bg = Global.getSector().getPlayerFaction().getDarkUIColor();
         float w = (tooltip.getTextWidthOverride() <= 10f ? tooltip.getWidthSoFar() : tooltip.getTextWidthOverride()) - 5f;
 
-        tooltip.addSectionHeading(header, text, bg, Alignment.MID, w+5f,20f);
-        tooltip.addPara(bodyFmt, opad);
+        tooltip.addSectionHeading(spec.getName(), text, bg, Alignment.MID, w+5f,20f);
+        tooltip.addPara(body, opad, highlightColor, params);
         tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.knowledgeCorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.knowledgeCorePersonalityTableTitle2, w / 3f);
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName1, Misc.getHighlightColor(), Utils.asInt(maxLevel));
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName2, Misc.getHighlightColor(), Utils.asFloatTwoDecimals(autoPtsMult) + "x");
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName3, Misc.getHighlightColor(), personalityName);
-        tooltip.addTable("", 0, 2f*opad);
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName1, Misc.getHighlightColor(), Utils.asInt(level));
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName2, Misc.getHighlightColor(), Utils.asFloatTwoDecimals(autoMult) + "x");
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.knowledgeCorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
+        tooltip.addTable("", 0, opad);
+        tooltip.addSpacer(opad);
     }
 
-    public float getAIPointsMult() {
-        return DP_MULT;
+    public float getBaseAIPointsMult() {
+        return BASE_DP_MULT;
     }
 
     public String getPortraitSpritePath() {
@@ -140,16 +163,29 @@ public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements 
                 setPersonalityToPlayerDoctrine(captain);
             }
 
+            // Special behavior for knowledge (but not sub-knowledge) cores
+            if ("sms_knowledge_core".equals(captain.getAICoreId())) {
+                int count = (int) captain.getStats().getSkillsCopy()
+                        .stream()
+                        .filter((skill) -> skill.getLevel() > 0f && skill.getSkill().isCombatOfficerSkill())
+                        .count();
+                int diff = Math.max(0, captain.getStats().getLevel() - count);
+                var memory = captain.getMemoryWithoutUpdate();
+                if (memory != null) {
+                    memory.set("$autoPointsMult", Math.max(MIN_DP_MULT, BASE_DP_MULT-DP_MULT_PER_MISSING_SKILL*diff));
+                }
+            }
+
             // Special behavior for amorphous cores
             if ("sms_amorphous_core".equals(captain.getAICoreId())) {
                 boolean integrated = Misc.isUnremovable(fm.getCaptain());
-                int level = Math.min(MAX_LEVEL, Math.round(MIN_LEVEL + LEVELS_PER_MASTERY_LEVEL * ShipMastery.getPlayerMasteryLevel(fm.getHullSpec())));
+                int level = Math.min(AmorphousCorePlugin.MAX_LEVEL, Math.round(AmorphousCorePlugin.MIN_LEVEL + AmorphousCorePlugin.LEVELS_PER_MASTERY_LEVEL * ShipMastery.getPlayerMasteryLevel(fm.getHullSpec())));
                 if (integrated) {
                     level++;
                 }
                 captain.getStats().setLevel(level);
                 int enhances = MasteryUtils.getEnhanceCount(fm.getHullSpec());
-                float dpMult = Math.max(MIN_DP_MULT, MAX_DP_MULT - enhances * DP_MULT_PER_ENHANCE);
+                float dpMult = Math.max(AmorphousCorePlugin.MIN_DP_MULT, AmorphousCorePlugin.MAX_DP_MULT - enhances * AmorphousCorePlugin.DP_MULT_PER_ENHANCE);
                 var memory = captain.getMemoryWithoutUpdate();
                 if (memory != null) {
                     memory.set("$autoPointsMult", dpMult);
@@ -172,12 +208,16 @@ public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements 
         }
     }
 
-    public void setPersonalityToPlayerDoctrine(PersonAPI person) {
+    public String getPlayerPersonalityId() {
         var personalityPicker = Global.getSector().getPlayerFaction().getPersonalityPicker();
         if (personalityPicker != null && !personalityPicker.isEmpty()) {
-            person.setPersonality(personalityPicker.getItems().get(0));
+            return personalityPicker.getItems().get(0);
         } else {
-            person.setPersonality(DEFAULT_PERSONALITY_ID);
+            return DEFAULT_PERSONALITY_ID;
         }
+    }
+
+    public void setPersonalityToPlayerDoctrine(PersonAPI person) {
+        person.setPersonality(getPlayerPersonalityId());
     }
 }

@@ -48,7 +48,9 @@ public class DeferredActionPlugin implements EveryFrameScript {
         DeferredAction firstItem;
         while ((firstItem = actionList.peek()) != null && firstItem.timeToPerform <= System.currentTimeMillis()) {
             actionList.poll();
-            firstItem.action.perform();
+            if (firstItem.action != null) {
+                firstItem.action.perform();
+            }
         }
 
         if (!Global.getSector().isPaused()) {

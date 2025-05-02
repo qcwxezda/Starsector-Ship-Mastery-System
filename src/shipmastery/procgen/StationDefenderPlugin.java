@@ -1,20 +1,28 @@
 package shipmastery.procgen;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.BaseGenericPlugin;
+import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import com.fs.starfarer.api.impl.campaign.fleets.GenerateFleetOfficersPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
+import shipmastery.mastery.impl.logistics.SModCapacity;
 import shipmastery.util.Utils;
 
 import java.util.HashMap;
@@ -50,29 +58,38 @@ public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageG
 
     @Override
     public void modifyFleet(SalvageGenFromSeed.SDMParams p, CampaignFleetAPI fleet, Random random, boolean withOverride) {
-        AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin(Commodities.ALPHA_CORE);
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            fm.setCaptain(plugin.createPerson(Commodities.ALPHA_CORE, fleet.getFaction().getId(), random));
-            RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(fm);
-        }
-        PersonAPI commander = fleet.getFlagship().getCaptain();
-        commander.getStats().setSkillLevel(Skills.FLUX_REGULATION, 1);
-        commander.getStats().setSkillLevel(Skills.COORDINATED_MANEUVERS, 1);
-        commander.getStats().setSkillLevel(Skills.BEST_OF_THE_BEST, 1);
-        fleet.setCommander(commander);
-        Map<String, Map<Integer, String>> masteries = new HashMap<>();
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
-            ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
-            Map<Integer, String> levels = new HashMap<>();
-            for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
-                List<String> options = ShipMastery.getMasteryOptionIds(spec, i);
-                if (options.isEmpty()) continue;
-                levels.put(i, options.get(random.nextInt(options.size())));
-            }
-            masteries.put(spec.getHullId(), levels);
-        }
-        commander.getMemoryWithoutUpdate().set(FleetHandler.CUSTOM_MASTERIES_KEY, masteries, 30f);
+        FactionAPI temp = Global.getSettings().createBaseFaction("sms_seeker");
+        fleet.setFaction(temp.getId());
+        FleetParamsV3 params = new FleetParamsV3();
+//        FleetParamsV3 params = new FleetParamsV3();
+//        params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_ALPHA;
+//        var pickData = new GenerateFleetOfficersPlugin.GenerateFleetOfficersPickData(fleet, params);
+//        var plugin = Global.getSector().getGenericPlugins().pickPlugin(GenerateFleetOfficersPlugin.class, pickData);
+//        plugin.addCommanderAndOfficers(fleet, params, random);
+//        AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin(Commodities.ALPHA_CORE);
+//        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+//            fm.setCaptain(plugin.createPerson(Commodities.ALPHA_CORE, fleet.getFaction().getId(), random));
+//            RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(fm);
+//        }
+//        PersonAPI commander = fleet.getFlagship().getCaptain();
+//        commander.getStats().setSkillLevel(Skills.FLUX_REGULATION, 1);
+//        commander.getStats().setSkillLevel(Skills.COORDINATED_MANEUVERS, 1);
+//        commander.getStats().setSkillLevel(Skills.BEST_OF_THE_BEST, 1);
+//        fleet.setCommander(commander);
+//        Map<String, Map<Integer, String>> masteries = new HashMap<>();
+//        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+//            fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+//            ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
+//            Map<Integer, String> levels = new HashMap<>();
+//            for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
+//                String selectedOption = FleetHandler.pickOptionForMasteryLevel(spec, i, random);
+//                if (selectedOption != null) {
+//                    levels.put(i, selectedOption);
+//                }
+//            }
+//            masteries.put(spec.getHullId(), levels);
+//        }
+//        commander.getMemoryWithoutUpdate().set(FleetHandler.CUSTOM_MASTERIES_KEY, masteries, 30f);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.util.Strings;
 
 public class AmorphousCorePlugin extends KnowledgeCorePlugin {
@@ -38,13 +39,18 @@ public class AmorphousCorePlugin extends KnowledgeCorePlugin {
     }
 
     @Override
-    public float getAIPointsMult() {
+    public float getBaseAIPointsMult() {
         return MAX_DP_MULT;
     }
 
     @Override
-    public int getMaxLevel() {
-        return MAX_LEVEL;
+    public int getBaseLevel() {
+        return MIN_LEVEL;
+    }
+
+    @Override
+    public String getCommodityId() {
+        return "sms_amorphous_core";
     }
 
     @Override
@@ -54,17 +60,12 @@ public class AmorphousCorePlugin extends KnowledgeCorePlugin {
 
     @Override
     public void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip) {
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(person.getAICoreId());
-        int level = person.getStats().getLevel();
-        float autoMult = person.getMemoryWithoutUpdate().getFloat("$autoPointsMult");
-        String personality = person.getPersonalityAPI().getDisplayName();
-
+        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(getCommodityId());
         createPersonalitySection(
+                person,
                 tooltip,
-                Strings.Items.amorphousCorePersonalityHeading,
-                String.format(Strings.Items.amorphousCorePersonalityText, spec.getName()),
-                level,
-                autoMult,
-                personality);
+                Strings.Items.amorphousCorePersonalityText,
+                Misc.getHighlightColor(),
+                spec.getName());
     }
 }
