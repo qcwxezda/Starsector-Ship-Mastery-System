@@ -2,10 +2,11 @@ id,type,text1,text2,text3,text4,notes
 sms_concealed_station,CUSTOM,"It's a seemingly abandoned station. Its purpose, whatever that may have been, remains unclear, and your scanners don't pick up anything of note. A closer inspection is required.",,,,
 sms_amorphous_core,RESOURCE,"A modified alpha core, fed with vast quantities of battle simulation data. Your engineers joke that it's a miracle the core hasn't formed a singularity and collapsed upon itself.
 
-Despite originating form an alpha core, its components have been stripped to such a degree that it lacks much of its original capability to reason intelligently with immense amounts of data. Careful interplay between the Amorphous Core and its fleet's commander is an absolute requirement for fielding it effectively. ",,,,,
+Despite originating from an alpha core, its components have been stripped to such a degree that it lacks much of its original capability to reason intelligently with immense amounts of data. Careful interplay between the Amorphous Core and its fleet's commander is an absolute requirement for fielding it effectively. ",,,,,
 sms_knowledge_core,RESOURCE,"A modified beta core, stripped of most of its functions and fed with copious amounts of battle simulation data.
 
 It's capable of putting its combat knowledge to great use, though it seems to prefer to defer to its commander where possible. As a result, knowledge cores benefit greatly when fielded by an equally competent commander.",,,,,
 sms_subknowledge_core,RESOURCE,"A modified gamma core, stripped of most of its functions and fed with copious amounts of battle simulation data.
 
 It's capable of putting its combat knowledge to great use, though it seems to prefer to defer to its commander where possible. As a result, knowledge cores benefit greatly when fielded by an equally competent commander.",,,,,
+sms_fractured_gamma_core,RESOURCE,"A gamma core that's seen better days. No longer possesses the computing power required to assist in colony management, but a brazen -- or desperate -- commander with the right skillset may nonetheless utilize it to minimally enhance the combat effectiveness of one of their ships. ",,,,,

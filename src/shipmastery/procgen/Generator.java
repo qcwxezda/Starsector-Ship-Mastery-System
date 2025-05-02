@@ -45,7 +45,7 @@ public abstract class Generator {
                     BaseThemeGenerator.convertOrbitPointingDown(added.entity);
                 }
             }
-            DefenderDataOverride ddo = new DefenderDataOverride(Factions.REMNANTS, 1f, 120f, 180f, 1000);
+            DefenderDataOverride ddo = new DefenderDataOverride("hegemony", 1f, 120f, 180f, 1000);
             Misc.setDefenderOverride(added.entity, ddo);
             SalvageSpecialAssigner.assignSpecials(added.entity);
         }

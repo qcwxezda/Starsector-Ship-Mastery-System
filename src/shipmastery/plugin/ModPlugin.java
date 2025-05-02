@@ -7,11 +7,17 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
+import com.fs.starfarer.api.campaign.FactionSpecAPI;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.loading.FighterWingSpecAPI;
+import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
@@ -20,6 +26,7 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.campaign.items.AmorphousCorePlugin;
+import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.KnowledgeCorePlugin;
 import shipmastery.campaign.items.SubknowledgeCorePlugin;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
@@ -55,6 +62,7 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() throws Exception {
         Utils.init();
+        initializeSeekerFaction();
         ShipMastery.loadMasteries();
         ShipMastery.loadStats();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
@@ -63,6 +71,37 @@ public class ModPlugin extends BaseModPlugin {
         else {
             Settings.loadSettingsFromJson();
         }
+    }
+
+    private void initializeSeekerFaction() {
+        FactionSpecAPI faction = Global.getSettings().getFactionSpec("sms_seeker");
+        var shipSpecs = Global.getSettings().getAllShipHullSpecs().stream()
+                .filter(spec -> spec == Utils.getRestoredHullSpec(spec)
+                        && !spec.hasTag(Tags.RESTRICTED)
+                        && !spec.hasTag(Tags.DWELLER)
+                        && !spec.hasTag(Tags.THREAT)
+                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.HIDE_IN_CODEX)
+                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.CIVILIAN)
+                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)
+                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION))
+                .map(ShipHullSpecAPI::getHullId)
+                .toList();
+        faction.getKnownShips().addAll(shipSpecs);
+        faction.getShipsWhenImporting().addAll(shipSpecs);
+        faction.getKnownWeapons().addAll(
+                Global.getSettings().getAllWeaponSpecs().stream()
+                        .filter(spec -> !spec.hasTag(Tags.RESTRICTED)
+                                && !spec.hasTag(Tags.HIDE_IN_CODEX)
+                                && !spec.getAIHints().contains(WeaponAPI.AIHints.SYSTEM))
+                        .map(WeaponSpecAPI::getWeaponId)
+                        .toList()
+        );
+        faction.getKnownFighters().addAll(
+                Global.getSettings().getAllFighterWingSpecs().stream()
+                        .filter(spec -> !spec.hasTag(Tags.RESTRICTED) && !spec.hasTag(Tags.HIDE_IN_CODEX))
+                        .map(FighterWingSpecAPI::getId)
+                        .toList()
+        );
     }
 
     @Override
@@ -79,6 +118,7 @@ public class ModPlugin extends BaseModPlugin {
         Generator.generate();
 
         // Not transient in case player saves while action queue isn't empty
+        // Possibly broken though !! - can't save lambdas
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
@@ -192,7 +232,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener(recentBattlesTracker, true);
 
         registerCommodityTooltipPlugin(listeners);
-        registerAICorePlugin();
+        registerAICorePlugins();
 
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();
@@ -210,47 +250,24 @@ public class ModPlugin extends BaseModPlugin {
     private static void registerCommodityTooltipPlugin(ListenerManagerAPI listeners) {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
-            String personalityName = Global.getSettings().getPersonaltySpec(KnowledgeCorePlugin.DEFAULT_PERSONALITY_ID).getDisplayName();
-            switch (stack.getCommodityId()) {
-                case "sms_amorphous_core" -> KnowledgeCorePlugin.createPersonalitySection(
-                        info,
-                        Strings.Items.amorphousCorePersonalityHeading,
-                        String.format(Strings.Items.amorphousCorePersonalityText, stack.getDisplayName()),
-                        AmorphousCorePlugin.MIN_LEVEL,
-                        AmorphousCorePlugin.MAX_DP_MULT,
-                        personalityName);
-                case "sms_knowledge_core" -> KnowledgeCorePlugin.createPersonalitySection(
-                        info,
-                        Strings.Items.knowledgeCorePersonalityHeading,
-                        String.format(Strings.Items.knowledgeCorePersonalityText, stack.getDisplayName()),
-                        KnowledgeCorePlugin.MAX_LEVEL,
-                        KnowledgeCorePlugin.DP_MULT,
-                        personalityName);
-                case "sms_subknowledge_core" -> KnowledgeCorePlugin.createPersonalitySection(
-                        info,
-                        Strings.Items.knowledgeCorePersonalityHeading,
-                        String.format(Strings.Items.knowledgeCorePersonalityText, stack.getDisplayName()),
-                        SubknowledgeCorePlugin.MAX_LEVEL,
-                        SubknowledgeCorePlugin.DP_MULT,
-                        personalityName);
-            }
+            var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
+            if (plugin == null) return;
+            plugin.createPersonalitySection(null, info);
         }, true);
     }
 
-    private static void registerAICorePlugin() {
+    private static void registerAICorePlugins() {
+        Global.getSector().getGenericPlugins().addPlugin(new SeekerOfficerPlugin(), true);
         Global.getSector().registerPlugin(new BaseCampaignPlugin() {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
-                if ("sms_amorphous_core".equals(commodityId)) {
-                    return new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
-                }
-                else if ("sms_knowledge_core".equals(commodityId)) {
-                    return new PluginPick<>(new KnowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
-                }
-                else if ("sms_subknowledge_core".equals(commodityId)) {
-                    return new PluginPick<>(new SubknowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
-                }
-                return null;
+                return switch (commodityId) {
+                    case "sms_amorphous_core" -> new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_knowledge_core" -> new PluginPick<>(new KnowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_subknowledge_core" -> new PluginPick<>(new SubknowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_fractured_gamma_core" -> new PluginPick<>(new FracturedGammaCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    default -> null;
+                };
             }
         });
     }

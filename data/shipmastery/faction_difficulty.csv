@@ -6,4 +6,5 @@ mercenary, 1,"",3,0.9,0.8
 remnant, 2,2,3,0.9,0.9
 threat, 6,1,0,0,""
 dweller, 8,1,0,0,""
+sms_seeker,10,1,5,1,0.9
 <default>, 0, 2.5,2,0.75,0.75

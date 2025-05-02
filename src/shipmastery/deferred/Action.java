@@ -1,5 +1,7 @@
 package shipmastery.deferred;
 
-public interface Action {
+import java.io.Serializable;
+
+public interface Action extends Serializable {
     void perform();
 }

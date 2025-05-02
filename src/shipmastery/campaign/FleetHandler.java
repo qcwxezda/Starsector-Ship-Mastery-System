@@ -20,10 +20,12 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.mastery.impl.logistics.SModCapacity;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.SizeLimitedMap;
@@ -105,9 +107,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     public static void addMasteriesToFleet(CampaignFleetAPI fleet) {
         // Ignore already-processed or empty fleets
         var members = Utils.getMembersNoSync(fleet);
-        if (members.isEmpty() || (members.get(0).getVariant() != null && members.get(0).getVariant().hasTag(VARIANT_PROCESSED_TAG))) {
-            return;
-        }
         // Ignore custom production "fleets", they will have the player as their commander
         PersonAPI commander = fleet.getCommander();
         if (commander.isPlayer()) return;
@@ -121,7 +120,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         Utils.DifficultyData difficultyData = Utils.difficultyDataMap.getOrDefault(factionId, Utils.defaultDifficultyData);
 
         for (FleetMemberAPI fm : members) {
-            //if (fm.isStation()) continue;
+            // Fleets may have some ships that are deflated and others that aren't, due to different autofit rules
+            // per ship
+            if (fm.getVariant().hasTag(VARIANT_PROCESSED_TAG)) continue;
             ShipHullSpecAPI spec = fm.getVariant().getHullSpec();
             MutableShipStatsAPI stats = fm.getStats();
 
@@ -334,10 +335,10 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             if (level > cap) break;
             // Mapping might already exist due to custom masteries
             if (map.containsKey(level)) continue;
-            List<String> allKeys = ShipMastery.getMasteryOptionIds(spec, level);
-            if (allKeys.isEmpty()) continue;
-            String optionId = allKeys.get(random.nextInt(allKeys.size()));
-            map.put(level, optionId);
+            String optionId = pickOptionForMasteryLevel(spec, level, random);
+            if (optionId != null) {
+                map.put(level, optionId);
+            }
         }
 
         // Once NPC mastery levels have been generated for the first time, activate the corresponding masteries
@@ -345,6 +346,30 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         cacheNPCMasteries(commander, spec, map);
 
         return map;
+    }
+
+    // Default mastery level picker. Will always choose S-mod capacity if available.
+    public static @Nullable String pickOptionForMasteryLevel(ShipHullSpecAPI spec, int level, Random random) {
+        List<String> allKeys = ShipMastery.getMasteryOptionIds(spec, level);
+        if (allKeys.isEmpty()) return null;
+        String selectedOption = null;
+        // Always pick S-mod capacity effects if they're available
+        if (allKeys.size() > 1) {
+            outer:
+            for (String option : allKeys) {
+                var effects = ShipMastery.getMasteryEffects(spec, level, option);
+                for (var effect : effects) {
+                    if (effect instanceof SModCapacity) {
+                        selectedOption = option;
+                        break outer;
+                    }
+                }
+            }
+        }
+        if (selectedOption == null) {
+            selectedOption = allKeys.get(random.nextInt(allKeys.size()));
+        }
+        return selectedOption;
     }
 
     public static float getNPCLevelModifier(float progression) {

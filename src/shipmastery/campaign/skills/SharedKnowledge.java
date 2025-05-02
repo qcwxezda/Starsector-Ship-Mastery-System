@@ -21,7 +21,7 @@ public class SharedKnowledge {
     private static PersonAPI getCommander(MutableShipStatsAPI stats) {
         if (stats.getVariant() == null) return null;
         var info = VariantLookup.getVariantInfo(stats.getVariant());
-        return info.commander;
+        return info == null ? null : info.commander;
     }
 
     public static int getMasteryLevel(MutableShipStatsAPI stats) {
@@ -93,15 +93,11 @@ public class SharedKnowledge {
             float bonus = Math.min(MAX_TIMEFLOW_BONUS, enhanceCount*TIMEFLOW_BONUS_PER_ENHANCE);
             if (bonus <= 0f) return;
             stats.getTimeMult().modifyPercent(id, 100f*bonus);
-            stats.getEnergyWeaponRangeBonus().modifyMult(id, 1f-bonus);
-            stats.getBallisticWeaponRangeBonus().modifyMult(id, 1f-bonus);
         }
 
         @Override
         public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
             stats.getTimeMult().unmodify(id);
-            stats.getEnergyWeaponRangeBonus().unmodify(id);
-            stats.getBallisticWeaponRangeBonus().unmodify(id);
         }
 
         @Override

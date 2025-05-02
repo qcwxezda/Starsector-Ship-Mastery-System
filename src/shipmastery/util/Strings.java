@@ -132,15 +132,14 @@ public interface Strings {
         String superconstruct2RightClick = Utils.getString("sms_items", "superconstruct2RightClick");
         String superconstruct2MessageDisplay1 = Utils.getString("sms_items", "superconstruct2MessageDisplay1");
         String superconstruct2MessageDisplay2 = Utils.getString("sms_items", "superconstruct2MessageDisplay2");
-        String amorphousCorePersonalityHeading = Utils.getString("sms_items", "amorphousCorePersonalityHeading");
         String amorphousCorePersonalityText  = Utils.getString("sms_items", "amorphousCorePersonalityText");
         String knowledgeCorePersonalityTableTitle1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle1");
         String knowledgeCorePersonalityTableTitle2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle2");
         String knowledgeCorePersonalityTableName1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName1");
         String knowledgeCorePersonalityTableName2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName2");
         String knowledgeCorePersonalityTableName3 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName3");
-        String knowledgeCorePersonalityHeading = Utils.getString("sms_items", "knowledgeCorePersonalityHeading");
         String knowledgeCorePersonalityText = Utils.getString("sms_items", "knowledgeCorePersonalityText");
+        String knowledgeCorePersonalityText2 = Utils.getString("sms_items", "knowledgeCorePersonalityText2");
     }
 
     interface Skills {
