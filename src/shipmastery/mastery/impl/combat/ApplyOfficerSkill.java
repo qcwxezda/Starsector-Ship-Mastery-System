@@ -16,9 +16,9 @@ import com.fs.starfarer.combat.entities.Ship;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
-import shipmastery.util.VariantLookup;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -69,9 +69,8 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
         }
         boolean noCaptain = captain == null || captain.isDefault() || captain.getStats() == null;
 
-        var lookup = VariantLookup.getVariantInfo(stats.getVariant());
-        if (noCaptain && lookup != null) {
-            var commander = lookup.commander;
+        if (noCaptain) {
+            var commander = CampaignUtils.getFleetCommanderForStats(stats);
             if (commander != null && commander.getStats().getSkillLevel(Skills.SUPPORT_DOCTRINE) >= 1) {
                 if (supportDoctrineSkillIds.contains(skillId)) {
                     return 999; // Don't apply anything if the skill is the result of support doctrine

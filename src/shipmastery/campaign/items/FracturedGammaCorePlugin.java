@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 public class FracturedGammaCorePlugin extends SubknowledgeCorePlugin {
 
     public static final int MAX_LEVEL = 1;
-    public static final float DP_MULT = 1.25f;
+    public static final float DP_MULT = 1.5f;
 
     @Override
     public int getBaseLevel() {

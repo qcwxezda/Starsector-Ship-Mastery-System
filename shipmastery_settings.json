@@ -12,9 +12,6 @@
   "npcMasteryLevelModifier": -1,
   "npcMasteryLevelModifierCap": 5,
 
-  "npcMasteryBonus": 0.0,
-  "npcMasteryBonusCap": 0.5,
-
   "progressionEnabled": true,
   "npcTotalProgressionMP": 2000,
 

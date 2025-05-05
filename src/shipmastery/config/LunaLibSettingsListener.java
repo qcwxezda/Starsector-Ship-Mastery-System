@@ -38,8 +38,6 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
 
         Settings.NPC_MASTERY_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyLevelMod");
         Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP = LunaSettings.getInt(id, "sms_DifficultyLevelModCap");
-        Settings.NPC_MASTERY_BONUS_MODIFIER = LunaSettings.getFloat(id, "sms_DifficultyBonusMod");
-        Settings.NPC_MASTERY_BONUS_MODIFIER_CAP = LunaSettings.getFloat(id, "sms_DifficultyBonusModCap");
 
         Settings.NPC_PROGRESSION_ENABLED = LunaSettings.getBoolean(id, "sms_ProgressionEnabled");
         Settings.NPC_TOTAL_PROGRESSION_MP = LunaSettings.getInt(id, "sms_TotalProgressionMP");

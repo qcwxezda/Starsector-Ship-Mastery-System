@@ -1,17 +1,17 @@
 {
 	id:"sms_seeker",
-	"displayName":"Seekers",
-	"displayNameWithArticle":"the seekers",
-	"displayNameLong":"Seekers",
-	"displayNameLongWithArticle":"the seekers",
-	"entityNamePrefix":"Seeker",
-	"personNamePrefix":"Seeker",
+	"displayName":"Unknown",
+	"displayNameWithArticle":"the unknown",
+	"displayNameLong":"unknown",
+	"displayNameLongWithArticle":"the unknown",
+	"entityNamePrefix":"???",
+	"personNamePrefix":"???",
 	"personNamePrefixAOrAn":"a",
 	"displayNameIsOrAre":"are",
 
 	"logo":"graphics/factions/sms_logo_seeker.png",
 	"crest":"graphics/factions/sms_crest_seeker.png",
-	"shipNamePrefix":"<!!!>",
+	"shipNamePrefix":"<???>",
 
 	"color":[50,150,100,255],
 	"baseUIColor":[50,150,100,255],
@@ -64,37 +64,8 @@
 		"weapons":[],
 	},
 	"knownHullMods":{
-		"tags":["base_bp", "remnant"],
-		"hullMods":[
-			"advancedshieldemitter", # accelerated
-			"advancedoptics",
-			"turretgyros",
-			"armoredweapons",
-			"augmentedengines",
-			"autorepair",
-			"converted_hangar",
-			"eccm",
-			"ecm",
-			"expanded_deck_crew",
-			"magazines",
-			"missleracks",
-			"extendedshieldemitter",
-			"frontemitter",
-			"frontshield",  # makeshift
-			"hardenedshieldemitter",
-			"heavyarmor",
-			"insulatedengine",
-			"pointdefenseai",
-			"targetingunit",
-			"nav_relay",
-			"adaptiveshields", # omni
-			"operations_center",
-			"recovery_shuttles",
-			"fluxbreakers",
-			"solar_shielding",
-			"stabilizedshieldemitter",
-			"surveying_equipment",
-		],
+		"tags":[],
+		"hullMods":[],
 	},
 	"factionDoctrine":{
 		"warships":5,
@@ -149,6 +120,7 @@
 		"allowsTransponderOffTrade":true, # to prevent cargoscan dialog from "patrols"
 		"postsNoBounties":true,
 		"fightToTheLast":true, # order a full assault instead of retreating, in most cases
+		"noAICoresFromAutomatedDefenses": true,
 		"simulatorData":{
 			"showInSimulator":false,
 		},

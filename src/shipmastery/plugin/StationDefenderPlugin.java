@@ -1,36 +1,22 @@
-package shipmastery.procgen;
+package shipmastery.plugin;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.BaseGenericPlugin;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.fleets.GenerateFleetOfficersPlugin;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
-import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
-import com.fs.starfarer.api.util.Misc;
-import shipmastery.ShipMastery;
-import shipmastery.campaign.FleetHandler;
-import shipmastery.mastery.impl.logistics.SModCapacity;
-import shipmastery.util.Utils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageGenFromSeed.SalvageDefenderModificationPlugin{
+public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageGenFromSeed.SalvageDefenderModificationPlugin {
     @Override
     public float getStrength(SalvageGenFromSeed.SDMParams p, float strength, Random random, boolean withOverride) {
         return strength;
@@ -61,11 +47,27 @@ public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageG
         FactionAPI temp = Global.getSettings().createBaseFaction("sms_seeker");
         fleet.setFaction(temp.getId());
         FleetParamsV3 params = new FleetParamsV3();
-//        FleetParamsV3 params = new FleetParamsV3();
-//        params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_ALPHA;
-//        var pickData = new GenerateFleetOfficersPlugin.GenerateFleetOfficersPickData(fleet, params);
-//        var plugin = Global.getSector().getGenericPlugins().pickPlugin(GenerateFleetOfficersPlugin.class, pickData);
-//        plugin.addCommanderAndOfficers(fleet, params, random);
+        params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_ALPHA;
+
+        // Adding officers may change maximum CR, but we don't want to fully repair in case the fleet
+        // started with non-maximum CR. So only add the difference.
+        Map<FleetMemberAPI, Float> initialMaxCRMap = new HashMap<>();
+        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+            initialMaxCRMap.put(fm, fm.getRepairTracker().getMaxCR());
+        }
+
+        var pickData = new GenerateFleetOfficersPlugin.GenerateFleetOfficersPickData(fleet, params);
+        var plugin = Global.getSector().getGenericPlugins().pickPlugin(GenerateFleetOfficersPlugin.class, pickData);
+        plugin.addCommanderAndOfficers(fleet, params, random);
+
+        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+            Float initial = initialMaxCRMap.get(fm);
+            if (initial != null) {
+                float diff = fm.getRepairTracker().getMaxCR() - initial;
+                fm.getRepairTracker().setCR(fm.getRepairTracker().getCR() + diff);
+            }
+        }
+
 //        AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin(Commodities.ALPHA_CORE);
 //        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
 //            fm.setCaptain(plugin.createPerson(Commodities.ALPHA_CORE, fleet.getFaction().getId(), random));
@@ -93,7 +95,8 @@ public class StationDefenderPlugin extends BaseGenericPlugin implements SalvageG
     }
 
     @Override
-    public void reportDefeated(SalvageGenFromSeed.SDMParams p, SectorEntityToken entity, CampaignFleetAPI fleet) {}
+    public void reportDefeated(SalvageGenFromSeed.SDMParams p, SectorEntityToken entity, CampaignFleetAPI fleet) {
+    }
 
     @Override
     public int getHandlingPriority(Object params) {

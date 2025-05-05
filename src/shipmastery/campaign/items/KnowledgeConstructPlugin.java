@@ -178,6 +178,9 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
                     .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
         }
+        Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy().get(1).setCaptain(
+                new KnowledgeCorePlugin().initPerson("sms_knowledge_core", "player", "graphics/portraits/sms_portrait_knowledge_core.png", 5f)
+        );
     }
 
     @Override

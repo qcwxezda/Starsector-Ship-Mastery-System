@@ -25,11 +25,11 @@ public abstract class MasteryUtils {
     public static final int bonusLogisticSlotEnhanceNumber = 1;
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
 
-    public static int getRerollMPCost(ShipHullSpecAPI spec) {
+    public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
         return 20;
     }
 
-    public static int getRerollSPCost(ShipHullSpecAPI spec) {
+    public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
         return 1;
     }
 
@@ -39,7 +39,7 @@ public abstract class MasteryUtils {
 
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
-        return count < Settings.MAX_ENHANCES ? Math.min(40, 20 + 5*count) : Integer.MAX_VALUE;
+        return count < Settings.MAX_ENHANCES ? 16+count : Integer.MAX_VALUE;
     }
 
     public static int getEnhanceCount(ShipHullSpecAPI spec) {

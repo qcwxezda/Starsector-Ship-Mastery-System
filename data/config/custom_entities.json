@@ -1,17 +1,18 @@
 {
-  "sms_concealed_station":{
-    "defaultName":"Concealed Station", # used if name=null in addCustomEntity()
-    "defaultRadius":45, # used if radius<0 in addCustomEntity()
-    "nameInText":"concealed station",
-    "shortName":"station",
-    "customDescriptionId":"sms_concealed_station",
-    "interactionImage":"graphics/illustrations/orbital.jpg",
-    "icon":"graphics/icons/station0.png",
-    "iconWidth":20,
-    "iconHeight":20,
-    "sprite":"graphics/stations/sms_concealed_station.png",
+  "sms_concealed_probe":{
+    "defaultName":"Concealed Probe", # used if name=null in addCustomEntity()
+    "defaultRadius":35, # used if radius<0 in addCustomEntity()
+    "nameInText":"concealed probe",
+    "shortName":"probe",
+    "customDescriptionId":"sms_concealed_probe",
+    "interactionImage":"graphics/illustrations/generic_probe.jpg",
+    "icon":"graphics/icons/generic_probe_icon.png",
+    "iconWidth":22,
+    "iconHeight":22,
+    "sprite":"graphics/stations/sms_concealed_probe.png",
     "spriteWidth":40,
     "spriteHeight":40,
+    "scaleIconSizeBasedOnDefaultRadius":false,
     "renderShadow":true,
     "useLightColor":true,
     "showInCampaign":true,
@@ -19,7 +20,118 @@
     "showNameOnMap":false,
     "scaleNameWithZoom":false,
     "scaleIconWithZoom":true,
-    "tags":["has_interaction_dialog", "salvageable", "neutrino_low"],
-    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values
+    "tags":["has_interaction_dialog", "salvageable", "neutrino_low", "not_random_mission_target"],
+    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
+    "renderCircleIndicator":true,
+    "renderCircleIndicatorSelectionFlash":true
+  },
+
+  "sms_concealed_station":{
+    "defaultName":"Concealed Station", # used if name=null in addCustomEntity()
+    "defaultRadius":60, # used if radius<0 in addCustomEntity()
+    "nameInText":"concealed station",
+    "shortName":"station",
+    "customDescriptionId":"sms_concealed_station",
+    "interactionImage":"graphics/illustrations/orbital.jpg",
+    "icon":"graphics/icons/sms_icon_station1.png",
+    "iconWidth":20,
+    "iconHeight":20,
+    "sprite":"graphics/stations/sms_mirror_array.png",
+    "spriteWidth":50,
+    "spriteHeight":50,
+    "scaleIconSizeBasedOnDefaultRadius":false,
+    "renderShadow":true,
+    "useLightColor":true,
+    "showInCampaign":true,
+    "showIconOnMap":true,
+    "showNameOnMap":false,
+    "scaleNameWithZoom":false,
+    "scaleIconWithZoom":true,
+    "tags":["has_interaction_dialog", "neutrino_low", "not_random_mission_target"],
+    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
+    "renderCircleIndicator":true,
+    "renderCircleIndicatorSelectionFlash":true
+  },
+
+  "sms_station_abyss":{
+    "defaultName":"Remote Station", # used if name=null in addCustomEntity()
+    "defaultRadius":90, # used if radius<0 in addCustomEntity()
+    "nameInText":"remote station",
+    "shortName":"station",
+    "customDescriptionId":"sms_station_abyss",
+    "interactionImage":"graphics/illustrations/orbital.jpg",
+    "icon":"graphics/icons/sms_icon_station1.png",
+    "iconWidth":25,
+    "iconHeight":25,
+    "sprite":"graphics/stations/sms_station_abyss.png",
+    "spriteWidth":100,
+    "spriteHeight":100,
+    "scaleIconSizeBasedOnDefaultRadius":false,
+    "renderShadow":true,
+    "useLightColor":true,
+    "showInCampaign":true,
+    "showIconOnMap":true,
+    "showNameOnMap":false,
+    "scaleNameWithZoom":false,
+    "scaleIconWithZoom":true,
+    "tags":["has_interaction_dialog", "neutrino_low", "not_random_mission_target"],
+    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
+    "renderCircleIndicator":true,
+    "renderCircleIndicatorSelectionFlash":true
+  },
+
+  "sms_station_nucleus":{
+    "defaultName":"Warped station", # used if name=null in addCustomEntity()
+    "defaultRadius":300, # used if radius<0 in addCustomEntity()
+    "nameInText":"warped station",
+    "shortName":"station",
+    "customDescriptionId":"sms_station_nucleus",
+    "interactionImage":"graphics/illustrations/orbital.jpg",
+    "icon":"graphics/icons/sms_icon_station2.png",
+    "iconWidth":30,
+    "iconHeight":30,
+    "sprite":"graphics/stations/sms_station_nucleus.png",
+    "spriteWidth":300,
+    "spriteHeight":300,
+    "scaleIconSizeBasedOnDefaultRadius":false,
+    "renderShadow":true,
+    "useLightColor":true,
+    "showInCampaign":true,
+    "showIconOnMap":true,
+    "showNameOnMap":false,
+    "scaleNameWithZoom":false,
+    "scaleIconWithZoom":true,
+    "tags":["has_interaction_dialog", "neutrino_low", "not_random_mission_target"],
+    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
+    "renderCircleIndicator":true,
+    "renderCircleIndicatorSelectionFlash":true
+  },
+
+  "sms_mirror_array":{
+    "defaultName":"Stellar Array", # used if name=null in addCustomEntity()
+    "defaultRadius":150, # used if radius<0 in addCustomEntity()
+    "nameInText":"stellar array",
+    "shortName":"stellar array",
+    "customDescriptionId":"sms_mirror_array",
+    "interactionImage":"graphics/illustrations/orbital.jpg",
+    "icon":"graphics/icons/sms_icon_station2.png",
+    "iconWidth":30,
+    "iconHeight":30,
+    "sprite":"graphics/stations/sms_mirror_array.png",
+    "spriteWidth":150,
+    "spriteHeight":150,
+    "scaleIconSizeBasedOnDefaultRadius":false,
+    "renderShadow":true,
+    "useLightColor":true,
+    "showInCampaign":true,
+    "showIconOnMap":true,
+    "showNameOnMap":false,
+    "scaleNameWithZoom":false,
+    "scaleIconWithZoom":true,
+    "tags":["has_interaction_dialog", "neutrino_low", "not_random_mission_target"],
+    "layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
+    "renderCircleIndicator":true,
+    "renderCircleIndicatorSelectionFlash":true,
+    "pluginClass":"shipmastery.plugin.MirrorArrayPlugin"
   }
 }

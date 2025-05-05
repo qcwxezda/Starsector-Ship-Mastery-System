@@ -33,7 +33,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
         if (dialog == null) return false;
         List<FleetMemberAPI> selectable = new ArrayList<>();
         for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
-            if (!fm.getVariant().hasHullMod("sms_extradimensionalRearrangement1")) {
+            if (!fm.getVariant().hasHullMod("sms_extradimensional_rearrangement1")) {
                 selectable.add(fm);
             }
         }
@@ -57,7 +57,7 @@ public class sms_ConcealedStationInteraction extends BaseCommandPlugin {
                             return;
                         }
                         FleetMemberAPI picked = fleetMembers.get(0);
-                        picked.getVariant().addPermaMod("sms_extradimensionalRearrangement5");
+                        picked.getVariant().addPermaMod("sms_extradimensional_rearrangement5");
 
                         picked.getRepairTracker().setCR(0);
                         memoryMap.get(MemKeys.LOCAL).set(SMS_USED_KEY, true);

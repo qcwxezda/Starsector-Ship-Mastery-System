@@ -22,6 +22,9 @@ import com.fs.starfarer.api.util.Pair;
 import org.apache.log4j.Logger;
 import shipmastery.deferred.Action;
 import shipmastery.plugin.ModPlugin;
+import shipmastery.util.FleetMemberTooltipCreator;
+import shipmastery.util.OnShipButtonClicked;
+import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -46,7 +49,6 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
     public static MethodHandle saveScrollbarLocationHandle;
     private static MethodHandle replayBattle;
-    private static MethodHandle modifyShipButtons;
     private static MethodHandle findInteractionDialogClassIfNeeded;
 
     static {
@@ -75,6 +77,20 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
         this.foughtLocation = location;
         CampaignClockAPI clock = Global.getSector().getClock();
         dateString = clock.getShortDate();
+    }
+
+    public static void saveScrollbarLocation(RecentBattlesIntel intel, TooltipMakerAPI tooltip) {
+        try {
+            // Container's scrollbar location should be more accurate, won't cause jumps
+            // when refreshing while scrolling
+            Object contentContainer = ReflectionUtils.invokeMethodNoCatch(tooltip.getExternalScroller(),
+                                                                          "getContentContainer");
+            float yOffset = (float) ReflectionUtils.invokeMethod(contentContainer, "getYOffset");
+            intel.saveScrollbarLocation(yOffset);
+        }
+        catch (Exception e) {
+            intel.saveScrollbarLocation(tooltip.getExternalScroller().getYOffset());
+        }
     }
 
     public void selectFleetMember(FleetMemberAPI member) {
@@ -142,14 +158,8 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
     }
 
     private static void createMethodHandles() throws NoSuchMethodException, IllegalAccessException, ClassNotFoundException {
-        Class<?> tooltipCreatorClass =
-                ModPlugin.classLoader.loadClass("shipmastery.campaign.recentbattles.TooltipCreator");
-        modifyShipButtons = lookup.findStatic(
-                tooltipCreatorClass,
-                "modifyShipButtons",
-                MethodType.methodType(void.class, RecentBattlesIntel.class, IntelUIAPI.class, TooltipMakerAPI.class, Object.class));
         saveScrollbarLocationHandle = lookup.findStatic(
-                tooltipCreatorClass,
+                RecentBattlesIntel.class,
                 "saveScrollbarLocation",
                 MethodType.methodType(void.class, RecentBattlesIntel.class, TooltipMakerAPI.class));
         Class<?> replayClass =
@@ -168,7 +178,11 @@ public class RecentBattlesIntel extends BaseIntelPlugin {
             Color color) {
         tooltip.addShipList(numPerRow, (members.size() + numPerRow - 1) / numPerRow, size, color, members, 10f);
         try {
-            modifyShipButtons.invoke(intel, intelUI, tooltip, tooltip.getPrev());
+            FleetMemberTooltipCreator.modifyShipButtons.invoke(tooltip, tooltip.getPrev(), (OnShipButtonClicked) (fm, args) -> {
+                RecentBattlesIntel.saveScrollbarLocation(intel, tooltip);
+                intel.selectFleetMember(fm);
+                intelUI.updateUIForItem(intel);
+            });
         }
         catch (Throwable e) {
             logger.error("Failed to modify ship buttons", e);

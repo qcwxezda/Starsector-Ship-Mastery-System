@@ -36,7 +36,7 @@ public abstract class Generator {
             if (picker.isEmpty()) return;
             StarSystemAPI system = picker.pickAndRemove();
             BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickHiddenLocationNotNearStar(Misc.random, system, 100f, null);
-            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_concealed_station",
+            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_mirror_array",
                                                              Factions.NEUTRAL);
             SectorEntityToken focus = added.entity.getOrbitFocus();
             if (focus instanceof PlanetAPI planet) {
@@ -45,7 +45,7 @@ public abstract class Generator {
                     BaseThemeGenerator.convertOrbitPointingDown(added.entity);
                 }
             }
-            DefenderDataOverride ddo = new DefenderDataOverride("hegemony", 1f, 120f, 180f, 1000);
+            DefenderDataOverride ddo = new DefenderDataOverride("hegemony", 1f, 1200f, 1800f, 1000);
             Misc.setDefenderOverride(added.entity, ddo);
             SalvageSpecialAssigner.assignSpecials(added.entity);
         }

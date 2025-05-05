@@ -16,17 +16,19 @@ import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.loading.FighterWingSpecAPI;
-import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import com.fs.starfarer.api.impl.codex.CodexDataV2;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.PlayerFleetHandler;
 import shipmastery.campaign.PlayerMPHandler;
+import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.campaign.items.AmorphousCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
+import shipmastery.campaign.items.KnowledgeCoreInterface;
 import shipmastery.campaign.items.KnowledgeCorePlugin;
 import shipmastery.campaign.items.SubknowledgeCorePlugin;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
@@ -37,7 +39,6 @@ import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.procgen.Generator;
-import shipmastery.procgen.StationDefenderPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -45,6 +46,7 @@ import shipmastery.util.VariantLookup;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
@@ -73,35 +75,62 @@ public class ModPlugin extends BaseModPlugin {
         }
     }
 
+    @Override
+    public void onAboutToLinkCodexEntries() {
+        CodexDataV2.makeRelated(
+                CodexDataV2.getSkillEntryId("sms_shared_knowledge"),
+                CodexDataV2.getItemEntryId("sms_construct"),
+                CodexDataV2.getCommodityEntryId("sms_subknowledge_core"),
+                CodexDataV2.getCommodityEntryId("sms_knowledge_core"));
+    }
+
     private void initializeSeekerFaction() {
-        FactionSpecAPI faction = Global.getSettings().getFactionSpec("sms_seeker");
-        var shipSpecs = Global.getSettings().getAllShipHullSpecs().stream()
-                .filter(spec -> spec == Utils.getRestoredHullSpec(spec)
-                        && !spec.hasTag(Tags.RESTRICTED)
-                        && !spec.hasTag(Tags.DWELLER)
-                        && !spec.hasTag(Tags.THREAT)
-                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.HIDE_IN_CODEX)
-                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.CIVILIAN)
-                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)
-                        && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION))
-                .map(ShipHullSpecAPI::getHullId)
-                .toList();
-        faction.getKnownShips().addAll(shipSpecs);
-        faction.getShipsWhenImporting().addAll(shipSpecs);
-        faction.getKnownWeapons().addAll(
-                Global.getSettings().getAllWeaponSpecs().stream()
-                        .filter(spec -> !spec.hasTag(Tags.RESTRICTED)
-                                && !spec.hasTag(Tags.HIDE_IN_CODEX)
-                                && !spec.getAIHints().contains(WeaponAPI.AIHints.SYSTEM))
-                        .map(WeaponSpecAPI::getWeaponId)
-                        .toList()
-        );
-        faction.getKnownFighters().addAll(
-                Global.getSettings().getAllFighterWingSpecs().stream()
-                        .filter(spec -> !spec.hasTag(Tags.RESTRICTED) && !spec.hasTag(Tags.HIDE_IN_CODEX))
-                        .map(FighterWingSpecAPI::getId)
-                        .toList()
-        );
+        FactionSpecAPI thisFaction = Global.getSettings().getFactionSpec("sms_seeker");
+        thisFaction.getKnownHullMods().addAll(Global.getSettings().getAllHullModSpecs().stream().filter(
+                spec -> !spec.hasTag(Tags.RESTRICTED)
+                        && !spec.hasTag(Tags.HIDE_IN_CODEX)
+                        && !spec.hasTag(Tags.NO_DROP)
+                        && !spec.hasTag(Tags.HULLMOD_NO_DROP_SALVAGE)
+        ).map(HullModSpecAPI::getId).toList());
+        for (FactionSpecAPI faction : Global.getSettings().getAllFactionSpecs()) {
+            if (!faction.isShowInIntelTab()) continue;
+            if (Objects.equals(faction.getId(), thisFaction.getId())) continue;
+            thisFaction.getKnownFighters().addAll(
+                    faction.getKnownFighters().stream().filter(
+                            id -> {
+                                var spec = Global.getSettings().getFighterWingSpec(id);
+                                return !spec.hasTag(Tags.RESTRICTED) && !spec.hasTag(Tags.HIDE_IN_CODEX);
+                            }).toList());
+            thisFaction.getKnownWeapons().addAll(
+                    faction.getKnownWeapons().stream().filter(
+                            id -> {
+                                var spec = Global.getSettings().getWeaponSpec(id);
+                                return !spec.hasTag(Tags.RESTRICTED)
+                                        && !spec.hasTag(Tags.HIDE_IN_CODEX)
+                                        && !spec.getAIHints().contains(WeaponAPI.AIHints.SYSTEM);
+                            }).toList());
+            var knownShips = faction.getKnownShips().stream().filter(
+                    id -> {
+                        var spec = Global.getSettings().getHullSpec(id);
+                        return spec == Utils.getRestoredHullSpec(spec)
+                            && !spec.hasTag(Tags.RESTRICTED)
+                            && !spec.hasTag(Tags.DWELLER)
+                            && !spec.hasTag(Tags.THREAT)
+                            && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.HIDE_IN_CODEX)
+                            && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.CIVILIAN)
+                            && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)
+                            && !spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION);
+                    }).toList();
+            thisFaction.getKnownShips().addAll(knownShips);
+            thisFaction.getShipsWhenImporting().addAll(knownShips);
+        }
+    }
+
+    @Override
+    public void beforeGameSave() {
+        // Technically it's possible to save inside a dialog using console commands, but this should never normally be needed
+        // since the memory key is set with an expiry of 0
+        Global.getSector().getPlayerFleet().getMemoryWithoutUpdate().unset(RefitHandler.CURRENT_REFIT_SHIP_KEY);
     }
 
     @Override
@@ -172,9 +201,6 @@ public class ModPlugin extends BaseModPlugin {
                 } else {
                     ShipMastery.clearRerolledMasteries();
                 }
-            }
-            catch (ClassCastException e) {
-                throw new RuntimeException("This version of Ship Mastery System is not save-compatible with versions prior to 0.15.0.", e);
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
@@ -251,7 +277,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
             var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
-            if (plugin == null) return;
+            if (!(plugin instanceof KnowledgeCoreInterface)) return;
             plugin.createPersonalitySection(null, info);
         }, true);
     }
@@ -280,6 +306,7 @@ public class ModPlugin extends BaseModPlugin {
             "shipmastery.campaign.recentbattles.RecentBattlesReplay",
             "shipmastery.campaign.recentbattles.TooltipCreator",
             "shipmastery.plugin.SModAutofitCampaignPlugin",
+            "shipmastery.util.FleetMemberTooltipCreator",
             "shipmastery.util.ReflectionUtils",
             "shipmastery.util.ClassRefs",
             "shipmastery.ui",

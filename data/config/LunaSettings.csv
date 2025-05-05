@@ -50,5 +50,3 @@ sms_TotalProgressionMP,Total Player MP to Cap,Int,2000,,"If progression is enabl
 sms_HeaderDifficulty,Difficulty Settings,Header,Difficulty Settings,,,,,Difficulty
 sms_DifficultyLevelMod,Initial Level Modifier,Int,-1,,"The initial [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty
 sms_DifficultyLevelModCap,Final Level Modifier,Int,5,,"The final [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty
-sms_DifficultyBonusMod,Initial Mastery Strength Modifier,Double,0,,"The initial [flat bonus] to the [mastery strength modifier] that NPC fleet commanders will have.",0,1,Difficulty
-sms_DifficultyBonusModCap,Final Mastery Strength Modifier,Double,0.5,,"The final [flat bonus] to the [mastery strength modifier] that NPC fleet commanders will have.",0,1,Difficulty

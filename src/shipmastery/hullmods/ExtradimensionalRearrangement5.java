@@ -21,9 +21,9 @@ public class ExtradimensionalRearrangement5 extends BaseHullMod implements HullM
     public static final float SENSOR_RANGE_MULT = 1.1f;
     public static final float SENSOR_PROFILE_MULT = 0.9f;
     public static final int DP_PER_SP = 500;
-    public static final String CURRENT_DP_DESTROYED_KEY = "$sms_ExtradimensionalRearrangement5DPDestroyed";
-    public static final String MOD_KEY = "sms_ExtradimensionalRearrangement5";
-    public static final String HULLMOD_ID = "sms_extradimensionalRearrangement5";
+    public static final String CURRENT_DP_DESTROYED_KEY = "$sms_extradimensional_rearrangement5DPDestroyed";
+    public static final String MOD_KEY = "sms_extradimensional_rearrangement5";
+    public static final String HULLMOD_ID = "sms_extradimensional_rearrangement5";
 
     private static class DPDestroyedTracker implements ShipDestroyedListener {
         @Override

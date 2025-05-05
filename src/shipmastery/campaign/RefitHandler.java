@@ -48,6 +48,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
     boolean insideRefitPanel = false;
     static final String MASTERY_BUTTON_TAG = "sms_mastery_button_tag";
     static final Logger logger = Logger.getLogger(RefitHandler.class);
+    public static final String CURRENT_REFIT_SHIP_KEY = "$sms_CurrentRefitShip";
 
     // Keep track of added panels to remove them in later inject calls
     WeakReference<UIPanelAPI> mpPanelRef = new WeakReference<>(null), masteryButtonPanelRef = new WeakReference<>(null);
@@ -366,17 +367,21 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         final ShipAPI module = moduleAndRoot.one;
         ShipAPI root = moduleAndRoot.two;
 
+        // Set the (temporary) "current-refit-ship" memory item
+        var memory = Global.getSector().getPlayerFleet().getMemoryWithoutUpdate();
+        memory.set(CURRENT_REFIT_SHIP_KEY, moduleAndRoot.one, 0f);
+
         if (module != null) {
             // bypass the arbitrary checks in removeMod since we're adding it back anyway
             //String lastHullmodId = Utils.getLastHullModId(module.getVariant());
-            //if (!"sms_masteryHandler".equals(lastHullmodId)) {
-                module.getVariant().getHullMods().remove("sms_masteryHandler");
-                module.getVariant().getHullMods().add("sms_masteryHandler");
+            //if (!"sms_mastery_handler".equals(lastHullmodId)) {
+                module.getVariant().getHullMods().remove("sms_mastery_handler");
+                module.getVariant().getHullMods().add("sms_mastery_handler");
                 //shouldSync = true;
             //}
             // This call does nothing except set variant.hasOpAffectingMods = null, which
             // triggers the variant to refresh its statsForOpCosts
-            module.getVariant().addPermaMod("sms_masteryHandler");
+            module.getVariant().addPermaMod("sms_mastery_handler");
             if (Utils.fixVariantInconsistencies(module.getMutableStats(), false)) {
                 syncRefitScreenWithVariant(true);
             }

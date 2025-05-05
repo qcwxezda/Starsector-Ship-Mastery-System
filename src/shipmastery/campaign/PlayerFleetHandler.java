@@ -56,7 +56,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
         for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
             ShipVariantAPI variant = fm.getVariant();
             VariantLookup.VariantInfo variantInfo = VariantLookup.getVariantInfo(variant);
-            if (!variant.hasHullMod("sms_masteryHandler")
+            if (!variant.hasHullMod("sms_mastery_handler")
                     || variantInfo == null
                     || variantInfo.fleet != Global.getSector().getPlayerFleet()
                     || variant.isStockVariant() || variant.isGoalVariant()) {
@@ -64,7 +64,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
             }
             // Remove NPC mastery indicators if they exist
             for (int i = 1; i <= 15; i++) {
-                fm.getVariant().removeMod("sms_npcIndicator" + i);
+                fm.getVariant().removeMod("sms_npc_indicator" + i);
             }
         }
     }

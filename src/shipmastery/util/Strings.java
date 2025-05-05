@@ -115,6 +115,9 @@ public interface Strings {
         String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
         String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
         String selectAShip = Utils.getString("sms_misc", "selectAShip");
+        // Duplicate, unused, SiC uses this though
+        @SuppressWarnings("unused")
+        String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
     }
 
     interface Messages {
@@ -181,7 +184,8 @@ public interface Strings {
     }
 
     interface Hullmods {
-        String ENGINEERING_OVERRIDE = "sms_engineeringOverride";
+        String ENGINEERING_OVERRIDE = "sms_engineering_override";
+        String ANALYSIS_PACKAGE = "sms_analysis_package";
         String rearrangement1Effect1 = Utils.getString("sms_hullmods", "rearrangement1Effect1");
         String rearrangement1Effect2 = Utils.getString("sms_hullmods", "rearrangement1Effect2");
         String rearrangement1Effect3 = Utils.getString("sms_hullmods", "rearrangement1Effect3");
@@ -209,6 +213,10 @@ public interface Strings {
         String engineeringOverrideDesc = Utils.getString("sms_hullmods", "engineeringOverrideDesc");
         String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
         String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
+        String moduleCantInstall = Utils.getString("sms_hullmods", "moduleCantInstall");
+        String analysisPackageCivilian = Utils.getString("sms_hullmods", "analysisPackageCivilian");
+        String analysisPackageCombat = Utils.getString("sms_hullmods", "analysisPackageCombat");
+        String analysisPackageDesc = Utils.getString("sms_hullmods", "analysisPackageDesc");
     }
 
     interface Descriptions {
