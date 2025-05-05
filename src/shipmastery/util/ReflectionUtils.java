@@ -13,18 +13,70 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Pair;
+import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
+import shipmastery.plugin.ModPlugin;
 import shipmastery.ui.triggers.ActionListener;
 import shipmastery.ui.triggers.DialogDismissedListener;
 
 import java.awt.Color;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class ReflectionUtils {
+
+    private final static MethodHandles.Lookup lookup = MethodHandles.lookup();
+    // MethodHandles for classes that must be loaded by the script classloader, e.g. due to being loaded from rules.csv
+    public static MethodHandle uiPanelGetParent;
+    public static MethodHandle uiPanelGetChildrenNonCopy;
+    public static MethodHandle createSkillTooltip;
+
+    static {
+        try {
+            Class<?> cls = ModPlugin.classLoader.loadClass("shipmastery.util.ReflectionUtils");
+
+            // Have to make sure the init method is called from the class with the reflection-enabled classloader
+            uiPanelGetParent = (MethodHandle) lookup.findStatic(cls, "getUIPanelGetParent", MethodType.methodType(MethodHandle.class)).invoke();
+            uiPanelGetChildrenNonCopy = (MethodHandle) lookup.findStatic(cls, "getUIPanelChildrenNonCopy", MethodType.methodType(MethodHandle.class)).invoke();
+            createSkillTooltip = (MethodHandle) lookup.findStatic(cls, "getCreateSkillTooltip", MethodType.methodType(MethodHandle.class)).invoke();
+
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static MethodHandle getCreateSkillTooltip() throws IllegalAccessException {
+        if (createSkillTooltip != null) { return createSkillTooltip; }
+        for (Method method : StandardTooltipV2Expandable.class.getMethods()) {
+            if ("createSkillTooltip".equals(method.getName())) {
+                if (method.getParameterCount() == 8) {
+                    return lookup.unreflect(method);
+                }
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unused")
+    public static MethodHandle getUIPanelGetParent() throws IllegalAccessException, NoSuchMethodException {
+        if (uiPanelGetParent != null) { return uiPanelGetParent; }
+        var temp = Global.getSettings().createCustom(0f, 0f, null);
+        return lookup.unreflect(temp.getClass().getMethod("getParent"));
+    }
+
+    @SuppressWarnings("unused")
+    public static MethodHandle getUIPanelChildrenNonCopy() throws NoSuchMethodException, IllegalAccessException {
+        if (uiPanelGetChildrenNonCopy != null) { return uiPanelGetChildrenNonCopy; }
+        var temp = Global.getSettings().createCustom(0f, 0f, null);
+        return lookup.unreflect(temp.getClass().getMethod("getChildrenNonCopy"));
+    }
 
     public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
         return makeButton(text, handler, base, bg, Alignment.MID, CutStyle.ALL, width, height, -1);

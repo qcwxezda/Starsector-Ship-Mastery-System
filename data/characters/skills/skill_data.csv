@@ -1,3 +1,2 @@
 id,name,order,tier,reqPoints,reqPointsPerExtraSkill,description,author,combat officer,admiral,admin,tags,icon,
-sms_shared_knowledge,Shared Knowledge,1,1,0,,"Error: skill name """Shared Knowledge""" not recognized. Unable to load flavor text. Please register your Tri-Tachyon datapad to receive the latest news and updates.",,TRUE,FALSE,FALSE,npc_only,graphics/icons/skills/sms_shared_knowledge.png,
-
+sms_shared_knowledge,Shared Knowledge,1,1,0,,"Error: skill name """Shared Knowledge""" not recognized. Unable to load flavor text. Please register your Tri-Tachyon datapad to receive the latest news and updates.",,TRUE,FALSE,FALSE,"npc_only, codex_unlockable",graphics/icons/skills/sms_shared_knowledge.png,

@@ -49,6 +49,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private boolean lastXPGainWasBattle = false;
     private final Random random = new Random(90706904117206L);
     public static final String DIFFICULTY_PROGRESSION_KEY = "$sms_DifficultyProgression";
+    // Attached to player person
+    public static final String COMBAT_MP_GAIN_STAT_MULT_KEY = "sms_MPGainMultCombat";
+    public static final String CIVILIAN_MP_GAIN_STAT_MULT_KEY = "sms_MPGainMultCivilian";
 
     public PlayerMPHandler() {
         super(false);
@@ -207,7 +210,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             xp -= xpPer;
             xpPer *= MULT_PER_MP;
         }
-        totalMPGained *= (isCivilian ? 0.8f * Settings.CIVILIAN_MP_GAIN_MULTIPLIER : 1.2f * Settings.COMBAT_MP_GAIN_MULTIPLIER);
+        var stats = Global.getSector().getPlayerStats().getDynamic();
+        float additionalCivMult = stats.getStat(CIVILIAN_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
+        float additionalCombatMult = stats.getStat(COMBAT_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
+        totalMPGained *= (isCivilian ? 0.8f * Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
+                : 1.2f * Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
             totalMPGained++;

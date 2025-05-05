@@ -84,12 +84,12 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         VariantLookup.addVariantInfo(variant, root, member);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway
         // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
-        variant.getHullMods().remove("sms_masteryHandler");
-        variant.getHullMods().add("sms_masteryHandler");
+        variant.getHullMods().remove("sms_mastery_handler");
+        variant.getHullMods().add("sms_mastery_handler");
         // This also sets hasOpAffectingMods to null, forcing variants to
         // recompute their statsForOpCosts
         // (Normally this is naturally set when a hullmod is manually added or removed)
-        variant.addPermaMod("sms_masteryHandler");
+        variant.addPermaMod("sms_mastery_handler");
         // Add the tracker to any modules as well
         for (String id : variant.getModuleSlots()) {
             variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, member));
@@ -170,9 +170,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 // Adjust CR if mastery effects affected that
                 //fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
                 // Do this again just to make sure mastery handler is at bottom of hullmod list
-                variant.getHullMods().remove("sms_masteryHandler");
-                variant.getHullMods().add("sms_masteryHandler");
-                variant.addPermaMod("sms_masteryHandler");
+                variant.getHullMods().remove("sms_mastery_handler");
+                variant.getHullMods().add("sms_mastery_handler");
+                variant.addPermaMod("sms_mastery_handler");
             }
 
             variant.addTag(VARIANT_PROCESSED_TAG);
@@ -181,7 +181,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 int level = masteries.lastEntry().getKey();
                 if (level >= 1) {
                     level = Math.min(level, 15);
-                    fm.getVariant().addMod("sms_npcIndicator" + level);
+                    fm.getVariant().addMod("sms_npc_indicator" + level);
                 }
             }
         }
@@ -320,7 +320,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         float bonus = data.averageModifier();
         float averageLevel = commander.getStats().getLevel()/3f + bonus + getNPCLevelModifier(progression);
-        float masteryStrength = getNPCStrengthModifier(progression);
+        float masteryStrength = data.masteryStrengthBonus();
         commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(FleetHandler.class.getName(), 100f*masteryStrength);
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
@@ -374,10 +374,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static float getNPCLevelModifier(float progression) {
         return (1f - progression) * Settings.NPC_MASTERY_LEVEL_MODIFIER + progression * Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP;
-    }
-
-    public static float getNPCStrengthModifier(float progression) {
-        return (1f - progression) * Settings.NPC_MASTERY_BONUS_MODIFIER + progression * Settings.NPC_MASTERY_BONUS_MODIFIER_CAP;
     }
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {

@@ -1,4 +1,8 @@
 {
+  "drop_prob_officer_sms_fractured_gamma_core": 0.5,
+  "drop_prob_officer_sms_subknowledge_core": 0.15,
+  "drop_prob_officer_sms_knowledge_core": 0.075,
+
   "ruleCommandPackages":[
     "shipmastery.campaign.rulecmd"
   ],

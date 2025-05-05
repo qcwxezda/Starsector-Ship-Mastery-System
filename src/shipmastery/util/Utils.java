@@ -71,6 +71,8 @@ public abstract class Utils {
     public static DifficultyData defaultDifficultyData;
     public static final String defaultFactionId = "<default>";
     public static final Set<String> combatSkillIds = new LinkedHashSet<>() {};
+    public static final Map<String, String> eliteIcons = new HashMap<>();
+
     static {
         combatSkillIds.add(Skills.HELMSMANSHIP);
         combatSkillIds.add(Skills.COMBAT_ENDURANCE);
@@ -86,6 +88,15 @@ public abstract class Utils {
         combatSkillIds.add(Skills.ENERGY_WEAPON_MASTERY);
         combatSkillIds.add(Skills.ORDNANCE_EXPERTISE);
         combatSkillIds.add(Skills.POLARIZED_ARMOR);
+        try {
+            JSONArray array = Global.getSettings().getMergedSpreadsheetData("id", "data/characters/skills/aptitude_data.csv");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject json = array.getJSONObject(i);
+                eliteIcons.put(json.getString("id"), json.optString("elite_overlay", null));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load data/characters/skills/aptitude_data.csv from the base game");
+        }
     }
 
     public static final Set<String> allHullSpecIds = new HashSet<>();
@@ -119,12 +130,8 @@ public abstract class Utils {
                 JSONObject object = factionsArray.getJSONObject(i);
                 String id = object.getString("faction_id");
                 if (defaultFactionId.equals(id)) {
-                    float avgMod = (float) object.getDouble("average_modifier");
-                    float stDev = (float) object.getDouble("stdev");
-                    float flagshipBonus = (float) object.getDouble("flagship_bonus");
-                    float sModProb = (float) object.getDouble("base_smod_prob");
-                    float perDMod = (float) object.getDouble("smod_prob_mult_per_dmod");
-                    DifficultyData data = new DifficultyData(avgMod, stDev, flagshipBonus, sModProb, perDMod);
+                    DifficultyData data = readDifficultyData(object,
+                            new DifficultyData(0f, 0f, 0f, 0f, 0f, 0f));
                     difficultyDataMap.put(id, data);
                     defaultDifficultyData = data;
                     break;
@@ -134,12 +141,7 @@ public abstract class Utils {
                 for (int i = 0; i < factionsArray.length(); i++) {
                     JSONObject object = factionsArray.getJSONObject(i);
                     String id = object.getString("faction_id");
-                    float avgMod = (float) object.optDouble("average_modifier", defaultDifficultyData.averageModifier());
-                    float stDev = (float) object.optDouble("stdev", defaultDifficultyData.stDev);
-                    float flagshipBonus = (float) object.optDouble("flagship_bonus", defaultDifficultyData.flagshipBonus());
-                    float sModProb = (float) object.optDouble("base_smod_prob", defaultDifficultyData.baseSModProb());
-                    float perDMod = (float) object.optDouble("smod_prob_mult_per_dmod", defaultDifficultyData.sModProbMultPerDMod());
-                    DifficultyData data = new DifficultyData(avgMod, stDev, flagshipBonus, sModProb, perDMod);
+                    DifficultyData data = readDifficultyData(object, defaultDifficultyData);
                     difficultyDataMap.put(id, data);
                     if (defaultFactionId.equals(id)) {
                         defaultDifficultyData = data;
@@ -152,7 +154,23 @@ public abstract class Utils {
         }
     }
 
-    public record DifficultyData(float averageModifier, float stDev, float flagshipBonus, float baseSModProb, float sModProbMultPerDMod) {}
+    private static DifficultyData readDifficultyData(JSONObject json, DifficultyData fallback) {
+        float avgMod = (float) json.optDouble("average_modifier", fallback.averageModifier);
+        float stDev = (float) json.optDouble("stdev", fallback.stDev);
+        float flagshipBonus = (float) json.optDouble("flagship_bonus", fallback.flagshipBonus);
+        float sModProb = (float) json.optDouble("base_smod_prob", fallback.baseSModProb);
+        float perDMod = (float) json.optDouble("smod_prob_mult_per_dmod", fallback.sModProbMultPerDMod);
+        float str = (float) json.optDouble("mastery_strength_bonus", fallback.masteryStrengthBonus);
+        return new DifficultyData(avgMod, stDev, flagshipBonus, sModProb, perDMod, str);
+    }
+
+    public record DifficultyData(
+            float averageModifier,
+            float stDev,
+            float flagshipBonus,
+            float baseSModProb,
+            float sModProbMultPerDMod,
+            float masteryStrengthBonus) {}
 
     public static String getHullmodName(String hullmodId) {
         return hullmodIdToNameMap.get(hullmodId);
@@ -475,7 +493,7 @@ public abstract class Utils {
             // This just sets hasOpAffectingMods to null, forcing the variant to
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
-            variant.addPermaMod("sms_masteryHandler");
+            variant.addPermaMod("sms_mastery_handler");
             Utils.fixVariantInconsistencies(fm.getStats(), true);
         }
     }
@@ -588,29 +606,45 @@ public abstract class Utils {
         return res;
     }
 
+
+    /** Default max weight is 3 */
+    public static float getSelectionWeightScaledByValueIncreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3) {
+        return getSelectionWeightScaledByValueIncreasing(value, breakpoint1, breakpoint2, breakpoint3, 3f);
+    }
+
     /** Weight is 0 from 0 to breakpoint 1,
      * increases exponentially from 0 to 1 between breakpoint1 and breakpoint2,
-     * and finally increases linearly from 1 to 3 between breakpoint2 and breakpoint3. */
-    public static float getSelectionWeightScaledByValueIncreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3) {
+     * and finally increases linearly from 1 to maxWeight between breakpoint2 and breakpoint3.
+     * maxWeight must be >1. */
+    public static float getSelectionWeightScaledByValueIncreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3, float maxWeight) {
+        assert(maxWeight > 1f);
         if (value <= breakpoint1) return 0f;
         else if (value <= breakpoint2) {
             return (float) ((Math.exp((value - breakpoint1) / (breakpoint2 - breakpoint1)) - 1f) / (Math.E - 1f));
         }
         else if (value <= breakpoint3){
-            return 1f + 2f * (value - breakpoint2) / (breakpoint3 - breakpoint2);
+            return 1f + (maxWeight - 1f) * (value - breakpoint2) / (breakpoint3 - breakpoint2);
         }
         else {
-            return 3f;
+            return maxWeight;
         }
     }
 
-    /** Weight is 3 from 0 to breakpoint 1,
-     * decreases linearly from 3 to 1 between breakpoint1 and breakpoint2,
-     * and finally decreases exponentially from 1 to 0 between breakpoint2 and breakpoint3. */
+
+    /** Default max weight is 3 */
     public static float getSelectionWeightScaledByValueDecreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3) {
-        if (value <= breakpoint1) return 3f;
+        return getSelectionWeightScaledByValueDecreasing(value, breakpoint1, breakpoint2, breakpoint3, 3f);
+    }
+
+    /** Weight is maxWeight from 0 to breakpoint 1,
+     * decreases linearly from maxWeight to 1 between breakpoint1 and breakpoint2,
+     * and finally decreases exponentially from 1 to 0 between breakpoint2 and breakpoint3.
+     * maxWeight must be >1.*/
+    public static float getSelectionWeightScaledByValueDecreasing(float value, float breakpoint1, float breakpoint2, float breakpoint3, float maxWeight) {
+        assert(maxWeight > 1f);
+        if (value <= breakpoint1) return maxWeight;
         else if (value <= breakpoint2) {
-            return 3f - 2f * (value - breakpoint1) / (breakpoint2 - breakpoint1);
+            return maxWeight - (maxWeight - 1f) * (value - breakpoint1) / (breakpoint2 - breakpoint1);
         } else if (value <= breakpoint3) {
             return (float) (1f / (1f - 1f / Math.E) * ((Math.exp((breakpoint2 - value) / (breakpoint3 - breakpoint2))) - 1f / Math.E));
         } else {

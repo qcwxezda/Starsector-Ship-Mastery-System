@@ -2,17 +2,20 @@
 ---------
 
 *** NOT SAVE COMPATIBLE WITH PREVIOUS VERSIONS ***
+*** ADDITIONALLY, SOME IDS HAVE BEEN RENAMED, IN PARTICULAR, HULLMOD IDS CHANGED FROM CAMEL CASE TO SNAKE CASE ***
+*** e.g. sms_masteryHandler is now sms_mastery_handler ***
 
 - Framework now supports more than 2 options per mastery level.
-- The presets for levels 1, 3, 5, 7, and 9 now have 3 options each.
+- The presets for levels 1, 2, 4, 5, 7, and 9 now have 3 options each.
     - Fixed max-level assignments still only have 2 options each.
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
     - When using SP in this manner, you may always build in at least 1 S-mod (3 with engineering override) regardless of the ship's current capacity.
 - Creating (not consuming) knowledge constructs now grants 1 SP per 5 constructs.
     - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
-- Added a difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
+- Added a faction difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
 - Added 7 mastery effects.
+- Added a substantial amount of content related to concealed stations and knowledge constructs.
 - Added ability for a single hull spec to have multiple presets:
     - If a "preset" string or array is given in the assignment, then only the presets provided are used.
         - They are processed in the order they are declared, so if multiple presets have conflicting entries, the earliest one wins.
@@ -76,10 +79,10 @@
 - Best of the best: nerfed mastery bonus from 30% to 25%.
 - Enhancing:
     - Extra logistics S-mod moved from third enhance to first enhance.
-    - First 2 enhances give +7.5% each, next 2 only give +5% each.
+    - Next 2 enhances give +7.5% each, then the next 2 only give +5% each.
     - Can enhance 5 more times for 2% each, for extreme min-maxing.
         - Enhances 6-10 also give -1% damage taken each.
-    - Enhancing now grants bonus XP.
+    - Enhancing now grants some bonus XP.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
 - Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.

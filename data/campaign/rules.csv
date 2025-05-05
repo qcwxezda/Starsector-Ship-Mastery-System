@@ -53,4 +53,5 @@ sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetSho
 sms_CheckForFleet,DialogOptionSelected,!$global.sms_checkedForFleet score:99999999,"sms_CheckForFleetScript ""BEST""",,,
 sms_CheckForFleetFireAllIntercept,FireAllIntercept,"$fireAllTrigger == DialogOptionSelected
 !$global.sms_checkedForFleet score:99999999","sms_CheckForFleetScript ""ALL""",,,
-sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_SuperconstructInteractionScript,,,
+sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_SuperconstructInteraction,,,
+sms_KnowledgeCoreUplinkClicked,sms_tKnowledgeCoreUplinkClicked,,sms_KnowledgeCoreUplinkInteraction,,,

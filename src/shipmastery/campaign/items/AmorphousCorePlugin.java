@@ -11,13 +11,12 @@ import shipmastery.util.Strings;
 
 public class AmorphousCorePlugin extends KnowledgeCorePlugin {
 
-    public static final int MIN_LEVEL = 3;
+    public static final int MIN_LEVEL = 5;
     public static final int MAX_LEVEL = 8;
-    public static final float LEVELS_PER_MASTERY_LEVEL = 0.5f;
-    public static final float MIN_DP_MULT = 3f;
-    public static final float MAX_DP_MULT = 5f;
+    public static final float LEVELS_PER_MASTERY_LEVEL = 1f/3f;
+    public static final float MIN_DP_MULT = 3.5f;
+    public static final float MAX_DP_MULT = 6f;
     public static final float DP_MULT_PER_ENHANCE = 0.25f;
-    public static final String UNIQUE_SKILL_ID = "sms_shared_knowledge";
 
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
@@ -25,6 +24,8 @@ public class AmorphousCorePlugin extends KnowledgeCorePlugin {
             stats.setLevel(MIN_LEVEL);
             stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
             stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
+            stats.setSkillLevel(Skills.IMPACT_MITIGATION, 2f);
+            stats.setSkillLevel(Skills.FIELD_MODULATION, 2f);
         } else {
             stats.setLevel(MAX_LEVEL);
             stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);

@@ -35,7 +35,7 @@ public class ExtradimensionalRearrangement3 extends BaseHullMod {
     }
 
     // Map fleet member id -> number of kills
-    public static final String KILL_COUNT_KEY = "$sms_ExtradimensionalRearrangement3KillCountTracker";
+    public static final String KILL_COUNT_KEY = "$sms_extradimensional_rearrangement3KillCountTracker";
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {

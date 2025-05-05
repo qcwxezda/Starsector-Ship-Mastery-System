@@ -9,7 +9,7 @@ import com.fs.starfarer.api.util.Misc;
 import java.util.List;
 import java.util.Map;
 
-public class sms_GenerateDefenses extends BaseCommandPlugin  {
+public class sms_GenerateStationDefenses extends BaseCommandPlugin  {
 
     public static final String FLEET_TYPE_MEMORY_KEY = "$sms_FleetType";
 

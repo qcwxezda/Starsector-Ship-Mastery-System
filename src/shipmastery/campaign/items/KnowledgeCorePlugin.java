@@ -25,16 +25,15 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.Random;
 
-import static shipmastery.campaign.items.AmorphousCorePlugin.*;
-
 public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements HullModFleetEffect, KnowledgeCoreInterface {
 
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
-    public static final int MAX_LEVEL = 6;
+    public static final int MAX_LEVEL = 5;
     public static final float BASE_DP_MULT = 3.5f;
     public static final float DP_MULT_PER_MISSING_SKILL = 0.5f;
     public static final float MIN_DP_MULT = 1.5f;
+    public static final String UNIQUE_SKILL_ID = "sms_shared_knowledge";
 
     public PersonAPI initPerson(String aiCoreId, String factionId, String spritePath, float aiPointsMult) {
         PersonAPI person = Global.getFactory().createPerson();
@@ -77,8 +76,7 @@ public class KnowledgeCorePlugin extends BaseAICoreOfficerPluginImpl implements 
         stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
         stats.setSkillLevel(Skills.IMPACT_MITIGATION, 2f);
         stats.setSkillLevel(Skills.FIELD_MODULATION, 2f);
-        stats.setSkillLevel(Skills.GUNNERY_IMPLANTS, 2f);
-        stats.setSkillLevel(AmorphousCorePlugin.UNIQUE_SKILL_ID, 2f);
+        stats.setSkillLevel(UNIQUE_SKILL_ID, 2f);
     }
 
     public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {

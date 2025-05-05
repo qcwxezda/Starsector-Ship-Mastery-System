@@ -21,12 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_SuperconstructInteractionScript extends BaseCommandPlugin {
+public class sms_SuperconstructInteraction extends BaseCommandPlugin {
 
     public static final String MODIFIER_ID = "sms_Superconstruct1";
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
+        if (dialog == null) return false;
         dialog.setPromptText("");
         RuleBasedInteractionDialogPluginImpl plugin = (RuleBasedInteractionDialogPluginImpl) dialog.getPlugin();
         SpecialItemPlugin.RightClickActionHelper helper = (SpecialItemPlugin.RightClickActionHelper) plugin.getCustom1();
@@ -44,14 +45,14 @@ public class sms_SuperconstructInteractionScript extends BaseCommandPlugin {
             @Override
             public void pickedFleetMembers(List<FleetMemberAPI> members) {
                 if (members == null || members.isEmpty()) {
-                    dialog.dismiss();
+                    dialog.dismissAsCancel();
                     return;
                 }
                 FleetMemberAPI member = members.get(0);
                 ShipHullSpecAPI spec = Utils.getRestoredHullSpec(member.getHullSpec());
                 ShipMastery.addPlayerMasteryPoints(spec, SuperconstructPlugin.SUPERCONSTRUCT1_MP, false, false);
                 Global.getSector().getPlayerStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId()).modifyPercent(MODIFIER_ID, 100f*SuperconstructPlugin.SUPERCONSTRUCT1_STRENGTH);
-                member.getVariant().addPermaMod("sms_superconstructHullmod", false);
+                member.getVariant().addPermaMod("sms_superconstruct_hullmod", false);
                 var messageDisplay = Global.getSector().getCampaignUI().getMessageDisplay();
                 messageDisplay.addMessage(String.format(Strings.Messages.gainedMPSingle, SuperconstructPlugin.SUPERCONSTRUCT1_MP + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
                 messageDisplay.addMessage(String.format(Strings.Items.superconstruct1MessageDisplay1, Utils.asPercent(SuperconstructPlugin.SUPERCONSTRUCT1_STRENGTH)), Settings.MASTERY_COLOR);
@@ -63,7 +64,7 @@ public class sms_SuperconstructInteractionScript extends BaseCommandPlugin {
 
             @Override
             public void cancelledFleetMemberPicking() {
-                dialog.dismiss();
+                dialog.dismissAsCancel();
             }
         });
         return true;

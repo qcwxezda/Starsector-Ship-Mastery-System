@@ -12,7 +12,7 @@ import shipmastery.util.Strings;
 public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
 
     public static final float DP_MULT = 2.5f;
-    public static final int MAX_LEVEL = 4;
+    public static final int MAX_LEVEL = 3;
 
     @Override
     public float getBaseAIPointsMult() {
@@ -50,7 +50,6 @@ public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
         stats.setLevel(MAX_LEVEL);
         stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
         stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
-        stats.setSkillLevel(Skills.IMPACT_MITIGATION, 2f);
-        stats.setSkillLevel(AmorphousCorePlugin.UNIQUE_SKILL_ID, 2f);
+        stats.setSkillLevel(KnowledgeCorePlugin.UNIQUE_SKILL_ID, 2f);
     }
 }

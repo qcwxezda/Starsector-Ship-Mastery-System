@@ -28,6 +28,11 @@ public class ParticleBurstEmitter extends BaseIEmitter {
     }
 
     @Override
+    public boolean isAlwaysRenderInCampaign() {
+        return false;
+    }
+
+    @Override
     protected ParticleData initParticle(int i) {
         ParticleData data = new ParticleData();
         float newLife = life * MathUtils.randBetween(1f - lifeJitter, 1f + lifeJitter);
