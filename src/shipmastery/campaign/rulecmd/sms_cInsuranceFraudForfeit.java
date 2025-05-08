@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class sms_InsuranceFraudForfeit extends BaseCommandPlugin {
+public class sms_cInsuranceFraudForfeit extends BaseCommandPlugin {
     @Override
     public boolean execute(String ruleId,  InteractionDialogAPI dialog, List<Misc.Token> params,
                            Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
 
-        Collection<FleetMemberAPI> members = sms_InsuranceFraudListShips.getShips();
+        Collection<FleetMemberAPI> members = sms_cInsuranceFraudListShips.getShips();
         Set<String> ids = new HashSet<>();
         for (FleetMemberAPI member : members) {
             ids.add(member.getId());
@@ -43,7 +43,7 @@ public class sms_InsuranceFraudForfeit extends BaseCommandPlugin {
             }
         }
 
-        Float additionalCost = (Float) memoryMap.get(MemKeys.LOCAL).get(sms_InsuranceFraudListShips.ADDITIONAL_COST_KEY);
+        Float additionalCost = (Float) memoryMap.get(MemKeys.LOCAL).get(sms_cInsuranceFraudListShips.ADDITIONAL_COST_KEY);
         if (additionalCost != null) {
             Utils.getPlayerCredits().subtract(additionalCost);
             dialog.getTextPanel().addPara(Strings.Graveyard.insuranceLostCredits, Misc.getNegativeHighlightColor(), Misc.getHighlightColor(), Misc.getDGSCredits(additionalCost));

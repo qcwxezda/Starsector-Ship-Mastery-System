@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.characters.SkillEffectType;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -11,34 +12,31 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
-import com.fs.starfarer.campaign.CharacterStats;
-import com.fs.starfarer.combat.entities.Ship;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.BaseMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.CampaignUtils;
+import shipmastery.util.IntRef;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static shipmastery.util.MasteryUtils.makeSharedId;
+
 public class ApplyOfficerSkill extends BaseMasteryEffect {
 
     String skillId;
-    private static MethodHandle applyPersonalToStats;
-    private static final Set<String> supportDoctrineSkillIds = new HashSet<>();
+    public static final Set<String> SUPPORT_DOCTRINE_SKILL_IDS = new HashSet<>();
     static {
-        supportDoctrineSkillIds.add(Skills.HELMSMANSHIP);
-        supportDoctrineSkillIds.add(Skills.COMBAT_ENDURANCE);
-        supportDoctrineSkillIds.add(Skills.DAMAGE_CONTROL);
-        supportDoctrineSkillIds.add(Skills.ORDNANCE_EXPERTISE);
+        SUPPORT_DOCTRINE_SKILL_IDS.add(Skills.HELMSMANSHIP);
+        SUPPORT_DOCTRINE_SKILL_IDS.add(Skills.COMBAT_ENDURANCE);
+        SUPPORT_DOCTRINE_SKILL_IDS.add(Skills.DAMAGE_CONTROL);
+        SUPPORT_DOCTRINE_SKILL_IDS.add(Skills.ORDNANCE_EXPERTISE);
     }
 
     @Override
@@ -68,15 +66,6 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
             captain = stats.getFleetMember() == null ? null : stats.getFleetMember().getCaptain();
         }
         boolean noCaptain = captain == null || captain.isDefault() || captain.getStats() == null;
-
-        if (noCaptain) {
-            var commander = CampaignUtils.getFleetCommanderForStats(stats);
-            if (commander != null && commander.getStats().getSkillLevel(Skills.SUPPORT_DOCTRINE) >= 1) {
-                if (supportDoctrineSkillIds.contains(skillId)) {
-                    return 999; // Don't apply anything if the skill is the result of support doctrine
-                }
-            }
-        }
         return noCaptain ? 0 : (int) captain.getStats().getSkillLevel(skillId);
     }
 
@@ -84,35 +73,60 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         int existingLevel = getSkillLevelForStats(ship.getMutableStats());
         if (existingLevel >= 2) return;
-        PersonAPI dummy = Global.getSettings().createPerson();
-        dummy.getStats().setSkillLevel(skillId, existingLevel + 1);
-        ((CharacterStats) dummy.getStats()).applyPersonalToShip((Ship) ship);
+
+        applyEffectsBeforeShipCreation(ship.getHullSize(), ship.getMutableStats());
+        Global.getSettings().getSkillSpec(skillId).getEffectsAPI().forEach(
+                effect -> {
+                    if (effect.getType() != SkillEffectType.SHIP) return;
+                    var afterCreationEffect = effect.getAsAfterShipCreationEffect();
+                    if (afterCreationEffect == null || effect.getRequiredSkillLevel() != existingLevel + 1) return;
+                    if (effect.getRequiredSkillLevel() == 1 && isNoOfficer(ship.getMutableStats())) {
+                        var commander = ship.getFleetCommander();
+                        if (commander != null && commander.getStats().getSkillLevel(Skills.SUPPORT_DOCTRINE) > 0f && SUPPORT_DOCTRINE_SKILL_IDS.contains(skillId)) {
+                            return;
+                        }
+                    }
+                    DeferredActionPlugin.performLater(() -> afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "support_doctrine_ships_0"), 0f);
+                    // SiC version of support doctrine, seems to be a hullmod so can just unapply (can't unapply character skills b/c they happen after hullmods)
+                    afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    afterCreationEffect.unapplyEffectsAfterShipCreation(ship, makeSharedId(this));
+                    afterCreationEffect.applyEffectsAfterShipCreation(ship, makeSharedId(this));
+                }
+        );
+    }
+
+    public static boolean isNoOfficer(MutableShipStatsAPI stats) {
+        if (stats.getEntity() instanceof ShipAPI ship) {
+            return ship.getCaptain() == null || ship.getCaptain().isDefault();
+        } else {
+            FleetMemberAPI member = stats.getFleetMember();
+            if (member == null) return true;
+            return member.getCaptain().isDefault();
+        }
     }
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         int existingLevel = getSkillLevelForStats(stats);
         if (existingLevel >= 2) return;
-        PersonAPI dummy = Global.getSettings().createPerson();
-        dummy.getStats().setSkillLevel(skillId, existingLevel + 1);
-        if (applyPersonalToStats == null) {
-            MethodHandles.Lookup lookup = MethodHandles.lookup();
-            try {
-                //noinspection JavaLangInvokeHandleSignature
-                applyPersonalToStats = lookup.findVirtual(
-                        CharacterStats.class, "applyPersonalToStats",
-                        MethodType.methodType(void.class, stats.getClass(), ShipAPI.HullSize.class));
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (applyPersonalToStats != null) {
-            try {
-                applyPersonalToStats.invoke(dummy.getStats(), stats, hullSize);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        }
+
+        IntRef count = new IntRef(0);
+        Global.getSettings().getSkillSpec(skillId).getEffectsAPI().forEach(
+                effect -> {
+                    if (effect.getType() != SkillEffectType.SHIP) return;
+                    if (effect.getRequiredSkillLevel() != existingLevel + 1) return;
+                    if (effect.getRequiredSkillLevel() == 1 && isNoOfficer(stats)) {
+                        var commander = CampaignUtils.getFleetCommanderForStats(stats);
+                        if (commander != null && commander.getStats().getSkillLevel(Skills.SUPPORT_DOCTRINE) > 0f && SUPPORT_DOCTRINE_SKILL_IDS.contains(skillId)) {
+                            return;
+                        }
+                    }
+                    // SiC version of support doctrine, seems to be a hullmod so can just unapply (can't unapply character skills b/c they happen after hullmods)
+                    effect.getAsShipEffect().unapply(stats, hullSize, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    effect.getAsShipEffect().apply(stats, hullSize, skillId + "_ship_" + count.value, effect.getRequiredSkillLevel());
+                    count.value++;
+                }
+        );
     }
 
     @Override

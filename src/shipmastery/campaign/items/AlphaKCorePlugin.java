@@ -9,7 +9,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.util.Strings;
 
-public class AmorphousCorePlugin extends KnowledgeCorePlugin {
+public class AlphaKCorePlugin extends BetaKCorePlugin {
 
     public static final int MIN_LEVEL = 5;
     public static final int MAX_LEVEL = 8;
@@ -51,12 +51,12 @@ public class AmorphousCorePlugin extends KnowledgeCorePlugin {
 
     @Override
     public String getCommodityId() {
-        return "sms_amorphous_core";
+        return "sms_alpha_k_core";
     }
 
     @Override
     public String getPortraitSpritePath() {
-        return "graphics/portraits/sms_portrait_amorphous_core.png";
+        return "graphics/portraits/sms_portrait_alpha_k_core.png";
     }
 
     @Override

@@ -26,11 +26,11 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
-import shipmastery.campaign.items.AmorphousCorePlugin;
+import shipmastery.campaign.items.AlphaKCorePlugin;
+import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
-import shipmastery.campaign.items.KnowledgeCoreInterface;
-import shipmastery.campaign.items.KnowledgeCorePlugin;
-import shipmastery.campaign.items.SubknowledgeCorePlugin;
+import shipmastery.campaign.items.KCoreInterface;
+import shipmastery.campaign.items.GammaKCorePlugin;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
 import shipmastery.campaign.skills.CyberneticAugmentation;
@@ -38,7 +38,7 @@ import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.procgen.Generator;
+import shipmastery.procgen.TestGenerator;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -80,8 +80,9 @@ public class ModPlugin extends BaseModPlugin {
         CodexDataV2.makeRelated(
                 CodexDataV2.getSkillEntryId("sms_shared_knowledge"),
                 CodexDataV2.getItemEntryId("sms_construct"),
-                CodexDataV2.getCommodityEntryId("sms_subknowledge_core"),
-                CodexDataV2.getCommodityEntryId("sms_knowledge_core"));
+                CodexDataV2.getCommodityEntryId("sms_gamma_k_core"),
+                CodexDataV2.getCommodityEntryId("sms_beta_k_core"),
+                CodexDataV2.getCommodityEntryId("sms_alpha_k_core"));
     }
 
     private void initializeSeekerFaction() {
@@ -144,7 +145,7 @@ public class ModPlugin extends BaseModPlugin {
 
         boolean randomMode = Settings.ENABLE_RANDOM_MODE;
         Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
-        Generator.generate();
+        //Generator.generate();
 
         // Not transient in case player saves while action queue isn't empty
         // Possibly broken though !! - can't save lambdas
@@ -155,6 +156,8 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        new TestGenerator().generate();
+
         boolean randomMode = (boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
         if (newGame) {
             String seed = Settings.RANDOM_GENERATION_SEED;
@@ -277,7 +280,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
             var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
-            if (!(plugin instanceof KnowledgeCoreInterface)) return;
+            if (!(plugin instanceof KCoreInterface)) return;
             plugin.createPersonalitySection(null, info);
         }, true);
     }
@@ -288,9 +291,9 @@ public class ModPlugin extends BaseModPlugin {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
                 return switch (commodityId) {
-                    case "sms_amorphous_core" -> new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_knowledge_core" -> new PluginPick<>(new KnowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_subknowledge_core" -> new PluginPick<>(new SubknowledgeCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_alpha_k_core" -> new PluginPick<>(new AlphaKCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_beta_k_core" -> new PluginPick<>(new BetaKCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_gamma_k_core" -> new PluginPick<>(new GammaKCorePlugin(), PickPriority.MOD_SPECIFIC);
                     case "sms_fractured_gamma_core" -> new PluginPick<>(new FracturedGammaCorePlugin(), PickPriority.MOD_SPECIFIC);
                     default -> null;
                 };

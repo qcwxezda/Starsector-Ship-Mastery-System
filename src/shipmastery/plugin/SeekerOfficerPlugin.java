@@ -16,7 +16,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGenerator
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
-import shipmastery.campaign.items.KnowledgeCorePlugin;
+import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.util.IntRef;
 import shipmastery.util.Utils;
 
@@ -35,30 +35,34 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         switch (params.aiCores) {
             case AI_GAMMA: {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
-                officerPicker.add(null, 1f);
+                officerPicker.add("sms_gamma_k_core", 0.5f);
+                officerPicker.add(null, 1.5f);
                 break;
             }
             case AI_BETA_OR_GAMMA: {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
-                officerPicker.add("sms_subknowledge_core", 1f);
-                officerPicker.add(null, 1f);
+                officerPicker.add("sms_gamma_k_core", 1f);
+                officerPicker.add("sms_beta_k_core", 0.5f);
+                officerPicker.add(null, 1.5f);
                 break;
             }
             case AI_BETA: case AI_MIXED: {
                 officerPicker.add("sms_fractured_gamma_core", 0.25f);
-                officerPicker.add("sms_subknowledge_core", 1f);
-                officerPicker.add("sms_knowledge_core", 0.5f);
-                officerPicker.add(null, 0.5f);
+                officerPicker.add("sms_gamma_k_core", 1f);
+                officerPicker.add("sms_beta_k_core", 1f);
+                officerPicker.add("sms_alpha_k_core", 0.4f);
+                officerPicker.add(null, 1f);
                 break;
             }
             case AI_ALPHA: {
                 officerPicker.add("sms_fractured_gamma_core", 0.5f);
-                officerPicker.add("sms_subknowledge_core", 1f);
-                officerPicker.add("sms_knowledge_core", 3f);
+                officerPicker.add("sms_gamma_k_core", 1f);
+                officerPicker.add("sms_beta_k_core", 1.5f);
+                officerPicker.add("sms_alpha_k_core", 2f);
                 break;
             }
             case AI_OMEGA: {
-                officerPicker.add("sms_amorphous_core", 1f);
+                officerPicker.add("sms_alpha_k_core", 1f);
                 break;
             }
         }
@@ -79,9 +83,9 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
             float commanderScore = switch (coreId) {
                 case "sms_fractured_gamma_core" -> 1000f;
-                case "sms_subknowledge_core" -> 10000f;
-                case "sms_knowledge_core" -> 100000f;
-                case "sms_amorphous_core" -> 1000000f;
+                case "sms_gamma_k_core" -> 10000f;
+                case "sms_beta_k_core" -> 100000f;
+                case "sms_alpha_k_core" -> 1000000f;
                 default -> 0f;
             };
             commanderScore += fm.getFleetPointCost();
@@ -100,9 +104,9 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             fleet.getFleetData().setFlagship(flagship);
             int numCommanderSkills = switch (commander.getAICoreId()) {
                 case "sms_fractured_gamma_core" -> 1;
-                case "sms_subknowledge_core" -> 3;
-                case "sms_knowledge_core" -> 5;
-                case "sms_amorphous_core" -> 7;
+                case "sms_gamma_k_core" -> 3;
+                case "sms_beta_k_core" -> 5;
+                case "sms_alpha_k_core" -> 7;
                 default -> 2;
             };
             RemnantOfficerGeneratorPlugin.addCommanderSkills(commander, fleet, params, numCommanderSkills, random);
@@ -119,7 +123,7 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         var skills = ((CharacterStats) captain.getStats()).getSkills();
         skills.removeIf(skill -> {
             if (!skill.getSkill().isCombatOfficerSkill()) return false;
-            if (!KnowledgeCorePlugin.UNIQUE_SKILL_ID.equals(skill.getSkill().getId())) {
+            if (!BetaKCorePlugin.UNIQUE_SKILL_ID.equals(skill.getSkill().getId())) {
                 numSkillsRemoved.value++;
                 return true;
             }

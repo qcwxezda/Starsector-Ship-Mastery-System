@@ -48,8 +48,8 @@ public class ConstructButtonPressed extends ActionListener {
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 "",
-                Strings.MasteryPanel.confirmText2,
-                Strings.MasteryPanel.cancelText,
+                Strings.Misc.confirm,
+                Strings.Misc.cancel,
                 550f,
                 170f,
                 new ConfirmCreateConstruct(masteryPanel, spec, count, spGained)

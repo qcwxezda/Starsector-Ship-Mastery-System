@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_CheckForFleetScript extends BaseCommandPlugin {
+public class sms_cCheckForFleet extends BaseCommandPlugin {
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
-        memoryMap.get(MemKeys.GLOBAL).set("$sms_checkedForFleet", true);
+        memoryMap.get(MemKeys.GLOBAL).set("$sms_CheckedForFleet", true);
 
         boolean fired;
         if ("ALL".equals(params.get(0).getString(memoryMap))) {
@@ -27,7 +27,7 @@ public class sms_CheckForFleetScript extends BaseCommandPlugin {
             fired = FireBest.fire(null, dialog, memoryMap, "DialogOptionSelected");
         }
 
-        memoryMap.get(MemKeys.GLOBAL).set("$sms_checkedForFleet", false);
+        memoryMap.get(MemKeys.GLOBAL).set("$sms_CheckedForFleet", false);
         if (dialog.getInteractionTarget() instanceof CampaignFleetAPI fleet) {
             FleetHandler.addMasteriesToFleet(fleet);
         }

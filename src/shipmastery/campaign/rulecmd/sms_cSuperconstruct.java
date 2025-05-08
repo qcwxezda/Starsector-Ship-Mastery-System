@@ -10,10 +10,12 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
+import org.apache.log4j.Logger;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.items.SuperconstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
+import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -21,14 +23,18 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_SuperconstructInteraction extends BaseCommandPlugin {
+public class sms_cSuperconstruct extends BaseCommandPlugin {
 
     public static final String MODIFIER_ID = "sms_Superconstruct1";
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
-        dialog.setPromptText("");
+        try {
+            ((List<?>) ReflectionUtils.uiPanelGetChildrenNonCopy.invoke(dialog)).clear();
+        } catch (Throwable e) {
+            Logger.getLogger(sms_cSuperconstruct.class).error("Couldn't clear dialog panel's children", e);
+        }
         RuleBasedInteractionDialogPluginImpl plugin = (RuleBasedInteractionDialogPluginImpl) dialog.getPlugin();
         SpecialItemPlugin.RightClickActionHelper helper = (SpecialItemPlugin.RightClickActionHelper) plugin.getCustom1();
         dialog.showFleetMemberPickerDialog(

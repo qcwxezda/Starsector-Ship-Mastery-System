@@ -4,6 +4,8 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.Random;
+
 public abstract class MathUtils {
     public static float sgnPos(float x) {
         return x < 0 ? -1f : 1f;
@@ -74,5 +76,9 @@ public abstract class MathUtils {
 
     public static float randBetween(float a, float b) {
         return a + (b-a) * Misc.random.nextFloat();
+    }
+
+    public static float randBetween(float a, float b, Random random) {
+        return a + (b-a) * random.nextFloat();
     }
 }

@@ -178,9 +178,6 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
                     .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
         }
-        Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy().get(1).setCaptain(
-                new KnowledgeCorePlugin().initPerson("sms_knowledge_core", "player", "graphics/portraits/sms_portrait_knowledge_core.png", 5f)
-        );
     }
 
     @Override
@@ -217,8 +214,11 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             ShipHullSpecAPI spec = iter.next();
             if (spec != Utils.getRestoredHullSpec(spec)) {
                 iter.remove();
+                continue;
             }
-            else if (!playerFleetSpecs.contains(spec) && !SharedUnlockData.get().isPlayerAwareOfShip(spec.getHullId())) {
+            if (playerFleetSpecs.contains(spec)) continue;
+
+            if (!SharedUnlockData.get().isPlayerAwareOfShip(spec.getHullId())) {
                 iter.remove();
             }
             else if (spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION)) {
@@ -257,7 +257,8 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         for (ShipHullSpecAPI spec : specs) {
             float weight = spec.getRarity();
             if (playerFleetSpecs.contains(spec) && tags.contains(PREF_IN_FLEET_TAG)) {
-                weight *= specs.size();
+                weight += Utils.getSelectionWeightScaledByValueDecreasing(
+                        ShipMastery.getPlayerMasteryPoints(spec), 10f, 50f, 150f, 100f);
             }
             picker.add(spec, weight);
         }

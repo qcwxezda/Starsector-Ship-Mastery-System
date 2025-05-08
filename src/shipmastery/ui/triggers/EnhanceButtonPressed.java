@@ -51,8 +51,8 @@ public class EnhanceButtonPressed extends ActionListener {
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 format,
-                Strings.MasteryPanel.confirmText2,
-                Strings.MasteryPanel.cancelText,
+                Strings.Misc.confirm,
+                Strings.Misc.cancel,
                 550f,
                 180f,
                 new ConfirmEnhanceMasteries(masteryPanel, spec)

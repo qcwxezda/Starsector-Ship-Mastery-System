@@ -135,7 +135,7 @@ public class ClearSModsPressed extends ActionListener {
 
     void beginConfirm(ButtonAPI button) {
         button.setCustomData(true);
-        button.setText(Strings.MasteryPanel.confirmText);
+        button.setText(Strings.MasteryPanel.confirmQuestion);
     }
 
     void endConfirm(ButtonAPI button) {

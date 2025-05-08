@@ -2,6 +2,25 @@ package shipmastery.util;
 
 public interface Strings {
 
+    interface Campaign {
+        String EMITTER_SOLVED = "$sms_EmitterArraySolved";
+        String REMOTE_PYLON_HAS_SHIELD = "$sms_HasShield";
+        String selectLoot = Utils.getString("sms_campaign", "selectLoot");
+        String remotePylon = Utils.getString("sms_campaign", "remotePylon");
+        String leaveText = Utils.getString("sms_campaign", "leaveText");
+        String cancelText = Utils.getString("sms_campaign", "cancelText");
+        String emitterConfirm = Utils.getString("sms_campaign", "emitterConfirm");
+        String emitterLeft = Utils.getString("sms_campaign", "emitterLeft");
+        String emitterLeftExt = Utils.getString("sms_campaign", "emitterLeftExt");
+        String emitterCenter = Utils.getString("sms_campaign", "emitterCenter");
+        String emitterCenterExt = Utils.getString("sms_campaign", "emitterCenterExt");
+        String emitterRight = Utils.getString("sms_campaign", "emitterRight");
+        String emitterRightExt = Utils.getString("sms_campaign", "emitterRightExt");
+        String emitterNotEnoughPower = Utils.getString("sms_campaign", "emitterNotEnoughPower");
+        String emitterPromptText = Utils.getString("sms_campaign", "emitterPromptText");
+        String emitterConfirmExt = Utils.getString("sms_campaign", "emitterConfirmExt");
+    }
+
     interface RefitScreen {
         String masteryButton = Utils.getString("sms_refitScreen", "masteryButton");
         String masteryLabel = Utils.getString("sms_refitScreen", "masteryLabel");
@@ -72,10 +91,8 @@ public interface Strings {
         String rerollConfirm = Utils.getString("sms_masteryPanel", "rerollConfirm");
         String enhanceMasteries = Utils.getString("sms_masteryPanel", "enhanceMasteries");
         String enhanceMasteriesConfirm = Utils.getString("sms_masteryPanel", "enhanceMasteriesConfirm");
-        String confirmText2 = Utils.getString("sms_masteryPanel", "confirmText2");
-        String cancelText = Utils.getString("sms_masteryPanel", "cancelText");
         String upgradeConfirm = Utils.getString("sms_masteryPanel", "upgradeConfirm");
-        String confirmText = Utils.getString("sms_masteryPanel", "confirmText");
+        String confirmQuestion = Utils.getString("sms_masteryPanel", "confirmQuestion");
         String enhanceConfirm = Utils.getString("sms_masteryPanel", "enhanceConfirm");
         String builtInConfirm = Utils.getString("sms_masteryPanel", "builtInConfirm");
         String clearConfirm = Utils.getString("sms_masteryPanel", "clearConfirm");
@@ -115,9 +132,11 @@ public interface Strings {
         String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
         String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
         String selectAShip = Utils.getString("sms_misc", "selectAShip");
+        String confirm = Utils.getString("sms_misc", "confirm");
+        String cancel = Utils.getString("sms_misc", "cancel");
         // Duplicate, unused, SiC uses this though
         @SuppressWarnings("unused")
-        String bestOfTheBestDesc = Utils.getString("sms_misc", "bestOfTheBestDesc");
+        String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
     }
 
     interface Messages {
@@ -136,13 +155,21 @@ public interface Strings {
         String superconstruct2MessageDisplay1 = Utils.getString("sms_items", "superconstruct2MessageDisplay1");
         String superconstruct2MessageDisplay2 = Utils.getString("sms_items", "superconstruct2MessageDisplay2");
         String amorphousCorePersonalityText  = Utils.getString("sms_items", "amorphousCorePersonalityText");
-        String knowledgeCorePersonalityTableTitle1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle1");
-        String knowledgeCorePersonalityTableTitle2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableTitle2");
-        String knowledgeCorePersonalityTableName1 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName1");
-        String knowledgeCorePersonalityTableName2 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName2");
-        String knowledgeCorePersonalityTableName3 = Utils.getString("sms_items", "knowledgeCorePersonalityTableName3");
-        String knowledgeCorePersonalityText = Utils.getString("sms_items", "knowledgeCorePersonalityText");
-        String knowledgeCorePersonalityText2 = Utils.getString("sms_items", "knowledgeCorePersonalityText2");
+        String kCoreAdditionalInfo = Utils.getString("sms_items", "kCoreAdditionalInfo");
+        String kCorePersonalityTableTitle1 = Utils.getString("sms_items", "kCorePersonalityTableTitle1");
+        String kCorePersonalityTableTitle2 = Utils.getString("sms_items", "kCorePersonalityTableTitle2");
+        String kCorePersonalityTableName1 = Utils.getString("sms_items", "kCorePersonalityTableName1");
+        String kCorePersonalityTableName2 = Utils.getString("sms_items", "kCorePersonalityTableName2");
+        String kCorePersonalityTableName3 = Utils.getString("sms_items", "kCorePersonalityTableName3");
+        String kCorePersonalityText = Utils.getString("sms_items", "kCorePersonalityText");
+        String kCorePersonalityText2 = Utils.getString("sms_items", "kCorePersonalityText2");
+        String uplinkKCoreSelect = Utils.getString("sms_items", "uplinkKCoreSelect");
+        String uplinkSkillSelect = Utils.getString("sms_items", "uplinkSkillSelect");
+        String uplinkDesc = Utils.getString("sms_items", "uplinkDesc");
+        String uplinkRightClick = Utils.getString("sms_items", "uplinkRightClick");
+        String uplinkStatus = Utils.getString("sms_items", "uplinkStatus");
+        String uplinkStatus2 = Utils.getString("sms_items", "uplinkStatus2");
+        String uplinkPenaltyDesc = Utils.getString("sms_items", "uplinkPenaltyDesc");
     }
 
     interface Skills {
