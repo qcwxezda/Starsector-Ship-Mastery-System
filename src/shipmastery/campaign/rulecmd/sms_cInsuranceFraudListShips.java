@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @SuppressWarnings("unused")
-public class sms_InsuranceFraudListShips extends BaseCommandPlugin {
+public class sms_cInsuranceFraudListShips extends BaseCommandPlugin {
 
     public static final String FORFEIT_OPTION = "sms_oInsuranceForfeit";
     public static final String ADDITIONAL_COST_KEY = "$sms_insuranceFraudAdditionalCost";

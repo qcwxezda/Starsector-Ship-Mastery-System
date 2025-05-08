@@ -35,6 +35,8 @@ import com.fs.starfarer.ui.impl.StandardTooltipV2;
 import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+import shipmastery.campaign.items.KCoreUplinkPlugin;
 import shipmastery.util.FleetMemberTooltipCreator;
 import shipmastery.util.IntRef;
 import shipmastery.util.OnShipButtonClicked;
@@ -53,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
+public class sms_cKCoreUplink extends BaseCommandPlugin {
 
     public static final String CORE_BUTTON_PREFIX = "sms_core_button";
     public static final String SKILL_BUTTON_PREFIX = "sms_skill_button";
@@ -61,7 +63,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
     private static MethodHandle setMaxShadowHeight = null;
     private static final MethodHandle addTooltipAbove;
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
-    public static Logger logger = Logger.getLogger(sms_KnowledgeCoreUplinkInteraction.class);
+    public static Logger logger = Logger.getLogger(sms_cKCoreUplink.class);
 
     static {
         try {
@@ -76,9 +78,20 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
-        dialog.setPromptText("");
+        try {
+            ((List<?>) ReflectionUtils.uiPanelGetChildrenNonCopy.invoke(dialog)).clear();
+        } catch (Throwable e) {
+            logger.error("Couldn't clear dialog panel's children", e);
+        }
         RuleBasedInteractionDialogPluginImpl plugin = (RuleBasedInteractionDialogPluginImpl) dialog.getPlugin();
         SpecialItemPlugin.RightClickActionHelper helper = (SpecialItemPlugin.RightClickActionHelper) plugin.getCustom1();
+
+        // Prevent losing cores if player fleet has no flagship and core is added to first member in fleet
+        var playerFlagship = Global.getSector().getPlayerFleet().getFlagship();
+        if (!playerFlagship.isFlagship()) {
+            playerFlagship.setFlagship(true);
+        }
+        Global.getSoundPlayer().playUISound("ui_noise_static_message_quiet", 1f, 1f);
         dialog.showCustomDialog(880f, 600f, new CorePickerDialog(helper, dialog));
         return true;
     }
@@ -185,7 +198,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
 
             // AI Core selection buttons
             float corePanelWidth = 306f, corePanelHeight = 188f, itemPad = 10f;
-            createOutlineAndTitle(panel, "Select a semi-core", corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
+            createOutlineAndTitle(panel, Strings.Items.uplinkKCoreSelect, corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
             float itemSize = 64f;
             var corePicker = panel.createUIElement(corePanelWidth, corePanelHeight-20f-2f*itemPad, true);
             //corePicker.getPosition().setXAlignOffset(-itemPad);
@@ -195,7 +208,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
             for (CargoStackAPI stack : Global.getSector().getPlayerFleet().getCargo().getStacksCopy()) {
                 if (stack.isCommodityStack()) {
                     var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
-                    if (spec != null && spec.hasTag("sms_semi_core")) {
+                    if (spec != null && spec.hasTag(KCoreUplinkPlugin.IS_AUTOCONSTRUCT_TAG)) {
                         coreStacksWithOrder.add(new Pair<>(stack, spec.getOrder()));
                     }
                 }
@@ -236,7 +249,6 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
 
             corePicker.addSpacer(itemPad);
             panel.addUIElement(corePicker).inTL(itemPad, itemPad + 20f + 2f * itemPad);
-
             removeScrollerShadow(corePicker.getExternalScroller());
 
             // Skill selection buttons
@@ -245,6 +257,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
             var pair = createOutlineAndTitle(panel, "", skillPanelWidth, skillPanelHeight, itemPad);
             pair.one.inTR(2f*itemPad, itemPad);
             plugin.skillsTitle = pair.two;
+            plugin.skillsPos = pair.one;
             plugin.updateTitleLabel();
             var skillPicker = panel.createUIElement(skillPanelWidth, skillPanelHeight-20f-2f*itemPad, true);
             List<String> ids = new ArrayList<>(Utils.combatSkillIds);
@@ -272,7 +285,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
                                     null
                     ));
                 } catch (Throwable e) {
-                    logger.error("Couldn't modify fleet member buttons", e);
+                    logger.error("Couldn't modify skill buttons", e);
                 }
 
                 skillPicker.addImage(Utils.eliteIcons.get(spec.getGoverningAptitudeId()), itemSize+6f, itemSize+6f, -itemSize-6f);
@@ -290,7 +303,9 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
             float fleetPanelWidth = 850f, fleetPanelHeight = 388f;
             int fleetMembersPerRow = 6;
             float fleetMemberIconSize = 2f*itemSize + 4f;
-            createOutlineAndTitle(panel, "Select a ship", fleetPanelWidth, fleetPanelHeight, itemPad).one.inBL(itemPad, 0f);
+            var pos = createOutlineAndTitle(panel, Strings.Misc.selectAShip, fleetPanelWidth, fleetPanelHeight, itemPad).one;
+            pos.inBL(itemPad, 0f);
+            plugin.fleetPos = pos;
             var fleetMemberPicker = panel.createUIElement(fleetPanelWidth-15f, fleetPanelHeight-20f-2f*itemPad, true);
             List<FleetMemberAPI> fms = Global
                     .getSector()
@@ -302,7 +317,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
                     .toList();
 
             fleetMemberPicker.addSpacer(fleetMemberIconSize + itemPad/2f);
-            addAreaCheckboxesWithImage(fleetMemberPicker, "TEST", fms, fleetMemberIconSize-itemPad, itemPad, fleetMembersPerRow, fm -> {
+            addAreaCheckboxesWithImage(fleetMemberPicker, "sms_fm_button", fms, fleetMemberIconSize-itemPad, itemPad, fleetMembersPerRow, fm -> {
                 var prev = fleetMemberPicker.getPrev();
                 prev.setOpacity(0f);
                 plugin.fmButtons.put(fm, (ButtonAPI) prev);
@@ -314,6 +329,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
             fleetMemberPicker.addShipList(fleetMembersPerRow, (fms.size() + fleetMembersPerRow - 1) / fleetMembersPerRow, fleetMemberIconSize, Misc.getBasePlayerColor(), fms, itemPad);
             try {
                 FleetMemberTooltipCreator.modifyShipButtons.invoke(fleetMemberPicker, fleetMemberPicker.getPrev(), (OnShipButtonClicked) (fm, args) -> {
+                    if (plugin.checkedCoreButtonIndex < 0) return;
                     if (plugin.selectedFleetMember == fm) {
                         var keepChecked = plugin.fmButtons.get(fm);
                         if (keepChecked != null) keepChecked.setChecked(true);
@@ -342,12 +358,6 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
             panel.addUIElement(fleetMemberPicker).inBL(2f*itemPad+10f, itemPad);
             removeScrollerShadow(fleetMemberPicker.getExternalScroller());
 
-            if (!plugin.coreButtons.isEmpty()) {
-                ButtonAPI button = plugin.coreButtons.get(0);
-                button.setChecked(true);
-                plugin.buttonPressed(button.getCustomData());
-            }
-
             try {
                 plugin.confirmButton = (ButtonAPI) ((List<?>) ReflectionUtils.uiPanelGetChildrenNonCopy.invoke(ReflectionUtils.uiPanelGetParent.invoke(panel))).get(1);
                 plugin.updateConfirmButton();
@@ -363,12 +373,12 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
 
         @Override
         public String getConfirmText() {
-            return Strings.MasteryPanel.confirmText2;
+            return Strings.Misc.confirm;
         }
 
         @Override
         public String getCancelText() {
-            return Strings.MasteryPanel.cancelText;
+            return Strings.Misc.cancel;
         }
 
         @Override
@@ -397,6 +407,7 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
 
             plugin.selectedFleetMember.setCaptain(plugin.person);
             helper.removeFromAnyStack(CargoAPI.CargoItemType.RESOURCES, plugin.coreIds.get(plugin.checkedCoreButtonIndex), 1);
+            Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             dialog.dismiss();
         }
 
@@ -432,13 +443,35 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
 
         PersonAPI person;
         final CorePickerDialog dialog;
+        PositionAPI skillsPos, fleetPos;
+
+        @Override
+        public void render(float alphaMult) {
+            if (checkedCoreButtonIndex >= 0 || skillsPos == null || fleetPos == null) return;
+            float sxm = skillsPos.getX(), sxM = sxm + skillsPos.getWidth() + 10f;
+            float sym = skillsPos.getY(), syM = sym + skillsPos.getHeight();
+            float fxm = fleetPos.getX(), fxM = fxm + fleetPos.getWidth() + 10f;
+            float fym = fleetPos.getY(), fyM = fym + fleetPos.getHeight();
+
+            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glColor4f(0f, 0f, 0f, 0.8f);
+            GL11.glVertex2f(sxm, sym);
+            GL11.glVertex2f(sxm, syM);
+            GL11.glVertex2f(sxM, syM);
+            GL11.glVertex2f(sxM, sym);
+            GL11.glVertex2f(fxm, fym);
+            GL11.glVertex2f(fxm, fyM);
+            GL11.glVertex2f(fxM, fyM);
+            GL11.glVertex2f(fxM, fym);
+            GL11.glEnd();
+        }
 
         public CorePickerPlugin(CorePickerDialog dialog) {
             this.dialog = dialog;
         }
 
         private void updateTitleLabel() {
-            skillsTitle.setText(String.format("Select skills (%s/%s)", numCheckedSkills, maxSkills));
+            skillsTitle.setText(String.format(Strings.Items.uplinkSkillSelect, numCheckedSkills, maxSkills));
             skillsTitle.setHighlight("" + numCheckedSkills, "" + maxSkills);
         }
 
@@ -448,6 +481,8 @@ public class sms_KnowledgeCoreUplinkInteraction extends BaseCommandPlugin {
         }
 
         private void regenerateSkills(boolean addSkills) {
+            if (checkedCoreButtonIndex < 0) return;
+
             var person = corePlugins.get(checkedCoreButtonIndex).createPerson(
                     coreIds.get(checkedCoreButtonIndex),
                     Global.getSector().getPlayerFaction().getId(),

@@ -36,7 +36,7 @@ public abstract class Generator {
             if (picker.isEmpty()) return;
             StarSystemAPI system = picker.pickAndRemove();
             BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickHiddenLocationNotNearStar(Misc.random, system, 100f, null);
-            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_mirror_array",
+            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(Misc.random, system, location, "sms_concealed_station",
                                                              Factions.NEUTRAL);
             SectorEntityToken focus = added.entity.getOrbitFocus();
             if (focus instanceof PlanetAPI planet) {

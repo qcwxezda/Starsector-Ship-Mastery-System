@@ -71,8 +71,8 @@ public class RerollButtonPressed extends ActionListener {
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 "",
-                Strings.MasteryPanel.confirmText2,
-                Strings.MasteryPanel.cancelText,
+                Strings.Misc.confirm,
+                Strings.Misc.cancel,
                 500f,
                 300f,
                 new ConfirmRerollMasteries(masteryPanel, spec, noEffect)

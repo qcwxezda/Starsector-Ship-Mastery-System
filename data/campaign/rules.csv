@@ -28,7 +28,7 @@ sms_InsuranceFleetBegin,BeginFleetEncounter,"$sms_InsuranceFleet score:1000
 !$ignorePlayerCommRequests","AddText ""You're being hailed by the $faction $otherShipOrFleet."" $faction.baseColor
 $hailing = true 0",,,
 sms_InsuranceFleetComms,OpenCommLink,"$entity.sms_InsuranceFleet score:1000
-!$entity.ignorePlayerCommRequests", "$entity.ignorePlayerCommRequests = true
+!$entity.ignorePlayerCommRequests","$entity.ignorePlayerCommRequests = true
 SetShortcut cutCommLinkNoText ""ESCAPE""","""Greetings, captain $player.name,"" the bounty hunter begins. ""How are you enjoying your recent insurance payout?""
 
 Before you can reply, $heOrShe continues, ""As you are well aware, Section 37.4 of the Unified FeBSure Insurance Terms states very clearly that under the protection of plan 3A -- that would be the Comprehensive Coverage Package -- you are to receive immediate and full compensation for any ship deemed a 'total loss' in exchange for the complete forfeiture of salvage rights.""
@@ -41,17 +41,77 @@ cutCommLinkNoText:Cut the comms link and power up weapons",
 sms_InsuranceFleetNeverRead,DialogOptionSelected,$option == sms_oNeverRead,,"""Well, I guess that's unfortunate,"" $heOrShe responds almost instantly, and in such a manner that you feel that this might not be the first time $heOrShe's used those exact words.",sms_oInsuranceContinue:Continue,
 sms_InsuranceFleetSoWhatNow,DialogOptionSelected,$option == sms_oSoWhatNow,,"""Well, now I've come to collect.""",sms_oInsuranceContinue:Continue,
 sms_InsuranceFleetCollect,DialogOptionSelected,$option == sms_oInsuranceContinue,"SetShortcut cutCommLinkNoText ""ESCAPE""
-sms_InsuranceFraudListShips","""Here is a list of ships currently in your fleet for which you've claimed an insurance payout under the category 'total loss.'""
+sms_cInsuranceFraudListShips","""Here is a list of ships currently in your fleet for which you've claimed an insurance payout under the category 'total loss.'""
 
 An image appears on your comms visual:","sms_oInsuranceForfeit:Forfeit the recovered ships
 sms_oInsuranceRefuse:""No deal.""
 cutCommLinkNoText:Cut the comms link and power up weapons",
-sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_InsuranceFraudForfeit,"""Ah, I knew you'd see reason.""
+sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_cInsuranceFraudForfeit,"""Ah, I knew you'd see reason.""
 
 You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
 sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,
-sms_CheckForFleet,DialogOptionSelected,!$global.sms_checkedForFleet score:99999999,"sms_CheckForFleetScript ""BEST""",,,
+sms_CheckForFleet,DialogOptionSelected,!$global.sms_CheckedForFleet score:99999999,"sms_cCheckForFleet ""BEST""",,,
 sms_CheckForFleetFireAllIntercept,FireAllIntercept,"$fireAllTrigger == DialogOptionSelected
-!$global.sms_checkedForFleet score:99999999","sms_CheckForFleetScript ""ALL""",,,
-sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_SuperconstructInteraction,,,
-sms_KnowledgeCoreUplinkClicked,sms_tKnowledgeCoreUplinkClicked,,sms_KnowledgeCoreUplinkInteraction,,,
+!$global.sms_CheckedForFleet score:99999999","sms_cCheckForFleet ""ALL""",,,
+sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cSuperconstruct,,,
+sms_KCoreUplinkClicked,sms_tKCoreUplinkClicked,,sms_cKCoreUplink,,,
+sms_EmitterArrayFirstTime,OpenInteractionDialog,"$customType == sms_emitter_array score:100
+!$global.sms_EmitterArrayAllowed",,"As you approach the distant orbital structure, an automated burst sends a coded transmission to your fleet.
+
+""Captain,"" your comms officer addresses you. ""This appears to be a request to link to computer systems onboard your flagship. Supposedly, accepting this connection would allow you to remotely operate--,"" he gestures toward the array, ""-- whatever that is.""
+
+He pauses briefly, before adding, rather emphatically, that this request was preceded by the attempted installation of a backdoor through a vulnerability in Domain-standard comms protocols that was, thankfully, resolved some several hundred cycles ago.
+
+""I'd advise against allowing it, but the choice is yours, captain.""","sms_oEmitterArrayAllow:Allow the connection
+defaultLeave:Leave",
+sms_EmitterArray,OpenInteractionDialog,"$customType == sms_emitter_array score:100
+$global.sms_EmitterArrayAllowed
+!$global.sms_EmitterArraySolved",sms_cEmitterArray,You approach the emitter array and accept the automated connection request.,,
+sms_EmitterArrayAllow,DialogOptionSelected,$option == sms_oEmitterArrayAllow,"sms_cEmitterArray
+$global.sms_EmitterArrayAllowed = true",,,
+sms_EmitterArraySolved,OpenInteractionDialog,"$customType == sms_emitter_array score:100
+$global.sms_EmitterArraySolved",,"You approach the emitter array, but do not receive a connection request.
+
+There's nothing more to be done here.",,
+sms_RemotePylonShielded,OpenInteractionDialog,"$market.id == sms_remote_pylon score:100
+$market.sms_HasShield
+",,This planet is encased by a massive barrier. Further interaction is impossible while the shield is deployed.,,
+sms_RemotePylonNoShieldUnlooted,OpenInteractionDialog,"$market.id == sms_remote_pylon score:100
+!$market.sms_HasShield
+!$market.sms_LootedRemotePylon","AddTextSmall ""A wave of uneasiness washes over you, as if proceeding could launch you into an unpleasant, or even dangerous, situation."" highlight","With the encasing shield gone, your fleet advances toward the planet.
+
+It's almost entirely barren, little more than a featureless space rock, with hardly anything to observe outside the stray indent from a smaller rock -- a sure indicator that the barrier, at least on a geological level, was a recent addition.
+
+You're just about to delegate the task of combing through what little there is to inspect to a dedicated salvage team when you notice a near-invisible blip on your preliminary scan chart alerting you to the presence of a possibly artificial formation. A second, higher resolution scan of the surrounding region reveals a small facility sequestered at the bottom of a particularly deep valley. The thought of a small research colony hiding away amidst the most remote recesses of the sector briefly crosses your mind, but that's preposterous. Colonizing a planet this deep in abyssal hyperspace would be virtually impossible. You instruct your sensors officer to run a cocktail of tests on the planet's surface to detect signs of organic activity. The conclusion: the probability of encountering any living biological life-forms, adjusted for the clearly man-made structures on and around the planet, nonetheless remains at or below the computed error margin of a thousandth of a percent.
+
+""What are your orders, chief?"" An impatient voice rings out on comms.
+
+Whatever you're about to find down there could be a monumental discovery. And you couldn't in good conscience risk a technologically-inexperienced team of salvors, known for destroying as much high-tech salvage as they haul back, potentially breaking things. You're determined to personally oversee at least this initial excursion.
+
+","sms_oRemotePylonNoShieldUnlooted:Take a shuttle down to the facility
+defaultLeave:Leave, for now",
+sms_RemotePylonNoShieldUnlooted2,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted,ShowImageVisual abandoned_station3,"With your personal bodyguards and a small team of your most experienced engineers, you head toward the isolated facility.
+
+On the ground, through a sheathe of darkness penetrated by nothing except the tac-lights on your helmets, you carefully make your way to the structure's only opening, which would have been a door did it not lack the door part thereof.
+
+It's equally as dark inside, and just as abandoned as the calculations predicted. Curiously, there aren't even any light fixtures or emplacements capable of holding light fixtures. As you wander about, you notice a few other peculiarities. Scattered throughout are desks, cabinets, and counter-tops laden with assorted but clearly incongruous equipment, among them ship repair tools married to small-arms weapons, and antimatter fuel in non-Domain-standard containers haphazardly laid about among piles of long-expired computer chips. In another section, you find what appears to be a pitcher of inert liquid resting atop some sort of dining table, but there's no evidence that any food, perishable or otherwise, ever made its way here. And you can't find a single chair anywhere.
+
+
+
+",sms_oRemotePylonNoShieldUnlooted2:Continue,
+sms_RemotePylonNoShieldUnlooted3,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted2,,"""Captain, over here!""
+
+One of your engineers is hovering over a secure travel-size container resting in the corner of an otherwise empty closet. The words ""PROTOTYPE - NOT WORKING"" -- the only words in the entire facility -- are scrawled diagonally in black ink across the top of the box.
+
+The security lock on the container indicates that it's been tampered with. It's unlocked.
+
+",sms_oRemotePylonNoShieldUnlooted3:Loot the container,
+sms_RemotePylonNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_uplink 1
+$market.sms_LootedRemotePylon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemotePylonNoShieldUnlooted4:Loot the rest of the facility,
+sms_RemotePylonNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted4,,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
+
+You return to your shuttle and instruct a salvage team to commence routine operations.
+
+",sms_oRemotePylonNoShieldUnlooted5:Continue,
+sms_RemotePylonNoShieldUnlooted6,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted5,sms_cRemotePylonAdditionalLoot,,,
+sms_RemotePylonNoShieldLootPicked,sms_tRemotePylonNoShieldLootPicked,,,,defaultLeave:Leave,

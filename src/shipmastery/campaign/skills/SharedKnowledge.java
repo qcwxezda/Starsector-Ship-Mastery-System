@@ -18,6 +18,7 @@ import shipmastery.util.Strings;
 
 // NPCs don't have enhances, so treat every NPC fleet as having 0 enhances.
 public class SharedKnowledge {
+    public static final float BASE_DAMAGE_BONUS = 0.01f;
     public static final float DAMAGE_BONUS_PER_LEVEL = 0.01f;
     public static final float MAX_DAMAGE_BONUS = 0.1f;
     public static final float DP_REDUCTION_PER_ENHANCE = 0.02f;
@@ -55,7 +56,7 @@ public class SharedKnowledge {
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             PersonAPI commander = CampaignUtils.getFleetCommanderForStats(stats);
             int masteryLevel = getMasteryLevel(commander, stats);
-            float bonus = Math.min(MAX_DAMAGE_BONUS, masteryLevel*DAMAGE_BONUS_PER_LEVEL);
+            float bonus = Math.min(MAX_DAMAGE_BONUS, BASE_DAMAGE_BONUS + masteryLevel*DAMAGE_BONUS_PER_LEVEL);
             if (bonus <= 0f) return;
             stats.getHullDamageTakenMult().modifyMult(id, 1f-bonus);
             stats.getArmorDamageTakenMult().modifyMult(id, 1f-bonus);

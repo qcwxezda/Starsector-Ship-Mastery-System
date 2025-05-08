@@ -47,9 +47,7 @@
     "builtInDisplay": "Built-in: ",
     "enhanceConfirm": "Enhanced ",
     "builtInConfirm": "Built in ",
-    "confirmText": "Confirm?",
-    "confirmText2": "Confirm",
-    "cancelText": "Cancel",
+    "confirmQuestion": "Confirm?",
     "clearConfirm": "Removed all S-mods",
     "hullmodListEmptyHint": "No applicable hullmods installed",
     "buildInOverMaxWarning": "Warning: building in additional S-mods will incur a DP penalty",
@@ -500,8 +498,8 @@
   "sms_skills": {
     "dimensionalLinkEffect": "Whenever this ship would be destroyed, it instead initiates an emergency long-range teleport, allowing it to instantly retreat from the battlefield. This procedure costs CR equal to the amount that would be needed to deploy the ship normally.\n\nWhen this ship executes an emergency retreat, it may be redeployed following a short delay, as long as it has the required CR.\n\nHull and armor are continuously repaired while this ship is in reserve, as long as at least one other ship is deployed on your side of the field. Hull is repaired at a rate of %1$s/%2$s/%3$s/%4$s of maximum hull per second. Armor is repaired at %5$s of that rate.\n\nIncreases the monthly maintenance supply cost by %6$s.",
     "dimensionalLinkRetreatText": "Emergency retreat",
-    "sharedKnowledgeStandardEffect": "+1% damage dealt per ship spec's mastery level (maximum of 10%)\n-1% damage taken per ship spec's mastery level (minimum of -10%)",
-    "sharedKnowledgeEliteEffect": "Reduces deployment points by whichever of the following is greatest:\n  • 25% if the fleet's commander is an AI core with this skill\n  • 10% if the fleet's commander is a human officer with this skill\n  • 2% per ship spec's enhance level, up to a maximum of 20%",
+    "sharedKnowledgeStandardEffect": "+1% damage dealt, plus an additional +1% damage dealt per ship spec's mastery level (maximum of 10%)\n-1% damage taken, minus an additional 1% damage taken per ship spec's mastery level (minimum of -10%)",
+    "sharedKnowledgeEliteEffect": "Reduces deployment points by whichever of the following is greatest:\n  • 25% if the fleet's commander is an AI core with this skill\n  • 10% if the fleet's commander is a human officer with this skill\n  • 2% per ship spec's enhance level",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, excluding civilian ship types, up to a maximum of %5$s).",
     "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
     "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship type.",
@@ -516,7 +514,7 @@
 
   "sms_items": {
     "knowledgeConstruct": "Knowledge Construct",
-    "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points",
+    "knowledgeConstructRightClick": "Right-click to gain %1$s mastery points.",
     "knowledgeConstructCantRightClick": "Can only be sold",
     "superconstruct1RightClick": "Right-click to gain %1$s mastery points and a permanent %2$s mastery effect strength for a hull spec in your fleet. The selected ship also gains %3$s additional S-mod slot.",
     "superconstruct1MessageDisplay1": "Gained %1$s mastery effect strength.",
@@ -525,13 +523,21 @@
     "superconstruct2MessageDisplay1": "Gained %1$s global mastery effect strength.",
     "superconstruct2MessageDisplay2": "Construct MP cost reduced to %1$s.",
     "amorphousCorePersonalityText": "The %1$s's abilities are subdued, but they may be unleashed by a highly competent fleet commander. When piloting a ship, this AI core's skill level and automated points multiplier scale with the commander's expertise in that ship.\n\nAdditionally, its personality is malleable, and it will prefer to mimic the fleet's commander in that regard.",
-    "knowledgeCorePersonalityTableTitle1": "Attribute",
-    "knowledgeCorePersonalityTableTitle2": "Value",
-    "knowledgeCorePersonalityTableName1": "Officer level",
-    "knowledgeCorePersonalityTableName2": "Automated points multiplier",
-    "knowledgeCorePersonalityTableName3": "Personality",
-    "knowledgeCorePersonalityText": "In combat, the %1$s prefers to copy the personality of its fleet's commander, mimicking the default behavior of the fleet's aggression doctrine.",
-    "knowledgeCorePersonalityText2": "This particular knowledge core is capable of truly and entirely forgetting select combat protocols, becoming easier to field the fewer combat skills it has active, though its automated points multiplier will never fall below %2$s."
+    "kCoreAdditionalInfo": "Additional info",
+    "kCorePersonalityTableTitle1": "Attribute",
+    "kCorePersonalityTableTitle2": "Value",
+    "kCorePersonalityTableName1": "Officer level",
+    "kCorePersonalityTableName2": "Automated points multiplier",
+    "kCorePersonalityTableName3": "Personality",
+    "kCorePersonalityText": "In combat, the %1$s prefers to copy the personality of its fleet's commander, mimicking the default behavior of the fleet's aggression doctrine.",
+    "kCorePersonalityText2": "This particular knowledge matrix is capable of truly and entirely forgetting select combat protocols, becoming easier to field the fewer combat skills it has active, though its automated points multiplier will never fall below %2$s.",
+    "uplinkKCoreSelect": "Select a Pseudocore",
+    "uplinkSkillSelect": "Select skills (%1$s/%2$s)",
+    "uplinkDesc": "Assigning a Pseudocore to a crewed ship accrues Pseudocore points equal to the ship's deployment points multiplied by the Pseudocore's AI points multiplier. Having greater than %1$s Pseudocore points in your fleet will incur a CR penalty to all crewed ships under Pseudocore command, the severity of which scales with the amount of excess Pseudocore points in your fleet. Automated ships under Pseudocore command are not affected. \n\nShips in the player's fleet under Pseudocore command do not contribute to the deployment point distribution.",
+    "uplinkStatus": "Your fleet currently fields %1$s Pseudocore points' worth of ships, which is within the limit.",
+    "uplinkStatus2":  "Your fleet currently fields %1$s Pseudocore points' worth of ships, which is over the limit. Consequently, all crewed ships under Pseudocore command have their maximum combat readiness reduced by %2$s.",
+    "uplinkPenaltyDesc": "Pseudocore penalty",
+    "uplinkRightClick": "Right click to assign a Pseudocore to a crewed ship not under your direct command."
   },
 
   "sms_graveyard": {
@@ -555,6 +561,23 @@
     "insuranceNotEnoughCredits": "Not enough credits."
   },
 
+  "sms_campaign": {
+    "selectLoot": "Select Loot",
+    "leaveText": "Leave",
+    "cancelText": "Cancel",
+    "remotePylon": "???",
+    "emitterConfirm": "Confirm",
+    "emitterConfirmExt": "Adjust the emitter's outputs to the selected values.",
+    "emitterLeft": "Left",
+    "emitterLeftExt": "Select the number of power units to feed through the emitter's left output. Power units are rounded to the nearest whole number.",
+    "emitterCenter": "Center",
+    "emitterCenterExt": "Select the number of power units to feed through the emitter's central output. Power units are rounded to the nearest whole number.",
+    "emitterRight": "Right",
+    "emitterRightExt": "Select the number of power units to feed through the emitter's right output. Power units are rounded to the nearest whole number.",
+    "emitterNotEnoughPower": "Current setting exceeds maximum number of available power units.",
+    "emitterPromptText": "Adjust emitter output (max %1$s units): "
+  },
+
   "sms_misc": {
     "doesntAffectModules": "This effect doesn't apply to modules.",
     "flagshipOnly": "Flagship only: ",
@@ -565,6 +588,7 @@
     "scopePrefix": "Affects: %1$s",
     "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow",
     "selectAShip": "Select a ship",
-    "bestOfTheBestDesc": "Increases the effectiveness of all ship mastery bonuses by %1$s"
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

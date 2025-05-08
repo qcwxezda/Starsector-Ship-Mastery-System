@@ -101,14 +101,14 @@
 	},
 	"portraits":{
 		"standard_male":[
-			"graphics/portraits/sms_portrait_amorphous_core.png",
-			"graphics/portraits/sms_portrait_knowledge_core.png",
-			"graphics/portraits/sms_portrait_subknowledge_core.png",
+			"graphics/portraits/sms_portrait_gamma_k_core.png",
+			"graphics/portraits/sms_portrait_beta_k_core.png",
+			"graphics/portraits/sms_portrait_alpha_k_core.png",
 		],
 		"standard_female":[
-			"graphics/portraits/sms_portrait_amorphous_core.png",
-			"graphics/portraits/sms_portrait_knowledge_core.png",
-			"graphics/portraits/sms_portrait_subknowledge_core.png",
+			"graphics/portraits/sms_portrait_gamma_k_core.png",
+			"graphics/portraits/sms_portrait_beta_k_core.png",
+			"graphics/portraits/sms_portrait_alpha_k_core.png",
 		],
 	},
 	"ranks":{

@@ -17,7 +17,7 @@ Analysis Package,sms_analysis_package,,,,"codex_unlockable, no_drop, special, re
 
 If installed on a ship with a combat hull spec, increases the fleet's mastery point gain across all combat hull types by up to %s/%s/%s/%s, depending on hull size and with diminishing returns.
 
-The effect is applied according to the ship's hull spec, not the ship itself, so modifying a particular ship's role, such as through the use of Militarized Subsystems, will not have any effect on this hullmod.",Increases fleet-wide mastery point gain,Negates the effect's diminishing returns and applies the bonus to both civilian and combat hull specs.,graphics/hullmods/sms_analysis_package.png
+The effect is applied according to the ship's hull spec, not the ship itself, so modifying a particular ship's role, such as through the use of Militarized Subsystems, will not have any effect on this hullmod.",Increases fleet-wide mastery point gain,Negates the effect's diminishing returns and applies the bonus to both civilian and combat hulls.,graphics/hullmods/sms_analysis_package.png
 Mastery - Level 1,sms_npc_indicator1,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 2,sms_npc_indicator2,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 3,sms_npc_indicator3,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
@@ -33,4 +33,4 @@ Mastery - Level 12,sms_npc_indicator12,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,c
 Mastery - Level 13,sms_npc_indicator13,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 14,sms_npc_indicator14,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 15+,sms_npc_indicator15,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
-Amorphous Core Handler,sms_amorphous_core_handler,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,shipmastery.campaign.items.KnowledgeCorePlugin,,,,graphics/hullmods/generic_mod.png
+KCore Handler,sms_k_core_handler,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,shipmastery.campaign.items.BaseKCorePlugin,,,,graphics/hullmods/generic_mod.png

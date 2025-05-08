@@ -530,6 +530,26 @@ public abstract class Utils {
         }
     }
 
+    static void toRGBA(float[] hsva, float[] dest) {
+        float h = hsva[0], s = hsva[1], v = hsva[2], a = hsva[3];
+        float c = v*s;
+        float x = c*(1f - Math.abs((h/60f) % 2f - 1f));
+        float m = v-c;
+        float r = 0f, g = 0f, b = 0f;
+        switch ((int) Math.floor(h/60f)) {
+            case 0: r = c; g = x; break;
+            case 1: r = x; g = c; break;
+            case 2: g = c; b = x; break;
+            case 3: g = x; b = c; break;
+            case 4: r = x; b = c; break;
+            case 5: r = c; b = x; break;
+        }
+        dest[0] = r + m;
+        dest[1] = g + m;
+        dest[2] = b + m;
+        dest[3] = a;
+    }
+
     public static void toHSVA(float[] rgba, float[] dest) {
         float r = rgba[0], g = rgba[1], b = rgba[2];
         float CMax = Math.max(r, Math.max(g, b));
@@ -561,6 +581,26 @@ public abstract class Utils {
             newColor[i] = (1f - t) * colorA[i] + t * colorB[i];
         }
         return new Color(newColor[0], newColor[1], newColor[2], newColor[3]);
+    }
+
+    public static Color mixColorHSVA(Color a, Color b, float t) {
+        if (t <= 0f) return a;
+        if (t >= 1f) return b;
+        float[] colorA = new float[4];
+        float[] colorB = new float[4];
+        a.getComponents(colorA);
+        b.getComponents(colorB);
+        float[] aHSV = new float[4];
+        float[] bHSV = new float[4];
+        toHSVA(colorA, aHSV);
+        toHSVA(colorB, bHSV);
+        float[] newColor = new float[4];
+        for (int i = 0; i < 4; i++) {
+            newColor[i] = (1f - t) * aHSV[i] + t * bHSV[i];
+        }
+        float[] resRGB = new float[4];
+        toRGBA(newColor, resRGB);
+        return new Color(resRGB[0], resRGB[1], resRGB[2], resRGB[3]);
     }
 
     /** Adapted from SkillsChangeRemoveExcessOPEffect */

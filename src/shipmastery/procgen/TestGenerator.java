@@ -1,0 +1,413 @@
+package shipmastery.procgen;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
+import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Planets;
+import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.procgen.AgeGenDataSpec;
+import com.fs.starfarer.api.impl.campaign.procgen.ConditionGenDataSpec;
+import com.fs.starfarer.api.impl.campaign.procgen.Constellation;
+import com.fs.starfarer.api.impl.campaign.procgen.NameAssigner;
+import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantStationFleetManager;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantThemeGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner;
+import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
+import com.fs.starfarer.campaign.BaseLocation;
+import com.fs.starfarer.campaign.NascentGravityWell;
+import com.fs.starfarer.campaign.StarSystem;
+import org.lwjgl.util.vector.Vector2f;
+import shipmastery.plugin.EmitterArrayPlugin;
+import shipmastery.util.MathUtils;
+import shipmastery.util.Strings;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+public class TestGenerator {
+
+    public static final float SECTOR_WIDTH = Global.getSettings().getFloat("sectorWidth");
+    public static final float SECTOR_HEIGHT = Global.getSettings().getFloat("sectorHeight");
+    public static final int NUM_STATIONS_HULLMOD = 3;
+    public static final int NUM_STATIONS_ITEM = 2;
+    public static final int NUM_PROBES_PER_STATION = 5;
+    public static final String STATION_TYPE_KEY = "$sms_StationType";
+    // Force set the commander id of defenders in probes and stations, so that their masteries remain the same
+    // even if they are regenerated
+    public static final String DEFENSES_COMMANDER_ID_KEY = "$sms_DefensesCommanderId";
+    public static final String COMMANDER_PREFIX = "sms_commander_";
+    public static final Vector2f NUCLEUS_LOCATION = new Vector2f(60000f, 40000f);
+
+    Random random = new Random(Global.getSector().getSeedString().hashCode());
+
+    static class CustomSystemGenerator extends StarSystemGenerator {
+
+        String ageGenId;
+
+        public CustomSystemGenerator(CustomConstellationParams params, String ageGenId) {
+            super(params);
+            this.ageGenId = ageGenId;
+        }
+
+        @Override
+        public Constellation generate() {
+            constellationAgeData = (AgeGenDataSpec) Global.getSettings().getSpec(AgeGenDataSpec.class, ageGenId, false);
+            return super.generate();
+        }
+    }
+
+    public static final Set<String> TAGS_TO_SKIP = new HashSet<>();
+    static {
+        TAGS_TO_SKIP.add(Tags.THEME_CORE);
+        TAGS_TO_SKIP.add(Tags.THEME_HIDDEN);
+        TAGS_TO_SKIP.add(Tags.THEME_DERELICT_PROBES);
+        TAGS_TO_SKIP.add(Tags.THEME_DERELICT_SURVEY_SHIP);
+        TAGS_TO_SKIP.add(Tags.THEME_DERELICT_MOTHERSHIP);
+    }
+
+    public enum StationType{
+        HULLMOD_1, HULLMOD_2, HULLMOD_3, HULLMOD_4, HULLMOD_5, SUPERCONSTRUCT_1, SUPERCONSTRUCT_2, CRYO_OFFICER
+    }
+
+    public void generate() {
+//        StarSystemAPI toRemove = null;
+//        for (var system : Global.getSector().getStarSystems()) {
+//            if (TEST_SYSTEM_NAME.equals(system.getName())) {
+//                toRemove = system;
+//                break;
+//            }
+//        }
+//        if (toRemove != null) {
+//            Global.getSector().removeStarSystem(toRemove);
+//        }
+//
+//        var system = Global.getSector().createStarSystem(TEST_SYSTEM_NAME);
+//        system.initStar("sms_Blah", "star_white", 1000f, 500f);
+//        system.setLightColor(new Color(100, 200, 150));
+//
+//        system.getLocation().set(0f, 0f);
+//        system.autogenerateHyperspaceJumpPoints(false, true);
+//
+//        var system2 = Global.getSector().createStarSystem(TEST_SYSTEM_NAME + "2");
+//        var star = system2.initStar("sms_Blah2", "star_red_supergiant", 3000f, 500f);
+//        star.setLightColorOverrideIfStar(new Color(100, 200, 150));
+//        star.setSecondLight(new Vector3f(0f, 0f, 0f), new Color(100, 200, 150));
+//
+//        system2.getLocation().set(0f, 10000f);
+//
+//        system2.autogenerateHyperspaceJumpPoints(false, false);
+//
+//        system2.getAutogeneratedJumpPointsInHyper().forEach(x -> x.addTag(Tags.STAR_HIDDEN_ON_MAP));
+//
+//        System.out.println("Done");
+
+
+        var eligibleSystems = new ArrayList<>(Global.getSector().getStarSystems().stream().filter(
+                sys -> {
+                    if (Math.abs(sys.getLocation().x) <= SECTOR_WIDTH / 6f
+                            || Math.abs(sys.getLocation().y) <= SECTOR_HEIGHT / 6f) return false;
+                    Set<String> blacklist = new HashSet<>(sys.getTags());
+                    blacklist.retainAll(TAGS_TO_SKIP);
+                    return blacklist.isEmpty();
+                }
+        ).toList());
+        var stationSystems = generateStations(eligibleSystems);
+        generateProbes(stationSystems, eligibleSystems);
+
+        generateNucleusStar();
+        generateRemoteSystem();
+    }
+
+    public void generateRemoteSystem() {
+        var system = Global.getSector().createStarSystem(Strings.Campaign.remotePylon);
+        system.getLocation().set(24000f, 0f);
+
+        var center = Global.getSettings().createLocationToken(0f, 0f);
+        system.addEntity(center);
+        var planet = system.addPlanet("sms_remote_pylon", center, Strings.Campaign.remotePylon, Planets.BARREN_CASTIRON, 0f, 300f, 0.01f, 100f);
+        planet.setCustomDescriptionId("sms_remote_pylon");
+        // add picked conditions to market
+        MarketAPI market = Global.getFactory().createMarket(planet.getId(), planet.getName(), 1);
+        market.setPlanetConditionMarketOnly(true);
+        market.setPrimaryEntity(planet);
+        market.setFactionId(Factions.NEUTRAL);
+        planet.setMarket(market);
+
+        market.addIndustry("sms_blueshield");
+        market.getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD, true);
+        List<String> ids = Arrays.asList("dark", "high_gravity", "no_atmosphere", "very_cold");
+        for (String cid : ids) {
+            if (cid.endsWith(ConditionGenDataSpec.NO_PICK_SUFFIX)) continue;
+            //planet.getMemory().set("$genCondition:" + condition, true);
+
+            MarketConditionAPI mc = market.getSpecificCondition(market.addCondition(cid));
+
+            ConditionGenDataSpec spec = (ConditionGenDataSpec) Global.getSettings().getSpec(ConditionGenDataSpec.class, cid, true);
+            mc.setSurveyed(!spec.isRequiresSurvey());
+        }
+
+        market.reapplyConditions();
+        system.setCenter(center);
+
+        var locationToken = Global.getSettings().createLocationToken(24000f, 0f);
+        Global.getSector().getHyperspace().addEntity(locationToken);
+        NascentGravityWellAPI well = new NascentGravityWell(planet, 250f);
+        well.setColorOverride(new Color(150, 255, 200));
+        well.setOrbit(new StarSystem.UpdateFromSystemLocationOrbit(locationToken, Global.getSettings().createLocationToken(0f, 0f), planet, well, 0f));
+        Global.getSector().getHyperspace().addEntity(well);
+
+        system.addTag(Tags.THEME_HIDDEN);
+        system.addTag(Tags.SYSTEM_ABYSSAL);
+        system.addTag(Tags.THEME_SPECIAL);
+
+        float emitterDist = planet.getRadius() + 3000f;
+        float emitterOrbitDays = 60f;
+        List<SectorEntityToken> emitters = new ArrayList<>();
+        for (float angle = 0f; angle < 360f; angle += 60f) {
+            int i = ((int) (angle/60f));
+            char c = (char) ('A' + i);
+            String name = Global.getSettings().getCustomEntitySpec("sms_emitter_array").getDefaultName();
+            var emitter = system.addCustomEntity(null, name + " " + c, "sms_emitter_array", Factions.NEUTRAL);
+            emitter.setCircularOrbitPointingDown(planet, angle, emitterDist, emitterOrbitDays);
+            emitter.setDiscoverable(true);
+            emitter.setDiscoveryXP(1000f);
+            emitter.setSensorProfile(1000f);
+            if (i == 0) {
+                emitter.getMemoryWithoutUpdate().set(EmitterArrayPlugin.KEY_IS_FIRST_EMITTER, true);
+            }
+            emitters.add(emitter);
+        }
+
+        for (int i = 0; i < emitters.size(); i++) {
+            var emitter = emitters.get(i);
+            var prevEmitter = emitters.get((i+5)%emitters.size());
+            var nextEmitter = emitters.get((i+1)%emitters.size());
+            var data = emitter.getMemoryWithoutUpdate();
+            data.set(EmitterArrayPlugin.KEY_NEXT_EMITTER, nextEmitter);
+            data.set(EmitterArrayPlugin.KEY_PREV_EMITTER, prevEmitter);
+        }
+    }
+
+    public void generateNucleusStar() {
+        float maxX = 0f, maxY = 0f;
+        for (var sys : Global.getSector().getStarSystems()) {
+            maxX = Math.max(maxX, sys.getLocation().x);
+            maxY = Math.max(maxY, sys.getLocation().y);
+        }
+
+        // Try to pick a location not near other stars
+        float finalMaxX = maxX;
+        float finalMaxY = maxY;
+        List<StarSystemAPI> toCheck = Global.getSector().getStarSystems()
+                .stream()
+                .filter(sys -> sys.getLocation().x >= finalMaxX - 30000f && sys.getLocation().y >= finalMaxY - 30000f && !sys.hasTag(Tags.SYSTEM_ABYSSAL))
+                .toList();
+
+        int tries = 10;
+        float maxMinDist = 0f;
+        Vector2f bestLoc = new Vector2f(SECTOR_WIDTH/2f - 10000f, SECTOR_HEIGHT/2f - 10000f);
+        for (int i = 0; i < tries; i++) {
+            Vector2f loc = new Vector2f(
+                    Math.min(maxX + MathUtils.randBetween(-24000f, 6000f, random), SECTOR_WIDTH/2f - 10000f),
+                    Math.min(maxY + MathUtils.randBetween(-24000f, 6000f, random), SECTOR_HEIGHT/2f - 10000f));
+            float minDist = Float.MAX_VALUE;
+            for (var sys : toCheck) {
+                var dist = MathUtils.dist(sys.getLocation(), loc);
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+            }
+
+            if (minDist > maxMinDist) {
+                maxMinDist = minDist;
+                bestLoc = loc;
+            }
+        }
+
+        StarSystemGenerator.CustomConstellationParams params = new StarSystemGenerator.CustomConstellationParams(StarAge.ANY);
+        params.numStars = 1;
+        params.starTypes = new ArrayList<>();
+        params.starTypes.add(StarTypes.WHITE_DWARF);
+        params.starTypes.add(StarTypes.WHITE_DWARF);
+        params.systemTypes = new ArrayList<>();
+        params.location = bestLoc;
+        params.systemTypes.add(StarSystemGenerator.StarSystemType.BINARY_CLOSE);
+
+        StarSystemGenerator gen = new CustomSystemGenerator(params, "sms_nucleus");
+        var constellation = gen.generate();
+
+        // Remove the weirdness from the binary orbit
+        var system = constellation.getSystemWithMostPlanets();
+        var star1 = system.getStar();
+        var star2 = system.getSecondary();
+
+        // Apparently can't have two stars orbiting each other, so have both orbit (0, 0) instead...
+        BaseLocation.LocationToken orbitFocus;
+        float orbitDays = 10f;
+        if (star1.getOrbitFocus() instanceof BaseLocation.LocationToken loc) {
+            orbitFocus = loc;
+        } else {
+            orbitFocus = (BaseLocation.LocationToken) star2.getOrbitFocus();
+        }
+        orbitFocus.setLocation(0f, 0f);
+
+        star1.setCircularOrbitPointingDown(orbitFocus, 0f, 500f + star1.getRadius(), orbitDays);
+        star2.setCircularOrbitPointingDown(orbitFocus, 180f, 500f + star2.getRadius(), orbitDays);
+
+        var themeGenerator = new RemnantThemeGenerator();
+        system.addTag(Tags.THEME_INTERESTING);
+        system.addTag(Tags.THEME_REMNANT);
+        system.addTag(Tags.THEME_UNSAFE);
+        system.addTag(Tags.THEME_REMNANT_MAIN);
+        system.addTag(Tags.THEME_HIDDEN);
+        system.addTag(Tags.THEME_SPECIAL);
+        system.getAutogeneratedJumpPointsInHyper().forEach(loc -> loc.addTag(Tags.STAR_HIDDEN_ON_MAP));
+        var systemData = BaseThemeGenerator.computeSystemData(system);
+        themeGenerator.populateMain(systemData, RemnantThemeGenerator.RemnantSystemType.RESURGENT);
+        List<CampaignFleetAPI> stations = themeGenerator.addBattlestations(systemData, 1f, 1, 1, themeGenerator.createStringPicker("remnant_station2_Standard", 10f));
+        for (CampaignFleetAPI station : stations) {
+            int maxFleets = 8 + random.nextInt(5);
+            RemnantStationFleetManager activeFleets = new RemnantStationFleetManager(
+                    station, 1f, 0, maxFleets, 15f, 8, 24);
+            system.addScript(activeFleets);
+        }
+        System.out.println(system.getName());
+
+        if (!NameAssigner.isNameSpecial(system)) {
+            NameAssigner.assignSpecialNames(system);
+        }
+
+        var entity = system.addCustomEntity(null, null, "sms_station_nucleus", Factions.NEUTRAL);
+        entity.setCircularOrbitPointingDown(orbitFocus, 0f, 0.1f, orbitDays);
+        entity.setDiscoverable(true);
+        entity.setDiscoveryXP(5000f);
+        entity.setSensorProfile(1000f);
+    }
+
+    public List<SectorEntityToken> generateStations(List<StarSystemAPI> eligibleSystems) {
+        Collections.shuffle(eligibleSystems);
+        int numStations = NUM_STATIONS_HULLMOD + NUM_STATIONS_ITEM;
+        List<StarSystemAPI> selectedSystems = new ArrayList<>();
+        Set<Vector2f> locationsToAvoid = new HashSet<>();
+        locationsToAvoid.add(NUCLEUS_LOCATION);
+        for (int i = 0; i < numStations; i++) {
+            var system = getSumFarthestSystem(eligibleSystems, locationsToAvoid);
+            selectedSystems.add(system);
+            locationsToAvoid.add(system.getLocation());
+        }
+
+        List<StationType> stationTypes = new ArrayList<>();
+        // Always add a station with an officer
+        stationTypes.add(StationType.CRYO_OFFICER);
+        // 50% chance of having either superconstruct
+        if (random.nextFloat() < 0.5f) {
+            stationTypes.add(StationType.SUPERCONSTRUCT_1);
+        } else {
+            stationTypes.add(StationType.SUPERCONSTRUCT_2);
+        }
+
+        // Finally, pick 3 out of 5 of the unique hullmods to add
+        List<StationType> stationTypes2 = new ArrayList<>(Arrays.asList(StationType.HULLMOD_1, StationType.HULLMOD_2, StationType.HULLMOD_3, StationType.HULLMOD_4, StationType.HULLMOD_5));
+        Collections.shuffle(stationTypes2);
+
+        stationTypes.addAll(stationTypes2.subList(0, 3));
+        Collections.shuffle(stationTypes);
+
+        // Add the stations
+        List<SectorEntityToken> addedEntities = new ArrayList<>();
+        for (int i = 0; i < selectedSystems.size(); i++) {
+            StarSystemAPI system = selectedSystems.get(i);
+            BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickHiddenLocationNotNearStar(random, system, 100f, null);
+            BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(random, system, location, "sms_concealed_station",
+                    Factions.NEUTRAL);
+            processAddedItem(added.entity);
+            var memory = added.entity.getMemoryWithoutUpdate();
+            memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
+            memory.set(STATION_TYPE_KEY, stationTypes.get(i));
+            addedEntities.add(added.entity);
+        }
+
+        return addedEntities;
+    }
+
+    public void generateProbes(List<SectorEntityToken> stations, List<StarSystemAPI> eligibleSystems) {
+        for (SectorEntityToken station : stations) {
+            var stationSystem = station.getStarSystem();
+            WeightedRandomPicker<StarSystemAPI> picker = new WeightedRandomPicker<>(random);
+            for (StarSystemAPI eligibleSystem : eligibleSystems) {
+                float dist = MathUtils.dist(eligibleSystem.getLocation(), stationSystem.getLocation());
+                if (dist > 30000f) continue;
+                picker.add(eligibleSystem, 1f / (1f + dist));
+            }
+            for (int i = 0; i < NUM_PROBES_PER_STATION; i++) {
+                var system = picker.pick();
+                BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickAnyLocation(random, system, 100f, Collections.singleton(station));
+                BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(random, system, location, "sms_concealed_probe",
+                        Factions.NEUTRAL);
+                processAddedItem(added.entity);
+                var memory = added.entity.getMemoryWithoutUpdate();
+                memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
+            }
+        }
+    }
+
+    public void processAddedItem(SectorEntityToken entity) {
+        SectorEntityToken focus = entity.getOrbitFocus();
+        if (focus instanceof PlanetAPI planet) {
+            boolean nearStar = planet.isStar() && entity.getOrbit() != null && entity.getCircularOrbitRadius() < 5000;
+            if (!planet.isStar() || nearStar) {
+                BaseThemeGenerator.convertOrbitPointingDown(entity);
+            }
+        }
+        SalvageSpecialAssigner.assignSpecials(entity);
+    }
+
+    public StarSystemAPI getSumFarthestSystem(List<StarSystemAPI> systems, Set<Vector2f> systemsToAvoid) {
+        // Nothing to avoid, just pick a random system
+        if (systemsToAvoid == null || systemsToAvoid.isEmpty()) {
+            return systems.get(random.nextInt(systems.size()));
+        }
+
+        float maxDist = 0f;
+        StarSystemAPI bestSystem = null;
+        outer:
+        for (var system : systems) {
+            float curDist = 0f;
+            for (var loc : systemsToAvoid) {
+                float dist = MathUtils.dist(system.getLocation(), loc);
+                // Too close
+                if (dist <= 10000f) continue outer;
+                curDist += dist;
+            }
+            if (curDist > maxDist) {
+                if (random.nextFloat() < 0.5f) {
+                    maxDist = curDist;
+                    bestSystem = system;
+                }
+            }
+        }
+
+        // Didn't find anything, pick a random system
+        if (bestSystem == null) {
+            return systems.get(random.nextInt(systems.size()));
+        }
+        return bestSystem;
+    }
+}

@@ -9,7 +9,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.util.Strings;
 
-public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
+public class GammaKCorePlugin extends BetaKCorePlugin {
 
     public static final float DP_MULT = 2.5f;
     public static final int MAX_LEVEL = 3;
@@ -26,7 +26,7 @@ public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
 
     @Override
     public String getCommodityId() {
-        return "sms_subknowledge_core";
+        return "sms_gamma_k_core";
     }
 
     @Override
@@ -35,14 +35,14 @@ public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
         createPersonalitySection(
                 person,
                 tooltip,
-                Strings.Items.knowledgeCorePersonalityText,
+                Strings.Items.kCorePersonalityText,
                 Misc.getHighlightColor(),
                 spec.getName());
     }
 
     @Override
     public String getPortraitSpritePath() {
-        return "graphics/portraits/sms_portrait_subknowledge_core.png";
+        return "graphics/portraits/sms_portrait_gamma_k_core.png";
     }
 
     @Override
@@ -50,6 +50,6 @@ public class SubknowledgeCorePlugin extends KnowledgeCorePlugin {
         stats.setLevel(MAX_LEVEL);
         stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
         stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
-        stats.setSkillLevel(KnowledgeCorePlugin.UNIQUE_SKILL_ID, 2f);
+        stats.setSkillLevel(BetaKCorePlugin.UNIQUE_SKILL_ID, 2f);
     }
 }

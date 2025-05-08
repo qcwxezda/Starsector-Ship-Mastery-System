@@ -76,6 +76,8 @@
     - No-CR-degradation-below-threshold:
         - Phase ships are no longer eligible.
         - Ships with built-in SO are no longer eligible.
+    - Apply-officer-effect:
+        - Added additional checks for Support Doctrine.
 - Best of the best: nerfed mastery bonus from 30% to 25%.
 - Enhancing:
     - Extra logistics S-mod moved from third enhance to first enhance.
@@ -87,6 +89,7 @@
 - Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.
 - Fixed a rare possible issue with the Orion-Device-deals-damage mastery.
+- Added a failsafe for null FleetDataAPI.
 
 0.14.2
 ---------
