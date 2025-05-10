@@ -4,10 +4,7 @@ import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.config.Settings;
 import shipmastery.util.Strings;
-
-import java.awt.Color;
 
 public class ExtradimensionalRearrangementD4 extends BaseHullMod {
 
@@ -27,15 +24,5 @@ public class ExtradimensionalRearrangementD4 extends BaseHullMod {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         tooltip.addPara(Strings.Hullmods.rearrangementD4Effect, 8f);
-    }
-
-    @Override
-    public Color getBorderColor() {
-        return Settings.MASTERY_COLOR;
-    }
-
-    @Override
-    public Color getNameColor() {
-        return Settings.MASTERY_COLOR;
     }
 }

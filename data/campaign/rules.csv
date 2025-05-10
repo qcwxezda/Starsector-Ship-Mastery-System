@@ -1,41 +1,10 @@
 id,trigger,conditions,script,text,options,notes
-sms_ConcealedStation,BeginSalvage,"$customType == sms_concealed_station
-!$sms_ConcealedStationUsed score:10000",SetShortcut sms_oConcealedStationLeave ESCAPE,"During your preliminary survey of the station, you notice that one of its modules is nearly barren, save for a single hangar that appears to be some sort of experimental construction.
-
-At a glance it seems incomplete, lacking any wires, monitoring devices, or tools of the sort one would expect to find in an orbital hangar. Nonetheless, the transparent landing plate is glowing, practically humming with some sort of arcane energy.
-
-You could try to dock one of your ships here -- it's large enough to accommodate any ship in your fleet -- or you could leave it well alone and scrap the entire station for valuables.","
-sms_oConcealedStationDock:Dock at the hangar
-sms_oConcealedStationSalvage:Salvage the station
-sms_oConcealedStationLeave:Leave
-",
-sms_ConcealedStationDock,DialogOptionSelected,$option == sms_oConcealedStationDock,sms_ConcealedStationInteraction,,,
-sms_ConcealedStationDocked,sms_tConcealedStationDocked,,"SetShortcut sms_oConcealedStationLeave ESCAPE
-AddTextSmall ""$sms_ShipName lost 100% combat readiness"" $sms_TextColor","You order the ship to dock at the mysterious hangar. As it lowers itself onto the glowing platform, a blinding veil of light encapsulates it.
-
-Before you can change your mind, the light subsides, and the platform lies dormant.
-
-There doesn't seem to be any external damage to your ship, but internal systems have gone haywire. Its scanners are picking up dozens of hostile ships at a distance of less than 10 meters, weapons are offline, engines are randomly stalling.
-
-Your engineers reassure you that they will be able to get the ship back into working order, but it will take some time. It's unclear if your stunt caused any lasting damage or changes to the ship's operating capability.","
-sms_oConcealedStationSalvage:Salvage the station
-sms_oConcealedStationLeave:Leave
-",
-sms_ConcealedStationSalvage,DialogOptionSelected,$option == sms_oConcealedStationSalvage,"SalvageEntity showCost
-FireAll PopulateSalvageOptions2",,,
-sms_ConcealedStationLeave,DialogOptionSelected,$option == sms_oConcealedStationLeave,DismissDialog,,,
 sms_InsuranceFleetBegin,BeginFleetEncounter,"$sms_InsuranceFleet score:1000
 !$ignorePlayerCommRequests","AddText ""You're being hailed by the $faction $otherShipOrFleet."" $faction.baseColor
 $hailing = true 0",,,
 sms_InsuranceFleetComms,OpenCommLink,"$entity.sms_InsuranceFleet score:1000
 !$entity.ignorePlayerCommRequests","$entity.ignorePlayerCommRequests = true
-SetShortcut cutCommLinkNoText ""ESCAPE""","""Greetings, captain $player.name,"" the bounty hunter begins. ""How are you enjoying your recent insurance payout?""
-
-Before you can reply, $heOrShe continues, ""As you are well aware, Section 37.4 of the Unified FeBSure Insurance Terms states very clearly that under the protection of plan 3A -- that would be the Comprehensive Coverage Package -- you are to receive immediate and full compensation for any ship deemed a 'total loss' in exchange for the complete forfeiture of salvage rights.""
-
-$HeOrShe pauses for a moment, perhaps searching for the right words, or perhaps wondering about the probability of a peaceful resolution.
-
-""This clause should have precluded you from recovering and continuing to operate intact wrecks that were already filed as a 'total loss,' though, judging by my data here, that seems not to have been the case.""","sms_oNeverRead:""I was never given any contract to read.""
+SetShortcut cutCommLinkNoText ""ESCAPE""",,"sms_oNeverRead:""I was never given any contract to read.""
 sms_oSoWhatNow:""So what now?""
 cutCommLinkNoText:Cut the comms link and power up weapons",
 sms_InsuranceFleetNeverRead,DialogOptionSelected,$option == sms_oNeverRead,,"""Well, I guess that's unfortunate,"" $heOrShe responds almost instantly, and in such a manner that you feel that this might not be the first time $heOrShe's used those exact words.",sms_oInsuranceContinue:Continue,
@@ -50,9 +19,6 @@ sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_c
 
 You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
 sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,
-sms_CheckForFleet,DialogOptionSelected,!$global.sms_CheckedForFleet score:99999999,"sms_cCheckForFleet ""BEST""",,,
-sms_CheckForFleetFireAllIntercept,FireAllIntercept,"$fireAllTrigger == DialogOptionSelected
-!$global.sms_CheckedForFleet score:99999999","sms_cCheckForFleet ""ALL""",,,
 sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cSuperconstruct,,,
 sms_KCoreUplinkClicked,sms_tKCoreUplinkClicked,,sms_cKCoreUplink,,,
 sms_EmitterArrayFirstTime,OpenInteractionDialog,"$customType == sms_emitter_array score:100
@@ -60,7 +26,7 @@ sms_EmitterArrayFirstTime,OpenInteractionDialog,"$customType == sms_emitter_arra
 
 ""Captain,"" your comms officer addresses you. ""This appears to be a request to link to computer systems onboard your flagship. Supposedly, accepting this connection would allow you to remotely operate--,"" he gestures toward the array, ""-- whatever that is.""
 
-He pauses briefly, before adding, rather emphatically, that this request was preceded by the attempted installation of a backdoor through a vulnerability in Domain-standard comms protocols that was, thankfully, resolved some several hundred cycles ago.
+He pauses briefly, before adding, rather emphatically, that this request was preceded by the attempted installation of a backdoor through a vulnerability in Domain-standard comms protocols that was, thankfully, patched over a hundred cycles ago.
 
 ""I'd advise against allowing it, but the choice is yours, captain.""","sms_oEmitterArrayAllow:Allow the connection
 defaultLeave:Leave",
@@ -115,3 +81,127 @@ You return to your shuttle and instruct a salvage team to commence routine opera
 ",sms_oRemotePylonNoShieldUnlooted5:Continue,
 sms_RemotePylonNoShieldUnlooted6,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted5,sms_cRemotePylonAdditionalLoot,,,
 sms_RemotePylonNoShieldLootPicked,sms_tRemotePylonNoShieldLootPicked,,,,defaultLeave:Leave,
+sms_ConcealedStationFirstTime,OpenInteractionDialog,"$customType == sms_concealed_station score:100
+!$global.sms_SeenConcealedStation
+!$entity.sms_SeenMessage",ShowDefaultVisual,"Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
+
+Before you can delegate a salvage team to a routine expedition, your comms officer addresses you.
+
+""$PlayerSirOrMadam, I'm picking up something on comms. Looks like a hyperwave transmission stuck on repeat. It's coming from the station -- I suspect there may be a relay inside.""","sms_oConcealedStationDecode:""Can you decode the message?""",
+sms_ConcealedStationDecode,DialogOptionSelected,$option == sms_oConcealedStationDecode,,"Your comms officer frowns a bit. ""That's the thing, Captain. It seems to be encrypted. I can try to decrypt it, but it'll take some time and I'll need some assistance.""","sms_oConcealedStationDecode2:""Do that.""",
+sms_ConcealedStationDecode2,DialogOptionSelected,$option == sms_oConcealedStationDecode2,,"On your orders, a small team of scientists and mathematicians pulled from your crew reserves assembles to decode the encrypted message.
+
+After a few brief minutes, you comms officer returns to you.
+
+""Turns out the message wasn't encrypted after all. It was just sent using an outdated protocol, except the streams were being transmitted in reverse order. That explains why our receiver thought it was corrupted.""","sms_oConcealedStationDecode3:""What's the message?""",
+sms_ConcealedStationDecode3,DialogOptionSelected,$option == sms_oConcealedStationDecode3,"sms_cConcealedStationShowMessage
+$global.sms_SeenConcealedStation = true
+$entity.sms_SeenMessage = true
+$global.sms_NumMessagesSeen++
+","One of the members of the impromptu assembly nods. ""Here, take a look. It's some sort of... salvage log. Probably just happened to be the last thing on the station's transmit queue before it stopped working. Could be dozens of cycles old.""","sms_oConcealedStationBeginSalvage:Assess the station for salvage
+defaultLeave:Leave",
+sms_ConcealedStationUnseenMessage,OpenInteractionDialog,"$customType == sms_concealed_station score:100
+$global.sms_SeenConcealedStation
+!$entity.sms_SeenMessage",ShowDefaultVisual,"Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
+
+It's broadcasting a message on repeat. Your comms officer mentions that while it's using the same odd protocol as a similar station you previously visited, the transmission itself is different. ",sms_oConcealedStationShowMessage:Have your comms officer display the message,
+sms_ConcealedStationUnseenMessage2,DialogOptionSelected,$option == sms_oConcealedStationShowMessage,"sms_cConcealedStationShowMessage
+$entity.sms_SeenMessage = true
+$global.sms_NumMessagesSeen++
+",,"sms_oConcealedStationBeginSalvage:Assess the station for salvage
+defaultLeave:Leave",
+sms_ConcealedStationSeenMessage,OpenInteractionDialog,"$customType == sms_concealed_station score:100
+$entity.sms_SeenMessage","ShowDefaultVisual
+","Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
+
+It's broadcasting a message on repeat, one that you've already received.
+","sms_oConcealedStationReplayMessage:Replay the message
+sms_oConcealedStationBeginSalvage:Assess the station for salvage
+defaultLeave:Leave",
+sms_ConcealedStationReplayMessage,DialogOptionSelected,$option == sms_oConcealedStationReplayMessage,"sms_cConcealedStationShowMessage
+",,"sms_oConcealedStationBeginSalvage:Assess the station for salvage
+defaultLeave:Leave",
+sms_ConcealedStationBeginSalvageDef,DialogOptionSelected,"$option == sms_oConcealedStationBeginSalvage
+!$defenderFleetDefeated
+!HostileFleetNearbyAndAware","$salvageLeaveText = Leave
+SalvageGenFromSeed
+SalvageDefenderInteraction","As you pull in closer for a salvage assessment, several unidentified energy signatures appear on your radar to be closing in on your location.
+
+""$PlayerSirOrMadam, looks like automated defenses. They're protecting the site; you'll have to -- hold on --""
+
+The ships emerging from the horizon comprise an incoherent assortment of tech levels and design philosophies. Moreover, most are what you recognize to be conventionally crewed ships. What would an entire fleet of manned vessels be doing out here, if not amidst its own salvage expedition?
+
+The answer comes just a few moments later. The officers onboard these ships are not human, but AI. These vessels have been automated.",defaultLeave:Leave,
+sms_ConcealedStationBeginSalvageHostileNearby,DialogOptionSelected,"$option == sms_oConcealedStationBeginSalvage
+HostileFleetNearbyAndAware",,"A nearby hostile fleet is tracking your movements, making exploration impossible.",defaultLeave:Leave,
+sms_ConcealedStationBeginSalvage,DialogOptionSelected,"$option == sms_oConcealedStationBeginSalvage
+!HostileFleetNearbyAndAware
+$defenderFleetDefeated",FireBest BeginSalvage,,,
+sms_ConcealedStationBeginSalvageFromDef,BeginSalvage,"$customType == sms_concealed_station score:100
+!HostileFleetNearbyAndAware
+$defenderFleetDefeated
+!$sms_StationUsed",sms_cConcealedStationCheckType,,,
+sms_ConcealedStationHullmodType,sms_tConcealedStationHullmod,,sms_cAddSpecificHullmodClues,"During the initial assessment, you discover a landing area designated ""AUTOMATED SERVICE BAY.""
+
+You remember what you read earlier -- that these bays were supposedly out of service at best and destructive at worst. Still, it's been possibly a hundred cycles since that report -- ample enough time for any pending repairs to have been completed.
+
+You order a small team, selected from among your best repair technicians, down into the landing bay to conduct a more detailed investigation of the area. Their shuttles quickly disappear into the station's vast hull.
+
+When they return, they report that the bay ""seems to be fully functional,"" but that its design is alien to them. One of the surveyors mentions that toward the back of the landing bay was a mountain of eviscerated ship components. Meeting your uneasy gaze, she reassures you: ""I don't think the service bay did that. The damage is too uneven to have been done by a machine -- they were probably salvaged from some shipwreck.""","sms_oConcealedStationAddHullmod:Dock one of your ships at the bay
+sms_oConcealedStationSalvage:Ignore the bay and salvage the station",
+sms_ConcealedStationSuperconstructType,sms_tConcealedStationSuperconstruct,,"sms_cConcealedStationAddSuperconstruct
+SalvageEntity showCost
+FireAll PopulateSalvageOptions2",,,
+sms_ConcealedStationOfficerType,sms_tConcealedStationOfficer,,sms_cConcealedStationAddOfficer,"During the initial assessment, one of your salvors notices a sleeper pod barely attached to one side of the station. Although its still -- barely -- connected, text on its status display indicates that it's been cut off from the station's main power supply for at least 50 cycles.
+
+Miraculously, the pod's backup power seems to have held steady for this entire time. The officer you find inside, while suffering from standard-issue post-cryosleep memory loss, seems to be otherwise fine and offers to join your fleet.",sms_oConcealedStationContinueToSalvage:Continue,
+sms_ConcealedStationSalvage,DialogOptionSelected,$option == sms_oConcealedStationSalvage,"SalvageEntity showCost
+FireAll PopulateSalvageOptions2",,,
+sms_ConcealedStationAddHullmod,DialogOptionSelected,$option == sms_oConcealedStationAddHullmod,sms_cConcealedStationAddHullmod,,,
+sms_ConcealedStationAddedHullmod,sms_tConcealedStationAddedHullmod,,"AddTextSmall ""$sms_ShipName lost 100% combat readiness"" bad","Your curiosity overcomes your better senses. Landing your personal shuttle into the bay, you watch as the ship you selected is ferried into the designated ""upgrade"" station, following which one of your technicians presses a nearby button, initiating the procedure.
+
+The tools and machines overseeing the hangar don't move. Instead, a blinding light from underneath flashes through the small grates in the landing pad, once, twice, and finally one last time, before the entire bay gives out. The entire process couldn't have lasted longer than a few seconds.
+
+""Damage report,"" you spit, while one of your senior technicians hands you a flashlight.
+
+There doesn't seem to be any external damage to your ship, but internal systems have gone haywire. Its scanners are picking up dozens of hostile ships at a distance of less than 10 meters, weapons are offline, engines are randomly stalling. Your engineers reassure you that they'll be able to get the ship back into working order, but it will take some time. It's unclear if your stunt caused any lasting damage or changes to the ship's operating capacity.",sms_oConcealedStationContinueToSalvage:Continue,
+sms_ConcealedStationContinueToSalvage,DialogOptionSelected,$option == sms_oConcealedStationContinueToSalvage,"SalvageEntity showCost
+FireAll PopulateSalvageOptions2",,,
+sms_ConcealedProbeSalvage,TriggerAutomatedDefenses,$customType == sms_concealed_probe score:100,SalvageDefenderInteraction,"As you pull in closer for a salvage assessment, a small number of unidentified energy signatures appear on your radar to be closing in on your location.
+
+""$PlayerSirOrMadam, looks like automated defenses. They're protecting the site; you'll have to -- hold on --""
+
+You recognize the vessels before you as conventionally crewed ships. What would a small fleet of crewed ships be doing out here, if not amidst its own salvage expedition?
+
+The answer comes just a few moments later. The officers onboard these ships are not human, but AI. These vessels have been automated.",,
+sms_ConcealedProbeTryAddHullmod,BeginSalvage,"$customType == sms_concealed_probe score:100
+!$sms_TriedToAddHullmod","sms_cConcealedProbeAddHullmod
+$sms_TriedToAddHullmod = true
+FireBest BeginSalvage
+",,,
+sms_CuratorGreeting,OpenCommLink,"$faction.id == sms_curator score:1000
+",$entity.ignorePlayerCommRequests = true 1,There is nothing but the faint crackling of static.,cutCommLink:Cut the comm link,
+sms_NucleusFirstTime,OpenInteractionDialog,"$customType == sms_station_nucleus score:100
+!$global.sms_NucleusSeen",ShowDefaultVisual,"Your fleet approaches a massive structure hovering perfectly in place between a closely-orbiting pair of white dwarves. On either side, a transplutonic proboscis curves toward its respective star, drawing in vast amounts of stellar energy.
+
+You settle into a close orbit while scanning the structure for potential points of interest, but find only that the construction is sealed on all sides.
+
+""$PlayerSirOrMadam, I'm detecting enormous quantities of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions. It's unlikely there's a specific target in mind other than... everywhere.""
+
+He continues, ""It's just a garbled mess of data. Incomprehensible. But it means there's probably some way inside.""",sms_oNucleusFirstTime2:Continue,
+sms_NucleusFirstTime2,DialogOptionSelected,$option == sms_oNucleusFirstTime2,,"""Hold on, I think I've got something...
+
+""Ah, there! It's... some sort of connection request. If I'm reading this correctly, it'd supposedly allow you to directly link your ship's computer systems with its central cluster, and then you'd supposedly be able to issue directives from here.
+
+""Mind you, I'm not convinced that's all there is to this. Seems like a terrible security solution. But as long as our anti-hijacking systems are up-to-date, couldn't hurt to give it a try... right?""","sms_oNucleusFirstTimeAllow:Allow the connection request
+defaultLeave:Leave",
+sms_NucleusFirstTimeAllow,DialogOptionSelected,$option == sms_oNucleusFirstTimeAllow,"$global.sms_NucleusSeen = true
+FireBest sms_tNucleusSelectOption","Almost as soon as you issue the order to accept the incoming request, your comms display flickers in a burst of static. Then, several instructions appear on-screen, prompting you to select one.",,
+sms_NucleusSelectOption,sms_tNucleusSelectOption,,,,"sms_oNucleusCheckBeacons:Check beacon status
+sms_oNucleusOpenStructure:Unseal
+sms_oNucleusShutDown:Shut down
+sms_oNucleusAdmin:Activate admin privileges
+defaultLeave:Leave
+",
+sms_NucleusSubsequentVisit,OpenInteractionDialog,"$customType == sms_station_nucleus score:100
+$global.sms_NucleusSeen",FireBest sms_tNucleusSelectOption,"As you approach the megastructure, you receive an automated request to connect to its mainframe, which you accept.",,

@@ -1,5 +1,7 @@
 package shipmastery.campaign;
 
+import com.fs.starfarer.api.EveryFrameScript;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
@@ -32,6 +34,7 @@ import shipmastery.util.SizeLimitedMap;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +43,14 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener {
+public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener, EveryFrameScript {
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
     /** Can be used to set custom mastery levels. Place in commander's memory. Expects a Map<String, Map<Integer, String>>
      *  hull spec id -> level -> which option is activated */
     public static final String CUSTOM_MASTERIES_KEY = "$sms_CustomMasteryData";
+    public static final String MINIMUM_MASTERY_LEVEL_KEY = "$sms_MinMasteryLevel";
     /** Can be used to set custom difficulty progression (between 0 and 1). Place in commander's memory. Mostly used
      *  so that the entries in recent battles stay the same regardless of further player progression. */
     public static final String CUSTOM_PROGRESSION_KEY = "$sms_DifficultyProgressionWhenFought";
@@ -241,6 +245,22 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     @Override
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
         addMasteriesToFleet(fleet);
+        // Curator fleets should not have crew or built-in d-mods
+        if (fleet.getFaction() != null && "sms_curator".equals(fleet.getFaction().getId())) {
+            for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+                fm.getVariant().addPermaMod("sms_curator_npc_hullmod", false);
+                var toRemove = new ArrayList<String>();
+                for (var hullmod : fm.getVariant().getHullMods()) {
+                    var spec = Global.getSettings().getHullModSpec(hullmod);
+                    if (spec.hasTag(Tags.HULLMOD_DMOD) && fm.getHullSpec().isBuiltInMod(hullmod)) {
+                        toRemove.add(hullmod);
+                    }
+                }
+                for (var hullmod : toRemove) {
+                    fm.getVariant().addSuppressedMod(hullmod);
+                }
+            }
+        }
     }
 
     public static boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -330,6 +350,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         float actualLevel = (float) random.nextGaussian(averageLevel, data.stDev());
         int cap = ShipMastery.getMaxMasteryLevel(spec);
+        actualLevel = Math.max(actualLevel, commander.getMemoryWithoutUpdate().getFloat(MINIMUM_MASTERY_LEVEL_KEY));
 
         for (int level = 1; level <= actualLevel; level++) {
             if (level > cap) break;
@@ -378,5 +399,28 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {
         return (commander.getId() + spec.getHullId() + "___").hashCode();
+    }
+
+    @Override
+    public boolean isDone() {
+        return false;
+    }
+
+    @Override
+    public boolean runWhilePaused() {
+        return true;
+    }
+
+    private CampaignFleetAPI lastSeenFleet;
+    @Override
+    public void advance(float amount) {
+        var dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
+        if (dialog == null) return;
+        var target = dialog.getInteractionTarget();
+        if (!(target instanceof CampaignFleetAPI fleet)) return;
+        if (fleet != lastSeenFleet) {
+            addMasteriesToFleet(fleet);
+        }
+        lastSeenFleet = fleet;
     }
 }

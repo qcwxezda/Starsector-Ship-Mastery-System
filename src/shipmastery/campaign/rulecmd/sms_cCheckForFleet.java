@@ -13,7 +13,7 @@ import shipmastery.campaign.FleetHandler;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
+@Deprecated
 public class sms_cCheckForFleet extends BaseCommandPlugin {
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {

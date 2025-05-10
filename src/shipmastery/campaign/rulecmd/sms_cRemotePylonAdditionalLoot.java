@@ -27,7 +27,7 @@ public class sms_cRemotePylonAdditionalLoot extends BaseCommandPlugin {
         cargo.addCommodity(Commodities.FUEL, MathUtils.randBetween(250f, 400f));
         cargo.addCommodity(Commodities.METALS, MathUtils.randBetween(100f, 200f));
         cargo.addCommodity("sms_fractured_gamma_core", MathUtils.randBetween(5f, 10f));
-        dialog.showCargoPickerDialog("Select Loot", Strings.Misc.confirm, Strings.Misc.cancel, false, 0f, cargo, new CargoPickerListener() {
+        dialog.showCargoPickerDialog(Strings.Campaign.selectLoot, Strings.Misc.confirm, Strings.Misc.cancel, false, 0f, cargo, new CargoPickerListener() {
             @Override
             public void pickedCargo(CargoAPI cargo) {
                 if (cargo.isEmpty()) return;

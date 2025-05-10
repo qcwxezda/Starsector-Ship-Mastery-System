@@ -46,7 +46,7 @@ public class MasteryHullmod extends BaseHullMod {
         int enhanceCount = MasteryUtils.getEnhanceCount(rootSpec);
         float dr = 0f;
         for (int i = 0; i < enhanceCount; i++) {
-            dr += Settings.ENHANCE_DR_AMOUNT[i];
+            dr += MasteryUtils.ENHANCE_DR_AMOUNT[i];
         }
         if (dr > 0f) {
             stats.getShieldDamageTakenMult().modifyMult(id, 1f-dr);

@@ -7,5 +7,5 @@ remnant, 2,2,3,0.9,0.9,0.5
 threat, 6,1,0,0,
 dweller, 8,1,0,0,,
 omega,5,1,5,1,1,0.5
-sms_seeker,2,2,3,1,1,1
+sms_curator,0,0,0,1,1,1
 <default>, 0, 2.5,2,0.75,0.75,0

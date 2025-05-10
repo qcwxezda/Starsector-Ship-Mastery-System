@@ -1,7 +1,6 @@
 package shipmastery.plugin;
 
 import com.fs.starfarer.api.campaign.CampaignEngineLayers;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin;
@@ -16,15 +15,15 @@ public class ConcealedEntityPlugin extends BaseCustomEntityPlugin {
     FaderUtil fader = new FaderUtil(Misc.random.nextFloat(), 10f, 10f, true, true);
     public static final float maxAlpha = 0.25f;
     transient SpriteAPI sprite;
+    transient boolean inited = false;
 
-    @Override
-    public void init(SectorEntityToken entity, Object pluginParams) {
-        super.init(entity, pluginParams);
+    public void init() {
         String spriteName = entity.getCustomEntitySpec().getSpriteName();
         String prefix = spriteName.substring(0, spriteName.indexOf('.'));
         String fullAlphaName = prefix + "_fullalpha.png";
         sprite = Utils.getLoadedSprite(fullAlphaName);
         fader.fadeIn();
+        inited = true;
 
         if (sprite == null) {
             Logger.getLogger(ConcealedEntityPlugin.class).warn(String.format("Failed to load full alpha sprite at [%s]", fullAlphaName));
@@ -33,6 +32,9 @@ public class ConcealedEntityPlugin extends BaseCustomEntityPlugin {
 
     @Override
     public void advance(float amount) {
+        if (!inited) {
+            init();
+        }
         fader.advance(amount);
     }
 
