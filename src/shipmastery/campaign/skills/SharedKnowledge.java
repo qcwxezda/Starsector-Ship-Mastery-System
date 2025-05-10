@@ -23,8 +23,8 @@ public class SharedKnowledge {
     public static final float MAX_DAMAGE_BONUS = 0.1f;
     public static final float DP_REDUCTION_PER_ENHANCE = 0.02f;
     public static final float MAX_DP_REDUCTION_ENHANCE = 0.2f;
-    public static final float BASE_DP_REDUCTION_AI_COMMANDER = 0.25f;
-    public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.1f;
+    public static final float BASE_DP_REDUCTION_AI_COMMANDER = 0.2f;
+    public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.075f;
 
     public static int getMasteryLevel(PersonAPI fleetCommander, MutableShipStatsAPI stats) {
         if (fleetCommander == null || fleetCommander.isDefault()) return 0;
@@ -51,7 +51,7 @@ public class SharedKnowledge {
         return person.getStats().getSkillLevel("sms_shared_knowledge") >= 2f;
     }
 
-    public static class Standard implements ShipSkillEffect {
+    public static class Standard extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             PersonAPI commander = CampaignUtils.getFleetCommanderForStats(stats);
@@ -77,18 +77,9 @@ public class SharedKnowledge {
         }
 
         @Override
-        public String getEffectDescription(float level) {
-            return Strings.Skills.sharedKnowledgeStandardEffect;
-        }
-
-        @Override
-        public String getEffectPerLevelDescription() {
-            return null;
-        }
-
-        @Override
-        public ScopeDescription getScopeDescription() {
-            return ScopeDescription.PILOTED_SHIP;
+        public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
+            // Needed because codex doesn't like \n character
+            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, Misc.getHighlightColor(), 0f);
         }
     }
 

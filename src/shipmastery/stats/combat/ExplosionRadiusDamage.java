@@ -10,9 +10,7 @@ public class ExplosionRadiusDamage extends ShipStat {
     public Object get(MutableShipStatsAPI stats) {
         return new Object[] {
                 stats.getDynamic().getStat(Stats.EXPLOSION_RADIUS_MULT),
-                stats.getDynamic().getStat(Stats.EXPLOSION_DAMAGE_MULT),
-                stats.getDynamic().getMod(Stats.EXPLOSION_DAMAGE_MULT),
-                stats.getDynamic().getMod(Stats.EXPLOSION_DAMAGE_MULT),};
+                stats.getDynamic().getStat(Stats.EXPLOSION_DAMAGE_MULT)};
     }
 
     @Override

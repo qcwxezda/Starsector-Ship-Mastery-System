@@ -5,9 +5,37 @@ public interface Strings {
     interface Campaign {
         String EMITTER_SOLVED = "$sms_EmitterArraySolved";
         String REMOTE_PYLON_HAS_SHIELD = "$sms_HasShield";
+        String NUM_MESSAGES_SEEN = "$sms_NumMessagesSeen";
+        String NUCLEUS_LOCATION = "$sms_NucleusLocation";
+        String REMOTE_PYLON_LOCATION = "$sms_RemotePylonLocation";
+        String STATION_SEEN_MESSAGE_INDEX = "$sms_SeenMessageIndex";
+        String NUM_STATIONS_DEFEATED = "$sms_NumStationsDefeated";
+        String NUM_PROBES_PROCESSED = "$sms_NumProbesProcessed";
+        String HULLMOD_NUM_TO_ADD = "$sms_HullmodToAdd";
+        String SUPERCONSTRUCT_TO_ADD = "$sms_SuperconstructToAdd";
+        String STATION_USED_KEY = "$sms_StationUsed";
+
+        String[] messages = new String[] {
+                Utils.getString("sms_campaign", "message0"),
+                Utils.getString("sms_campaign", "message1"),
+                Utils.getString("sms_campaign", "message2"),
+                Utils.getString("sms_campaign", "message3"),
+                Utils.getString("sms_campaign", "message4"),
+        };
+        String[] rearrangementHints = new String[] {
+                Utils.getString("sms_campaign", "rearrangement1Hint"),
+                Utils.getString("sms_campaign", "rearrangement2Hint"),
+                Utils.getString("sms_campaign", "rearrangement3Hint"),
+                Utils.getString("sms_campaign", "rearrangement4Hint"),
+                Utils.getString("sms_campaign", "rearrangement5Hint")
+        };
         String selectLoot = Utils.getString("sms_campaign", "selectLoot");
+        String officerAddedToFleet = Utils.getString("sms_campaign", "officerAddedToFleet");
+        String fleetLogIntelTitle = Utils.getString("sms_campaign", "fleetLogIntelTitle");
+        String fleetLogIntelHeader = Utils.getString("sms_campaign", "fleetLogIntelHeader");
+        String fleetLogDeleteButton = Utils.getString("sms_campaign", "fleetLogDeleteButton");
         String remotePylon = Utils.getString("sms_campaign", "remotePylon");
-        String leaveText = Utils.getString("sms_campaign", "leaveText");
+        String convertedNexus = Utils.getString("sms_campaign", "convertedNexus");
         String cancelText = Utils.getString("sms_campaign", "cancelText");
         String emitterConfirm = Utils.getString("sms_campaign", "emitterConfirm");
         String emitterLeft = Utils.getString("sms_campaign", "emitterLeft");
@@ -145,6 +173,8 @@ public interface Strings {
     }
 
     interface Items {
+        String SUPERCONSTRUCT_1 = "sms_superconstruct1";
+        String SUPERCONSTRUCT_2 = "sms_superconstruct2";
         String knowledgeConstruct = Utils.getString("sms_items", "knowledgeConstruct");
         String knowledgeConstructRightClick = Utils.getString("sms_items", "knowledgeConstructRightClick");
         String knowledgeConstructCantRightClick = Utils.getString("sms_items", "knowledgeConstructCantRightClick");
@@ -213,6 +243,11 @@ public interface Strings {
     interface Hullmods {
         String ENGINEERING_OVERRIDE = "sms_engineering_override";
         String ANALYSIS_PACKAGE = "sms_analysis_package";
+        String REARRANGEMENT1 = "sms_extradimensional_rearrangement1";
+        String REARRANGEMENT2 = "sms_extradimensional_rearrangement2";
+        String REARRANGEMENT3 = "sms_extradimensional_rearrangement3";
+        String REARRANGEMENT4 = "sms_extradimensional_rearrangement4";
+        String REARRANGEMENT5 = "sms_extradimensional_rearrangement5";
         String rearrangement1Effect1 = Utils.getString("sms_hullmods", "rearrangement1Effect1");
         String rearrangement1Effect2 = Utils.getString("sms_hullmods", "rearrangement1Effect2");
         String rearrangement1Effect3 = Utils.getString("sms_hullmods", "rearrangement1Effect3");

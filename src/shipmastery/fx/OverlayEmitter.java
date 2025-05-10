@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.BaseIEmitter;
 import particleengine.ParticleData;
+import shipmastery.util.MathUtils;
 
 import java.awt.Color;
 
@@ -21,6 +22,8 @@ public class OverlayEmitter extends BaseIEmitter {
     public int blendDestFac = GL11.GL_ONE;
     public float alphaMult = 1f;
     public float fadeInFrac = 0.25f, fadeOutFrac = 0.25f;
+    public float randomOffset = 0f;
+    public float randomAngle = 0f;
     private float anchorAlpha = 1f;
 
     public OverlayEmitter(CombatEntityAPI anchor, SpriteAPI sprite, float life) {
@@ -64,6 +67,10 @@ public class OverlayEmitter extends BaseIEmitter {
     @Override
     protected ParticleData initParticle(int i) {
         ParticleData data = new ParticleData();
+        if (randomOffset > 0f) {
+            data.offset(MathUtils.randomPointInCircle(new Vector2f(), randomOffset));
+        }
+        data.facing(MathUtils.randBetween(-randomAngle/2f, randomAngle/2f));
         data.size(sprite.getWidth(), sprite.getHeight());
         Color newColor = new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, Math.min(1f, color.getAlpha()/255f * alphaMult * anchorAlpha));
         data.color(newColor);

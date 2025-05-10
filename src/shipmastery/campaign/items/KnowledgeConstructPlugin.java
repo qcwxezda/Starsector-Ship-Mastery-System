@@ -9,8 +9,8 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.SharedUnlockData;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -34,7 +34,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     public static final int NUM_POINTS_GAINED = 10;
     public static final String PREF_IN_FLEET_TAG = "~pref_in_fleet";
     public static final String PLAYER_CREATED_PREFIX = "sms_PlayerCreated_";
-    private ShipHullSpecAPI spec;
+    private ShipHullSpecAPI hullSpec;
     private boolean wasCreatedByPlayer = false;
     private boolean noSpecString = false;
 
@@ -50,12 +50,12 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             wasCreatedByPlayer = true;
             specStr = specStr.substring(PLAYER_CREATED_PREFIX.length());
         }
-        spec = Global.getSettings().getHullSpec(specStr);
+        hullSpec = Global.getSettings().getHullSpec(specStr);
     }
 
     @Override
     public boolean hasRightClickAction() {
-        return spec != null && !wasCreatedByPlayer;
+        return hullSpec != null && !wasCreatedByPlayer;
     }
 
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult,
@@ -65,7 +65,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         float cy = y + hh;
 
         if (noSpecString) return;
-        String hullId = spec == null ? null : spec.getHullId();
+        String hullId = hullSpec == null ? null : hullSpec.getHullId();
         bgColor = Misc.setAlpha(bgColor, 255);
 
         float tlX = cx;
@@ -130,8 +130,8 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public int getPrice(MarketAPI market, SubmarketAPI submarket) {
-        if (spec == null) return 20000;
-        return getPrice(spec);
+        if (hullSpec == null) return 20000;
+        return getPrice(hullSpec);
     }
 
     public static int getPrice(ShipHullSpecAPI spec) {
@@ -140,8 +140,8 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public String getName() {
-        if (spec == null) return super.getName();
-        return spec.getHullNameWithDashClass() + " " + Strings.Items.knowledgeConstruct;
+        if (hullSpec == null) return super.getName();
+        return hullSpec.getHullNameWithDashClass() + " " + Strings.Items.knowledgeConstruct;
     }
 
     @Override
@@ -150,11 +150,11 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         super.createTooltip(tooltip, expanded, transferHandler, stackSource);
         float opad = 10.0F;
         Color b = Misc.getPositiveHighlightColor();
-        if (spec != null) {
-            Description desc = Global.getSettings().getDescription(spec.getDescriptionId(), Description.Type.SHIP);
+        if (hullSpec != null) {
+            Description desc = Global.getSettings().getDescription(hullSpec.getDescriptionId(), Description.Type.SHIP);
             String prefix = "";
-            if (spec.getDescriptionPrefix() != null) {
-                prefix = spec.getDescriptionPrefix() + "\n\n";
+            if (hullSpec.getDescriptionPrefix() != null) {
+                prefix = hullSpec.getDescriptionPrefix() + "\n\n";
             }
             tooltip.addPara(prefix + desc.getText1FirstPara(), opad);
         }
@@ -171,11 +171,11 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void performRightClickAction(RightClickActionHelper helper) {
-        if (spec != null && !wasCreatedByPlayer) {
-            ShipMastery.addPlayerMasteryPoints(spec, NUM_POINTS_GAINED, false, false);
+        if (hullSpec != null && !wasCreatedByPlayer) {
+            ShipMastery.addPlayerMasteryPoints(hullSpec, NUM_POINTS_GAINED, false, false);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             Global.getSector().getCampaignUI().getMessageDisplay()
-                    .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", spec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+                    .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", hullSpec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
         }
     }
@@ -218,7 +218,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             }
             if (playerFleetSpecs.contains(spec)) continue;
 
-            if (!SharedUnlockData.get().isPlayerAwareOfShip(spec.getHullId())) {
+            if (!CodexDataV2.hasUnlockedEntry("codex_hull_" + spec.getHullId())) {
                 iter.remove();
             }
             else if (spec.getHints().contains(ShipHullSpecAPI.ShipTypeHints.STATION)) {

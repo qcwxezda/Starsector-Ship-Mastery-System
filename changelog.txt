@@ -12,10 +12,12 @@
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
     - When using SP in this manner, you may always build in at least 1 S-mod (3 with engineering override) regardless of the ship's current capacity.
 - Creating (not consuming) knowledge constructs now grants 1 SP per 5 constructs.
+    - You need a ship of the specified type in your fleet to create constructs for it, so this makes not as strong as it seems for concealed station loot (which gives lots of random constructs).
     - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
 - Added a faction difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
 - Added 7 mastery effects.
-- Added a substantial amount of content related to concealed stations and knowledge constructs.
+- Added a substantial amount of exploration content related to concealed stations and knowledge constructs.
+    - Modified existing exploration content, too many changes to list.
 - Added ability for a single hull spec to have multiple presets:
     - If a "preset" string or array is given in the assignment, then only the presets provided are used.
         - They are processed in the order they are declared, so if multiple presets have conflicting entries, the earliest one wins.
@@ -80,10 +82,9 @@
         - Added additional checks for Support Doctrine.
 - Best of the best: nerfed mastery bonus from 30% to 25%.
 - Enhancing:
-    - Extra logistics S-mod moved from third enhance to first enhance.
-    - Next 2 enhances give +7.5% each, then the next 2 only give +5% each.
-    - Can enhance 5 more times for 2% each, for extreme min-maxing.
-        - Enhances 6-10 also give -1% damage taken each.
+    - You no longer get an extra logistics S-mod slot on the third enhance (sorry).
+    - Reduced enhance MP cost.
+    - Each enhance now grants a 5% mastery effect boost.
     - Enhancing now grants some bonus XP.
 - Knowledge constructs no longer randomly generate for ship hull specs with the RESTRICTED tag.
 - Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.

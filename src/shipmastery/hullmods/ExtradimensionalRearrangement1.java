@@ -16,7 +16,7 @@ public class ExtradimensionalRearrangement1 extends BaseHullMod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         if (stats.getFleetMember() == null) return;
 
-        stats.getTimeMult().modifyMult(id, 1.2f);
+        stats.getTimeMult().modifyPercent(id, 20f);
 
         float[] params = getParams(stats.getFleetMember().getId().hashCode());
         stats.getMaxSpeed().modifyPercent(id, params[0]);
@@ -35,7 +35,7 @@ public class ExtradimensionalRearrangement1 extends BaseHullMod {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         if (ship == null || ship.getFleetMemberId() == null) return;
-        tooltip.addPara(Strings.Hullmods.rearrangement1Effect1, 8f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatTwoDecimals(1.2f));
+        tooltip.addPara(Strings.Hullmods.rearrangement1Effect1, 8f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(0.2f));
         float[] params = getParams(ship.getFleetMemberId().hashCode());
         tooltip.addPara(Strings.Hullmods.rearrangement1Effect2, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[0]/100f));
         tooltip.addPara(Strings.Hullmods.rearrangement1Effect3, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(-params[1]/100f));

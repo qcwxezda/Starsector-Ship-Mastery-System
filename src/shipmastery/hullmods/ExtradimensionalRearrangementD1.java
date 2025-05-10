@@ -8,11 +8,9 @@ import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.Color;
-
 public class ExtradimensionalRearrangementD1 extends BaseHullMod {
 
-    public static final float TIME_MULT = 0.8f;
+    public static final float TIME_MULT = 0.85f;
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
@@ -26,15 +24,5 @@ public class ExtradimensionalRearrangementD1 extends BaseHullMod {
                 8f,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(1f - TIME_MULT));
-    }
-
-    @Override
-    public Color getBorderColor() {
-        return Settings.MASTERY_COLOR;
-    }
-
-    @Override
-    public Color getNameColor() {
-        return Settings.MASTERY_COLOR;
     }
 }

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
@@ -46,7 +47,9 @@ import shipmastery.util.VariantLookup;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
@@ -64,7 +67,7 @@ public class ModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() throws Exception {
         Utils.init();
-        initializeSeekerFaction();
+        initializeCuratorFaction();
         ShipMastery.loadMasteries();
         ShipMastery.loadStats();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
@@ -85,16 +88,23 @@ public class ModPlugin extends BaseModPlugin {
                 CodexDataV2.getCommodityEntryId("sms_alpha_k_core"));
     }
 
-    private void initializeSeekerFaction() {
-        FactionSpecAPI thisFaction = Global.getSettings().getFactionSpec("sms_seeker");
+    private void initializeCuratorFaction() {
+        FactionSpecAPI thisFaction = Global.getSettings().getFactionSpec("sms_curator");
         thisFaction.getKnownHullMods().addAll(Global.getSettings().getAllHullModSpecs().stream().filter(
                 spec -> !spec.hasTag(Tags.RESTRICTED)
                         && !spec.hasTag(Tags.HIDE_IN_CODEX)
                         && !spec.hasTag(Tags.NO_DROP)
                         && !spec.hasTag(Tags.HULLMOD_NO_DROP_SALVAGE)
         ).map(HullModSpecAPI::getId).toList());
+
+        Set<String> allowedHiddenFactions = new HashSet<>();
+        allowedHiddenFactions.add("lions_guard");
+        allowedHiddenFactions.add("mercenary");
+        allowedHiddenFactions.add("remnant");
+        allowedHiddenFactions.add("derelict");
+
         for (FactionSpecAPI faction : Global.getSettings().getAllFactionSpecs()) {
-            if (!faction.isShowInIntelTab()) continue;
+            if (!faction.isShowInIntelTab() && !allowedHiddenFactions.contains(faction.getId())) continue;
             if (Objects.equals(faction.getId(), thisFaction.getId())) continue;
             thisFaction.getKnownFighters().addAll(
                     faction.getKnownFighters().stream().filter(
@@ -145,7 +155,8 @@ public class ModPlugin extends BaseModPlugin {
 
         boolean randomMode = Settings.ENABLE_RANDOM_MODE;
         Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
-        //Generator.generate();
+        new TestGenerator().generate();
+        Global.getSector().getPlayerFaction().setRelationship("sms_curator", RepLevel.HOSTILE);
 
         // Not transient in case player saves while action queue isn't empty
         // Possibly broken though !! - can't save lambdas
@@ -156,8 +167,6 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        new TestGenerator().generate();
-
         boolean randomMode = (boolean) Global.getSector().getPersistentData().get(RANDOM_MODE_KEY);
         if (newGame) {
             String seed = Settings.RANDOM_GENERATION_SEED;
@@ -235,8 +244,9 @@ public class ModPlugin extends BaseModPlugin {
             FleetHandler fleetHandler = new FleetHandler();
             listeners.addListener(fleetHandler, true);
             Global.getSector().addTransientListener(fleetHandler);
+            Global.getSector().addTransientScript(fleetHandler);
             listeners.addListener(new PlayerFleetHandler(), true);
-
+            FleetHandler.NPC_MASTERY_CACHE.clear();
 
             CyberneticAugmentation.refreshPlayerMasteredCount();
 
@@ -270,10 +280,15 @@ public class ModPlugin extends BaseModPlugin {
             }
         }
 
+        registerCuratorFleetPlugins();
+    }
+
+    private static void registerCuratorFleetPlugins(){
         GenericPluginManagerAPI plugins = Global.getSector().getGenericPlugins();
-        if (!plugins.hasPlugin(StationDefenderPlugin.class)) {
-            plugins.addPlugin(new StationDefenderPlugin(), true);
+        if (!plugins.hasPlugin(ConcealedEntityDefenderPlugin.class)) {
+            plugins.addPlugin(new ConcealedEntityDefenderPlugin(), true);
         }
+        plugins.addPlugin(new CuratorOfficerPlugin(), true);
     }
 
     private static void registerCommodityTooltipPlugin(ListenerManagerAPI listeners) {
@@ -286,7 +301,6 @@ public class ModPlugin extends BaseModPlugin {
     }
 
     private static void registerAICorePlugins() {
-        Global.getSector().getGenericPlugins().addPlugin(new SeekerOfficerPlugin(), true);
         Global.getSector().registerPlugin(new BaseCampaignPlugin() {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {

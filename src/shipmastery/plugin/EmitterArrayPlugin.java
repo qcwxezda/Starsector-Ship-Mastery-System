@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Utils;
 import shipmastery.campaign.industries.BluePlanetaryShield;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 
@@ -24,7 +23,6 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
-
     public static final String KEY_NEXT_EMITTER = "$sms_nextEmitter";
     public static final String KEY_PREV_EMITTER = "$sms_prevEmitter";
     public static final String KEY_IS_FIRST_EMITTER = "$sms_isFirstEmitter";
@@ -48,32 +46,26 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
     private transient SectorEntityToken nextEmitter;
     private transient SectorEntityToken prevEmitter;
     private transient float texOffset = 0f;
-    float time = 0f;
-    boolean added = false;
+    private transient boolean inited = false;
     FaderUtil leftFader = new FaderUtil(0f, TRANSITION_SECONDS);
     FaderUtil centerFader = new FaderUtil(0f, TRANSITION_SECONDS);
     FaderUtil rightFader = new FaderUtil(0f, TRANSITION_SECONDS);
-    FaderUtil colorFader = new FaderUtil(0f, 2f*TRANSITION_SECONDS);
+    FaderUtil colorFader = new FaderUtil(0f, 3f*TRANSITION_SECONDS);
     FaderUtil shieldFader = new FaderUtil(0f, TRANSITION_SECONDS);
     int leftPower = 0, centerPower = 0, rightPower = 0;
     float leftPowerRender = 0f, centerPowerRender = 0f, rightPowerRender = 0f;
 
-    @Override
-    public void init(SectorEntityToken entity, Object pluginParams) {
-        this.entity = entity;
-        DeferredActionPlugin.performLater(() -> {
-            nextEmitter = (SectorEntityToken) entity.getMemoryWithoutUpdate().get(KEY_NEXT_EMITTER);
-            prevEmitter = (SectorEntityToken) entity.getMemoryWithoutUpdate().get(KEY_PREV_EMITTER);
-            activeLeftSprite = Utils.getLoadedSprite(ACTIVE_LEFT_PATH);
-            activeCenterSprite = Utils.getLoadedSprite(ACTIVE_CENTER_PATH);
-            activeRightSprite = Utils.getLoadedSprite(ACTIVE_RIGHT_PATH);
-            beamFringeSprite = Utils.getLoadedSprite(BEAM_FRINGE_PATH);
-            beamCoreSprite = Utils.getLoadedSprite(BEAM_CORE_PATH);
-            glowSprite = Utils.getLoadedSprite(GLOW_PATH);
-            center = entity.getOrbitFocus();
-
-        }, 0f);
-
+    public void init() {
+        nextEmitter = (SectorEntityToken) entity.getMemoryWithoutUpdate().get(KEY_NEXT_EMITTER);
+        prevEmitter = (SectorEntityToken) entity.getMemoryWithoutUpdate().get(KEY_PREV_EMITTER);
+        activeLeftSprite = Utils.getLoadedSprite(ACTIVE_LEFT_PATH);
+        activeCenterSprite = Utils.getLoadedSprite(ACTIVE_CENTER_PATH);
+        activeRightSprite = Utils.getLoadedSprite(ACTIVE_RIGHT_PATH);
+        beamFringeSprite = Utils.getLoadedSprite(BEAM_FRINGE_PATH);
+        beamCoreSprite = Utils.getLoadedSprite(BEAM_CORE_PATH);
+        glowSprite = Utils.getLoadedSprite(GLOW_PATH);
+        center = entity.getOrbitFocus();
+        inited = true;
     }
 
     @Override
@@ -169,6 +161,9 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
 
     @Override
     public void advance(float amount) {
+        if (!inited) {
+            init();
+        }
         // Core and fringe have same width, so can share texOffset
         texOffset = (texOffset + amount * TEXTURE_SCROLL_SPEED / beamFringeSprite.getWidth()) % 1f;
         leftFader.advance(amount);
@@ -202,11 +197,10 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
             shieldFader.fadeIn();
         }
         if (entity.getMemoryWithoutUpdate().getBoolean(KEY_IS_FIRST_EMITTER)) {
-            if (shieldFader.getBrightness() > 0f && shieldFader.getBrightness() < 1f) {
+            if (shieldFader.getBrightness() < 1f) {
                 BluePlanetaryShield.applyVisuals((PlanetAPI) center, 1f - shieldFader.getBrightness());
             }
-            if (shieldFader.getBrightness() >= 1f && center.getMarket().hasIndustry("sms_blueshield")) {
-                center.getMarket().removeIndustry("sms_blueshield", null, false);
+            if (shieldFader.getBrightness() >= 1f && center.getMarket().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD)) {
                 Global.getSoundPlayer().playSound("ui_shutdown_industry", 1f, 1f, Global.getSector().getPlayerFleet().getLocation(), new Vector2f());
                 center.setCustomDescriptionId("sms_remote_pylon_no_shield");
                 center.getMarket().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD);

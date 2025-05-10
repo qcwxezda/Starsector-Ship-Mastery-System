@@ -1,7 +1,6 @@
 package shipmastery.plugin;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -13,17 +12,19 @@ import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
+import shipmastery.campaign.FleetHandler;
+import shipmastery.campaign.items.AlphaKCorePlugin;
 import shipmastery.campaign.items.BetaKCorePlugin;
+import shipmastery.campaign.items.FracturedGammaCorePlugin;
+import shipmastery.campaign.items.GammaKCorePlugin;
 import shipmastery.util.IntRef;
 import shipmastery.util.Utils;
 
-import java.util.HashMap;
 import java.util.Random;
 
-public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
+public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
     @Override
     public void addCommanderAndOfficers(CampaignFleetAPI fleet, FleetParamsV3 params, Random random) {
         // In case a random fleet patrol is generated, etc.
@@ -33,41 +34,35 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
         WeightedRandomPicker<String> officerPicker = new WeightedRandomPicker<>(random);
         switch (params.aiCores) {
-            case AI_GAMMA: {
+            case AI_GAMMA -> {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
-                officerPicker.add("sms_gamma_k_core", 0.5f);
                 officerPicker.add(null, 1.5f);
-                break;
             }
-            case AI_BETA_OR_GAMMA: {
+            case AI_BETA_OR_GAMMA -> {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
                 officerPicker.add("sms_gamma_k_core", 1f);
-                officerPicker.add("sms_beta_k_core", 0.5f);
                 officerPicker.add(null, 1.5f);
-                break;
             }
-            case AI_BETA: case AI_MIXED: {
-                officerPicker.add("sms_fractured_gamma_core", 0.25f);
-                officerPicker.add("sms_gamma_k_core", 1f);
-                officerPicker.add("sms_beta_k_core", 1f);
-                officerPicker.add("sms_alpha_k_core", 0.4f);
-                officerPicker.add(null, 1f);
-                break;
-            }
-            case AI_ALPHA: {
-                officerPicker.add("sms_fractured_gamma_core", 0.5f);
-                officerPicker.add("sms_gamma_k_core", 1f);
+            case AI_BETA -> {
+                officerPicker.add("sms_fractured_gamma_core", 1f);
+                officerPicker.add("sms_gamma_k_core", 1.5f);
                 officerPicker.add("sms_beta_k_core", 1.5f);
+                officerPicker.add(null, 0.5f);
+            }
+            case AI_MIXED -> {
+                officerPicker.add("sms_fractured_gamma_core", 0.25f);
+                officerPicker.add("sms_gamma_k_core", 0.75f);
+                officerPicker.add("sms_beta_k_core", 1.5f);
+                officerPicker.add("sms_alpha_k_core", 0.75f);
+            }
+            case AI_ALPHA -> {
+                officerPicker.add("sms_fractured_gamma_core", 0.25f);
+                officerPicker.add("sms_gamma_k_core", 0.5f);
+                officerPicker.add("sms_beta_k_core", 1f);
                 officerPicker.add("sms_alpha_k_core", 2f);
-                break;
             }
-            case AI_OMEGA: {
-                officerPicker.add("sms_alpha_k_core", 1f);
-                break;
-            }
+            case AI_OMEGA -> officerPicker.add("sms_alpha_k_core", 1f);
         }
-
-        var pluginCache = new HashMap<String, AICoreOfficerPlugin>();
 
         float biggestCommanderScore = 0f;
         PersonAPI commander = null;
@@ -75,9 +70,17 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             String coreId = officerPicker.pick();
             if (coreId == null) continue;
-            var plugin = pluginCache.computeIfAbsent(coreId, k -> Misc.getAICoreOfficerPlugin(coreId));
+            // Don't use Misc.getAICoreOfficerPlugin because we only register the plugin on game load, but we
+            // need the plugin on game enable (to set AI core for custom station)
+            var plugin = switch (coreId) {
+                case "sms_fractured_gamma_core" -> new FracturedGammaCorePlugin();
+                case "sms_gamma_k_core" -> new GammaKCorePlugin();
+                case "sms_beta_k_core" -> new BetaKCorePlugin();
+                case "sms_alpha_k_core" -> new AlphaKCorePlugin();
+                default -> null;
+            };
             if (plugin == null) continue;
-            var person = plugin.createPerson(coreId, "sms_seeker", random);
+            var person = plugin.createPerson(coreId, "sms_curator", random);
             assignOfficerSkillsAndIntegrate(person, fm, random);
             fm.setCaptain(person);
 
@@ -102,15 +105,35 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             commander.setPostId(Ranks.POST_FLEET_COMMANDER);
             fleet.setCommander(commander);
             fleet.getFleetData().setFlagship(flagship);
-            int numCommanderSkills = switch (commander.getAICoreId()) {
-                case "sms_fractured_gamma_core" -> 1;
-                case "sms_gamma_k_core" -> 3;
-                case "sms_beta_k_core" -> 5;
-                case "sms_alpha_k_core" -> 7;
-                default -> 2;
-            };
+            int numCommanderSkills = getNumCommanderSkillsAndSetMinMastery(commander);
             RemnantOfficerGeneratorPlugin.addCommanderSkills(commander, fleet, params, numCommanderSkills, random);
         }
+    }
+
+    private static int getNumCommanderSkillsAndSetMinMastery(PersonAPI commander) {
+        int numCommanderSkills;
+        var memory = commander.getMemoryWithoutUpdate();
+        String key = FleetHandler.MINIMUM_MASTERY_LEVEL_KEY;
+        switch (commander.getAICoreId()) {
+            case "sms_fractured_gamma_core" -> {
+                numCommanderSkills = 1;
+                memory.set(key, 2);
+            }
+            case "sms_gamma_k_core" -> {
+                numCommanderSkills = 2;
+                memory.set(key, 4);
+            }
+            case "sms_beta_k_core" -> {
+                numCommanderSkills = 3;
+                memory.set(key, 6);
+            }
+            case "sms_alpha_k_core" -> {
+                numCommanderSkills = 5;
+                memory.set(key, 8);
+            }
+            default -> numCommanderSkills = 0;
+        }
+        return numCommanderSkills;
     }
 
     private void assignOfficerSkillsAndIntegrate(PersonAPI captain, FleetMemberAPI fm, Random random) {
@@ -195,13 +218,15 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         String systemId = fm.getHullSpec().getShipSystemId();
         if (systemId != null) {
             var systemSpec = Global.getSettings().getShipSystemSpec(fm.getHullSpec().getShipSystemId());
-            // no charges
-            if (systemSpec.getMaxUses(fm.getStats()) == Integer.MAX_VALUE) {
-                skillsPicker.add(Skills.SYSTEMS_EXPERTISE, 2.5f);
-            }
-            // charges
-            else {
-                skillsPicker.add(Skills.SYSTEMS_EXPERTISE, 5f);
+            if (systemSpec != null) {
+                // no charges
+                if (systemSpec.getMaxUses(fm.getStats()) == Integer.MAX_VALUE) {
+                    skillsPicker.add(Skills.SYSTEMS_EXPERTISE, 2.5f);
+                }
+                // charges
+                else {
+                    skillsPicker.add(Skills.SYSTEMS_EXPERTISE, 5f);
+                }
             }
         }
 
@@ -227,7 +252,7 @@ public class SeekerOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         } else if (data.params == null || !data.params.withOfficers) {
             return -1;
         } else {
-            return data.fleet != null && "sms_seeker".equals(data.fleet.getFaction().getId()) ? 1000 : -1;
+            return data.fleet != null && "sms_curator".equals(data.fleet.getFaction().getId()) ? 1000 : -1;
         }
     }
 }

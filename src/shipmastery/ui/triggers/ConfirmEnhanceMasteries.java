@@ -46,13 +46,13 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         enhanceMap.put(spec.getHullId(), enhanceCount);
 
         ShipMastery.spendPlayerMasteryPoints(spec, mpCost);
-        Global.getSector().getPlayerStats().spendStoryPoints(spCost, spCost > 0, null, spCost > 0, Settings.ENHANCE_BONUS_XP[enhanceCount-1], null);
+        Global.getSector().getPlayerStats().spendStoryPoints(spCost, spCost > 0, null, spCost > 0, MasteryUtils.ENHANCE_BONUS_XP[enhanceCount-1], null);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                 Strings.MasteryPanel.enhanceMasteriesConfirm, Settings.MASTERY_COLOR);
 
         float enhanceAmount = 0f;
         for (int i = 0; i < enhanceCount; i++) {
-            enhanceAmount += Settings.ENHANCE_MASTERY_AMOUNT[i];
+            enhanceAmount += MasteryUtils.ENHANCE_MASTERY_AMOUNT[i];
         }
         Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
                 .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);

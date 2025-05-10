@@ -6,3 +6,11 @@ commodity,group,freq
 nothing,sms_construct_random,50
 "item_sms_construct:{tags:[!no_drop, !restricted, ~pref_in_fleet]}",sms_construct_pref_in_fleet,50
 nothing,sms_construct_pref_in_fleet,50
+nothing,sms_k_cores1,80
+sms_fractured_gamma_core,sms_k_cores1,40
+sms_gamma_k_core,sms_k_cores1,10
+nothing,sms_k_cores2,100
+sms_fractured_gamma_core,sms_k_cores2,50
+sms_gamma_k_core,sms_k_cores2,50
+sms_beta_k_core,sms_k_cores2,20
+sms_alpha_k_core,sms_k_cores2,5

@@ -28,13 +28,13 @@ public class EnhanceButtonPressed extends ActionListener {
 
         int count = MasteryUtils.getEnhanceCount(spec);
         boolean isLogisticsBoost = count == MasteryUtils.bonusLogisticSlotEnhanceNumber - 1;
-        float dr = Settings.ENHANCE_DR_AMOUNT[count];
+        float dr = MasteryUtils.ENHANCE_DR_AMOUNT[count];
         boolean hasDR = dr > 0f;
         String stringToUse = getConfirmString(spCost, hasDR, isLogisticsBoost);
 
-        String amountStr = Utils.asPercent(Settings.ENHANCE_MASTERY_AMOUNT[count]);
+        String amountStr = Utils.asPercent(MasteryUtils.ENHANCE_MASTERY_AMOUNT[count]);
         String drString = Utils.asPercent(dr);
-        String bonusXPString = Utils.asPercent(Settings.ENHANCE_BONUS_XP[count]);
+        String bonusXPString = Utils.asPercent(MasteryUtils.ENHANCE_BONUS_XP[count]);
         String format;
 
         if (isLogisticsBoost) {

@@ -2,23 +2,31 @@ package shipmastery.procgen;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
+import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.Planets;
 import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.procgen.AgeGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.ConditionGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.Constellation;
+import com.fs.starfarer.api.impl.campaign.procgen.DefenderDataOverride;
 import com.fs.starfarer.api.impl.campaign.procgen.NameAssigner;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantAssignmentAI;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantSeededFleetManager;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantStationFleetManager;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner;
@@ -28,6 +36,7 @@ import com.fs.starfarer.campaign.BaseLocation;
 import com.fs.starfarer.campaign.NascentGravityWell;
 import com.fs.starfarer.campaign.StarSystem;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.plugin.CuratorOfficerPlugin;
 import shipmastery.plugin.EmitterArrayPlugin;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
@@ -136,8 +145,12 @@ public class TestGenerator {
     }
 
     public void generateRemoteSystem() {
+
+        Vector2f remotePylonLocation = new Vector2f(-SECTOR_WIDTH/2f-15500f, SECTOR_HEIGHT/2f-14500f);
+
         var system = Global.getSector().createStarSystem(Strings.Campaign.remotePylon);
-        system.getLocation().set(24000f, 0f);
+        system.getLocation().set(remotePylonLocation.x, remotePylonLocation.y);
+        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_PYLON_LOCATION, remotePylonLocation);
 
         var center = Global.getSettings().createLocationToken(0f, 0f);
         system.addEntity(center);
@@ -150,7 +163,6 @@ public class TestGenerator {
         market.setFactionId(Factions.NEUTRAL);
         planet.setMarket(market);
 
-        market.addIndustry("sms_blueshield");
         market.getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD, true);
         List<String> ids = Arrays.asList("dark", "high_gravity", "no_atmosphere", "very_cold");
         for (String cid : ids) {
@@ -162,11 +174,10 @@ public class TestGenerator {
             ConditionGenDataSpec spec = (ConditionGenDataSpec) Global.getSettings().getSpec(ConditionGenDataSpec.class, cid, true);
             mc.setSurveyed(!spec.isRequiresSurvey());
         }
-
         market.reapplyConditions();
         system.setCenter(center);
 
-        var locationToken = Global.getSettings().createLocationToken(24000f, 0f);
+        var locationToken = Global.getSettings().createLocationToken(remotePylonLocation.x, remotePylonLocation.y);
         Global.getSector().getHyperspace().addEntity(locationToken);
         NascentGravityWellAPI well = new NascentGravityWell(planet, 250f);
         well.setColorOverride(new Color(150, 255, 200));
@@ -202,6 +213,65 @@ public class TestGenerator {
             var data = emitter.getMemoryWithoutUpdate();
             data.set(EmitterArrayPlugin.KEY_NEXT_EMITTER, nextEmitter);
             data.set(EmitterArrayPlugin.KEY_PREV_EMITTER, prevEmitter);
+        }
+    }
+
+    private static class CuratorStationFleetManager extends RemnantStationFleetManager {
+
+        public CuratorStationFleetManager(SectorEntityToken source, float thresholdLY, int minFleets, int maxFleets, float respawnDelay, int minPts, int maxPts) {
+            super(source, thresholdLY, minFleets, maxFleets, respawnDelay, minPts, maxPts);
+        }
+
+        @Override
+        protected CampaignFleetAPI spawnFleet() {
+            if (source == null) return null;
+
+            Random random = new Random();
+            int combatPoints = minPts + random.nextInt(maxPts - minPts + 1);
+            int bonus = totalLost * 4;
+            if (bonus > maxPts) bonus = maxPts;
+            combatPoints += bonus;
+            String type = FleetTypes.PATROL_SMALL;
+            if (combatPoints > 8) type = FleetTypes.PATROL_MEDIUM;
+            if (combatPoints > 16) type = FleetTypes.PATROL_LARGE;
+            combatPoints *= 8;
+
+            FleetParamsV3 params = new FleetParamsV3(
+                    source.getMarket(),
+                    source.getLocationInHyperspace(),
+                    "sms_curator",
+                    2f,
+                    type,
+                    combatPoints, // combatPts
+                    0f, // freighterPts
+                    0f, // tankerPts
+                    0f, // transportPts
+                    0f, // linerPts
+                    0f, // utilityPts
+                    0f // qualityMod
+            );
+            params.random = random;
+            switch (type) {
+                case FleetTypes.PATROL_SMALL -> params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_BETA;
+                case FleetTypes.PATROL_MEDIUM -> params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_MIXED;
+                case FleetTypes.PATROL_LARGE -> params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_ALPHA;
+            }
+
+            CampaignFleetAPI fleet = FleetFactoryV3.createFleet(params);
+            if (fleet == null) return null;
+
+            LocationAPI location = source.getContainingLocation();
+            location.addEntity(fleet);
+
+            RemnantSeededFleetManager.initRemnantFleetProperties(random, fleet, false);
+
+            fleet.setLocation(source.getLocation().x, source.getLocation().y);
+            fleet.setFacing(random.nextFloat() * 360f);
+
+            fleet.addScript(new RemnantAssignmentAI(fleet, (StarSystemAPI) source.getContainingLocation(), source));
+            fleet.getMemoryWithoutUpdate().set("$sourceId", source.getId());
+
+            return fleet;
         }
     }
 
@@ -253,8 +323,10 @@ public class TestGenerator {
         StarSystemGenerator gen = new CustomSystemGenerator(params, "sms_nucleus");
         var constellation = gen.generate();
 
-        // Remove the weirdness from the binary orbit
         var system = constellation.getSystemWithMostPlanets();
+        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.NUCLEUS_LOCATION, system.getLocation());
+
+        // Remove the weirdness from the binary orbit
         var star1 = system.getStar();
         var star2 = system.getSecondary();
 
@@ -272,7 +344,6 @@ public class TestGenerator {
         star2.setCircularOrbitPointingDown(orbitFocus, 180f, 500f + star2.getRadius(), orbitDays);
 
         var themeGenerator = new RemnantThemeGenerator();
-        system.addTag(Tags.THEME_INTERESTING);
         system.addTag(Tags.THEME_REMNANT);
         system.addTag(Tags.THEME_UNSAFE);
         system.addTag(Tags.THEME_REMNANT_MAIN);
@@ -283,12 +354,15 @@ public class TestGenerator {
         themeGenerator.populateMain(systemData, RemnantThemeGenerator.RemnantSystemType.RESURGENT);
         List<CampaignFleetAPI> stations = themeGenerator.addBattlestations(systemData, 1f, 1, 1, themeGenerator.createStringPicker("remnant_station2_Standard", 10f));
         for (CampaignFleetAPI station : stations) {
-            int maxFleets = 8 + random.nextInt(5);
-            RemnantStationFleetManager activeFleets = new RemnantStationFleetManager(
-                    station, 1f, 0, maxFleets, 15f, 8, 24);
+            station.setFaction("sms_curator");
+            station.setName(Strings.Campaign.convertedNexus);
+            FleetParamsV3 stationParams = new FleetParamsV3();
+            stationParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
+            new CuratorOfficerPlugin().addCommanderAndOfficers(station, stationParams, StarSystemGenerator.random);
+            CuratorStationFleetManager activeFleets = new CuratorStationFleetManager(
+                    station, 1f, 0, 12, 20f, 8, 24);
             system.addScript(activeFleets);
         }
-        System.out.println(system.getName());
 
         if (!NameAssigner.isNameSpecial(system)) {
             NameAssigner.assignSpecialNames(system);
@@ -342,6 +416,10 @@ public class TestGenerator {
             memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
             memory.set(STATION_TYPE_KEY, stationTypes.get(i));
             addedEntities.add(added.entity);
+            // strength data is overridden in ConcealedEntityDefenderPlugin
+            DefenderDataOverride ddo = new DefenderDataOverride("sms_curator", 1f, 0f, 0f, 0);
+            Misc.setDefenderOverride(added.entity, ddo);
+            SalvageSpecialAssigner.assignSpecials(added.entity);
         }
 
         return addedEntities;
@@ -353,17 +431,29 @@ public class TestGenerator {
             WeightedRandomPicker<StarSystemAPI> picker = new WeightedRandomPicker<>(random);
             for (StarSystemAPI eligibleSystem : eligibleSystems) {
                 float dist = MathUtils.dist(eligibleSystem.getLocation(), stationSystem.getLocation());
-                if (dist > 30000f) continue;
+                if (dist > 30000f || station.getStarSystem() == eligibleSystem) continue;
                 picker.add(eligibleSystem, 1f / (1f + dist));
             }
             for (int i = 0; i < NUM_PROBES_PER_STATION; i++) {
                 var system = picker.pick();
+                // Why no pick with index??
+                List<StarSystemAPI> items = picker.getItems();
+                for (int j = 0; j < items.size(); j++) {
+                    var sys = items.get(j);
+                    if (sys == system) {
+                        picker.setWeight(j, picker.getWeight(j)/2f);
+                    }
+                }
                 BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickAnyLocation(random, system, 100f, Collections.singleton(station));
                 BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(random, system, location, "sms_concealed_probe",
                         Factions.NEUTRAL);
                 processAddedItem(added.entity);
                 var memory = added.entity.getMemoryWithoutUpdate();
                 memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
+                // strength data is overridden in ConcealedEntityDefenderPlugin
+                DefenderDataOverride ddo = new DefenderDataOverride("sms_curator", 1f, 0f, 0f, 0);
+                Misc.setDefenderOverride(added.entity, ddo);
+                SalvageSpecialAssigner.assignSpecials(added.entity);
             }
         }
     }

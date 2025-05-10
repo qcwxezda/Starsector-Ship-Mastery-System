@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
-import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
@@ -22,8 +21,12 @@ import java.util.TreeMap;
 
 public abstract class MasteryUtils {
 
-    public static final int bonusLogisticSlotEnhanceNumber = 1;
+    public static final int bonusLogisticSlotEnhanceNumber = 9999; // Disabled, sorry
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
+    public static final float[] ENHANCE_MASTERY_AMOUNT = {0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.02f, 0.02f, 0.02f, 0.02f, 0.02f};
+    public static final float[] ENHANCE_DR_AMOUNT = {0f, 0f, 0f, 0f, 0f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
+    public static final float[] ENHANCE_BONUS_XP = {1f, 0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f, 0.2f, 0.1f};
+    public static final int MAX_ENHANCES = 10;
 
     public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
         return 20;
@@ -39,7 +42,7 @@ public abstract class MasteryUtils {
 
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
-        return count < Settings.MAX_ENHANCES ? 16+count : Integer.MAX_VALUE;
+        return count < MAX_ENHANCES ? Math.min(30, 18+3*count) : Integer.MAX_VALUE;
     }
 
     public static int getEnhanceCount(ShipHullSpecAPI spec) {

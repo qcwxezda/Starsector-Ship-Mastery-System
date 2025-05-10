@@ -3,6 +3,8 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -61,6 +63,12 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
             case TYPE_2 -> bgColor = Utils.mixColor(new Color(1f, 0.4f, 1f, 1f), Global.getSector().getPlayerFaction().getBrightUIColor(), 0.8f);
         }
         super.render(x, y, w, h, alphaMult, glowMult, renderer, bgColor);
+    }
+
+    @Override
+    public int getPrice(MarketAPI market, SubmarketAPI submarket) {
+        if (spec != null) return (int) spec.getBasePrice();
+        return 0;
     }
 
     @Override

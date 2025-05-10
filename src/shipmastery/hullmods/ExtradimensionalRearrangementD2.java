@@ -9,8 +9,6 @@ import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-import java.awt.Color;
-
 public class ExtradimensionalRearrangementD2 extends BaseHullMod {
 
     public static final float DP_PER_SMOD = 0.1f;
@@ -30,15 +28,5 @@ public class ExtradimensionalRearrangementD2 extends BaseHullMod {
                 8f,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(DP_PER_SMOD));
-    }
-
-    @Override
-    public Color getBorderColor() {
-        return Settings.MASTERY_COLOR;
-    }
-
-    @Override
-    public Color getNameColor() {
-        return Settings.MASTERY_COLOR;
     }
 }
