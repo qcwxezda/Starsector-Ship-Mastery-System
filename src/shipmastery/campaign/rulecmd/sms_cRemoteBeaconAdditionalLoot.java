@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class sms_cRemotePylonAdditionalLoot extends BaseCommandPlugin {
+public class sms_cRemoteBeaconAdditionalLoot extends BaseCommandPlugin {
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
@@ -32,7 +32,7 @@ public class sms_cRemotePylonAdditionalLoot extends BaseCommandPlugin {
             public void pickedCargo(CargoAPI cargo) {
                 if (cargo.isEmpty()) return;
                 Global.getSector().getPlayerFleet().getCargo().addAll(cargo);
-                FireBest.fire(null, dialog, memoryMap, "sms_tRemotePylonNoShieldLootPicked");
+                FireBest.fire(null, dialog, memoryMap, "sms_tRemoteBeaconNoShieldLootPicked");
             }
 
             @Override

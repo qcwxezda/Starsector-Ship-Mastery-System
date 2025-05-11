@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import particleengine.Particles;
 import shipmastery.fx.StarSiphonEmitter;
+import shipmastery.util.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,7 @@ public class NucleusPlugin extends BaseCustomEntityPlugin {
             }
         }
 
-        if (playerLocation == containingLocation) {
+        if (playerLocation == containingLocation && !Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.NUCLEUS_SHUT_DOWN)) {
             for (var pair : siphoningStars) {
                 if (Misc.random.nextFloat() < 0.1f) {
                     Particles.burst(pair.two, 1);

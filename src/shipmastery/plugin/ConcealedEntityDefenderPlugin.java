@@ -11,7 +11,6 @@ import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.fleets.GenerateFleetOfficersPlugin;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
-import shipmastery.procgen.TestGenerator;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 
@@ -98,7 +97,7 @@ public class ConcealedEntityDefenderPlugin extends BaseGenericPlugin implements 
 
         // Set the commander's id to seed the masteries properly
         if (fleet.getCommander() != null) {
-            String commanderId = p.entity.getMemoryWithoutUpdate().getString(TestGenerator.DEFENSES_COMMANDER_ID_KEY);
+            String commanderId = p.entity.getMemoryWithoutUpdate().getString(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY);
             if (commanderId != null) {
                 fleet.getCommander().setId(commanderId);
             }

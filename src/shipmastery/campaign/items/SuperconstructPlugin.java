@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class SuperconstructPlugin extends KnowledgeConstructPlugin {
     // Basically a key; if any other string is used with a blank construct,
-    // it will not work. Also avoids rendering weirdness with the codex (which always passes in null)
+    // it will not work. This avoids rendering weirdness with the codex (which always passes in null)
     public static final String ACTIVE_STRING = "sms_BlankConstructActive";
     public static final int SUPERCONSTRUCT1_MP = 100;
     public static final float SUPERCONSTRUCT1_STRENGTH = 0.25f;
@@ -27,10 +27,12 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
     public static final float SUPERCONSTRUCT2_STRENGTH = 0.1f;
     public static final int SUPERCONSTRUCT2_NEWMPCOST = 8;
     public static final String SUPERCONSTRUCT2_MODIFIERID = "sms_Superconstruct2";
+
     private enum Type {
         NONE,
         TYPE_1,
-        TYPE_2
+        TYPE_2,
+        TYPE_3
     }
     private Type type;
 
@@ -39,7 +41,9 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
         this.stack = stack;
         String specStr = stack.getSpecialDataIfSpecial().getData();
         if (Objects.equals(specStr, ACTIVE_STRING)) {
-            type = getId().equals("sms_superconstruct1") ? Type.TYPE_1 :Type.TYPE_2;
+            type = getId().equals("sms_superconstruct1")
+                    ? Type.TYPE_1 : getId().equals("sms_superconstruct2")
+                    ?  Type.TYPE_2 : Type.TYPE_3;
         } else {
             type = Type.NONE;
         }
@@ -59,8 +63,9 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
         Color bgColor = Global.getSector().getPlayerFaction().getDarkUIColor();
         switch (type) {
-            case TYPE_1 -> bgColor = Utils.mixColor(Misc.getPositiveHighlightColor(), Global.getSector().getPlayerFaction().getBrightUIColor(), 0.8f);
-            case TYPE_2 -> bgColor = Utils.mixColor(new Color(1f, 0.4f, 1f, 1f), Global.getSector().getPlayerFaction().getBrightUIColor(), 0.8f);
+            case TYPE_1 -> bgColor = Global.getSector().getPlayerFaction().getBrightUIColor();
+            case TYPE_2 -> bgColor = Utils.mixColor(new Color(1f, 0.4f, 1f, 1f), Global.getSector().getPlayerFaction().getBrightUIColor(), 0.4f);
+            case TYPE_3 -> bgColor = Misc.getPositiveHighlightColor();
         }
         super.render(x, y, w, h, alphaMult, glowMult, renderer, bgColor);
     }
@@ -81,6 +86,8 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
         }
         else if (type == Type.TYPE_2) {
             tooltip.addPara(Strings.Items.superconstruct2RightClick, opad, b, Misc.getHighlightColor(), Utils.asPercent(SUPERCONSTRUCT2_STRENGTH), Utils.asInt(SUPERCONSTRUCT2_NEWMPCOST));
+        } else if (type == Type.TYPE_3) {
+            tooltip.addPara(Strings.Items.superconstruct3RightClick, opad, b, Misc.getHighlightColor(), Global.getSettings().getSkillSpec("sms_shared_knowledge").getName());
         }
     }
 
@@ -98,6 +105,13 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
             messageDisplay.addMessage(String.format(Strings.Items.superconstruct2MessageDisplay2, "" + SUPERCONSTRUCT2_NEWMPCOST), Settings.MASTERY_COLOR);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             helper.removeFromClickedStackFirst(1);
+        } else if (type == Type.TYPE_3) {
+            Global.getSector().getPlayerStats().setSkillLevel("sms_shared_knowledge", 2f);
+            var messageDisplay = Global.getSector().getCampaignUI().getMessageDisplay();
+            String name = Global.getSettings().getSkillSpec("sms_shared_knowledge").getName();
+            messageDisplay.addMessage(String.format(Strings.Items.superconstruct3MessageDisplay1, name), Misc.getHighlightColor());
+            messageDisplay.addMessage(String.format(Strings.Items.superconstruct3MessageDisplay2, name), Misc.getHighlightColor());
+            Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
         }
     }
 }

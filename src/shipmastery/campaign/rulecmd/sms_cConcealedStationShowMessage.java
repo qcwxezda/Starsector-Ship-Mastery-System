@@ -138,13 +138,9 @@ public class sms_cConcealedStationShowMessage extends BaseCommandPlugin {
                 String tag = message.substring(i + 1, j);
                 switch (tag) {
                     case "br" -> {
-                        var label = Global.getSettings().createLabel("", Fonts.ORBITRON_12);
-                        float width = label.computeTextWidth("-");
-                        int count = (int) ((textWidth - 30f) / width);
+                        String br = Utils.makeLineBreak(textWidth - 30f, Fonts.ORBITRON_12);
                         appendToStringAndHighlight(sb, currentHighlight, "\n");
-                        for (int k = 0; k < count; k++) {
-                            appendToStringAndHighlight(sb, currentHighlight, "-");
-                        }
+                        appendToStringAndHighlight(sb, currentHighlight, br);
                         appendToStringAndHighlight(sb, currentHighlight, "\n");
                     }
                     case "h" -> currentHighlight = new StringBuilder();
@@ -157,13 +153,13 @@ public class sms_cConcealedStationShowMessage extends BaseCommandPlugin {
                     case "fullName" ->
                             appendToStringAndHighlight(sb, currentHighlight, Global.getSector().getFaction(Factions.INDEPENDENT).createRandomPerson(random).getNameString());
                     case "nucleusLoc" -> {
-                        Vector2f loc = (Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.NUCLEUS_LOCATION);
-                        String str = String.format("(%.1f, %.1f)", loc.x / 2000f, loc.y / 2000f);
+                        Vector2f loc = Utils.toLightyears((Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.NUCLEUS_LOCATION));
+                        String str = String.format("(%.1f, %.1f)", loc.x, loc.y);
                         appendToStringAndHighlight(sb, currentHighlight, str);
                     }
-                    case "remotePylonLoc" -> {
-                        Vector2f loc = (Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.REMOTE_PYLON_LOCATION);
-                        String str = String.format("(%.1f, %.1f)", loc.x / 2000f, loc.y / 2000f);
+                    case "remoteBeaconLoc" -> {
+                        Vector2f loc = Utils.toLightyears((Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.REMOTE_BEACON_LOCATION));
+                        String str = String.format("(%.1f, %.1f)", loc.x, loc.y);
                         appendToStringAndHighlight(sb, currentHighlight, str);
                     }
                 }

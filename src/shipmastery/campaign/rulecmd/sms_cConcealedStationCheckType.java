@@ -21,7 +21,7 @@ public class sms_cConcealedStationCheckType extends BaseCommandPlugin {
         var memory = getEntityMemory(memoryMap);
         if (memory == null) return false;
 
-        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(TestGenerator.STATION_TYPE_KEY);
+        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
         if (type == null) return false;
 
         switch (type) {

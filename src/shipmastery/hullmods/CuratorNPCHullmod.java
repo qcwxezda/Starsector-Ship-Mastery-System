@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.IntervalUtil;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.OverlayEmitter;
+import shipmastery.util.Strings;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -50,6 +51,7 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
         private final IntervalUtil interval;
         private final ShipAPI ship;
         private final String id;
+        private final boolean enabled;
         private final OverlayEmitter emitter;
         private final FaderUtil effectFader = new FaderUtil(0f, 1f);
 
@@ -61,7 +63,6 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
             emitter.alphaMult = 0.3f;
             emitter.fadeInFrac = 0.1f;
             emitter.fadeOutFrac = 0.1f;
-            ship.setExplosionFlashColorOverride(new Color(150, 250, 200));
             emitter.enableDynamicAnchoring();
             return emitter;
         }
@@ -78,16 +79,21 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
             float minIntervalTime;
             if (ship.getCaptain() != null && ship.getCaptain().getAICoreId() != null) {
                 minIntervalTime = switch (ship.getCaptain().getAICoreId()) {
-                    case "sms_gamma_k_core" -> 40f;
-                    case "sms_beta_k_core" -> 30f;
-                    case "sms_alpha_k_core" -> 20f;
-                    default -> 50f;
+                    case "sms_fractured_gamma_core" -> 60f;
+                    case "sms_gamma_k_core" -> 45f;
+                    case "sms_beta_k_core" -> 35f;
+                    case "sms_alpha_k_core" -> 25f;
+                    case "sms_amorphous_core" -> 15f;
+                    default -> 999999999f;
                 };
             } else {
-                minIntervalTime = 50f;
+                minIntervalTime = 999999999f;
             }
-
-            interval = new IntervalUtil(minIntervalTime, 1.5f*minIntervalTime);
+            enabled = minIntervalTime < 100f;
+            if (enabled) {
+                ship.setExplosionFlashColorOverride(new Color(150, 250, 200));
+            }
+            interval = new IntervalUtil(minIntervalTime, 1.2f*minIntervalTime);
         }
 
         @Override
@@ -98,6 +104,7 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
                 return;
             }
 
+            if (!enabled) return;
             effectFader.advance(amount);
             //noinspection unchecked
             List<ShipAPI> fighterList = ship.getCustomData() == null ? null : (List<ShipAPI>) ship.getCustomData().get(CUSTOM_DATA_KEY);
@@ -154,9 +161,24 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
     @Override
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (!fleet.isPlayerFleet()) return;
+        boolean active = Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.K_CORE_AMP_INTEGRATED);
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            if (fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
-                fm.getVariant().removePermaMod("sms_curator_npc_hullmod");
+            boolean remove = !active;
+            remove |= fm.getCaptain() == null || !fm.getCaptain().isAICore() || fm.getCaptain().getAICoreId() == null;
+
+            if (!remove) {
+                var spec = Global.getSettings().getCommoditySpec(fm.getCaptain().getAICoreId());
+                remove = spec == null || !spec.hasTag("sms_k_core");
+            }
+
+            if (remove) {
+                if (fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
+                    fm.getVariant().removePermaMod("sms_curator_npc_hullmod");
+                }
+            } else {
+                if (!fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
+                    fm.getVariant().addPermaMod("sms_curator_npc_hullmod");
+                }
             }
         }
     }

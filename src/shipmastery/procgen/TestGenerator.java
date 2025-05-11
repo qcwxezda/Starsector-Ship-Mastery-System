@@ -40,6 +40,7 @@ import shipmastery.plugin.CuratorOfficerPlugin;
 import shipmastery.plugin.EmitterArrayPlugin;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -57,11 +58,6 @@ public class TestGenerator {
     public static final int NUM_STATIONS_HULLMOD = 3;
     public static final int NUM_STATIONS_ITEM = 2;
     public static final int NUM_PROBES_PER_STATION = 5;
-    public static final String STATION_TYPE_KEY = "$sms_StationType";
-    // Force set the commander id of defenders in probes and stations, so that their masteries remain the same
-    // even if they are regenerated
-    public static final String DEFENSES_COMMANDER_ID_KEY = "$sms_DefensesCommanderId";
-    public static final String COMMANDER_PREFIX = "sms_commander_";
     public static final Vector2f NUCLEUS_LOCATION = new Vector2f(60000f, 40000f);
 
     Random random = new Random(Global.getSector().getSeedString().hashCode());
@@ -146,16 +142,16 @@ public class TestGenerator {
 
     public void generateRemoteSystem() {
 
-        Vector2f remotePylonLocation = new Vector2f(-SECTOR_WIDTH/2f-15500f, SECTOR_HEIGHT/2f-14500f);
+        Vector2f remoteBeaconLocation = new Vector2f(-SECTOR_WIDTH/2f-15500f, SECTOR_HEIGHT/2f-14500f);
 
-        var system = Global.getSector().createStarSystem(Strings.Campaign.remotePylon);
-        system.getLocation().set(remotePylonLocation.x, remotePylonLocation.y);
-        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_PYLON_LOCATION, remotePylonLocation);
+        var system = Global.getSector().createStarSystem(Strings.Campaign.remoteBeacon);
+        system.getLocation().set(remoteBeaconLocation.x, remoteBeaconLocation.y);
+        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_BEACON_LOCATION, remoteBeaconLocation);
 
         var center = Global.getSettings().createLocationToken(0f, 0f);
         system.addEntity(center);
-        var planet = system.addPlanet("sms_remote_pylon", center, Strings.Campaign.remotePylon, Planets.BARREN_CASTIRON, 0f, 300f, 0.01f, 100f);
-        planet.setCustomDescriptionId("sms_remote_pylon");
+        var planet = system.addPlanet("sms_remote_beacon", center, Strings.Campaign.remoteBeacon, Planets.BARREN_CASTIRON, 0f, 300f, 0.01f, 100f);
+        planet.setCustomDescriptionId("sms_remote_beacon");
         // add picked conditions to market
         MarketAPI market = Global.getFactory().createMarket(planet.getId(), planet.getName(), 1);
         market.setPlanetConditionMarketOnly(true);
@@ -163,7 +159,7 @@ public class TestGenerator {
         market.setFactionId(Factions.NEUTRAL);
         planet.setMarket(market);
 
-        market.getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD, true);
+        market.getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD, true);
         List<String> ids = Arrays.asList("dark", "high_gravity", "no_atmosphere", "very_cold");
         for (String cid : ids) {
             if (cid.endsWith(ConditionGenDataSpec.NO_PICK_SUFFIX)) continue;
@@ -177,7 +173,7 @@ public class TestGenerator {
         market.reapplyConditions();
         system.setCenter(center);
 
-        var locationToken = Global.getSettings().createLocationToken(remotePylonLocation.x, remotePylonLocation.y);
+        var locationToken = Global.getSettings().createLocationToken(remoteBeaconLocation.x, remoteBeaconLocation.y);
         Global.getSector().getHyperspace().addEntity(locationToken);
         NascentGravityWellAPI well = new NascentGravityWell(planet, 250f);
         well.setColorOverride(new Color(150, 255, 200));
@@ -405,16 +401,22 @@ public class TestGenerator {
         Collections.shuffle(stationTypes);
 
         // Add the stations
+        var globalMemory = Global.getSector().getMemoryWithoutUpdate();
+        List<String> locations = new ArrayList<>();
+        globalMemory.set(Strings.Campaign.BEACON_LOCATION_NAMES, locations);
         List<SectorEntityToken> addedEntities = new ArrayList<>();
         for (int i = 0; i < selectedSystems.size(); i++) {
             StarSystemAPI system = selectedSystems.get(i);
+            var ly = Utils.toLightyears(system.getLocation());
+            locations.add(system.getNameWithTypeIfNebula() + String.format(" (%.1f, %.1f)", ly.getX(), ly.getY()));
             BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickHiddenLocationNotNearStar(random, system, 100f, null);
             BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(random, system, location, "sms_concealed_station",
                     Factions.NEUTRAL);
             processAddedItem(added.entity);
             var memory = added.entity.getMemoryWithoutUpdate();
-            memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
-            memory.set(STATION_TYPE_KEY, stationTypes.get(i));
+            memory.set(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY, Strings.Campaign.COMMANDER_PREFIX + Misc.genUID());
+            memory.set(Strings.Campaign.STATION_TYPE_KEY, stationTypes.get(i));
+            memory.set(Strings.Campaign.BEACON_ID, i);
             addedEntities.add(added.entity);
             // strength data is overridden in ConcealedEntityDefenderPlugin
             DefenderDataOverride ddo = new DefenderDataOverride("sms_curator", 1f, 0f, 0f, 0);
@@ -449,7 +451,7 @@ public class TestGenerator {
                         Factions.NEUTRAL);
                 processAddedItem(added.entity);
                 var memory = added.entity.getMemoryWithoutUpdate();
-                memory.set(DEFENSES_COMMANDER_ID_KEY, COMMANDER_PREFIX + Misc.genUID());
+                memory.set(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY, Strings.Campaign.COMMANDER_PREFIX + Misc.genUID());
                 // strength data is overridden in ConcealedEntityDefenderPlugin
                 DefenderDataOverride ddo = new DefenderDataOverride("sms_curator", 1f, 0f, 0f, 0);
                 Misc.setDefenderOverride(added.entity, ddo);

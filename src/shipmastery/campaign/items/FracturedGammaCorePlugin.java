@@ -5,12 +5,12 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 
 public class FracturedGammaCorePlugin extends BaseKCorePlugin {
 
-    public static final int MAX_LEVEL = 1;
+    public static final int LEVEL = 1;
     public static final float DP_MULT = 1.5f;
 
     @Override
     public int getBaseLevel() {
-        return MAX_LEVEL;
+        return LEVEL;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class FracturedGammaCorePlugin extends BaseKCorePlugin {
 
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
-        stats.setLevel(MAX_LEVEL);
+        stats.setLevel(LEVEL);
         stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
     }
 }

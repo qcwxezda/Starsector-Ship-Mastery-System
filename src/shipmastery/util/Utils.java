@@ -17,6 +17,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.campaign.fleet.FleetData;
@@ -25,6 +26,7 @@ import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.lwjgl.util.vector.Vector2f;
 import shipmastery.ShipMastery;
 import shipmastery.data.MasteryInfo;
 import shipmastery.mastery.MasteryEffect;
@@ -790,4 +792,15 @@ public abstract class Utils {
             }
         } catch (Exception ignore) {}
     }
+
+    public static Vector2f toLightyears(Vector2f loc) {
+        return new Vector2f(loc.x/2000f, loc.y/2000f);
+    }
+
+    public static String makeLineBreak(float width, String font) {
+        LabelAPI label = Global.getSettings().createLabel("", font);
+        float per = label.computeTextWidth("-");
+        return "-".repeat((int) (width/per));
+    }
+
 }
