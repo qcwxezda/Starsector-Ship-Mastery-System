@@ -23,7 +23,7 @@ public class sms_cConcealedStationAddSuperconstruct extends BaseCommandPlugin {
         var memory = getEntityMemory(memoryMap);
         if (memory.getBoolean(Strings.Campaign.STATION_USED_KEY)) return true;
 
-        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(TestGenerator.STATION_TYPE_KEY);
+        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
         String itemId;
         if (type == TestGenerator.StationType.SUPERCONSTRUCT_1) {
             itemId = Strings.Items.SUPERCONSTRUCT_1;

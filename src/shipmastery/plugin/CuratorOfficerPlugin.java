@@ -16,6 +16,7 @@ import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.items.AlphaKCorePlugin;
+import shipmastery.campaign.items.AmorphousCorePlugin;
 import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.GammaKCorePlugin;
@@ -77,6 +78,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 case "sms_gamma_k_core" -> new GammaKCorePlugin();
                 case "sms_beta_k_core" -> new BetaKCorePlugin();
                 case "sms_alpha_k_core" -> new AlphaKCorePlugin();
+                case "sms_amorphous_core" -> new AmorphousCorePlugin();
                 default -> null;
             };
             if (plugin == null) continue;
@@ -89,6 +91,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 case "sms_gamma_k_core" -> 10000f;
                 case "sms_beta_k_core" -> 100000f;
                 case "sms_alpha_k_core" -> 1000000f;
+                case "sms_amorphous_core" -> 10000000f;
                 default -> 0f;
             };
             commanderScore += fm.getFleetPointCost();
@@ -131,6 +134,10 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 numCommanderSkills = 5;
                 memory.set(key, 8);
             }
+            case "sms_amorphous_core" -> {
+                numCommanderSkills = 7;
+                memory.set(key, 999999);
+            }
             default -> numCommanderSkills = 0;
         }
         return numCommanderSkills;
@@ -141,12 +148,12 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
         captain.getStats().setLevel(captain.getStats().getLevel() + 1);
         captain.getStats().setSkipRefresh(true);
-        // First, remove all existing skills *except* the unique one, if it exists
+        // First, remove all existing skills *except* the unique ones, if they exists
         IntRef numSkillsRemoved = new IntRef(0);
         var skills = ((CharacterStats) captain.getStats()).getSkills();
         skills.removeIf(skill -> {
             if (!skill.getSkill().isCombatOfficerSkill()) return false;
-            if (!BetaKCorePlugin.UNIQUE_SKILL_ID.equals(skill.getSkill().getId())) {
+            if (Utils.combatSkillIds.contains(skill.getSkill().getId())) {
                 numSkillsRemoved.value++;
                 return true;
             }

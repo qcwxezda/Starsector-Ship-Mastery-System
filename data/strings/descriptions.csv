@@ -1,6 +1,6 @@
 id,type,text1,text2,text3,text4,notes
-sms_remote_pylon,CUSTOM,"This seemingly unremarkable rock is encapsulated by an impenetrable barrier. Whoever would go through the trouble to shield a planet so removed from the confines of the sector must have stashed within it infinite wealth, power, or some combination of the two. At least, that's what common folklore would suggest."
-sms_remote_pylon_no_shield,CUSTOM,This seemingly unremarkable rock was once enveloped by an impenetrable barrier.
+sms_remote_beacon,CUSTOM,"This seemingly unremarkable rock is encapsulated by an impenetrable barrier. Whoever would go through the trouble to shield a planet so removed from the confines of the sector must have stashed within it infinite wealth, power, or some combination of the two. At least, that's what common folklore would suggest."
+sms_remote_beacon_no_shield,CUSTOM,This seemingly unremarkable rock was once enveloped by an impenetrable barrier.
 sms_concealed_probe,CUSTOM,"An autonomous probe of impressive scale equipped with a sensor cloak. This particular probe, while not currently functional, appears to have been calibrated to detect pockets of unusually high environmental flux that would indicate the presence of a venting, overloaded, or destroyed spacefaring vessel.",,,,
 sms_concealed_station,CUSTOM,"A seemingly abandoned station, located far away from civilized space and outfitted with a device that masks its sensor signal, albeit with limited effectiveness. Whoever built this station clearly wanted to keep it safe from prying pirates, scavengers, and adventurers alike. A closer inspection is required.",,,,
 sms_station_nucleus,CUSTOM,"A massive siphon intercepting a pair of binary stars, deformed by cycles of bidirectional tension.",,,,

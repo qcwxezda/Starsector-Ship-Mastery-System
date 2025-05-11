@@ -200,10 +200,10 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
             if (shieldFader.getBrightness() < 1f) {
                 BluePlanetaryShield.applyVisuals((PlanetAPI) center, 1f - shieldFader.getBrightness());
             }
-            if (shieldFader.getBrightness() >= 1f && center.getMarket().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD)) {
+            if (shieldFader.getBrightness() >= 1f && center.getMarket().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD)) {
                 Global.getSoundPlayer().playSound("ui_shutdown_industry", 1f, 1f, Global.getSector().getPlayerFleet().getLocation(), new Vector2f());
-                center.setCustomDescriptionId("sms_remote_pylon_no_shield");
-                center.getMarket().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_PYLON_HAS_SHIELD);
+                center.setCustomDescriptionId("sms_remote_beacon_no_shield");
+                center.getMarket().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD);
             }
         }
     }

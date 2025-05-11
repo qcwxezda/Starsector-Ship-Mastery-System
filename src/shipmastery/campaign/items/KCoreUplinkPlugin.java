@@ -96,7 +96,7 @@ public class KCoreUplinkPlugin extends BaseSpecialItemPlugin {
         } else {
             tooltip.addPara(Strings.Items.uplinkStatus2, 10f, new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor()}, Utils.asInt(data.numPoints), Utils.asPercent(data.crPenalty));
         }
-        this.addCostLabel(tooltip, 10f, transferHandler, stackSource);
+        addCostLabel(tooltip, 10f, transferHandler, stackSource);
         tooltip.addPara(Strings.Items.uplinkRightClick, Misc.getPositiveHighlightColor(), 10f);
     }
 }

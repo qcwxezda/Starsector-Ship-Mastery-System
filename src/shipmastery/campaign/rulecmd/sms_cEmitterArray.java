@@ -31,6 +31,7 @@ public class sms_cEmitterArray extends BaseCommandPlugin {
         var origPlugin = dialog.getPlugin();
         var optionPanel = dialog.getOptionPanel();
         dialog.setPromptText(String.format(Strings.Campaign.emitterPromptText, MAX_UNITS));
+        dialog.getTextPanel().addPara(Strings.Campaign.welcomeText);
         optionPanel.clearOptions();
         optionPanel.addSelector(Strings.Campaign.emitterLeft, LEFT_SELECTOR, Color.WHITE, 500f, 50f, 0f, 3f, ValueDisplayMode.VALUE, Strings.Campaign.emitterLeftExt);
         optionPanel.setSelectorValue(LEFT_SELECTOR, emitterPlugin.getLeftOutput());

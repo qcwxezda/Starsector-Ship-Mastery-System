@@ -10,5 +10,8 @@
   ],
   "sms_change_masteries": [
     {"file": "sounds/sfx_interface/ui_char_increase_aptitude.ogg", "pitch": 1, "volume": 1}
+  ],
+  "sms_dimensional_tether_retreat": [
+    {"file": "sounds/dimensional_tether_retreat.wav", "pitch": 1, "volume": 1}
   ]
 }

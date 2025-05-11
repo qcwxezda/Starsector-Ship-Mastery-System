@@ -28,6 +28,7 @@ import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
 import shipmastery.campaign.items.AlphaKCorePlugin;
+import shipmastery.campaign.items.AmorphousCorePlugin;
 import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.KCoreInterface;
@@ -283,7 +284,7 @@ public class ModPlugin extends BaseModPlugin {
         registerCuratorFleetPlugins();
     }
 
-    private static void registerCuratorFleetPlugins(){
+    private static void registerCuratorFleetPlugins() {
         GenericPluginManagerAPI plugins = Global.getSector().getGenericPlugins();
         if (!plugins.hasPlugin(ConcealedEntityDefenderPlugin.class)) {
             plugins.addPlugin(new ConcealedEntityDefenderPlugin(), true);
@@ -309,6 +310,7 @@ public class ModPlugin extends BaseModPlugin {
                     case "sms_beta_k_core" -> new PluginPick<>(new BetaKCorePlugin(), PickPriority.MOD_SPECIFIC);
                     case "sms_gamma_k_core" -> new PluginPick<>(new GammaKCorePlugin(), PickPriority.MOD_SPECIFIC);
                     case "sms_fractured_gamma_core" -> new PluginPick<>(new FracturedGammaCorePlugin(), PickPriority.MOD_SPECIFIC);
+                    case "sms_amorphous_core" -> new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
                     default -> null;
                 };
             }

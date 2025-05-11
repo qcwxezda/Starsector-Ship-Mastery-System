@@ -3,16 +3,30 @@ package shipmastery.util;
 public interface Strings {
 
     interface Campaign {
-        String EMITTER_SOLVED = "$sms_EmitterArraySolved";
-        String REMOTE_PYLON_HAS_SHIELD = "$sms_HasShield";
-        String NUM_MESSAGES_SEEN = "$sms_NumMessagesSeen";
-        String NUCLEUS_LOCATION = "$sms_NucleusLocation";
-        String REMOTE_PYLON_LOCATION = "$sms_RemotePylonLocation";
+        String EMITTER_SOLVED = "$sms_EmitterArraySolved"; // global
+        String REMOTE_BEACON_HAS_SHIELD = "$sms_HasShield";
+        String NUM_MESSAGES_SEEN = "$sms_NumMessagesSeen"; // global
+        String NUCLEUS_LOCATION = "$sms_NucleusLocation"; // global
+        String REMOTE_BEACON_LOCATION = "$sms_RemoteBeaconLocation"; // global
         String STATION_SEEN_MESSAGE_INDEX = "$sms_SeenMessageIndex";
-        String NUM_STATIONS_DEFEATED = "$sms_NumStationsDefeated";
-        String NUM_PROBES_PROCESSED = "$sms_NumProbesProcessed";
+        String NUM_STATIONS_DEFEATED = "$sms_NumStationsDefeated"; // global
+        String NUM_PROBES_PROCESSED = "$sms_NumProbesProcessed"; // global
+        String BEACON_LOCATION_NAMES = "$sms_ConcealedStationLocations"; // global
+        String LOOTED_REMOTE_BEACON = "$sms_LootedRemoteBeacon"; // global
         String HULLMOD_NUM_TO_ADD = "$sms_HullmodToAdd";
         String SUPERCONSTRUCT_TO_ADD = "$sms_SuperconstructToAdd";
+        String NUCLEUS_ADMIN_ACCESS = "$sms_NucleusAdminAccess";
+        String NUCLEUS_SHUT_DOWN = "$sms_NucleusShutDown";
+        String NUCLEUS_UNSEALED = "$sms_NucleusUnsealed";
+        String BEACON_ID = "$sms_BeaconID";
+        String STATION_TYPE_KEY = "$sms_StationType";
+        String K_CORE_AMP_INTEGRATED = "$sms_KCoreAmpIntegrated";
+        // Force set the commander id of defenders in probes and stations, so that their masteries remain the same
+        // even if they are regenerated
+        String DEFENSES_COMMANDER_ID_KEY = "$sms_DefensesCommanderId";
+        String COMMANDER_PREFIX = "sms_commander_";
+        String SALVAGED_BEACON_IDS = "$sms_SalvagedBeaconIDs"; // global
+
         String STATION_USED_KEY = "$sms_StationUsed";
 
         String[] messages = new String[] {
@@ -30,11 +44,29 @@ public interface Strings {
                 Utils.getString("sms_campaign", "rearrangement5Hint")
         };
         String selectLoot = Utils.getString("sms_campaign", "selectLoot");
+        String checkStatus = Utils.getString("sms_campaign", "checkStatus");
+        String shutDown = Utils.getString("sms_campaign", "shutDown");
+        String powerOn = Utils.getString("sms_campaign", "powerOn");
+        String sealStructure = Utils.getString("sms_campaign", "sealStructure");
+        String unsealStructure = Utils.getString("sms_campaign", "unsealStructure");
+        String checkingBeacons = Utils.getString("sms_campaign", "checkingBeacons");
+        String ellipses = Utils.getString("sms_campaign", "ellipses");
+        String unknown = Utils.getString("sms_campaign", "unknown");
+        String noConnection = Utils.getString("sms_campaign", "noConnection");
+        String ok = Utils.getString("sms_campaign", "ok");
+        String elevate = Utils.getString("sms_campaign", "elevate");
+        String leave = Utils.getString("sms_campaign", "leave");
+        String passcodeBlank = Utils.getString("sms_campaign", "passcodeBlank");
+        String passcodeWrong = Utils.getString("sms_campaign", "passcodeWrong");
+        String passcodeRight = Utils.getString("sms_campaign", "passcodeRight");
+        String questionMarks = Utils.getString("sms_campaign", "questionMarks");
+        String statusText = Utils.getString("sms_campaign", "statusText");
+        String welcomeText = Utils.getString("sms_campaign", "welcomeText");
         String officerAddedToFleet = Utils.getString("sms_campaign", "officerAddedToFleet");
         String fleetLogIntelTitle = Utils.getString("sms_campaign", "fleetLogIntelTitle");
         String fleetLogIntelHeader = Utils.getString("sms_campaign", "fleetLogIntelHeader");
         String fleetLogDeleteButton = Utils.getString("sms_campaign", "fleetLogDeleteButton");
-        String remotePylon = Utils.getString("sms_campaign", "remotePylon");
+        String remoteBeacon = Utils.getString("sms_campaign", "remoteBeacon");
         String convertedNexus = Utils.getString("sms_campaign", "convertedNexus");
         String cancelText = Utils.getString("sms_campaign", "cancelText");
         String emitterConfirm = Utils.getString("sms_campaign", "emitterConfirm");
@@ -184,6 +216,9 @@ public interface Strings {
         String superconstruct2RightClick = Utils.getString("sms_items", "superconstruct2RightClick");
         String superconstruct2MessageDisplay1 = Utils.getString("sms_items", "superconstruct2MessageDisplay1");
         String superconstruct2MessageDisplay2 = Utils.getString("sms_items", "superconstruct2MessageDisplay2");
+        String superconstruct3RightClick = Utils.getString("sms_items", "superconstruct3RightClick");
+        String superconstruct3MessageDisplay1 = Utils.getString("sms_items", "superconstruct3MessageDisplay1");
+        String superconstruct3MessageDisplay2 = Utils.getString("sms_items", "superconstruct3MessageDisplay2");
         String amorphousCorePersonalityText  = Utils.getString("sms_items", "amorphousCorePersonalityText");
         String kCoreAdditionalInfo = Utils.getString("sms_items", "kCoreAdditionalInfo");
         String kCorePersonalityTableTitle1 = Utils.getString("sms_items", "kCorePersonalityTableTitle1");
@@ -192,7 +227,6 @@ public interface Strings {
         String kCorePersonalityTableName2 = Utils.getString("sms_items", "kCorePersonalityTableName2");
         String kCorePersonalityTableName3 = Utils.getString("sms_items", "kCorePersonalityTableName3");
         String kCorePersonalityText = Utils.getString("sms_items", "kCorePersonalityText");
-        String kCorePersonalityText2 = Utils.getString("sms_items", "kCorePersonalityText2");
         String uplinkKCoreSelect = Utils.getString("sms_items", "uplinkKCoreSelect");
         String uplinkSkillSelect = Utils.getString("sms_items", "uplinkSkillSelect");
         String uplinkDesc = Utils.getString("sms_items", "uplinkDesc");
@@ -200,11 +234,14 @@ public interface Strings {
         String uplinkStatus = Utils.getString("sms_items", "uplinkStatus");
         String uplinkStatus2 = Utils.getString("sms_items", "uplinkStatus2");
         String uplinkPenaltyDesc = Utils.getString("sms_items", "uplinkPenaltyDesc");
+        String ampRightClick = Utils.getString("sms_items", "ampRightClick");
+        String ampIntegrated = Utils.getString("sms_items", "ampIntegrated");
     }
 
     interface Skills {
-        String dimensionalLinkEffect = Utils.getString("sms_skills", "dimensionalLinkEffect");
-        String dimensionalLinkRetreatText = Utils.getString("sms_skills", "dimensionalLinkRetreatText");
+        String dimensionalTetherEffect = Utils.getString("sms_skills", "dimensionalTetherEffect");
+        String dimensionalTetherRetreatText = Utils.getString("sms_skills", "dimensionalTetherRetreatText");
+        String dimensionalTetherEliteEffect = Utils.getString("sms_skills", "dimensionalTetherEliteEffect");
         String sharedKnowledgeStandardEffect = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect");
         String sharedKnowledgeEliteEffect = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect");
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");

@@ -39,12 +39,12 @@ sms_EmitterArraySolved,OpenInteractionDialog,"$customType == sms_emitter_array s
 $global.sms_EmitterArraySolved",,"You approach the emitter array, but do not receive a connection request.
 
 There's nothing more to be done here.",,
-sms_RemotePylonShielded,OpenInteractionDialog,"$market.id == sms_remote_pylon score:100
+sms_RemoteBeaconShielded,OpenInteractionDialog,"$market.id == sms_remote_beacon score:100
 $market.sms_HasShield
 ",,This planet is encased by a massive barrier. Further interaction is impossible while the shield is deployed.,,
-sms_RemotePylonNoShieldUnlooted,OpenInteractionDialog,"$market.id == sms_remote_pylon score:100
+sms_RemoteBeaconNoShieldUnlooted,OpenInteractionDialog,"$market.id == sms_remote_beacon score:100
 !$market.sms_HasShield
-!$market.sms_LootedRemotePylon","AddTextSmall ""A wave of uneasiness washes over you, as if proceeding could launch you into an unpleasant, or even dangerous, situation."" highlight","With the encasing shield gone, your fleet advances toward the planet.
+!$global.sms_LootedRemoteBeacon","AddTextSmall ""A wave of uneasiness washes over you, as if proceeding could launch you into an unpleasant, or even dangerous, situation."" highlight","With the encasing shield gone, your fleet advances toward the planet.
 
 It's almost entirely barren, little more than a featureless space rock, with hardly anything to observe outside the stray indent from a smaller rock -- a sure indicator that the barrier, at least on a geological level, was a recent addition.
 
@@ -54,9 +54,9 @@ You're just about to delegate the task of combing through what little there is t
 
 Whatever you're about to find down there could be a monumental discovery. And you couldn't in good conscience risk a technologically-inexperienced team of salvors, known for destroying as much high-tech salvage as they haul back, potentially breaking things. You're determined to personally oversee at least this initial excursion.
 
-","sms_oRemotePylonNoShieldUnlooted:Take a shuttle down to the facility
+","sms_oRemoteBeaconNoShieldUnlooted:Take a shuttle down to the facility
 defaultLeave:Leave, for now",
-sms_RemotePylonNoShieldUnlooted2,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted,ShowImageVisual abandoned_station3,"With your personal bodyguards and a small team of your most experienced engineers, you head toward the isolated facility.
+sms_RemoteBeaconNoShieldUnlooted2,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted,ShowImageVisual abandoned_station3,"With your personal bodyguards and a small team of your most experienced engineers, you head toward the isolated facility.
 
 On the ground, through a sheathe of darkness penetrated by nothing except the tac-lights on your helmets, you carefully make your way to the structure's only opening, which would have been a door did it not lack the door part thereof.
 
@@ -64,23 +64,23 @@ It's equally as dark inside, and just as abandoned as the calculations predicted
 
 
 
-",sms_oRemotePylonNoShieldUnlooted2:Continue,
-sms_RemotePylonNoShieldUnlooted3,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted2,,"""Captain, over here!""
+",sms_oRemoteBeaconNoShieldUnlooted2:Continue,
+sms_RemoteBeaconNoShieldUnlooted3,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted2,,"""Captain, over here!""
 
 One of your engineers is hovering over a secure travel-size container resting in the corner of an otherwise empty closet. The words ""PROTOTYPE - NOT WORKING"" -- the only words in the entire facility -- are scrawled diagonally in black ink across the top of the box.
 
 The security lock on the container indicates that it's been tampered with. It's unlocked.
 
-",sms_oRemotePylonNoShieldUnlooted3:Loot the container,
-sms_RemotePylonNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_uplink 1
-$market.sms_LootedRemotePylon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemotePylonNoShieldUnlooted4:Loot the rest of the facility,
-sms_RemotePylonNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted4,,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
+",sms_oRemoteBeaconNoShieldUnlooted3:Loot the container,
+sms_RemoteBeaconNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_amplifier 1
+$global.sms_LootedRemoteBeacon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemoteBeaconNoShieldUnlooted4:Loot the rest of the facility,
+sms_RemoteBeaconNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted4,,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
 
 You return to your shuttle and instruct a salvage team to commence routine operations.
 
-",sms_oRemotePylonNoShieldUnlooted5:Continue,
-sms_RemotePylonNoShieldUnlooted6,DialogOptionSelected,$option == sms_oRemotePylonNoShieldUnlooted5,sms_cRemotePylonAdditionalLoot,,,
-sms_RemotePylonNoShieldLootPicked,sms_tRemotePylonNoShieldLootPicked,,,,defaultLeave:Leave,
+",sms_oRemoteBeaconNoShieldUnlooted5:Continue,
+sms_RemoteBeaconNoShieldUnlooted6,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted5,sms_cRemoteBeaconAdditionalLoot,,,
+sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,,,defaultLeave:Leave,
 sms_ConcealedStationFirstTime,OpenInteractionDialog,"$customType == sms_concealed_station score:100
 !$global.sms_SeenConcealedStation
 !$entity.sms_SeenMessage",ShowDefaultVisual,"Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
@@ -167,6 +167,10 @@ The tools and machines overseeing the hangar don't move. Instead, a blinding lig
 There doesn't seem to be any external damage to your ship, but internal systems have gone haywire. Its scanners are picking up dozens of hostile ships at a distance of less than 10 meters, weapons are offline, engines are randomly stalling. Your engineers reassure you that they'll be able to get the ship back into working order, but it will take some time. It's unclear if your stunt caused any lasting damage or changes to the ship's operating capacity.",sms_oConcealedStationContinueToSalvage:Continue,
 sms_ConcealedStationContinueToSalvage,DialogOptionSelected,$option == sms_oConcealedStationContinueToSalvage,"SalvageEntity showCost
 FireAll PopulateSalvageOptions2",,,
+sms_ConcealedStationSalvaged,PostSalvagePerform,"$customType == sms_concealed_station score:100
+!$sms_ProcessedSalvagedStation","$sms_ProcessedSalvagedStation = true
+sms_cNotifyStationSalvaged
+FireBest PostSalvagePerform",,,
 sms_ConcealedProbeSalvage,TriggerAutomatedDefenses,$customType == sms_concealed_probe score:100,SalvageDefenderInteraction,"As you pull in closer for a salvage assessment, a small number of unidentified energy signatures appear on your radar to be closing in on your location.
 
 ""$PlayerSirOrMadam, looks like automated defenses. They're protecting the site; you'll have to -- hold on --""
@@ -174,10 +178,11 @@ sms_ConcealedProbeSalvage,TriggerAutomatedDefenses,$customType == sms_concealed_
 You recognize the vessels before you as conventionally crewed ships. What would a small fleet of crewed ships be doing out here, if not amidst its own salvage expedition?
 
 The answer comes just a few moments later. The officers onboard these ships are not human, but AI. These vessels have been automated.",,
-sms_ConcealedProbeTryAddHullmod,BeginSalvage,"$customType == sms_concealed_probe score:100
+sms_ConcealedProbeTryAddHullmod,DialogOptionSelected,"$option == salSalvage
+$customType == sms_concealed_probe score:100
 !$sms_TriedToAddHullmod","sms_cConcealedProbeAddHullmod
 $sms_TriedToAddHullmod = true
-FireBest BeginSalvage
+SalvageEntity checkAccidents
 ",,,
 sms_CuratorGreeting,OpenCommLink,"$faction.id == sms_curator score:1000
 ",$entity.ignorePlayerCommRequests = true 1,There is nothing but the faint crackling of static.,cutCommLink:Cut the comm link,
@@ -188,20 +193,66 @@ You settle into a close orbit while scanning the structure for potential points 
 
 ""$PlayerSirOrMadam, I'm detecting enormous quantities of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions. It's unlikely there's a specific target in mind other than... everywhere.""
 
-He continues, ""It's just a garbled mess of data. Incomprehensible. But it means there's probably some way inside.""",sms_oNucleusFirstTime2:Continue,
+He continues, ""It's just a garbled mess of data. Incomprehensible.""",sms_oNucleusFirstTime2:Continue,
 sms_NucleusFirstTime2,DialogOptionSelected,$option == sms_oNucleusFirstTime2,,"""Hold on, I think I've got something...
 
-""Ah, there! It's... some sort of connection request. If I'm reading this correctly, it'd supposedly allow you to directly link your ship's computer systems with its central cluster, and then you'd supposedly be able to issue directives from here.
+""Ah, there! It's... some sort of connection request. If I'm reading this correctly, it'd -supposedly- allow you to directly link your ship's computer systems with its central cluster, and then you'd -supposedly- be able to issue directives from here.
 
 ""Mind you, I'm not convinced that's all there is to this. Seems like a terrible security solution. But as long as our anti-hijacking systems are up-to-date, couldn't hurt to give it a try... right?""","sms_oNucleusFirstTimeAllow:Allow the connection request
 defaultLeave:Leave",
 sms_NucleusFirstTimeAllow,DialogOptionSelected,$option == sms_oNucleusFirstTimeAllow,"$global.sms_NucleusSeen = true
 FireBest sms_tNucleusSelectOption","Almost as soon as you issue the order to accept the incoming request, your comms display flickers in a burst of static. Then, several instructions appear on-screen, prompting you to select one.",,
-sms_NucleusSelectOption,sms_tNucleusSelectOption,,,,"sms_oNucleusCheckBeacons:Check beacon status
-sms_oNucleusOpenStructure:Unseal
-sms_oNucleusShutDown:Shut down
-sms_oNucleusAdmin:Activate admin privileges
-defaultLeave:Leave
-",
+sms_NucleusSelectOption,sms_tNucleusSelectOption,!$global.sms_NucleusAdminAccess,FireBest sms_tNucleusPopulateOptions,"---------------------------------------
+
+Welcome back, Curator.",,
+sms_NucleusSelectOptionAdmin,sms_tNucleusSelectOption,$global.sms_NucleusAdminAccess,FireBest sms_tNucleusPopulateOptions,"---------------------------------------
+
+Welcome back, Admin.",,
+sms_NucleusSelectOptionNoGreeting,sms_tNucleusSelectOptionNoGreeting,,FireBest sms_tNucleusPopulateOptions,,,
+sms_NucleusPopulateOptions,sms_tNucleusPopulateOptions,,sms_cNucleusAddOptions,,,
 sms_NucleusSubsequentVisit,OpenInteractionDialog,"$customType == sms_station_nucleus score:100
-$global.sms_NucleusSeen",FireBest sms_tNucleusSelectOption,"As you approach the megastructure, you receive an automated request to connect to its mainframe, which you accept.",,
+$global.sms_NucleusSeen",FireBest sms_tNucleusSelectOption,"As you approach the megastructure, you receive an automated connection request, which you accept.",,
+sms_NucleusCheckBeacons,DialogOptionSelected,$option == sms_oNucleusCheckBeacons,sms_cNucleusCheckBeacons,,sms_oNucleusGoBack:Go back,
+sms_NucleusGoBack,DialogOptionSelected,$option == sms_oNucleusGoBack,FireBest sms_tNucleusSelectOptionNoGreeting,,,
+sms_NucleusUnsealNotShutDown,DialogOptionSelected,"$option == sms_oNucleusOpenStructure
+!$global.sms_NucleusShutDown","AddText ""Error: This command could not be completed\nReason: System is operational"" bad",,sms_oNucleusGoBack:Go back,
+sms_NucleusShutDownNoAdmin,DialogOptionSelected,"$option == sms_oNucleusShutDown
+!$global.sms_NucleusAdminAccess","AddText ""Error: This command could not be completed\nReason: This command requires elevation"" bad",,sms_oNucleusGoBack:Go back,
+sms_NucleusEnableAdmin,DialogOptionSelected,$option == sms_oNucleusAdmin,sms_cNucleusRequestAdmin,,,
+sms_NucleusShutDownAdmin,DialogOptionSelected,"$option == sms_oNucleusShutDown
+$global.sms_NucleusAdminAccess",,Please confirm your instructions.,"sms_oNucleusShutDownConfirm:Confirm
+sms_oNucleusGoBack:Go back",
+sms_NucleusShutDownAdminConfirm,DialogOptionSelected,$option == sms_oNucleusShutDownConfirm,"$global.sms_NucleusShutDown = true
+sms_cPlaySoundExt ui_downgrade_industry 0.5 1.5","Shutting down ...
+
+...
+
+...
+
+Complete.",sms_oNucleusGoBack:Go back,
+sms_NucleusPowerOn,DialogOptionSelected,$option == sms_oNucleusPowerOn,,Please confirm your instructions.,"sms_oNucleusPowerOnConfirm:Confirm
+sms_oNucleusGoBack:Go back",
+sms_oNucleusPowerOnConfirm,DialogOptionSelected,$option == sms_oNucleusPowerOnConfirm,"$global.sms_NucleusShutDown = false
+sms_cPlaySoundExt ui_upgrade_industry 0.5 1.5","Powering on ...
+
+...
+
+...
+
+Complete.",sms_oNucleusGoBack:Go back,
+sms_NucleusUnsealShutDown,DialogOptionSelected,"$option == sms_oNucleusOpenStructure
+$global.sms_NucleusShutDown",,Please confirm your instructions.,"sms_oNucleusUnsealConfirm:Confirm
+sms_oNucleusGoBack:Go back",
+sms_NucleusUnsealConfirm,DialogOptionSelected,$option == sms_oNucleusUnsealConfirm,"$global.sms_NucleusUnsealed = true
+sms_cPlaySoundExt ui_build_industry 0.5 1.5","Releasing seals...
+
+...
+
+...
+
+Complete.",sms_oNucleusGoBack:Go back,
+sms_NucleusAttemptSeal,DialogOptionSelected,$option == sms_oNucleusCloseStructure,,Please confirm your instructions.,"sms_oNucleusSealConfirm:Confirm
+sms_oNucleusGoBack:Go back",
+sms_NucleusAttemptSealConfirm,DialogOptionSelected,$option == sms_oNucleusSealConfirm,"AddText ""Error: This command could not be completed\nReason: Unspecified error, please contact an administrator for assistance"" bad",,sms_oNucleusGoBack:Go back,
+sms_NucleusPowerOnUnsealed,DialogOptionSelected,"$option == sms_oNucleusPowerOn score:100
+$global.sms_NucleusUnsealed","AddText ""Error: This command could not be completed\nReason: Structure is unsealed"" bad",,sms_oNucleusGoBack:Go back,

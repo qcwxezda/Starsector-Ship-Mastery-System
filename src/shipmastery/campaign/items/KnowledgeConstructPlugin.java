@@ -26,7 +26,6 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -159,7 +158,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             tooltip.addPara(prefix + desc.getText1FirstPara(), opad);
         }
         this.addCostLabel(tooltip, opad, transferHandler, stackSource);
-        if (Objects.equals(getId(), "sms_superconstruct1") || Objects.equals(getId(), "sms_superconstruct2")) return;
+        if (getId() != null && getId().startsWith("sms_superconstruct")) return;
 
         if (!hasRightClickAction() && !noSpecString) {
             tooltip.addPara(Strings.Items.knowledgeConstructCantRightClick, Misc.getGrayColor(), opad);

@@ -1,18 +1,11 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
-import shipmastery.util.Strings;
 
-public class GammaKCorePlugin extends BetaKCorePlugin {
-
+public class GammaKCorePlugin extends BaseKCorePlugin {
+    public static final int LEVEL = 3;
     public static final float DP_MULT = 2.5f;
-    public static final int MAX_LEVEL = 3;
 
     @Override
     public float getBaseAIPointsMult() {
@@ -21,23 +14,12 @@ public class GammaKCorePlugin extends BetaKCorePlugin {
 
     @Override
     public int getBaseLevel() {
-        return MAX_LEVEL;
+        return LEVEL;
     }
 
     @Override
     public String getCommodityId() {
         return "sms_gamma_k_core";
-    }
-
-    @Override
-    public void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip) {
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(getCommodityId());
-        createPersonalitySection(
-                person,
-                tooltip,
-                Strings.Items.kCorePersonalityText,
-                Misc.getHighlightColor(),
-                spec.getName());
     }
 
     @Override
@@ -47,9 +29,9 @@ public class GammaKCorePlugin extends BetaKCorePlugin {
 
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
-        stats.setLevel(MAX_LEVEL);
+        stats.setLevel(LEVEL);
         stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
         stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
-        stats.setSkillLevel(BetaKCorePlugin.UNIQUE_SKILL_ID, 2f);
+        stats.setSkillLevel(SHARED_KNOWLEDGE_ID, 2f);
     }
 }
