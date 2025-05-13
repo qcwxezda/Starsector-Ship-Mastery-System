@@ -1,13 +1,16 @@
 id,rating,detection_range,type,autoXP,xpDiscover,xpSalvage,tags,drop_value,drop_random,defFaction,defQuality,probDefenders,minStr,maxStr,minSize,maxSize,probStation,stationRole
-sms_concealed_station,0,50,DISCOVERABLE,2000,1000,5000,,basic:10000,"weapons2:30,
+sms_concealed_station,1,50,DISCOVERABLE,2000,1000,5000,,basic:10000,"weapons2:30,
 rare_tech_low:2,
 sms_construct_pref_in_fleet:10,
 sms_construct_random:20,
 extended:5x5000,
 sms_k_cores2:10
 ",,,,,,,,,
-sms_concealed_probe,0,50,DISCOVERABLE,2000,1000,5000,,basic:4000,"weapons1:15,
+sms_concealed_probe,0,50,DISCOVERABLE,1000,500,2000,,basic:4000,"weapons1:15,
 sms_k_cores1:5,
 sms_construct_pref_in_fleet:4,
 extended:1x3000
+",,,,,,,,,
+sms_station_nucleus,10,50,DISCOVERABLE,4000,2000,10000,"no_debris, no_remove",,"rare_tech:2,
+extended:5x30000
 ",,,,,,,,,

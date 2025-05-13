@@ -27,28 +27,16 @@ public class TemporalShellCRDegradation extends ShipSystemEffect {
         return "temporalshell";
     }
 
-    static class TemporalShellCRDegradationScript implements AdvanceableListener {
-
-        final ShipAPI ship;
-        final float mult;
-        final String id;
-
-        TemporalShellCRDegradationScript(ShipAPI ship, float mult, String id) {
-            this.ship = ship;
-            this.mult = mult;
-            this.id = id;
-        }
-
+    record TemporalShellCRDegradationScript(ShipAPI ship, float mult, String id) implements AdvanceableListener {
         @Override
-        public void advance(float amount) {
-            if (!ship.areSignificantEnemiesInRange()) return;
-            if (ship.getSystem().isActive()) {
-                ship.getMutableStats().getCRLossPerSecondPercent().modifyMult(id, mult);
-                ship.setTimeDeployed(ship.getTimeDeployedForCRReduction() - amount * (1f - mult));
-            }
-            else {
-                ship.getMutableStats().getCRLossPerSecondPercent().unmodify(id);
+            public void advance(float amount) {
+                if (!ship.areSignificantEnemiesInRange()) return;
+                if (ship.getSystem().isActive()) {
+                    ship.getMutableStats().getCRLossPerSecondPercent().modifyMult(id, mult);
+                    ship.setTimeDeployed(ship.getTimeDeployedForCRReduction() - amount * (1f - mult));
+                } else {
+                    ship.getMutableStats().getCRLossPerSecondPercent().unmodify(id);
+                }
             }
         }
-    }
 }

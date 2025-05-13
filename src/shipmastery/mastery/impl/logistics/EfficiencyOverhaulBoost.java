@@ -36,4 +36,9 @@ public class EfficiencyOverhaulBoost extends BaseMasteryEffect {
         if (spec.isBuiltInMod("high_maintenance")) f *= 2;
         return f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
 }

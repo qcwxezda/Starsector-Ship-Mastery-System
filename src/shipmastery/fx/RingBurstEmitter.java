@@ -31,7 +31,7 @@ public class RingBurstEmitter extends BaseIEmitter {
 
     @Override
     protected ParticleData initParticle(int i) {
-        float theta = (float) i;
+        float theta = (float) i*3;
         float baseLife = 0.75f;
         float life = baseLife * MathUtils.randBetween(0.95f, 1.05f);
         Vector2f locDir = Misc.getUnitVectorAtDegreeAngle(theta);
@@ -45,7 +45,7 @@ public class RingBurstEmitter extends BaseIEmitter {
         data.growthRate(endRadius * 0.25f / life * MathUtils.randBetween(0.8f, 1.2f), endRadius / life * MathUtils.randBetween(0.5f, 1.5f));
         data.revolutionRate(MathUtils.randBetween(-10f, 10f));
         data.facing(theta - 90f + MathUtils.randBetween(-30f, 30f));
-        data.color(0.7f, 1f, 0.85f, 0.125f);
+        data.color(0.7f, 1f, 0.85f, 0.7f);
         data.saturationShift(MathUtils.randBetween(0f, 0.5f));
         return data;
     }

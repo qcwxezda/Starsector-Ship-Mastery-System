@@ -110,6 +110,11 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 1f;
+    }
+
+    @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {}
 

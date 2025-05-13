@@ -1,7 +1,5 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
@@ -9,8 +7,6 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
@@ -42,7 +38,7 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
+    public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(PlasmaBurnEnergyRoFScript.class)) {
             float strength = getStrength(ship);
@@ -51,26 +47,18 @@ public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        ship.getMutableStats().getEnergyRoFMult().unmodify(id);
-        ship.getMutableStats().getEnergyWeaponFluxCostMod().unmodify(id);
-        ship.removeListenerOfClass(PlasmaBurnEnergyRoFScript.class);
-    }
-
-    @Override
     public String getSystemSpecId() {
         return "microburn";
     }
 
     static class PlasmaBurnEnergyRoFScript extends BaseShipSystemListener implements AdvanceableListener {
-
         final ShipAPI ship;
         final float increase, increaseTime;
         final String id;
         float postEffectLevel = 0f;
         static final Color color = new Color(89, 255, 255);
         final EntityBurstEmitter emitter;
-        final IntervalUtil burstInterval = new IntervalUtil(0.1f, 0.1f);
+        final IntervalUtil burstInterval = new IntervalUtil(0.2f, 0.2f);
 
         PlasmaBurnEnergyRoFScript(ShipAPI ship, float increase, float increaseTime, String id) {
             this.ship = ship;

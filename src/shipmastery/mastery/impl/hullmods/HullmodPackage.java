@@ -62,4 +62,13 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 0.6f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (hasRequiredCount(fm.getVariant())) {
+            return 3f*super.getNPCWeight(fm);
+        } else {
+            return 0.25f*super.getNPCWeight(fm);
+        }
+    }
 }

@@ -61,4 +61,9 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 0f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 10f; // Good, but with default settings, will virtually always choose the S-mod instead
+    }
 }

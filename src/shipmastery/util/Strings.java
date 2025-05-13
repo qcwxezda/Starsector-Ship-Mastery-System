@@ -18,6 +18,7 @@ public interface Strings {
         String NUCLEUS_ADMIN_ACCESS = "$sms_NucleusAdminAccess";
         String NUCLEUS_SHUT_DOWN = "$sms_NucleusShutDown";
         String NUCLEUS_UNSEALED = "$sms_NucleusUnsealed";
+        String NUCLEUS_DEFENDER_FLEET_TYPE = "sms_NucleusDefenderFleet";
         String BEACON_ID = "$sms_BeaconID";
         String STATION_TYPE_KEY = "$sms_StationType";
         String K_CORE_AMP_INTEGRATED = "$sms_KCoreAmpIntegrated";
@@ -26,6 +27,10 @@ public interface Strings {
         String DEFENSES_COMMANDER_ID_KEY = "$sms_DefensesCommanderId";
         String COMMANDER_PREFIX = "sms_commander_";
         String SALVAGED_BEACON_IDS = "$sms_SalvagedBeaconIDs"; // global
+        String NUCLEUS_SALVAGED = "$sms_NucleusSalvaged"; // local
+        String TRIGGERED_REMOTE_BEACON_DEFENDERS = "$sms_TriggeredRemoteBeaconDefenders"; // global
+        String REMOTE_BEACON_DEFENDER_FLEET_TYPE = "sms_RemoteBeaconDefender"; // Local
+        String REMOTE_BEACON_DEFENDER_FLEET = "$sms_RemoteBeaconDefenderFleet"; // Global
 
         String STATION_USED_KEY = "$sms_StationUsed";
 
@@ -44,6 +49,7 @@ public interface Strings {
                 Utils.getString("sms_campaign", "rearrangement5Hint")
         };
         String selectLoot = Utils.getString("sms_campaign", "selectLoot");
+        String assessForSalvage = Utils.getString("sms_campaign", "assessForSalvage");
         String checkStatus = Utils.getString("sms_campaign", "checkStatus");
         String shutDown = Utils.getString("sms_campaign", "shutDown");
         String powerOn = Utils.getString("sms_campaign", "powerOn");
@@ -62,6 +68,7 @@ public interface Strings {
         String questionMarks = Utils.getString("sms_campaign", "questionMarks");
         String statusText = Utils.getString("sms_campaign", "statusText");
         String welcomeText = Utils.getString("sms_campaign", "welcomeText");
+        String swarm = Utils.getString("sms_campaign", "swarm");
         String officerAddedToFleet = Utils.getString("sms_campaign", "officerAddedToFleet");
         String fleetLogIntelTitle = Utils.getString("sms_campaign", "fleetLogIntelTitle");
         String fleetLogIntelHeader = Utils.getString("sms_campaign", "fleetLogIntelHeader");
@@ -79,6 +86,7 @@ public interface Strings {
         String emitterNotEnoughPower = Utils.getString("sms_campaign", "emitterNotEnoughPower");
         String emitterPromptText = Utils.getString("sms_campaign", "emitterPromptText");
         String emitterConfirmExt = Utils.getString("sms_campaign", "emitterConfirmExt");
+        String singularity = Utils.getString("sms_campaign", "singularity");
     }
 
     interface RefitScreen {

@@ -35,4 +35,9 @@ public class SafetyOverridesPPT extends BaseMasteryEffect {
         if (spec.getBuiltInMods().contains(HullMods.FLUX_SHUNT)) return null;
         return 0.6f * (1.5f - 0.5f * Utils.hullSizeToInt(spec.getHullSize()));
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return fm.getVariant().hasHullMod(HullMods.SAFETYOVERRIDES) ? 3f*super.getNPCWeight(fm) : 0f;
+    }
 }

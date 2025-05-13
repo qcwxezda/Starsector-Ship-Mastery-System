@@ -50,6 +50,12 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         }
     }
 
+
+    static boolean isPilumOrSalamander(MissileSpecAPI spec) {
+        String id = spec.getHullSpec().getHullId();
+        return "pilum_second_stage".equals(id) || "type_1_lrm".equals(id) || "heatseeker_mrm".equals(id);
+    }
+
     static class PilumSalamanderBoostScript implements DamageDealtModifier, ProjectileCreatedListener {
         final ShipAPI ship;
         final float hpIncrease;
@@ -75,11 +81,6 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
                     }
                 }
             }
-        }
-
-        boolean isPilumOrSalamander(MissileSpecAPI spec) {
-            String id = spec.getHullSpec().getHullId();
-            return "pilum_second_stage".equals(id) || "type_1_lrm".equals(id) || "heatseeker_mrm".equals(id);
         }
 
         @Override
@@ -143,5 +144,24 @@ public class PilumSalamanderBoost extends BaseMasteryEffect {
         float count = 0.5f*wsc.sm + 2f*wsc.mm + 4f*wsc.lm;
         if (count < 3f) return null;
         return Utils.getSelectionWeightScaledByValueIncreasing(count, 2f, 5f, 10f);
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        float score = 0f;
+        for (String id : fm.getVariant().getFittedWeaponSlots()) {
+            var spec = fm.getVariant().getWeaponSpec(id);
+            if (spec != null) {
+                var projSpec = spec.getProjectileSpec();
+                if (projSpec instanceof MissileSpecAPI mSpec && isPilumOrSalamander(mSpec)) {
+                    score += switch (spec.getSize()) {
+                        case SMALL -> 1f;
+                        case MEDIUM -> 2f;
+                        case LARGE -> 4f;
+                    };
+                }
+            }
+        }
+        return score/4f;
     }
 }

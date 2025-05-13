@@ -117,4 +117,9 @@ public class OrionDeviceDamage extends ShipSystemEffect {
             }, 0.25f);
         }
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : super.getNPCWeight(fm);
+    }
 }

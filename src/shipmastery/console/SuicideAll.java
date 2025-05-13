@@ -9,7 +9,7 @@ import org.lazywizard.console.BaseCommand;
 public class SuicideAll implements BaseCommand {
     @Override
     public CommandResult runCommand(@NotNull String args, @NotNull BaseCommand.CommandContext context) {
-        if (!context.equals(CommandContext.COMBAT_CAMPAIGN)) return CommandResult.WRONG_CONTEXT;
+        if (!context.equals(CommandContext.COMBAT_CAMPAIGN) && !context.equals(CommandContext.COMBAT_SIMULATION)) return CommandResult.WRONG_CONTEXT;
         if (Global.getCombatEngine() == null) return CommandResult.ERROR;
 
         for (ShipAPI ship : Global.getCombatEngine().getShips()) {

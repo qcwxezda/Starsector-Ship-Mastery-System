@@ -24,29 +24,18 @@ public class RegroupReplacement extends BaseMasteryEffect {
         }
     }
 
-    static class RegroupReplacementScript implements AdvanceableListener {
-        final ShipAPI ship;
-        final float strength;
-        final String id;
-
-        RegroupReplacementScript(ShipAPI ship, float strength, String id) {
-            this.ship = ship;
-            this.strength = strength;
-            this.id = id;
-        }
-
+    record RegroupReplacementScript(ShipAPI ship, float strength, String id) implements AdvanceableListener {
         @Override
-        public void advance(float amount) {
-            if (ship.isPullBackFighters()) {
-                ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(id, strength);
-                ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).modifyPercent(id, 100f * strength);
-            }
-            else {
-                ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).unmodify(id);
-                ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).unmodify(id);
+            public void advance(float amount) {
+                if (ship.isPullBackFighters()) {
+                    ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(id, strength);
+                    ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).modifyPercent(id, 100f * strength);
+                } else {
+                    ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).unmodify(id);
+                    ship.getMutableStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).unmodify(id);
+                }
             }
         }
-    }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {

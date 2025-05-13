@@ -34,4 +34,9 @@ public class GroundSupportBoost extends BaseMasteryEffect {
         if (spec.isBuiltInMod("ground_support") || spec.isBuiltInMod("advanced_ground_support")) return 1f;
         return null;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
 }

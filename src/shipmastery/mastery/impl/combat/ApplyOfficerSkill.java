@@ -185,4 +185,15 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 2.5f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        boolean applies;
+        if (fm.getCaptain() == null || fm.getCaptain().isDefault()) {
+            applies = true;
+        } else {
+            applies = fm.getCaptain().getStats().getSkillLevel(skillId) < 2f;
+        }
+        return applies ? super.getNPCWeight(fm) : 0f;
+    }
 }

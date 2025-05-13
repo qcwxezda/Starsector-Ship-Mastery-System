@@ -104,4 +104,9 @@ public class SystemRegenOnKill extends BaseMasteryEffect {
         if (regen <= 0f) return null;
         return Utils.getSelectionWeightScaledByValueDecreasing(regen, 0f, 0.1f, 0.4f);
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0.25f; // hard to use for NPCs
+    }
 }

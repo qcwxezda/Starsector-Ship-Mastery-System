@@ -117,4 +117,9 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return 0f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 3f;
+    }
 }

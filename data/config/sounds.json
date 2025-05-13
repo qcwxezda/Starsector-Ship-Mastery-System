@@ -12,6 +12,9 @@
     {"file": "sounds/sfx_interface/ui_char_increase_aptitude.ogg", "pitch": 1, "volume": 1}
   ],
   "sms_dimensional_tether_retreat": [
-    {"file": "sounds/dimensional_tether_retreat.wav", "pitch": 1, "volume": 1}
+    {"file": "sounds/sms_dimensional_tether_retreat.wav", "pitch": 1, "volume": 1}
+  ],
+  "sms_cargo_amorphous_core_drop": [
+    {"file": "sounds/sms_cargo_amorphous_core_drop.wav", "pitch": 1, "volume": 0.8}
   ]
 }

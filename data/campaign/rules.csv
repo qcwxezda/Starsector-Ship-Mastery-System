@@ -74,13 +74,13 @@ The security lock on the container indicates that it's been tampered with. It's 
 ",sms_oRemoteBeaconNoShieldUnlooted3:Loot the container,
 sms_RemoteBeaconNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_amplifier 1
 $global.sms_LootedRemoteBeacon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemoteBeaconNoShieldUnlooted4:Loot the rest of the facility,
-sms_RemoteBeaconNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted4,,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
+sms_RemoteBeaconNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted4,sms_cRemoteBeaconAdditionalLoot,,,
+sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,sms_cRemoteBeaconPostLoot,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
 
 You return to your shuttle and instruct a salvage team to commence routine operations.
 
-",sms_oRemoteBeaconNoShieldUnlooted5:Continue,
-sms_RemoteBeaconNoShieldUnlooted6,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted5,sms_cRemoteBeaconAdditionalLoot,,,
-sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,,,defaultLeave:Leave,
+",defaultLeave:Leave,
+sms_RemoteBeaconBeginFight,BeginFleetEncounter,$fleetType == sms_RemoteBeaconDefender score:1000,,A fleet suddenly appears! Oh no!,,
 sms_ConcealedStationFirstTime,OpenInteractionDialog,"$customType == sms_concealed_station score:100
 !$global.sms_SeenConcealedStation
 !$entity.sms_SeenMessage",ShowDefaultVisual,"Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
@@ -191,7 +191,7 @@ sms_NucleusFirstTime,OpenInteractionDialog,"$customType == sms_station_nucleus s
 
 You settle into a close orbit while scanning the structure for potential points of interest, but find only that the construction is sealed on all sides.
 
-""$PlayerSirOrMadam, I'm detecting enormous quantities of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions. It's unlikely there's a specific target in mind other than... everywhere.""
+""$PlayerSirOrMadam, I'm detecting enormous amounts of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions -- I don't think there's a specific target in mind.""
 
 He continues, ""It's just a garbled mess of data. Incomprehensible.""",sms_oNucleusFirstTime2:Continue,
 sms_NucleusFirstTime2,DialogOptionSelected,$option == sms_oNucleusFirstTime2,,"""Hold on, I think I've got something...
@@ -256,3 +256,25 @@ sms_oNucleusGoBack:Go back",
 sms_NucleusAttemptSealConfirm,DialogOptionSelected,$option == sms_oNucleusSealConfirm,"AddText ""Error: This command could not be completed\nReason: Unspecified error, please contact an administrator for assistance"" bad",,sms_oNucleusGoBack:Go back,
 sms_NucleusPowerOnUnsealed,DialogOptionSelected,"$option == sms_oNucleusPowerOn score:100
 $global.sms_NucleusUnsealed","AddText ""Error: This command could not be completed\nReason: Structure is unsealed"" bad",,sms_oNucleusGoBack:Go back,
+sms_NucleusAssessSalvage,DialogOptionSelected,"$option == sms_oNucleusAssessSalvage
+!$defenderFleetDefeated",,"With the megastructure unsealed, several compartments, evenly spaced along either end, expand outward along their center lines to reveal rows of gaping voids. Each of the newly-opened hatches is spacious enough for several of your ships to enter, though from a distance it's impossible to tell what's on the other side.
+
+You order your fleet to approach the structure, but to hold a formation just outside in case you encounter an unexpected greeting party.",sms_oNucleusDefenderContinue:Continue,
+sms_NucleusDefenderContinue,DialogOptionSelected,$option == sms_oNucleusDefenderContinue,"$sms_DefendersTriggered = true
+sms_cGenerateNucleusDefenders
+sms_cNucleusDefenderInteraction","As if on cue, your radar explodes in a frenzy of activity, as unidentified contact after unidentified contact intersects your sensor bubble.
+
+From the depths of hell erupts an unmitigated swarm of frigates and destroyers. At once they form a barricade between your fleet and the dormant siphon.
+
+The opposing fleet is defending the megastructure. You'll have to defeat them to proceed, but they won't pursue you should you choose to disengage.",,
+sms_NucleusHasDefenders,OpenInteractionDialog,"$customType == sms_station_nucleus score:100
+$sms_DefendersTriggered
+!$defenderFleetDefeated","sms_cGenerateNucleusDefenders
+sms_cNucleusDefenderInteraction",A massive swarm of automated ships is defending this site. You'll have to deal with it before you can get closer.,,
+sms_NucleusBeatDefenders,BeatDefendersContinue,$customType == sms_station_nucleus score:100,FireBest sms_tNucleusSalvageNoDefender,,,
+sms_NucleusSalvageNoDefenders,DialogOptionSelected,"$option == sms_oNucleusAssessSalvage
+$defenderFleetDefeated",FireBest sms_tNucleusSalvageNoDefender,,,
+sms_NucleusSalvageNoDefenders2,sms_tNucleusSalvageNoDefender,,"$salvageLeaveText = Leave
+SalvageEntity showCost
+FireAll PopulateSalvageOptions2",,,
+sms_NucleusPostSalvage,PostSalvagePerform,$customType == sms_station_nucleus score:100,$sms_NucleusSalvaged = true,,,

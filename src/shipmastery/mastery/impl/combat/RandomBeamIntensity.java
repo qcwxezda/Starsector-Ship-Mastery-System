@@ -164,4 +164,21 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
         if (!Utils.getDominantWeaponTypes(spec).contains(WeaponAPI.WeaponType.ENERGY)) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (!fm.isFlagship()) return 0f;
+        float score = 0f;
+        for (String id : fm.getVariant().getFittedWeaponSlots()) {
+            var spec = fm.getVariant().getWeaponSpec(id);
+            if (spec.isBeam()) {
+                score += switch (spec.getSize()) {
+                    case SMALL -> 1f;
+                    case MEDIUM -> 2f;
+                    case LARGE -> 4f;
+                };
+            }
+        }
+        return score/2f;
+    }
 }

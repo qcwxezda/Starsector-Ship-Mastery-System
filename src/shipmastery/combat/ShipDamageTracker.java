@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.util.vector.Vector2f;
@@ -16,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ShipDamageTracker implements DamageTakenModifier {
+public class ShipDamageTracker implements DamageTakenModifier, AdvanceableListener {
 //    @Override
 //    public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
 //        if (!(source instanceof ShipAPI) || !(target instanceof ShipAPI)) return;
@@ -42,6 +43,11 @@ public class ShipDamageTracker implements DamageTakenModifier {
 
     public static final float RECENTLY_DAMAGED_TIME = 1f;
     private final Map<ShipAPI, Set<ShipAPI>> recentlyDamagedBy = new HashMap<>();
+    private final ShipAPI ship;
+
+    public ShipDamageTracker(ShipAPI ship) {
+        this.ship = ship;
+    }
 
     private void setRecentlyDamagedBy(final ShipAPI source, final ShipAPI target) {
         Set<ShipAPI> sources = recentlyDamagedBy.computeIfAbsent(target, k -> new HashSet<>());
@@ -80,16 +86,36 @@ public class ShipDamageTracker implements DamageTakenModifier {
 
         setRecentlyDamagedBy(sourceShip, targetShip);
         if (target.getHitpoints() <= 0f) {
-            for (ShipAPI ship : Global.getCombatEngine().getShips()) {
-                if (ship.hasListenerOfClass(ShipDestroyedListener.class)) {
-                    for (ShipDestroyedListener listener : ship.getListeners(ShipDestroyedListener.class)) {
-                        listener.reportShipDestroyed(getRecentlyDamagedBy(targetShip), targetShip);
-                    }
-                }
-            }
+            reportDestroyed();
             // CombatListenerUtil in base game copies the listener list when calling reportDamageApplied, so this is safe
             targetShip.removeListenerOfClass(ShipDamageTracker.class);
         }
         return null;
+    }
+
+    private boolean reported = false;
+    private void reportDestroyed() {
+        if (!reported) {
+            reported = true;
+            for (ShipAPI ship : Global.getCombatEngine().getShips()) {
+                if (ship.hasListenerOfClass(ShipDestroyedListener.class)) {
+                    for (ShipDestroyedListener listener : ship.getListeners(ShipDestroyedListener.class)) {
+                        listener.reportShipDestroyed(getRecentlyDamagedBy(this.ship), this.ship);
+                    }
+                }
+            }
+
+            for (var listener : Global.getCombatEngine().getListenerManager().getListeners(ShipDestroyedListener.class)) {
+                listener.reportShipDestroyed(getRecentlyDamagedBy(this.ship), this.ship);
+            }
+        }
+    }
+
+    @Override
+    public void advance(float amount) {
+        if (ship.getHitpoints() <= 0f) {
+            reportDestroyed();
+            ship.removeListener(this);
+        }
     }
 }

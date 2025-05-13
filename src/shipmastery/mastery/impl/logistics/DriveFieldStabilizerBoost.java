@@ -35,4 +35,10 @@ public class DriveFieldStabilizerBoost extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return spec.isBuiltInMod("drive_field_stabilizer") ? 1f : null;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
 }
+

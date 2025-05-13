@@ -32,4 +32,9 @@ public class ExpandedFuelBoost extends BaseMasteryEffect {
         if (!spec.isCivilianNonCarrier()) return null;
         return Utils.getSelectionWeightScaledByValueIncreasing(spec.getFuel(), 100f, 500f, 1500f);
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
 }

@@ -88,4 +88,9 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
                     false);
         }
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+    }
 }

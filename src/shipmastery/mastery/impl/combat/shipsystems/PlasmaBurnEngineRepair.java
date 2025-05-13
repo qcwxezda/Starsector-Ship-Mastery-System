@@ -134,4 +134,9 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
             }
         }
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+    }
 }

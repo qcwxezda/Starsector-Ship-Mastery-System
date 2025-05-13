@@ -2,10 +2,12 @@ package shipmastery.procgen;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
@@ -30,12 +32,14 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantSeededFleetManag
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantStationFleetManager;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.BaseLocation;
 import com.fs.starfarer.campaign.NascentGravityWell;
 import com.fs.starfarer.campaign.StarSystem;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.campaign.items.SuperconstructPlugin;
 import shipmastery.plugin.CuratorOfficerPlugin;
 import shipmastery.plugin.EmitterArrayPlugin;
 import shipmastery.util.MathUtils;
@@ -160,6 +164,8 @@ public class TestGenerator {
         planet.setMarket(market);
 
         market.getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD, true);
+        market.getMemoryWithoutUpdate().set(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY, Strings.Campaign.COMMANDER_PREFIX + Misc.genUID() + "_" + Misc.random.nextInt());
+
         List<String> ids = Arrays.asList("dark", "high_gravity", "no_atmosphere", "very_cold");
         for (String cid : ids) {
             if (cid.endsWith(ConditionGenDataSpec.NO_PICK_SUFFIX)) continue;
@@ -369,6 +375,20 @@ public class TestGenerator {
         entity.setDiscoverable(true);
         entity.setDiscoveryXP(5000f);
         entity.setSensorProfile(1000f);
+        entity.getMemoryWithoutUpdate().set(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY, Strings.Campaign.COMMANDER_PREFIX + Misc.genUID() + "_" + Misc.random.nextInt());
+        CargoAPI extra = Global.getFactory().createCargo(true);
+        extra.addCommodity("alpha_core", 1 + Misc.random.nextInt(2));
+        extra.addCommodity("beta_core", 2 + Misc.random.nextInt(2));
+        extra.addCommodity("gamma_core", 3 + Misc.random.nextInt(3));
+        extra.addCommodity("sms_fractured_gamma_core", 25 + Misc.random.nextInt(25));
+        extra.addCommodity("sms_alpha_k_core", 1 + Misc.random.nextInt(2));
+        extra.addCommodity("sms_beta_k_core", 2 + Misc.random.nextInt(2));
+        extra.addCommodity("sms_gamma_k_core", 3 + Misc.random.nextInt(3));
+        extra.addSpecial(new SpecialItemData("sms_superconstruct3", SuperconstructPlugin.ACTIVE_STRING), 1f);
+        extra.addSpecial(new SpecialItemData("sms_k_core_uplink", null), 1f);
+
+        BaseSalvageSpecial.ExtraSalvage extraSalvage = new BaseSalvageSpecial.ExtraSalvage(extra);
+        entity.getMemoryWithoutUpdate().set(BaseSalvageSpecial.EXTRA_SALVAGE, extraSalvage);
     }
 
     public List<SectorEntityToken> generateStations(List<StarSystemAPI> eligibleSystems) {

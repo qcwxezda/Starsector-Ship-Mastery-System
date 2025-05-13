@@ -4,10 +4,13 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.state.AppDriver;
 import shipmastery.campaign.StateTracker;
+import shipmastery.util.Strings;
 
 import java.util.List;
 
@@ -39,6 +42,21 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         engine.getListenerManager().addListener(projectileTracker);
         projectileTracker.init(engine);
         lastBattleCreationContext = engine.getContext();
+
+        if (lastBattleCreationContext != null) {
+            var otherFleet = lastBattleCreationContext.getOtherFleet();
+            if (otherFleet != null) {
+                // Add plugin for nucleus defender fight
+                String fleetType = otherFleet.getMemoryWithoutUpdate().getString(MemFlags.MEMORY_KEY_FLEET_TYPE);
+                if (Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE.equals(fleetType)) {
+                    engine.addPlugin(new NucleusDefenderHandler());
+                }
+                // Modify admiral AI for remote beacon fight
+                if (Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType)) {
+                    RemoteBeaconDefenderHandler.modifyAdmiralAI(engine.getFleetManager(FleetSide.ENEMY), otherFleet.getFlagship());
+                }
+            }
+        }
     }
 
     @Override
@@ -65,7 +83,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
             if (!ship.isAlive()) continue;
             // Note: DamageListener listens for damage taken only
             if (!ship.hasListenerOfClass(ShipDamageTracker.class)) {
-                ship.addListener(new ShipDamageTracker());
+                ship.addListener(new ShipDamageTracker(ship));
             }
         }
     }

@@ -14,6 +14,8 @@ import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.Objects;
+
 public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
 
     static final int MAX_STACKS = 10;
@@ -80,5 +82,18 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
         if (spec.getSuppliesToRecover() >= 40f) return 0f;
         float dp = spec.getSuppliesToRecover();
         return Utils.getSelectionWeightScaledByValueDecreasing(dp, 3f, 8f, 40f);
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        var specId = Utils.getRestoredHullSpecId(fm.getHullSpec());
+        var members = Utils.getMembersNoSync(fm.getFleetData());
+
+        int count = (int) members.stream()
+                .filter(x -> Objects.equals(specId, Utils.getRestoredHullSpecId(x.getHullSpec())))
+                .count();
+
+        if (count <= 1) return 0f;
+        return count <= 3 ? 0.5f * super.getNPCWeight(fm) : super.getNPCWeight(fm);
     }
 }

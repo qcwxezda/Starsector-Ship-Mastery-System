@@ -35,6 +35,11 @@ public class SModRemoval extends BaseMasteryEffect {
     }
 
     @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
+
+    @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
                                           FleetMemberAPI selectedFleetMember) {
         if (Settings.CLEAR_SMODS_REFUND_FRACTION <= 0f) {

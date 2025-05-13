@@ -85,4 +85,9 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
         if (wrp.isEmpty()) return null;
         return Collections.singletonList(wrp.pick());
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f; // Masteries are picked after autofit, can't go back and S-mod something after masteries have already been chosen
+    }
 }

@@ -34,4 +34,9 @@ public class ECMPackageBoost extends BaseMasteryEffect {
         if (spec.getOrdnancePoints(null) < Global.getSettings().getHullModSpec(HullMods.ECM).getCostFor(spec.getHullSize())) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return fm.getVariant().hasHullMod(HullMods.ECM) ? super.getNPCWeight(fm) : 0f;
+    }
 }

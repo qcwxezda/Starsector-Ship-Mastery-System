@@ -176,4 +176,9 @@ public class HEFExplosion extends ShipSystemEffect {
         if (count.le <= 0) return null;
         return super.getSelectionWeight(spec);
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+    }
 }

@@ -29,4 +29,9 @@ public class SModCapacity extends AdditiveMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         return null;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 9999999f; // Always pick if possible
+    }
 }
