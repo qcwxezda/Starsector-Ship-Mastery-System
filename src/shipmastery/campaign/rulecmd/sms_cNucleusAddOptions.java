@@ -21,6 +21,10 @@ public class sms_cNucleusAddOptions extends BaseCommandPlugin {
         boolean isUnsealed = mem.getBoolean(Strings.Campaign.NUCLEUS_UNSEALED);
 
         dialog.getOptionPanel().clearOptions();
+        if (isUnsealed && !getEntityMemory(memoryMap).getBoolean(Strings.Campaign.NUCLEUS_SALVAGED)) {
+            dialog.getOptionPanel().addOption(Strings.Campaign.assessForSalvage, "sms_oNucleusAssessSalvage");
+        }
+
         dialog.getOptionPanel().addOption(Strings.Campaign.checkStatus, "sms_oNucleusCheckBeacons");
         if (!isShutdown) {
             dialog.getOptionPanel().addOption(Strings.Campaign.shutDown, "sms_oNucleusShutDown");

@@ -49,6 +49,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -135,6 +136,34 @@ public class ModPlugin extends BaseModPlugin {
                     }).toList();
             thisFaction.getKnownShips().addAll(knownShips);
             thisFaction.getShipsWhenImporting().addAll(knownShips);
+//            var byFPPerDP = new List[4];
+//            for (int i = 0; i < 3; i++) {
+//                int finalI = i;
+//                byFPPerDP[i] = knownShips.stream()
+//                        .map(x -> Global.getSettings().getHullSpec(x)).filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
+//                        .sorted((a, b) -> (int) (b.getSuppliesToRecover()*a.getFleetPoints()- b.getFleetPoints()*a.getSuppliesToRecover()))
+//                        .map(ShipHullSpecAPI::getHullId)
+//                        .toList();
+//                for (int j = 0; j <= 2; j++) {
+//                    if (byFPPerDP[i].size() > j) {
+//                        thisFaction.getPriorityShips().add((String) byFPPerDP[i].get(j));
+//                    }
+//                }
+//            }
+        }
+        var mostFP = new List[4];
+        for (int i = 0; i < 4; i++) {
+            int finalI = i;
+            mostFP[i] = thisFaction.getKnownShips().stream()
+                    .map(x -> Global.getSettings().getHullSpec(x)).filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
+                    .sorted((a, b) -> b.getFleetPoints()- a.getFleetPoints())
+                    .map(ShipHullSpecAPI::getHullId)
+                    .toList();
+            for (int j = 0; j < 10; j++) {
+                if (mostFP[i].size() > j) {
+                    thisFaction.getPriorityShips().add((String) mostFP[i].get(j));
+                }
+            }
         }
     }
 

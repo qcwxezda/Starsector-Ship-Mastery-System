@@ -37,4 +37,12 @@ public class MakeshiftShieldBoost extends BaseMasteryEffect {
         if (spec.getShieldType() != ShieldAPI.ShieldType.NONE) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (fm.getVariant().hasHullMod(HullMods.MAKESHIFT_GENERATOR)) {
+            return 3f*super.getNPCWeight(fm);
+        }
+        return 0f;
+    }
 }

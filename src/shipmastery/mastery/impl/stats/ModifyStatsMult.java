@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.stats.ShipStat;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -68,5 +69,10 @@ public class ModifyStatsMult extends ModifyStatsEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         // Select ModifyStatsEffect instead to get better spread between flat and mult stats
         return null;
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 2f;
     }
 }

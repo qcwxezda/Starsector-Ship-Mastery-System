@@ -97,4 +97,9 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
             Particles.burst(circleEmitter, 1);
         }
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+    }
 }

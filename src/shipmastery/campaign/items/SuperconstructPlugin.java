@@ -51,7 +51,7 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
 
     @Override
     public boolean shouldRemoveOnRightClickAction() {
-        return false;
+        return type == Type.TYPE_3 || type == Type.TYPE_2;
     }
 
     @Override
@@ -104,7 +104,6 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
             messageDisplay.addMessage(String.format(Strings.Items.superconstruct2MessageDisplay1, Utils.asPercent(SUPERCONSTRUCT2_STRENGTH)), Settings.MASTERY_COLOR);
             messageDisplay.addMessage(String.format(Strings.Items.superconstruct2MessageDisplay2, "" + SUPERCONSTRUCT2_NEWMPCOST), Settings.MASTERY_COLOR);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
-            helper.removeFromClickedStackFirst(1);
         } else if (type == Type.TYPE_3) {
             Global.getSector().getPlayerStats().setSkillLevel("sms_shared_knowledge", 2f);
             var messageDisplay = Global.getSector().getCampaignUI().getMessageDisplay();

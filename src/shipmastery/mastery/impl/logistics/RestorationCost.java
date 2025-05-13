@@ -36,4 +36,9 @@ public class RestorationCost extends MultiplicativeMasteryEffect {
         // boring, don't select
         return null;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f;
+    }
 }

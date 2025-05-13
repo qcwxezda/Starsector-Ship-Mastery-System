@@ -45,6 +45,9 @@ public class KCoreUplinkPlugin extends BaseSpecialItemPlugin {
             autoconstuctPoints += fm.getCaptain().getMemoryWithoutUpdate().getFloat("$autoPointsMult") * fm.getDeploymentPointsCost();
         }
 
+        // resolve NaN with no max points
+        autoconstuctPoints = Math.max(autoconstuctPoints, Float.MIN_VALUE);
+        maxPoints = Math.max(maxPoints, Float.MIN_VALUE);
         float crPenalty = Math.max(0f, 1f - maxPoints / autoconstuctPoints);
         data = new KCoreUplinkData(uplinkCount, autoconstuctPoints, crPenalty);
         fleetData.getCacheClearedOnSync().put(AUTOCONSTRUCT_PENALTY_CACHE, data);

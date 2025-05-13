@@ -76,7 +76,7 @@
     "showNameOnMap":false,
     "scaleNameWithZoom":false,
     "scaleIconWithZoom":true,
-    "tags":["has_interaction_dialog", "neutrino_low", "not_random_mission_target"],
+    "tags":["has_interaction_dialog", "neutrino_low", "salvageable", "not_random_mission_target"],
     "layers":[STATIONS, ABOVE], # what layer(s) to render in. See CampaignEngineLayers.java for possible values,
     "renderCircleIndicator":true,
     "renderCircleIndicatorSelectionFlash":true,

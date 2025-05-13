@@ -59,4 +59,9 @@ public class HighFrequencyMotes extends ShipSystemEffect {
     public String getSystemSpecId() {
         return "mote_control";
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+    }
 }

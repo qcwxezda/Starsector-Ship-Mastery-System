@@ -256,4 +256,22 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
         if (weight <= 0f) return null;
         return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        float score = 0f;
+        for (String id : fm.getVariant().getFittedWeaponSlots()) {
+            var spec = fm.getVariant().getWeaponSpec(id);
+            if (spec != null  && spec.getProjectileSpec() instanceof MissileSpecAPI mSpec) {
+                if ("hammer_torp".equals(mSpec.getHullSpec().getHullId())) {
+                    score += switch (spec.getSize()) {
+                        case SMALL -> 1f;
+                        case MEDIUM -> 2f;
+                        case LARGE -> 4f;
+                    };
+                }
+            }
+        }
+        return score / 3f;
+    }
 }

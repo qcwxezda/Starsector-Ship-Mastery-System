@@ -22,12 +22,12 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
-import shipmastery.mastery.impl.logistics.SModCapacity;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.SModUtils;
 import shipmastery.util.SizeLimitedMap;
@@ -109,12 +109,11 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     }
 
     public static void addMasteriesToFleet(CampaignFleetAPI fleet) {
-        // Ignore already-processed or empty fleets
-        var members = Utils.getMembersNoSync(fleet);
         // Ignore custom production "fleets", they will have the player as their commander
         PersonAPI commander = fleet.getCommander();
         if (commander.isPlayer()) return;
 
+        var members = Utils.getMembersNoSync(fleet);
         var inflater = fleet.getInflater();
         CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
         Random random = new Random(commander.getId().hashCode());
@@ -122,6 +121,11 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
         String factionId = fleet.getFaction() == null ? Utils.defaultFactionId : fleet.getFaction().getId();
         Utils.DifficultyData difficultyData = Utils.difficultyDataMap.getOrDefault(factionId, Utils.defaultDifficultyData);
+
+        Map<String, List<FleetMemberAPI>> membersOfSpecMap = new HashMap<>();
+        members.forEach(
+                fm -> membersOfSpecMap.computeIfAbsent(Utils.getRestoredHullSpecId(fm.getHullSpec()), lst -> new ArrayList<>()).add(fm)
+        );
 
         for (FleetMemberAPI fm : members) {
             // Fleets may have some ships that are deflated and others that aren't, due to different autofit rules
@@ -132,7 +136,11 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
             float maxBeforeModification = fm.getRepairTracker().getMaxCR();
             float crBeforeModification = fm.getRepairTracker().getCR();
-            NavigableMap<Integer, String> masteries = getActiveMasteriesForCommander(commander, spec, fleet.getFlagship());
+            NavigableMap<Integer, String> masteries = getActiveMasteriesForCommander(
+                    commander,
+                    spec,
+                    membersOfSpecMap.get(Utils.getRestoredHullSpecId(spec)),
+                    fleet.getFlagship());
             fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
 
             final ShipVariantAPI variant = fm.getVariant();
@@ -299,15 +307,29 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         // commander.getFleet() can be null, so have to use stats.getFleet
         if (stats == null) return null;
         CampaignFleetAPI fleet = stats.getFleet();
-        if (fleet == null || fleet.getFleetData() == null || fleet.getFleetData().getMembersListCopy().isEmpty()) return null;
+        if (fleet == null || fleet.getFleetData() == null) return null;
         return fleet.getFlagship();
     }
 
-    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec) {
-        return getActiveMasteriesForCommander(commander, spec, getFlagship(commander));
+    public static List<? extends FleetMemberAPI> getMembersNoSync(PersonAPI commander) {
+        MutableCharacterStatsAPI stats = commander.getStats();
+        // commander.getFleet() can be null, so have to use stats.getFleet
+        if (stats == null) return null;
+        CampaignFleetAPI fleet = stats.getFleet();
+        if (fleet == null || fleet.getFleetData() == null) return null;
+        return Utils.getMembersNoSync(fleet);
     }
 
-    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec, FleetMemberAPI flagship) {
+    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(final PersonAPI commander, ShipHullSpecAPI spec) {
+        return getActiveMasteriesForCommander(commander, spec, null, getFlagship(commander));
+    }
+
+    // If membersOfSpec is not provided, it will be rebuilt from the commander's fleet data
+    public static NavigableMap<Integer, String> getActiveMasteriesForCommander(
+            final PersonAPI commander,
+            ShipHullSpecAPI spec,
+            @Nullable List<? extends FleetMemberAPI> membersOfSpec,
+            FleetMemberAPI flagship) {
         if (commander == null || commander.isDefault()) return new TreeMap<>();
         if (commander.isPlayer()) return ShipMastery.getPlayerActiveMasteriesCopy(spec);
 
@@ -352,11 +374,21 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         int cap = ShipMastery.getMaxMasteryLevel(spec);
         actualLevel = Math.max(actualLevel, commander.getMemoryWithoutUpdate().getFloat(MINIMUM_MASTERY_LEVEL_KEY));
 
+        List<? extends FleetMemberAPI> fmsOfSpec;
+        if (membersOfSpec != null) {
+            fmsOfSpec = membersOfSpec;
+        } else {
+            var members = getMembersNoSync(commander);
+            ShipHullSpecAPI finalSpec = spec;
+            fmsOfSpec = members == null ? new ArrayList<>() : members
+                    .stream().filter(fm -> Objects.equals(finalSpec.getHullId(), Utils.getRestoredHullSpecId(fm.getHullSpec()))).toList();
+        }
+
         for (int level = 1; level <= actualLevel; level++) {
             if (level > cap) break;
             // Mapping might already exist due to custom masteries
             if (map.containsKey(level)) continue;
-            String optionId = pickOptionForMasteryLevel(spec, level, random);
+            String optionId = pickOptionForMasteryLevel(spec, fmsOfSpec, level, random);
             if (optionId != null) {
                 map.put(level, optionId);
             }
@@ -369,28 +401,46 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         return map;
     }
 
-    // Default mastery level picker. Will always choose S-mod capacity if available.
-    public static @Nullable String pickOptionForMasteryLevel(ShipHullSpecAPI spec, int level, Random random) {
+    // Default mastery level picker.
+    public static @Nullable String pickOptionForMasteryLevel(
+            ShipHullSpecAPI spec,
+            @NotNull List<? extends FleetMemberAPI> membersOfSpec,
+            int level,
+            Random random) {
         List<String> allKeys = ShipMastery.getMasteryOptionIds(spec, level);
         if (allKeys.isEmpty()) return null;
-        String selectedOption = null;
-        // Always pick S-mod capacity effects if they're available
-        if (allKeys.size() > 1) {
-            outer:
-            for (String option : allKeys) {
-                var effects = ShipMastery.getMasteryEffects(spec, level, option);
-                for (var effect : effects) {
-                    if (effect instanceof SModCapacity) {
-                        selectedOption = option;
-                        break outer;
-                    }
-                }
-            }
+
+        WeightedRandomPicker<String> picker = new WeightedRandomPicker<>(random);
+        for (String option : allKeys) {
+            float p = (float) ShipMastery.getMasteryEffects(spec, level, option)
+                    .stream()
+                    .mapToDouble(effect ->
+                            membersOfSpec.stream()
+                                    .mapToDouble(effect::getNPCWeight)
+                                    .reduce(Double::sum)
+                                    .orElse(0f))
+                    .reduce(Double::sum).orElse(0f);
+            picker.add(option, p + 0.00000001f);
         }
-        if (selectedOption == null) {
-            selectedOption = allKeys.get(random.nextInt(allKeys.size()));
-        }
-        return selectedOption;
+
+        return picker.pick();
+//        // Always pick S-mod capacity effects if they're available
+//        if (allKeys.size() > 1) {
+//            outer:
+//            for (String option : allKeys) {
+//                var effects = ShipMastery.getMasteryEffects(spec, level, option);
+//                for (var effect : effects) {
+//                    if (effect instanceof SModCapacity) {
+//                        selectedOption = option;
+//                        break outer;
+//                    }
+//                }
+//            }
+//        }
+//        if (selectedOption == null) {
+//            selectedOption = allKeys.get(random.nextInt(allKeys.size()));
+//        }
+//        return selectedOption;
     }
 
     public static float getNPCLevelModifier(float progression) {

@@ -21,32 +21,43 @@ public class EnergyProjectileRange extends BaseMasteryEffect {
         ship.addListener(new EnergyProjectileRangeScript(getStrength(ship)));
     }
 
-    static class EnergyProjectileRangeScript implements WeaponBaseRangeModifier {
-        final float bonus;
-        EnergyProjectileRangeScript(float bonus) {
-            this.bonus = bonus;
-        }
-
+    record EnergyProjectileRangeScript(float bonus) implements WeaponBaseRangeModifier {
         @Override
-        public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {
-            return 0f;
-        }
+            public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {
+                return 0f;
+            }
 
-        @Override
-        public float getWeaponBaseRangeMultMod(ShipAPI ship, WeaponAPI weapon) {
-            return 1f;
-        }
+            @Override
+            public float getWeaponBaseRangeMultMod(ShipAPI ship, WeaponAPI weapon) {
+                return 1f;
+            }
 
-        @Override
-        public float getWeaponBaseRangeFlatMod(ShipAPI ship, WeaponAPI weapon) {
-            return WeaponAPI.WeaponType.ENERGY.equals(weapon.getType()) && !weapon.isBeam() ? bonus : 0f;
+            @Override
+            public float getWeaponBaseRangeFlatMod(ShipAPI ship, WeaponAPI weapon) {
+                return WeaponAPI.WeaponType.ENERGY.equals(weapon.getType()) && !weapon.isBeam() ? bonus : 0f;
+            }
         }
-    }
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (!Utils.getDominantWeaponTypes(spec).contains(WeaponAPI.WeaponType.ENERGY)) return null;
         return 1f;
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        float score = 0f;
+        for (String slot : fm.getVariant().getFittedWeaponSlots()) {
+            var weapon = fm.getVariant().getWeaponSpec(slot);
+            if (weapon != null && WeaponAPI.WeaponType.ENERGY.equals(weapon.getType()) && !weapon.isBeam()) {
+                score += switch (weapon.getSize()) {
+                    case SMALL -> 1f;
+                    case MEDIUM -> 2f;
+                    case LARGE -> 4f;
+                };
+            }
+        }
+        return Math.min(2f, score / 3f);
     }
 }

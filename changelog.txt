@@ -16,6 +16,8 @@
     - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
 - Added a faction difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
 - Added 7 mastery effects.
+- Added MasteryEffect.getNPCWeight(FleetMemberAPI):float.
+    - Weights are used to pick masteries for NPC fleets when multiple options exist, so they no longer stupidly just pick a random one.
 - Added a substantial amount of exploration content related to concealed stations and knowledge constructs.
     - Modified existing exploration content, too many changes to list.
 - Added ability for a single hull spec to have multiple presets:
@@ -90,6 +92,7 @@
 - Knowledge constructs no longer randomly generate for ship hull specs that are locked in the codex.
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.
 - Fixed a rare possible issue with the Orion-Device-deals-damage mastery.
+- Fixed plasma-burn-giving-energy-RoF mastery only applying to the flagship despite not having that tag.
 - Added a failsafe for null FleetDataAPI.
 
 0.14.2

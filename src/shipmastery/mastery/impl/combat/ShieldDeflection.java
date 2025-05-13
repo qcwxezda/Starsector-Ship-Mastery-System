@@ -189,4 +189,9 @@ public class ShieldDeflection extends BaseMasteryEffect {
         if (!ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize())) return 0f;
         return Utils.getSelectionWeightScaledByValueDecreasing(spec.getBaseShieldFluxPerDamageAbsorbed(), 0.4f, 0.6f, 1f);
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return !fm.isFlagship() ? 0f : 3f*super.getNPCWeight(fm);
+    }
 }

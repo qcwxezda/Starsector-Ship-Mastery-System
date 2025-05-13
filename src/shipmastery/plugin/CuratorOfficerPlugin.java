@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.fleets.BaseGenerateFleetOfficersPlugin
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
@@ -21,6 +22,7 @@ import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.GammaKCorePlugin;
 import shipmastery.util.IntRef;
+import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.Random;
@@ -68,8 +70,14 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         float biggestCommanderScore = 0f;
         PersonAPI commander = null;
         FleetMemberAPI flagship = null;
+        var mem = fleet.getMemoryWithoutUpdate();
+        String fleetType = mem == null ? null : mem.getString("$fleetType");
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             String coreId = officerPicker.pick();
+            if (Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType) && "tesseract".equals(fm.getHullId())) {
+                coreId = "sms_amorphous_core";
+                fm.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult("fdsf", 0f);
+            }
             if (coreId == null) continue;
             // Don't use Misc.getAICoreOfficerPlugin because we only register the plugin on game load, but we
             // need the plugin on game enable (to set AI core for custom station)
@@ -135,7 +143,10 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 memory.set(key, 8);
             }
             case "sms_amorphous_core" -> {
-                numCommanderSkills = 7;
+                numCommanderSkills = 5;
+                commander.getStats().setSkillLevel("best_of_the_best", 1f);
+                commander.getStats().setSkillLevel("carrier_group", 1f);
+                commander.getStats().setSkillLevel("fighter_uplink", 1f);
                 memory.set(key, 999999);
             }
             default -> numCommanderSkills = 0;

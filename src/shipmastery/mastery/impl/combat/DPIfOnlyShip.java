@@ -13,6 +13,8 @@ import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.Objects;
+
 public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -66,5 +68,17 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         float dp = spec.getSuppliesToRecover();
         if (dp < 10f) return null;
         return Utils.getSelectionWeightScaledByValueIncreasing(dp, 10f, 20f, 60f);
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        var specId = Utils.getRestoredHullSpecId(fm.getHullSpec());
+        var members = Utils.getMembersNoSync(fm.getFleetData());
+
+        int count = (int) members.stream()
+                .filter(x -> Objects.equals(specId, Utils.getRestoredHullSpecId(x.getHullSpec())))
+                .count();
+
+        return count > 1 ? 0f : 2f*super.getNPCWeight(fm);
     }
 }

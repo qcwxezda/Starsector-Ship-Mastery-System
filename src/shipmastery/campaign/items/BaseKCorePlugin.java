@@ -134,17 +134,22 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
 
         int level;
         float autoMult;
+        int baseLevel = getBaseLevel();
+        float baseAutoMult = getBaseAIPointsMult();
         if (person == null) {
             String defaultPersonality = getPlayerPersonalityId();
             person = Global.getFactory().createPerson();
             person.setAICoreId(getCommodityId());
             person.setPersonality(defaultPersonality);
-            level = getBaseLevel();
-            autoMult = getBaseAIPointsMult();
+            level = baseLevel;
+            autoMult = baseAutoMult;
         } else {
             level = person.getStats().getLevel();
             autoMult = person.getMemoryWithoutUpdate().getFloat("$autoPointsMult");
         }
+
+        Color levelColor = level < baseLevel ? Misc.getNegativeHighlightColor() : level > baseLevel ? Misc.getPositiveHighlightColor() : Misc.getHighlightColor();
+        Color autoMultColor = autoMult < baseAutoMult ? Misc.getPositiveHighlightColor() : autoMult > baseAutoMult ? Misc.getNegativeHighlightColor() : Misc.getHighlightColor();
 
         float opad = 10f;
         Color text = Global.getSector().getPlayerFaction().getBaseUIColor();
@@ -154,8 +159,8 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         tooltip.addSectionHeading(Strings.Items.kCoreAdditionalInfo, text, bg, Alignment.MID, w+5f,20f);
         tooltip.addPara(body, opad, highlightColor, params);
         tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.kCorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.kCorePersonalityTableTitle2, w / 3f);
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName1, Misc.getHighlightColor(), Utils.asInt(level));
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, Misc.getHighlightColor(), Utils.asFloatTwoDecimals(autoMult) + "x");
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName1, levelColor, Utils.asInt(level));
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, autoMultColor, Utils.asFloatTwoDecimals(autoMult) + "x");
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
         tooltip.addTable("", 0, opad);
         tooltip.addSpacer(opad);

@@ -69,6 +69,13 @@ public interface MasteryEffect {
      */
     Float getSelectionWeight(ShipHullSpecAPI spec);
 
+    /**
+     * Controls the likelihood of this mastery effect being chosen by an NPC fleet when it must choose between multiple
+     * different mastery effects for a given level. For options with multiple effects, the average weight among them
+     * is taken.
+     */
+    float getNPCWeight(FleetMemberAPI fm);
+
     /** Will be displayed in the mastery panel. */
     void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
 

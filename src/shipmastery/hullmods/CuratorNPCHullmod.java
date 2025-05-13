@@ -1,25 +1,26 @@
 package shipmastery.hullmods;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
-import com.fs.starfarer.api.combat.HullModFleetEffect;
+import com.fs.starfarer.api.combat.EmpArcEntityAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.FaderUtil;
-import com.fs.starfarer.api.util.IntervalUtil;
+import com.fs.starfarer.api.util.Misc;
+import shipmastery.combat.listeners.ShipDestroyedListener;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.OverlayEmitter;
-import shipmastery.util.Strings;
+import shipmastery.util.MathUtils;
+import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect {
+public class CuratorNPCHullmod extends BaseHullMod {
 
     public static final String CUSTOM_DATA_KEY = "sms_FightersList";
 
@@ -45,24 +46,55 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
         fighterList.add(fighter);
     }
 
-    public static class CuratorNPCHullmodScript implements AdvanceableListener {
+    protected float getBaseCooldownGamma() {
+        return 60f;
+    }
 
-        public static final float DURATION = 3f; // In normal time, not accelerated time
-        private final IntervalUtil interval;
+    protected float getBaseCooldownBeta() {
+        return 40f;
+    }
+
+    protected float getBaseCooldownAlpha() {
+        return 25f;
+    }
+
+    protected float getBaseCooldownOmega() {
+        return 25f;
+    }
+
+    protected float getDurationSeconds() {
+        return 5f;
+    }
+
+    protected float getDamageReductionAmount() {
+        return 0.6f;
+    }
+
+    protected boolean isNPCVersion() {
+        return true;
+    }
+
+    public class CuratorNPCHullmodScript implements AdvanceableListener, ShipDestroyedListener {
         private final ShipAPI ship;
         private final String id;
-        private final boolean enabled;
         private final OverlayEmitter emitter;
-        private final FaderUtil effectFader = new FaderUtil(0f, 1f);
+        private boolean active = false;
+        private float activeTime = 0f;
+        private final FaderUtil effectFader = new FaderUtil(0f, 0.5f);
+        private final boolean isOmegaAndNPC;
+        private float cooldownMult = 1f;
+        private float cooldownTime;
+        private float baseCooldownTime;
+        public static final Color color = new Color(100, 200, 150);
 
         private OverlayEmitter makeEmitter(ShipAPI ship) {
-            var emitter = new OverlayEmitter(ship, ship.getSpriteAPI(), DURATION / 2f);
-            emitter.randomOffset = Math.min(ship.getSpriteAPI().getHeight(), ship.getSpriteAPI().getWidth()) / 15f;
-            emitter.randomAngle = 10f;
-            emitter.color = new Color(100, 200, 150);
+            var emitter = new OverlayEmitter(ship, ship.getSpriteAPI(), 1f);
+            emitter.randomOffset = Math.min(ship.getSpriteAPI().getHeight(), ship.getSpriteAPI().getWidth()) / 7f;
+            emitter.randomAngle = 20f;
+            emitter.color = color;
             emitter.alphaMult = 0.3f;
-            emitter.fadeInFrac = 0.1f;
-            emitter.fadeOutFrac = 0.1f;
+            emitter.fadeInFrac = 0.2f;
+            emitter.fadeOutFrac = 0.2f;
             emitter.enableDynamicAnchoring();
             return emitter;
         }
@@ -76,24 +108,68 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
                 emitter = makeEmitter(ship);
             }
 
-            float minIntervalTime;
-            if (ship.getCaptain() != null && ship.getCaptain().getAICoreId() != null) {
-                minIntervalTime = switch (ship.getCaptain().getAICoreId()) {
-                    case "sms_fractured_gamma_core" -> 60f;
-                    case "sms_gamma_k_core" -> 45f;
-                    case "sms_beta_k_core" -> 35f;
-                    case "sms_alpha_k_core" -> 25f;
-                    case "sms_amorphous_core" -> 15f;
+            String coreId;
+            if (ship.getCaptain() != null && (coreId = ship.getCaptain().getAICoreId()) != null) {
+                isOmegaAndNPC = isNPCVersion() && "sms_amorphous_core".equals(coreId);
+                baseCooldownTime = switch (coreId) {
+                    case "sms_gamma_k_core" -> getBaseCooldownGamma();
+                    case "sms_beta_k_core" -> getBaseCooldownBeta();
+                    case "sms_alpha_k_core" -> getBaseCooldownAlpha();
+                    case "sms_amorphous_core" -> getBaseCooldownOmega();
                     default -> 999999999f;
                 };
             } else {
-                minIntervalTime = 999999999f;
+                baseCooldownTime = 999999999f;
+                isOmegaAndNPC = false;
             }
-            enabled = minIntervalTime < 100f;
+            boolean enabled = baseCooldownTime < 100f;
             if (enabled) {
                 ship.setExplosionFlashColorOverride(new Color(150, 250, 200));
+            } else {
+                ship.removeListener(this);
             }
-            interval = new IntervalUtil(minIntervalTime, 1.2f*minIntervalTime);
+
+            if (isOmegaAndNPC) {
+                // Need to wait until ship's CR is actually set
+                CombatDeferredActionPlugin.performLater(() -> {
+                    baseCooldownTime *= ship.getCurrentCR();
+                    resetCooldownTime();
+                }, 0f);
+                var stats = ship.getMutableStats();
+                stats.getCriticalMalfunctionChance().modifyMult(id, 0f);
+                stats.getWeaponMalfunctionChance().modifyMult(id, 0f);
+                stats.getEngineMalfunctionChance().modifyMult(id, 0f);
+                stats.getShieldMalfunctionChance().modifyMult(id, 0f);
+            }
+
+            resetCooldownTime();
+        }
+
+        private void resetCooldownTime() {
+            cooldownTime = MathUtils.randBetween(0.75f*baseCooldownTime*cooldownMult, 1.25f*baseCooldownTime*cooldownMult);
+        }
+
+        private void applyEffects(ShipAPI ship, float effectLevel) {
+            if (effectLevel > 0f) {
+                ship.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
+                ship.getMutableStats().getEmpDamageTakenMult().modifyMult(id, 1f - effectLevel*getDamageReductionAmount());
+                ship.getMutableStats().getHullDamageTakenMult().modifyMult(id, 1f - effectLevel*getDamageReductionAmount());
+                ship.getMutableStats().getArmorDamageTakenMult().modifyMult(id, 1f - effectLevel*getDamageReductionAmount());
+                ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - effectLevel*getDamageReductionAmount());
+            } else {
+                ship.getMutableStats().getTimeMult().unmodify(id);
+                ship.getMutableStats().getEmpDamageTakenMult().unmodify(id);
+                ship.getMutableStats().getHullDamageTakenMult().unmodify(id);
+                ship.getMutableStats().getArmorDamageTakenMult().unmodify(id);
+                ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
+            }
+        }
+
+        public void activate() {
+            effectFader.fadeIn();
+            active = true;
+            activeTime = 0f;
+            resetCooldownTime();
         }
 
         @Override
@@ -104,80 +180,75 @@ public class CuratorNPCHullmod extends BaseHullMod implements HullModFleetEffect
                 return;
             }
 
-            if (!enabled) return;
             effectFader.advance(amount);
             //noinspection unchecked
             List<ShipAPI> fighterList = ship.getCustomData() == null ? null : (List<ShipAPI>) ship.getCustomData().get(CUSTOM_DATA_KEY);
             if (fighterList == null) fighterList = new LinkedList<>();
 
             float effectLevel = effectFader.getBrightness();
-            if (effectLevel > 0f) {
-                ship.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
-            } else {
-                ship.getMutableStats().getTimeMult().unmodify(id);
-            }
+            applyEffects(ship, effectLevel);
+
             for (Iterator<ShipAPI> iterator = fighterList.iterator(); iterator.hasNext(); ) {
                 ShipAPI fighter = iterator.next();
                 if (!engine.isShipAlive(fighter)) {
                     iterator.remove();
                     continue;
                 }
-                if (effectLevel > 0f) {
-                    fighter.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
-                }
-                else {
-                    fighter.getMutableStats().getTimeMult().unmodify(id);
-                }
+                applyEffects(fighter, effectLevel);
             }
 
-            interval.advance(amount);
-            if (interval.intervalElapsed()) {
-                effectFader.fadeIn();
-                emitter.stream(1, 4f, DURATION, e -> engine.isShipAlive(ship));
-                CombatDeferredActionPlugin.performLater(effectFader::fadeOut, DURATION);
-
+            if (!active) {
+                cooldownTime -= amount;
+                if (cooldownTime <= 0f) {
+                    activate();
+                }
+            } else {
+                activeTime += amount;
+                if (Misc.random.nextFloat() < 0.1f) {
+                    emitter.burst(1);
+                }
+                if (activeTime >= getDurationSeconds()) {
+                    active = false;
+                    effectFader.fadeOut();
+                }
+            }
+            if (effectFader.getBrightness() > 0f) {
                 for (ShipAPI fighter : fighterList) {
-                    OverlayEmitter emitter = makeEmitter(fighter);
-                    emitter.stream(1, 4f, DURATION, e -> engine.isShipAlive(ship));
+                    fighter.setCircularJitter(true);
+                    fighter.setJitterShields(true);
+                    fighter.setJitter(fighter, color, effectFader.getBrightness(), 12, 10f);
                 }
             }
         }
-    }
 
-    @Override
-    public void advanceInCampaign(CampaignFleetAPI fleet) {
-    }
-
-    @Override
-    public boolean withAdvanceInCampaign() {
-        return false;
-    }
-
-    @Override
-    public boolean withOnFleetSync() {
-        return true;
-    }
-
-    @Override
-    public void onFleetSync(CampaignFleetAPI fleet) {
-        if (!fleet.isPlayerFleet()) return;
-        boolean active = Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.K_CORE_AMP_INTEGRATED);
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            boolean remove = !active;
-            remove |= fm.getCaptain() == null || !fm.getCaptain().isAICore() || fm.getCaptain().getAICoreId() == null;
-
-            if (!remove) {
-                var spec = Global.getSettings().getCommoditySpec(fm.getCaptain().getAICoreId());
-                remove = spec == null || !spec.hasTag("sms_k_core");
-            }
-
-            if (remove) {
-                if (fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
-                    fm.getVariant().removePermaMod("sms_curator_npc_hullmod");
-                }
-            } else {
-                if (!fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
-                    fm.getVariant().addPermaMod("sms_curator_npc_hullmod");
+        @Override
+        public void reportShipDestroyed(Set<ShipAPI> recentlyDamagedBy, ShipAPI target) {
+            if (!isOmegaAndNPC) return;
+            if (target.isFighter()) return;
+            if (target.getOriginalOwner() == ship.getOwner()) {
+                float reduction = Utils.hullSizeToInt(target.getHullSize()) * 0.03f;
+                cooldownMult = Math.max(0f, cooldownMult - reduction);
+                for (int i = 0; i < 5; i++) {
+                    EmpArcEntityAPI.EmpArcParams params = new EmpArcEntityAPI.EmpArcParams();
+                    params.segmentLengthMult = 4f;
+                    params.zigZagReductionFactor = 0.2f;
+                    params.minFadeOutMult = 1f;
+                    float dist = MathUtils.dist(target.getLocation(), ship.getLocation());
+                    params.flickerRateMult = 200f/dist;
+                    params.nonBrightSpotMinBrightness = 0f;
+                    float arcSize = 100f + MathUtils.randBetween(0f, 100f);
+                    var arc = Global.getCombatEngine().spawnEmpArcVisual(
+                            target.getLocation(),
+                            target,
+                            ship.getLocation(),
+                            ship, arcSize,
+                            new Color(50, 150, 100, 100),
+                            new Color(150, 250, 200),
+                            params);
+                    arc.setCoreWidthOverride(arcSize / 2f);
+                    arc.setRenderGlowAtStart(false);
+                    arc.setFadedOutAtStart(true);
+                    arc.setSingleFlickerMode(true);
                 }
             }
         }

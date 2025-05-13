@@ -70,4 +70,9 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
         if (spec.getAllWeaponSlotsCopy().size() <= 3) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        return 0f; // NPCs seem to prioritize fitting weapons
+    }
 }

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.combat.ai.missile.RocketAI;
@@ -89,5 +90,26 @@ public class TorpedoTracking extends BaseMasteryEffect {
         float weight = wsc.computeWeaponWeight(WeaponAPI.WeaponType.MISSILE, 0.2f, 0.3f);
         if (weight <= 0f) return null;
         return Utils.getSelectionWeightScaledByValueIncreasing(weight, 0f, 0.4f, 1f);
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        float score = 0f;
+        for (var id : fm.getVariant().getFittedWeaponSlots()) {
+            var weaponSpec = fm.getVariant().getWeaponSpec(id);
+            if (weaponSpec != null) {
+                var projSpec = weaponSpec.getProjectileSpec();
+                if (projSpec instanceof MissileSpecAPI mSpec) {
+                    if (mSpec.getDamage().getBaseDamage() >= MIN_DAMAGE  && "ROCKET".equals(mSpec.getTypeString())) {
+                        score += switch (weaponSpec.getSize()) {
+                            case SMALL -> 1f;
+                            case MEDIUM -> 2f;
+                            case LARGE -> 4f;
+                        };
+                    }
+                }
+            }
+        }
+        return Math.min(3f, score/3f);
     }
 }

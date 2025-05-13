@@ -35,4 +35,12 @@ public class NavRelayBoost extends BaseMasteryEffect {
         if (spec.getOrdnancePoints(null) < Global.getSettings().getHullModSpec(HullMods.NAV_RELAY).getCostFor(spec.getHullSize())) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (fm.getVariant().hasHullMod(HullMods.NAV_RELAY)) {
+            return 2f*super.getNPCWeight(fm);
+        }
+        return 0f;
+    }
 }

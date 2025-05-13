@@ -46,4 +46,13 @@ public class OperationsCenterBoost extends BaseMasteryEffect {
         if (spec.getOrdnancePoints(null) < Global.getSettings().getHullModSpec(HullMods.OPERATIONS_CENTER).getCostFor(spec.getHullSize())) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        // I think NPCs can make use of command point recovery, maybe...?
+        if (fm.getVariant().hasHullMod(HullMods.OPERATIONS_CENTER)) {
+            return super.getNPCWeight(fm);
+        }
+        return 0f;
+    }
 }

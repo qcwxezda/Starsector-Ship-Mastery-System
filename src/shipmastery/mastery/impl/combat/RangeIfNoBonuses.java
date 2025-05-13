@@ -89,4 +89,11 @@ public class RangeIfNoBonuses extends MultiplicativeMasteryEffect {
         if (spec.isBuiltInMod(HullMods.DISTRIBUTED_FIRE_CONTROL)) return 0f;
         return 0.6f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        var variant = fm.getVariant();
+        if (variant.hasHullMod(HullMods.DEDICATED_TARGETING_CORE) || variant.hasHullMod(HullMods.INTEGRATED_TARGETING_UNIT) || variant.hasHullMod(HullMods.ADVANCED_TARGETING_CORE)) return 0f;
+        return super.getNPCWeight(fm);
+    }
 }
