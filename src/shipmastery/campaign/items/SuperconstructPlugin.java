@@ -65,7 +65,7 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
         switch (type) {
             case TYPE_1 -> bgColor = Global.getSector().getPlayerFaction().getBrightUIColor();
             case TYPE_2 -> bgColor = Utils.mixColor(new Color(1f, 0.4f, 1f, 1f), Global.getSector().getPlayerFaction().getBrightUIColor(), 0.4f);
-            case TYPE_3 -> bgColor = Misc.getPositiveHighlightColor();
+            case TYPE_3 -> bgColor = new Color(200, 255, 225);
         }
         super.render(x, y, w, h, alphaMult, glowMult, renderer, bgColor);
     }

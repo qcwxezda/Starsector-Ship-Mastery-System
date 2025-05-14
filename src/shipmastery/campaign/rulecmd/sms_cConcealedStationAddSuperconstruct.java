@@ -9,7 +9,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.campaign.items.SuperconstructPlugin;
-import shipmastery.procgen.TestGenerator;
+import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 
 import java.util.List;
@@ -23,11 +23,11 @@ public class sms_cConcealedStationAddSuperconstruct extends BaseCommandPlugin {
         var memory = getEntityMemory(memoryMap);
         if (memory.getBoolean(Strings.Campaign.STATION_USED_KEY)) return true;
 
-        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
+        Generator.StationType type = (Generator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
         String itemId;
-        if (type == TestGenerator.StationType.SUPERCONSTRUCT_1) {
+        if (type == Generator.StationType.SUPERCONSTRUCT_1) {
             itemId = Strings.Items.SUPERCONSTRUCT_1;
-        } else if (type == TestGenerator.StationType.SUPERCONSTRUCT_2) {
+        } else if (type == Generator.StationType.SUPERCONSTRUCT_2) {
             itemId = Strings.Items.SUPERCONSTRUCT_2;
         } else {
             return false;

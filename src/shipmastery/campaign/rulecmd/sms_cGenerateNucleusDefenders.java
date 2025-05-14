@@ -49,6 +49,7 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
         fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_MIXED;
         fParams.maxNumShips = 75;
         fParams.maxShipSize = 2;
+        fParams.averageSMods = 3;
         fParams.random = new Random(commanderId.hashCode());
         fParams.modeOverride = FactionAPI.ShipPickMode.PRIORITY_ONLY;
         fParams.addShips = new ArrayList<>();

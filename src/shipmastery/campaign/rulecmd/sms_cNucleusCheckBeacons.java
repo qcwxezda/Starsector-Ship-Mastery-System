@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.procgen.TestGenerator;
+import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -38,7 +38,7 @@ public class sms_cNucleusCheckBeacons extends BaseCommandPlugin {
         if (locations == null) locations = new ArrayList<>();
 
         int i = 0;
-        for (; i < TestGenerator.NUM_STATIONS_ITEM + TestGenerator.NUM_STATIONS_HULLMOD; i++) {
+        for (; i < Generator.NUM_STATIONS_ITEM + Generator.NUM_STATIONS_HULLMOD; i++) {
             String loc = locations.size() <= i ? Strings.Campaign.unknown : locations.get(i);
             String status = salvagedIds.contains(i) ? Strings.Campaign.noConnection : Strings.Campaign.ok;
             Color highlight = salvagedIds.contains(i) ? Misc.getNegativeHighlightColor() : Misc.getHighlightColor();

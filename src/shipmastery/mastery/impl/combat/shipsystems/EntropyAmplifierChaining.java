@@ -44,7 +44,7 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(EntropyAmplifierChainingScript.class)) {
-            ship.addListener(new EntropyAmplifierChainingScript(ship, (int) getStrength(ship), id));
+            ship.addListener(new EntropyAmplifierChainingScript(ship, (int) getStrength(ship)));
         }
     }
 
@@ -53,17 +53,15 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
         return ENTROPY_AMPLIFIER_ID;
     }
 
-    static class EntropyAmplifierChainingScript extends BaseShipSystemListener implements AdvanceableListener {
+    class EntropyAmplifierChainingScript extends BaseShipSystemListener implements AdvanceableListener {
         final ShipAPI ship;
         final int count;
-        final String id;
         final List<ShipAPI> additionalTargets = new ArrayList<>();
         EntropyAmplifierStats.TargetData curTargetData;
 
-        EntropyAmplifierChainingScript(ShipAPI ship, int count, String id) {
+        EntropyAmplifierChainingScript(ShipAPI ship, int count) {
             this.ship = ship;
             this.count = count;
-            this.id = id;
         }
 
         @Override
@@ -126,7 +124,7 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
             for (ShipAPI target : additionalTargets) {
                 Utils.maintainStatusForPlayerShip(target,
                                                   ENTROPY_AMPLIFIER_ID,
-                                                  ship.getSystem().getSpecAPI().getIconSpriteName(),
+                                                  getSystemSpec().getIconSpriteName(),
                                                   ship.getSystem().getDisplayName(),
                                                   String.format(Strings.Descriptions.EntropyAmplifierChainingDesc1, (int)((curTargetData.currDamMult - 1f) * 100f)),
                                                   true);

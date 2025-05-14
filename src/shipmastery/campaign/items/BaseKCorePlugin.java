@@ -160,7 +160,7 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         tooltip.addPara(body, opad, highlightColor, params);
         tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.kCorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.kCorePersonalityTableTitle2, w / 3f);
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName1, levelColor, Utils.asInt(level));
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, autoMultColor, Utils.asFloatTwoDecimals(autoMult) + "x");
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, autoMultColor, "×" + Utils.asFloatTwoDecimals(autoMult));
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
         tooltip.addTable("", 0, opad);
         tooltip.addSpacer(opad);

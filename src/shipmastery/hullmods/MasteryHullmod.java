@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import shipmastery.campaign.items.KCoreUplinkPlugin;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
@@ -28,8 +27,6 @@ public class MasteryHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        KCoreUplinkPlugin.applyKCoreCRPenalty(stats, id);
-
         ShipVariantAPI variant = stats.getVariant();
         // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
         if (shouldApplyEffects(variant)) {

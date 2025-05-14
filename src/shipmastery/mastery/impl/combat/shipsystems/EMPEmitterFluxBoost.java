@@ -39,7 +39,7 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(EMPEmitterFluxBoostScript.class)) {
-            ship.addListener(new EMPEmitterFluxBoostScript(ship, getStrength(ship), id));
+            ship.addListener(new EMPEmitterFluxBoostScript(ship, getStrength(ship)));
         }
     }
 
@@ -48,16 +48,14 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
         return "emp";
     }
 
-    static class EMPEmitterFluxBoostScript implements EMPEmitterDamageListener, AdvanceableListener {
+    class EMPEmitterFluxBoostScript implements EMPEmitterDamageListener, AdvanceableListener {
         final ShipAPI ship;
         final float strength;
-        final String id;
         float currentBoost = 0f;
 
-        EMPEmitterFluxBoostScript(ShipAPI ship, float strength, String id) {
+        EMPEmitterFluxBoostScript(ShipAPI ship, float strength) {
             this.ship = ship;
             this.strength = strength;
-            this.id = id;
         }
 
         @Override
@@ -77,7 +75,7 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
                 Utils.maintainStatusForPlayerShip(
                         ship,
                         id,
-                        ship.getSystem().getSpecAPI().getIconSpriteName(),
+                        getSystemSpec().getIconSpriteName(),
                         Strings.Descriptions.EMPEmitterFluxBoostTitle,
                         String.format(Strings.Descriptions.EMPEmitterFluxBoostDesc1, Utils.asPercentNoDecimal(currentBoost)),
                         false);

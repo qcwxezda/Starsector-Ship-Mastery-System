@@ -54,7 +54,7 @@ public class DimensionalTether {
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
     public static final String HAS_ELITE_EFFECT_KEY = "$sms_EliteDimensionalTether";
     public static final float MIN_CR_COST = 0.05f;
-    public static final float[] EMP_RANGE = {800f, 1000f, 1250f, 1500f};
+    public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
 
     private static class RepairScript extends BaseEveryFrameCombatPlugin {
         private final IntervalUtil updateInterval = new IntervalUtil(0.5f, 0.5f);

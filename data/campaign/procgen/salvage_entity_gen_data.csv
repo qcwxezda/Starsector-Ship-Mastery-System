@@ -12,5 +12,5 @@ sms_construct_pref_in_fleet:4,
 extended:1x3000
 ",,,,,,,,,
 sms_station_nucleus,10,50,DISCOVERABLE,4000,2000,10000,"no_debris, no_remove",,"rare_tech:2,
-extended:5x30000
+extended:15x50000
 ",,,,,,,,,

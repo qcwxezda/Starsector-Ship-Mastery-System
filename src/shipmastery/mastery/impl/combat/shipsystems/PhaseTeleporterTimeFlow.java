@@ -51,7 +51,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(PhaseTeleporterTimeFlowScript.class)) {
-            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 3f*getStrength(ship), 10f*getStrength(ship), id));
+            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 3f*getStrength(ship), 10f*getStrength(ship)));
         }
     }
 
@@ -66,24 +66,22 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         return "phaseteleporter";
     }
 
-    static class PhaseTeleporterTimeFlowScript extends BaseShipSystemListener implements AdvanceableListener,
+    class PhaseTeleporterTimeFlowScript extends BaseShipSystemListener implements AdvanceableListener,
                                                                                          ShipDestroyedListener {
         final ShipAPI ship;
         final float maxTimeMult;
         final float maxTime;
         final float basePPTAmount;
-        final String id;
         float timeLeft = 0f;
         final float particlesPerSecond = 50;
         final int particleCount;
         final JitterEmitter emitter;
 
-        PhaseTeleporterTimeFlowScript(ShipAPI ship, float strength, float maxTime, float basePPTAmount, String id) {
+        PhaseTeleporterTimeFlowScript(ShipAPI ship, float strength, float maxTime, float basePPTAmount) {
             this.ship = ship;
             this.maxTimeMult = 1f + strength;
             this.maxTime = maxTime;
             this.basePPTAmount = basePPTAmount;
-            this.id = id;
             particleCount = (int) (maxTime * particlesPerSecond);
             emitter = new JitterEmitter(
                     ship,
@@ -124,7 +122,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
             }
             Utils.maintainStatusForPlayerShip(ship,
                                               id,
-                                              ship.getSystem().getSpecAPI().getIconSpriteName(),
+                                              getSystemSpec().getIconSpriteName(),
                                               Strings.Descriptions.PhaseTeleporterTimeFlowTitle,
                                               String.format(Strings.Descriptions.PhaseTeleporterTimeFlowDesc1, Utils.asPercentNoDecimal(timeMult.getModifiedValue())),
                                               false);

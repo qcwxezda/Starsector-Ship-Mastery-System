@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.procgen.TestGenerator;
+import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class sms_cConcealedStationCheckType extends BaseCommandPlugin {
         var memory = getEntityMemory(memoryMap);
         if (memory == null) return false;
 
-        TestGenerator.StationType type = (TestGenerator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
+        Generator.StationType type = (Generator.StationType) memory.get(Strings.Campaign.STATION_TYPE_KEY);
         if (type == null) return false;
 
         switch (type) {

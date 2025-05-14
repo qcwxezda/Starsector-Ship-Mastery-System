@@ -39,7 +39,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
         if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(PlasmaBurnEngineRepairScript.class)) {
             float strength = getStrength(ship);
-            ship.addListener(new PlasmaBurnEngineRepairScript(ship, 5f * strength, strength, strength, id));
+            ship.addListener(new PlasmaBurnEngineRepairScript(ship, 5f * strength, strength, strength));
         }
     }
 
@@ -56,22 +56,20 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
         return "microburn";
     }
 
-    static class PlasmaBurnEngineRepairScript extends BaseShipSystemListener implements AdvanceableListener {
+    class PlasmaBurnEngineRepairScript extends BaseShipSystemListener implements AdvanceableListener {
 
         final ShipAPI ship;
         final float repairSpeedMult, turnRateMult, turnRateTime;
-        final String id;
         float postEffectLevel = 0f;
         static final Color color = new Color(89, 255, 89);
         final EntityBurstEmitter emitter;
         final IntervalUtil burstInterval = new IntervalUtil(0.2f, 0.2f);
 
-        PlasmaBurnEngineRepairScript(ShipAPI ship, float repairSpeedMult, float turnRateMult, float turnRateTime, String id) {
+        PlasmaBurnEngineRepairScript(ShipAPI ship, float repairSpeedMult, float turnRateMult, float turnRateTime) {
             this.ship = ship;
             this.repairSpeedMult = repairSpeedMult;
             this.turnRateMult = turnRateMult;
             this.turnRateTime = turnRateTime;
-            this.id = id;
             emitter = new EntityBurstEmitter(ship, ship.getSpriteAPI(), color, 4, 10f, 1f);
             emitter.alphaMult = 0.5f;
             emitter.fadeInFrac = 0.5f;
@@ -90,7 +88,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
             ship.getMutableStats().getCombatEngineRepairTimeMult().modifyMult(id, 1f / repairSpeedMult);
             Utils.maintainStatusForPlayerShip(ship,
                     id,
-                    ship.getSystem().getSpecAPI().getIconSpriteName(),
+                    getSystemSpec().getIconSpriteName(),
                     Strings.Descriptions.PlasmaBurnEngineRepairTitle,
                     String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.asFloatOneDecimal(repairSpeedMult)),
                     false);
@@ -104,13 +102,13 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
                 ship.getMutableStats().getCombatEngineRepairTimeMult().modifyMult(id, 1f / repairSpeedMult);
                 Utils.maintainStatusForPlayerShip(ship,
                         id,
-                        ship.getSystem().getSpecAPI().getIconSpriteName(),
+                        getSystemSpec().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,
                         String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc1, Utils.asFloatOneDecimal(repairSpeedMult)),
                         false);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "2",
-                        ship.getSystem().getSpecAPI().getIconSpriteName(),
+                        getSystemSpec().getIconSpriteName(),
                         Strings.Descriptions.PlasmaBurnEngineRepairTitle,
                         String.format(Strings.Descriptions.PlasmaBurnEngineRepairDesc2, Utils.asPercentNoDecimal(turnRateMult * postEffectLevel)),
                         false);

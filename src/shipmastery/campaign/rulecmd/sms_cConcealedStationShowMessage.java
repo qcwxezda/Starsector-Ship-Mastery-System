@@ -100,9 +100,9 @@ public class sms_cConcealedStationShowMessage extends BaseCommandPlugin {
             int seen = memoryMap.get(MemKeys.GLOBAL).getInt(Strings.Campaign.NUM_MESSAGES_SEEN);
             if (seen >= Strings.Campaign.messages.length) return false;
             var message = Strings.Campaign.messages[seen];
-            addAndGetFormattedMessage(textPanel, dialog.getTextWidth(), message, seen);
             localMemory.set(Strings.Campaign.STATION_SEEN_MESSAGE_INDEX, seen);
-            Global.getSector().getIntelManager().addIntel(new ConcealedStationMessageIntel(seen));
+            Global.getSector().getIntelManager().addIntel(new ConcealedStationMessageIntel(seen), false, textPanel);
+            addAndGetFormattedMessage(textPanel, dialog.getTextWidth(), message, seen);
         }
 
         textPanel.setFontInsignia();
@@ -157,11 +157,17 @@ public class sms_cConcealedStationShowMessage extends BaseCommandPlugin {
                         String str = String.format("(%.1f, %.1f)", loc.x, loc.y);
                         appendToStringAndHighlight(sb, currentHighlight, str);
                     }
-                    case "remoteBeaconLoc" -> {
+                    case "remoteBeaconLoc1" -> {
                         Vector2f loc = Utils.toLightyears((Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.REMOTE_BEACON_LOCATION));
-                        String str = String.format("(%.1f, %.1f)", loc.x, loc.y);
+                        String str = String.format("(%.1f, %.1f)", loc.x + 3f, loc.y);
                         appendToStringAndHighlight(sb, currentHighlight, str);
                     }
+                    case "remoteBeaconLoc2" -> {
+                        Vector2f loc = Utils.toLightyears((Vector2f) Global.getSector().getMemoryWithoutUpdate().get(Strings.Campaign.REMOTE_BEACON_LOCATION));
+                        String str = String.format("(%.1f, %.1f)", loc.x + 7.3f, loc.y);
+                        appendToStringAndHighlight(sb, currentHighlight, str);
+                    }
+                    default -> appendToStringAndHighlight(sb, currentHighlight, "<" + tag + ">");
                 }
                 i = j;
                 continue;

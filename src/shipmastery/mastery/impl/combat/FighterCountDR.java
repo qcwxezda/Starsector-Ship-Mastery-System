@@ -116,7 +116,7 @@ public class FighterCountDR extends BaseMasteryEffect {
                 Utils.maintainStatusForPlayerShip(
                         ship,
                         id,
-                        ship.getSystem().getSpecAPI().getIconSpriteName(),
+                        "graphics/icons/hullsys/damper_field.png",
                         Strings.Descriptions.FighterCountDRTitle,
                         String.format(Strings.Descriptions.FighterCountDRDesc1, Utils.asPercentNoDecimal(currentStacks * amountPerFighter)),
                         false);
