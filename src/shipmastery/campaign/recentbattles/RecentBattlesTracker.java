@@ -144,7 +144,11 @@ public class RecentBattlesTracker extends BaseCampaignEventListener implements F
                     fleet.setInflater(inflater);
                 }
                 fleet.setDoNotAdvanceAI(true);
-                fleet.setMemory(fleetToCopy.getMemoryWithoutUpdate());
+                var copyMem = fleetToCopy.getMemoryWithoutUpdate();
+                var thisMem = fleet.getMemoryWithoutUpdate();
+                for (var id : copyMem.getKeys()) {
+                    thisMem.set(id, copyMem.get(id));
+                }
                 fleetsCopy.add(fleet);
             }
 

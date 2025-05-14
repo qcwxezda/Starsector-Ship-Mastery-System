@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class CuratorHullmodPlayer extends CuratorNPCHullmod implements HullModFleetEffect {
     @Override
@@ -56,7 +57,7 @@ public class CuratorHullmodPlayer extends CuratorNPCHullmod implements HullModFl
                 }
             } else {
                 if (!fm.getVariant().hasHullMod("sms_curator_player_hullmod")) {
-                    fm.getVariant().addPermaMod("sms_curator_player_hullmod");
+                    Utils.addPermaModCloneVariantIfNeeded(fm, "sms_curator_player_hullmod");
                 }
             }
         }

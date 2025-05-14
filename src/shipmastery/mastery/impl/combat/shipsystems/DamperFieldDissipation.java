@@ -18,7 +18,7 @@ public class DamperFieldDissipation extends ShipSystemEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(DamperFieldDissipationScript.class)) {
-            ship.addListener(new DamperFieldDissipationScript(ship, getStrength(ship), id));
+            ship.addListener(new DamperFieldDissipationScript(ship, getStrength(ship)));
         }
     }
 
@@ -27,15 +27,13 @@ public class DamperFieldDissipation extends ShipSystemEffect {
         return "damper";
     }
 
-    static class DamperFieldDissipationScript extends BaseShipSystemListener {
+    class DamperFieldDissipationScript extends BaseShipSystemListener {
         final ShipAPI ship;
         final float strength;
-        final String id;
 
-        DamperFieldDissipationScript(ShipAPI ship, float strength, String id) {
+        DamperFieldDissipationScript(ShipAPI ship, float strength) {
             this.ship = ship;
             this.strength = strength;
-            this.id = id;
         }
 
         @Override
@@ -50,7 +48,7 @@ public class DamperFieldDissipation extends ShipSystemEffect {
             Utils.maintainStatusForPlayerShip(
                     ship,
                     id,
-                    ship.getSystem().getSpecAPI().getIconSpriteName(),
+                    getSystemSpec().getIconSpriteName(),
                     Strings.Descriptions.DamperFieldDissipationTitle,
                     String.format(Strings.Descriptions.DamperFieldDissipationDesc1, Utils.asFloatTwoDecimals(mult)),
                     false);

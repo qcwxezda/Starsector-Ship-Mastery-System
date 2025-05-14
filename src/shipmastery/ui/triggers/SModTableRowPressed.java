@@ -75,7 +75,35 @@ public class SModTableRowPressed extends TriggerableProxy {
             } else {
                 if (rootVariant != null) {
                     String name = spec.getDisplayName();
-                    if (SModUtils.isHullmodBuiltIn(spec, variant)) {
+
+                    boolean isEnhance = SModUtils.isHullmodBuiltIn(spec, variant);
+                    float bonusXPFraction = 0f;
+                    if (masteryPanel.isUsingSP()) {
+                        float origCreditsCost = SModUtils.getCreditsCost(spec, module);
+                        bonusXPFraction = isEnhance ? 1f : 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
+                        Global.getSector().getPlayerStats().spendStoryPoints(
+                                1,
+                                true,
+                                null,
+                                true,
+                                bonusXPFraction,
+                                String.format(
+                                        Strings.RefitScreen.sModAutofitSPText,
+                                        module.getName(),
+                                        module.getHullSpec().getNameWithDesignationWithDashClass(),
+                                        spec.getDisplayName()));
+                    }
+                    if (module.getFleetMember() != null) {
+                        ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
+                        record.getSMods().add(rowData.hullModSpecId);
+                        record.setSPSpent(masteryPanel.isUsingSP() ? 1 : 0);
+                        record.setMPSpent(rowData.mpCost);
+                        record.setBonusXPFractionGained(bonusXPFraction);
+                        record.setCreditsSpent(rowData.creditsCost);
+                        PlaythroughLog.getInstance().getSModsInstalled().add(record);
+                    }
+
+                    if (isEnhance) {
                         variant.getSModdedBuiltIns().add(rowData.hullModSpecId);
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                                 Strings.MasteryPanel.enhanceConfirm + name, Settings.MASTERY_COLOR);
@@ -85,31 +113,6 @@ public class SModTableRowPressed extends TriggerableProxy {
 //                            DeferredActionPlugin.performLater(() -> SModsOverCapacity.trackOverCapacityMod(module.getFleetMember(), cur - limit), 0f);
 //                        }
                         variant.addPermaMod(rowData.hullModSpecId, true);
-                        float bonusXPFraction = 0f;
-                        if (masteryPanel.isUsingSP()) {
-                            float origCreditsCost = SModUtils.getCreditsCost(spec, module);
-                            bonusXPFraction = 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
-                            Global.getSector().getPlayerStats().spendStoryPoints(
-                                    1,
-                                    true,
-                                    null,
-                                    true,
-                                    bonusXPFraction,
-                                    String.format(
-                                            Strings.RefitScreen.sModAutofitSPText,
-                                            module.getName(),
-                                            module.getHullSpec().getNameWithDesignationWithDashClass(),
-                                            spec.getDisplayName()));
-                        }
-                        if (module.getFleetMember() != null) {
-                            ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
-                            record.getSMods().add(rowData.hullModSpecId);
-                            record.setSPSpent(masteryPanel.isUsingSP() ? 1 : 0);
-                            record.setMPSpent(rowData.mpCost);
-                            record.setBonusXPFractionGained(bonusXPFraction);
-                            record.setCreditsSpent(rowData.creditsCost);
-                            PlaythroughLog.getInstance().getSModsInstalled().add(record);
-                        }
                         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
                                 Strings.MasteryPanel.builtInConfirm + name, masteryPanel.isUsingSP() ? Misc.getStoryBrightColor() : Settings.MASTERY_COLOR);
                     }

@@ -26,7 +26,7 @@ public class EntropyAmplifierMobility extends ShipSystemEffect {
             return;
         }
         if (!ship.hasListenerOfClass(EntropyAmplifierMobilityScript.class)) {
-            ship.addListener(new EntropyAmplifierMobilityScript(ship, getStrength(ship), id));
+            ship.addListener(new EntropyAmplifierMobilityScript(ship, getStrength(ship)));
         }
     }
 
@@ -35,16 +35,14 @@ public class EntropyAmplifierMobility extends ShipSystemEffect {
         return ENTROPY_AMPLIFIER_ID;
     }
 
-    static class EntropyAmplifierMobilityScript extends BaseShipSystemListener implements AdvanceableListener {
+    class EntropyAmplifierMobilityScript extends BaseShipSystemListener implements AdvanceableListener {
         final ShipAPI ship;
         final float strength;
-        final String id;
         EntropyAmplifierStats.TargetData curTargetData;
 
-        EntropyAmplifierMobilityScript(ShipAPI ship, float strength, String id) {
+        EntropyAmplifierMobilityScript(ShipAPI ship, float strength) {
             this.ship = ship;
             this.strength = strength;
-            this.id = id;
         }
 
         @Override
@@ -74,7 +72,7 @@ public class EntropyAmplifierMobility extends ShipSystemEffect {
 
             Utils.maintainStatusForPlayerShip(target,
                                               ENTROPY_AMPLIFIER_ID,
-                                              ship.getSystem().getSpecAPI().getIconSpriteName(),
+                                              getSystemSpec().getIconSpriteName(),
                                               ship.getSystem().getDisplayName(),
                                               String.format(Strings.Descriptions.EntropyAmplifierMobilityDesc1, Utils.asPercentNoDecimal(effectLevel*strength)),
                                               true);

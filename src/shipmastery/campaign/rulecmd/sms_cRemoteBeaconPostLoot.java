@@ -17,6 +17,7 @@ import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
@@ -61,6 +62,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             fParams.maxNumShips = 60;
             fParams.doNotPrune = true;
+            fParams.averageSMods = 5;
             fParams.random = new Random(commanderId.hashCode());
             fParams.modeOverride = FactionAPI.ShipPickMode.PRIORITY_ONLY;
             fParams.addShips = new ArrayList<>();
@@ -68,8 +70,9 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
 
             var fleet = FleetFactoryV3.createFleet(fParams);
             fleet.getInflater().setRemoveAfterInflating(false);
-            fleet.setName(Strings.Campaign.singularity);
+            fleet.setName(Strings.Campaign.continuum);
             fleet.clearAbilities();
+            fleet.addAbility(Abilities.INTERDICTION_PULSE);
             fleet.getFleetData().sort();
             var commander = fleet.getCommander();
             if (commander != null) {
@@ -102,6 +105,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             FleetInteractionDialogPluginImpl.FIDConfig config = new FleetInteractionDialogPluginImpl.FIDConfig();
             config.alwaysAttackVsAttack = true;
             config.pullInStations = false;
+            config.showTransponderStatus = false;
             config.delegate = new FIDDelegate();
             return config;
         }
@@ -142,6 +146,19 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (nonPlayer == null) return;
             if (!nonPlayer.contains(toTrack)) return;
             if (toTrack.isEmpty()) {
+                // Remove omega weapons, add our own for consistency
+                for (var stack : loot.getStacksCopy()) {
+                    var weaponSpec = stack.getWeaponSpecIfWeapon();
+                    if (weaponSpec != null && weaponSpec.hasTag(Tags.OMEGA)) {
+                        loot.removeStack(stack);
+                    }
+                }
+                loot.addWeapons("riftcascade", 1);
+                loot.addWeapons("cryoblaster", 1);
+                loot.addWeapons("disintegrator", 1);
+                loot.addWeapons("cryoflux", 2);
+                loot.addWeapons("minipulser", 2);
+                loot.sort();
                 loot.addCommodity("sms_amorphous_core", 1);
                 DeferredActionPlugin.performLater(() -> Global.getSector().removeListener(this), 0f);
             }

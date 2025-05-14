@@ -143,7 +143,7 @@ public class NucleusDefenderHandler extends BaseEveryFrameCombatPlugin implement
         var objectives = engine.getObjectives();
         if (objectives != null) {
             for (var obj : objectives) {
-                float score = computeScore(obj.getLocation());
+                float score = computeScore(obj.getLocation()) + 3f;
                 if (score > bestScore) {
                     bestScore = score;
                     bestLoc = obj.getLocation();
@@ -185,17 +185,31 @@ public class NucleusDefenderHandler extends BaseEveryFrameCombatPlugin implement
             var data = entry.getValue();
             GL11.glBegin(GL11.GL_TRIANGLE_FAN);
             float alpha = 0.3f - Math.max(0f, (3f - data.timeLeft)) * 0.3f;
-            GL11.glColor4f(0.5f, 1f, 0.75f, alpha);
+            GL11.glColor4f(0.8f, 1f, 0.9f, alpha);
             GL11.glVertex2f(loc.x, loc.y);
 
-            GL11.glColor4f(0.5f, 1f, 0.75f, 0f);
+            GL11.glColor4f(0.6f, 1f, 0.8f, 0f);
             for (float angle = 0f; angle <= 360f; angle += 2f) {
                 GL11.glVertex2f(
                         loc.x + data.radius*(float)Math.cos(angle*Misc.RAD_PER_DEG),
                         loc.y + data.radius*(float)Math.sin(angle*Misc.RAD_PER_DEG));
             }
-
             GL11.glEnd();
+
+            if (data.timeLeft >= data.totalTime/2f) {
+                float mult = Math.min(1f, Math.min(data.totalTime - data.timeLeft, data.timeLeft - data.totalTime/2f));
+                GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+                GL11.glColor4f(0.5f, 1f, 0.75f, 0.15f*mult);
+                GL11.glVertex2f(loc.x, loc.y);
+
+                GL11.glColor4f(0.7f, 1f, 0.8f, 0f);
+                for (float angle = 0f; angle <= 360f; angle += 2f) {
+                    GL11.glVertex2f(
+                            loc.x + (RADIUS / 4f) * (float) Math.cos(angle * Misc.RAD_PER_DEG),
+                            loc.y + (RADIUS / 4f) * (float) Math.sin(angle * Misc.RAD_PER_DEG));
+                }
+                GL11.glEnd();
+            }
         }
         GL11.glDisable(GL11.GL_BLEND);
     }

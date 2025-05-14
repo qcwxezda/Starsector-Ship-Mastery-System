@@ -16,6 +16,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -801,6 +802,17 @@ public abstract class Utils {
         LabelAPI label = Global.getSettings().createLabel("", font);
         float per = label.computeTextWidth("-");
         return "-".repeat((int) (width/per));
+    }
+
+    public static void addPermaModCloneVariantIfNeeded(FleetMemberAPI fm, String hullmodId) {
+        var variant = fm.getVariant();
+        if (variant == null) return;
+        if (variant.getPermaMods().contains(hullmodId)) return;
+        if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
+            fm.setVariant(variant.clone(), false, false);
+            fm.getVariant().setSource(VariantSource.REFIT);
+        }
+        fm.getVariant().addPermaMod(hullmodId, false);
     }
 
 }

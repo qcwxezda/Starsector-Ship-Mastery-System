@@ -29,8 +29,10 @@ public interface Strings {
         String SALVAGED_BEACON_IDS = "$sms_SalvagedBeaconIDs"; // global
         String NUCLEUS_SALVAGED = "$sms_NucleusSalvaged"; // local
         String TRIGGERED_REMOTE_BEACON_DEFENDERS = "$sms_TriggeredRemoteBeaconDefenders"; // global
-        String REMOTE_BEACON_DEFENDER_FLEET_TYPE = "sms_RemoteBeaconDefender"; // Local
-        String REMOTE_BEACON_DEFENDER_FLEET = "$sms_RemoteBeaconDefenderFleet"; // Global
+        String REMOTE_BEACON_DEFENDER_FLEET_TYPE = "sms_RemoteBeaconDefender"; // local
+        String REMOTE_BEACON_DEFENDER_FLEET = "$sms_RemoteBeaconDefenderFleet"; // global
+        String ACQUIRED_STATION_LEADS = "$sms_AcquiredStationLeads"; // global
+        String PROBE_PARENT_STATION = "$sms_ProbeParentStation"; // local
 
         String STATION_USED_KEY = "$sms_StationUsed";
 
@@ -86,7 +88,10 @@ public interface Strings {
         String emitterNotEnoughPower = Utils.getString("sms_campaign", "emitterNotEnoughPower");
         String emitterPromptText = Utils.getString("sms_campaign", "emitterPromptText");
         String emitterConfirmExt = Utils.getString("sms_campaign", "emitterConfirmExt");
-        String singularity = Utils.getString("sms_campaign", "singularity");
+        String continuum = Utils.getString("sms_campaign", "continuum");
+        String probeBreadcrumb = Utils.getString("sms_campaign", "probeBreadcrumb");
+        String probeBreadcrumbForIntel = Utils.getString("sms_campaign", "probeBreadcrumbForIntel");
+        String probeBreadcrumbIntelTitle = Utils.getString("sms_campaign", "probeBreadcrumbIntelTitle");
     }
 
     interface RefitScreen {

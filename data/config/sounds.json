@@ -15,6 +15,6 @@
     {"file": "sounds/sms_dimensional_tether_retreat.wav", "pitch": 1, "volume": 1}
   ],
   "sms_cargo_amorphous_core_drop": [
-    {"file": "sounds/sms_cargo_amorphous_core_drop.wav", "pitch": 1, "volume": 0.8}
+    {"file": "sounds/sms_cargo_amorphous_core_drop.wav", "pitch": 1, "volume": 0.7}
   ]
 }

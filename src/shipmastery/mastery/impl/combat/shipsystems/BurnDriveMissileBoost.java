@@ -44,25 +44,23 @@ public class BurnDriveMissileBoost extends ShipSystemEffect {
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
         if (!ship.hasListenerOfClass(BurnDriveMissileBoostScript.class)) {
-            ship.addListener(new BurnDriveMissileBoostScript(ship, getStrength(ship), id));
+            ship.addListener(new BurnDriveMissileBoostScript(ship, getStrength(ship)));
         }
     }
 
-    static class BurnDriveMissileBoostScript extends BaseShipSystemListener implements AdvanceableListener {
+    class BurnDriveMissileBoostScript extends BaseShipSystemListener implements AdvanceableListener {
 
         final ShipAPI ship;
         final float mult;
-        final String id;
         final Map<BurstEmitter, WeaponAPI> emitters = new HashMap<>();
         final IntervalUtil burstInterval = new IntervalUtil(0.25f, 0.35f);
         final float particleLife = 1f;
         float timeSinceDeactivated = 0f;
         boolean active = false;
 
-        BurnDriveMissileBoostScript(ShipAPI ship, float mult, String id) {
+        BurnDriveMissileBoostScript(ShipAPI ship, float mult) {
             this.ship = ship;
             this.mult = mult;
-            this.id = id;
 
             for (WeaponAPI weapon : ship.getUsableWeapons()) {
                 if (WeaponAPI.WeaponType.MISSILE.equals(weapon.getType())) {
@@ -94,7 +92,7 @@ public class BurnDriveMissileBoost extends ShipSystemEffect {
             ship.getMutableStats().getMissileHealthBonus().modifyPercent(id, 100f * modifiedMult);
             Utils.maintainStatusForPlayerShip(ship,
                     id,
-                    ship.getSystem().getSpecAPI().getIconSpriteName(),
+                    getSystemSpec().getIconSpriteName(),
                     Strings.Descriptions.BurnDriveMissileBoostTitle,
                     String.format(Strings.Descriptions.BurnDriveMissileBoostDesc1, Utils.asPercentNoDecimal(modifiedMult)),
                     false);

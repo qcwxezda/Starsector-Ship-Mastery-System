@@ -128,26 +128,26 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         switch (commander.getAICoreId()) {
             case "sms_fractured_gamma_core" -> {
                 numCommanderSkills = 1;
-                memory.set(key, 2);
+                memory.set(key, 1f);
             }
             case "sms_gamma_k_core" -> {
                 numCommanderSkills = 2;
-                memory.set(key, 4);
+                memory.set(key, 3.5f);
             }
             case "sms_beta_k_core" -> {
                 numCommanderSkills = 3;
-                memory.set(key, 6);
+                memory.set(key, 6f);
             }
             case "sms_alpha_k_core" -> {
                 numCommanderSkills = 5;
-                memory.set(key, 8);
+                memory.set(key, 8.5f);
             }
             case "sms_amorphous_core" -> {
                 numCommanderSkills = 5;
                 commander.getStats().setSkillLevel("best_of_the_best", 1f);
                 commander.getStats().setSkillLevel("carrier_group", 1f);
                 commander.getStats().setSkillLevel("fighter_uplink", 1f);
-                memory.set(key, 999999);
+                memory.set(key, 999999f);
             }
             default -> numCommanderSkills = 0;
         }

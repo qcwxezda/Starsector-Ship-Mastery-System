@@ -25,6 +25,11 @@ public class RingBurstEmitter extends BaseIEmitter {
     }
 
     @Override
+    public float getRenderRadius() {
+        return endRadius + 500f;
+    }
+
+    @Override
     public CombatEngineLayers getLayer() {
         return CombatEngineLayers.ABOVE_SHIPS_LAYER;
     }

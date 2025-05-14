@@ -21,6 +21,7 @@ import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.CuratorFleetHandler;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.PlayerFleetHandler;
 import shipmastery.campaign.PlayerMPHandler;
@@ -40,7 +41,7 @@ import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.procgen.TestGenerator;
+import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -78,6 +79,10 @@ public class ModPlugin extends BaseModPlugin {
         else {
             Settings.loadSettingsFromJson();
         }
+
+        // Load this particular portrait sprite manually as we do not want these to be
+        // random officers
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_amorphous_core.png");
     }
 
     @Override
@@ -136,20 +141,6 @@ public class ModPlugin extends BaseModPlugin {
                     }).toList();
             thisFaction.getKnownShips().addAll(knownShips);
             thisFaction.getShipsWhenImporting().addAll(knownShips);
-//            var byFPPerDP = new List[4];
-//            for (int i = 0; i < 3; i++) {
-//                int finalI = i;
-//                byFPPerDP[i] = knownShips.stream()
-//                        .map(x -> Global.getSettings().getHullSpec(x)).filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
-//                        .sorted((a, b) -> (int) (b.getSuppliesToRecover()*a.getFleetPoints()- b.getFleetPoints()*a.getSuppliesToRecover()))
-//                        .map(ShipHullSpecAPI::getHullId)
-//                        .toList();
-//                for (int j = 0; j <= 2; j++) {
-//                    if (byFPPerDP[i].size() > j) {
-//                        thisFaction.getPriorityShips().add((String) byFPPerDP[i].get(j));
-//                    }
-//                }
-//            }
         }
         var mostFP = new List[4];
         for (int i = 0; i < 4; i++) {
@@ -185,7 +176,7 @@ public class ModPlugin extends BaseModPlugin {
 
         boolean randomMode = Settings.ENABLE_RANDOM_MODE;
         Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
-        new TestGenerator().generate();
+        new Generator().generate();
         Global.getSector().getPlayerFaction().setRelationship("sms_curator", RepLevel.HOSTILE);
 
         // Not transient in case player saves while action queue isn't empty
@@ -259,17 +250,10 @@ public class ModPlugin extends BaseModPlugin {
             // But this doesn't seem to be the case
             VariantLookup variantLookup = new VariantLookup();
             Global.getSector().addTransientListener(variantLookup);
-            // Temporary, remove deprecated object if it still exists
-            Global.getSector().getMemoryWithoutUpdate().unset("$shipmastery_VariantLookup");
 
             PlayerMPHandler xpTracker = new PlayerMPHandler();
             Global.getSector().addTransientScript(xpTracker);
             Global.getSector().addTransientListener(xpTracker);
-
-            ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
-            Global.getSector().addTransientListener(graveyardSpawner);
-            Global.getSector().addTransientScript(graveyardSpawner);
-            listeners.addListener(graveyardSpawner, true);
 
             FleetHandler fleetHandler = new FleetHandler();
             listeners.addListener(fleetHandler, true);
@@ -295,6 +279,13 @@ public class ModPlugin extends BaseModPlugin {
                 throw new RuntimeException("Failed to add refit autofit plugin", e);
             }
         }
+
+        listeners.addListener(new CuratorFleetHandler(), true);
+
+        ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
+        Global.getSector().addTransientListener(graveyardSpawner);
+        Global.getSector().addTransientScript(graveyardSpawner);
+        listeners.addListener(graveyardSpawner, true);
 
         RecentBattlesTracker recentBattlesTracker = new RecentBattlesTracker();
         Global.getSector().addTransientListener(recentBattlesTracker);

@@ -75,12 +75,13 @@ The security lock on the container indicates that it's been tampered with. It's 
 sms_RemoteBeaconNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_amplifier 1
 $global.sms_LootedRemoteBeacon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemoteBeaconNoShieldUnlooted4:Loot the rest of the facility,
 sms_RemoteBeaconNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted4,sms_cRemoteBeaconAdditionalLoot,,,
-sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,sms_cRemoteBeaconPostLoot,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest.
+sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,sms_cRemoteBeaconPostLoot,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest, nor does the salvage team sent in after you.",defaultLeave:Leave,
+sms_RemoteBeaconBeginFight,BeginFleetEncounter,"$fleetType == sms_RemoteBeaconDefender score:1000
+!$sms_FleetSeen",$sms_FleetSeen = true,"Not an hour after you give the order to leave the planet behind, your radars begin frantically alerting you to the presence of dozens of unidentified vessels that had previously been lying in wait, scattered across the countless darkened craters on the planet's surface.
 
-You return to your shuttle and instruct a salvage team to commence routine operations.
+Did your arrival at the facility trip an automated beacon within? Or were they alerted to the commotion of your fleet's drive bubble?
 
-",defaultLeave:Leave,
-sms_RemoteBeaconBeginFight,BeginFleetEncounter,$fleetType == sms_RemoteBeaconDefender score:1000,,A fleet suddenly appears! Oh no!,,
+It's too late to make amends now. A hostile swarm of ships is rapidly closing in on your location.",,
 sms_ConcealedStationFirstTime,OpenInteractionDialog,"$customType == sms_concealed_station score:100
 !$global.sms_SeenConcealedStation
 !$entity.sms_SeenMessage",ShowDefaultVisual,"Your fleet approaches an abandoned station tucked away in a remote location, inside a system far removed from the inhabited Core. Some sort of jammer inside or nearby is sending intermittent bursts, preventing your sensors from acquiring a consistent lock on the structure.
@@ -178,6 +179,9 @@ sms_ConcealedProbeSalvage,TriggerAutomatedDefenses,$customType == sms_concealed_
 You recognize the vessels before you as conventionally crewed ships. What would a small fleet of crewed ships be doing out here, if not amidst its own salvage expedition?
 
 The answer comes just a few moments later. The officers onboard these ships are not human, but AI. These vessels have been automated.",,
+sms_ConcealedProbeBreadcrumb,CheckSalvageSpecial,$customType == sms_concealed_probe score:100,"sms_cConcealedProbeAddBreadcrumb
+ShowDefaultVisual
+FireBest BeginSalvage",,,
 sms_ConcealedProbeTryAddHullmod,DialogOptionSelected,"$option == salSalvage
 $customType == sms_concealed_probe score:100
 !$sms_TriedToAddHullmod","sms_cConcealedProbeAddHullmod
@@ -191,7 +195,7 @@ sms_NucleusFirstTime,OpenInteractionDialog,"$customType == sms_station_nucleus s
 
 You settle into a close orbit while scanning the structure for potential points of interest, but find only that the construction is sealed on all sides.
 
-""$PlayerSirOrMadam, I'm detecting enormous amounts of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions -- I don't think there's a specific target in mind.""
+""$PlayerSirOrMadam, I'm detecting vast quantities of hyperwave signals originating from somewhere inside that thing."" One of your officers motions for you to join him at a nearby holoprojector displaying a formless mass of blips and clouds. ""They're being sent out in all directions -- I don't think there's a specific target in mind.""
 
 He continues, ""It's just a garbled mess of data. Incomprehensible.""",sms_oNucleusFirstTime2:Continue,
 sms_NucleusFirstTime2,DialogOptionSelected,$option == sms_oNucleusFirstTime2,,"""Hold on, I think I've got something...

@@ -82,7 +82,8 @@
         - Ships with built-in SO are no longer eligible.
     - Apply-officer-effect:
         - Added additional checks for Support Doctrine.
-- Best of the best: nerfed mastery bonus from 30% to 25%.
+- Best of the Best: nerfed mastery bonus from 30% to 25%.
+- Cybernetic Augmentation: can no longer be adjusted directly from lunalib settings, but may still be adjusted from shipmastery_settings.json.
 - Enhancing:
     - You no longer get an extra logistics S-mod slot on the third enhance (sorry).
     - Reduced enhance MP cost.
@@ -93,6 +94,7 @@
 - Screenshots in the README now link to online images; screenshots no longer packaged in releases.
 - Fixed a rare possible issue with the Orion-Device-deals-damage mastery.
 - Fixed plasma-burn-giving-energy-RoF mastery only applying to the flagship despite not having that tag.
+- Fixed fighter-count-DR mastery incorrectly looking for ship system icon, which could cause a crash.
 - Added a failsafe for null FleetDataAPI.
 
 0.14.2

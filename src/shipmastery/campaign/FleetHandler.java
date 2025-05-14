@@ -253,22 +253,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     @Override
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
         addMasteriesToFleet(fleet);
-        // Curator fleets should not have crew or built-in d-mods
-        if (fleet.getFaction() != null && "sms_curator".equals(fleet.getFaction().getId())) {
-            for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-                fm.getVariant().addPermaMod("sms_curator_npc_hullmod", false);
-                var toRemove = new ArrayList<String>();
-                for (var hullmod : fm.getVariant().getHullMods()) {
-                    var spec = Global.getSettings().getHullModSpec(hullmod);
-                    if (spec.hasTag(Tags.HULLMOD_DMOD) && fm.getHullSpec().isBuiltInMod(hullmod)) {
-                        toRemove.add(hullmod);
-                    }
-                }
-                for (var hullmod : toRemove) {
-                    fm.getVariant().addSuppressedMod(hullmod);
-                }
-            }
-        }
     }
 
     public static boolean isNoAutofit(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -373,6 +357,10 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         float actualLevel = (float) random.nextGaussian(averageLevel, data.stDev());
         int cap = ShipMastery.getMaxMasteryLevel(spec);
         actualLevel = Math.max(actualLevel, commander.getMemoryWithoutUpdate().getFloat(MINIMUM_MASTERY_LEVEL_KEY));
+        float fracPart = actualLevel - (int) actualLevel;
+        if (random.nextFloat() < fracPart) {
+            actualLevel++;
+        }
 
         List<? extends FleetMemberAPI> fmsOfSpec;
         if (membersOfSpec != null) {
@@ -424,23 +412,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         }
 
         return picker.pick();
-//        // Always pick S-mod capacity effects if they're available
-//        if (allKeys.size() > 1) {
-//            outer:
-//            for (String option : allKeys) {
-//                var effects = ShipMastery.getMasteryEffects(spec, level, option);
-//                for (var effect : effects) {
-//                    if (effect instanceof SModCapacity) {
-//                        selectedOption = option;
-//                        break outer;
-//                    }
-//                }
-//            }
-//        }
-//        if (selectedOption == null) {
-//            selectedOption = allKeys.get(random.nextInt(allKeys.size()));
-//        }
-//        return selectedOption;
     }
 
     public static float getNPCLevelModifier(float progression) {

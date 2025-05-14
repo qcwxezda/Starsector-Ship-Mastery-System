@@ -1,8 +1,10 @@
 package shipmastery.config;
 
+import com.fs.starfarer.api.Global;
 import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettingsListener;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import shipmastery.campaign.FleetHandler;
 
 public class LunaLibSettingsListener implements LunaSettingsListener {
@@ -56,9 +58,14 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         }
         Settings.DISABLE_MAIN_FEATURES = LunaSettings.getBoolean(id, "sms_DisableMainFeatures");
 
-        Settings.CYBER_AUG_BASE_BONUS = LunaSettings.getFloat(id, "sms_CyberAugBaseBonus");
-        Settings.CYBER_AUG_MAX_BONUS = LunaSettings.getFloat(id, "sms_CyberAugMaxBonus");
-        Settings.CYBER_AUG_BONUS_PER_GROUP = LunaSettings.getFloat(id, "sms_CyberAugBonusPerGroup");
+        try {
+            JSONObject json = Global.getSettings().loadJSON("shipmastery_settings.json", "shipmasterysystem");
+            Settings.CYBER_AUG_BASE_BONUS = Math.max(0f, (float) json.getDouble("cyberAugBaseBonus"));
+            Settings.CYBER_AUG_MAX_BONUS = Math.max(0f, (float) json.getDouble("cyberAugMaxBonus"));
+            Settings.CYBER_AUG_BONUS_PER_GROUP = Math.max(0f, (float) json.getDouble("cyberAugBonusPerGroup"));
+        } catch (Exception e) {
+            throw new RuntimeException("[Ship Mastery System] Unable to load shipmastery_settings.json", e);
+        }
 
         FleetHandler.NPC_MASTERY_CACHE.clear();
     }

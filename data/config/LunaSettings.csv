@@ -2,7 +2,7 @@ fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValu
 sms_HeaderFeatures,Features,Header,Features,,,,,General
 sms_DisableMainFeatures,Disable Main Features (requires reload),Boolean,false,,"If this option is enabled, the main features of this mod will be disabled, re-enabling building in hullmods with story points and disabling all mastery effects.
 
-Note that this does not disable this mod's skill changes, nor does it prevent knowledge constructs from spawning.
+Note that this does not disable this mod's skill changes, nor does it remove additional content not related to the mastery system.
 You will need to manually revert this mod's skill changes by deleting the ""replace"" property in ""Ship Mastery System/mod_info.json"" and deleting or renaming ""Ship Mastery System/data/characters/skills"". This will require a full application reload to take effect.
 ",,,General
 sms_RandomMode,Enable Random Mode (requires new game),Boolean,false,,"If enabled, all masteries are randomized except for the guaranteed 3 S-mod capacity masteries, which may appear at any level. Disables tier requirements from mastery selection criteria and removes the option to select between two different masteries at certain levels.
@@ -15,12 +15,6 @@ sms_RecentBattles,Recent Battle Replay,Radio,On,"Off,On,Precise","If enabled, sa
 If precise mode is enabled, exact ship variants will be saved to file, ensuring that the same ships that were fought in the field are fought in replay, but this may make your save file noticeably larger.
 Otherwise, only the fleets' inflaters will be saved, meaning variations in ship loadouts may occur due to setting changes, or poorly-seeded or unseeded inflaters.",,,General
 sms_SModAutofitOption,Add S-Mod Autofit Option,Boolean,true,,"If enabled, adds a checkbox to the autofit window that, when checked, will attempt to copy installed S-mods from the goal variant during the autofit process. May conflict with other mods that modify the refit screen autofit behavior.",,,General
-,,,,,,,,
-,,,,,,,,
-sms_HeaderSkillChanges,Skill Changes,Header,Skill Changes,,,,,General
-sms_CyberAugBaseBonus,Cybernetic Augmentation: Base OP Bonus,Double,0.02,,"Sets the base OP bonus that the Cybernetic Augmentation skill provides.",0.01,0.1,General
-sms_CyberAugMaxBonus,Cybernetic Augmentation: Max OP Bonus,Double,0.1,,"Sets the maximum OP bonus that the Cybernetic Augmentation skill may provide.",0.01,0.25,General
-sms_CyberAugBonusPerGroup,Cybernetic Augmentation: Additional OP Per Set,Double,0.02,,"Sets the OP bonus granted by Cybernetic Augmentation per set of 5 mastered ship hulls, up to the maximum bonus listed above.",0.01,0.05,General
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderGameplay,Gameplay,Header,Gameplay,,,,,Mastery
