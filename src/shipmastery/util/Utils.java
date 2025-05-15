@@ -22,7 +22,6 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.campaign.fleet.FleetData;
-import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.combat.entities.Missile;
 import com.fs.starfarer.combat.entities.PlasmaShot;
 import org.json.JSONArray;
@@ -505,17 +504,17 @@ public abstract class Utils {
         return ((FleetData) Global.getSector().getPlayerFleet().getFleetData()).getCargoNoSync().getCredits();
     }
 
-    public static List<FleetMember> getMembersNoSync(CampaignFleetAPI fleet) {
+    public static List<? extends FleetMemberAPI> getMembersNoSync(CampaignFleetAPI fleet) {
         if (fleet == null) return new ArrayList<>();
         return getMembersNoSync(fleet.getFleetData());
     }
 
-    public static List<FleetMember> getMembersNoSync(FleetDataAPI fleetData) {
+    public static List<? extends FleetMemberAPI> getMembersNoSync(FleetDataAPI fleetData) {
         if (fleetData == null) return new ArrayList<>();
         // Don't use getMembersNoSync because that also includes NULL spacer members (when dragging stuff around)
         boolean wasNoSync = fleetData.isForceNoSync();
         fleetData.setForceNoSync(true);
-        List<FleetMember> members = ((FleetData) fleetData).getMembers();
+        List<? extends FleetMemberAPI> members = ((FleetData) fleetData).getMembers();
         fleetData.setForceNoSync(wasNoSync);
         return members == null ? new ArrayList<>() : members;
     }

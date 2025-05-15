@@ -1,3 +1,7 @@
+1.0.2
+----------
+- Fixed even more issues with FleetMember.getHullSpec (not Mac/Linux exclusive, could also be due to different versions/RC versions of the base game)
+
 1.0.1
 ----------
 - Fixed crash on Linux/Mac related to FleetMember.getHullSpec.
