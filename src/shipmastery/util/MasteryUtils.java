@@ -42,7 +42,20 @@ public abstract class MasteryUtils {
 
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
-        return count < MAX_ENHANCES ? Math.min(30, 18+3*count) : Integer.MAX_VALUE;
+        if (count >= MAX_ENHANCES) return Integer.MAX_VALUE;
+        return switch (count) {
+            case 0 -> 16;
+            case 1 -> 17;
+            case 2 -> 18;
+            case 3 -> 19;
+            case 4 -> 20;
+            case 5 -> 25;
+            case 6 -> 30;
+            case 7 -> 35;
+            case 8 -> 40;
+            case 9 -> 50;
+            default -> Integer.MAX_VALUE;
+        };
     }
 
     public static int getEnhanceCount(ShipHullSpecAPI spec) {

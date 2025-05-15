@@ -51,11 +51,11 @@ public class CuratorNPCHullmod extends BaseHullMod {
     }
 
     protected float getBaseCooldownBeta() {
-        return 40f;
+        return 45f;
     }
 
     protected float getBaseCooldownAlpha() {
-        return 25f;
+        return 30f;
     }
 
     protected float getBaseCooldownOmega() {
@@ -67,7 +67,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
     }
 
     protected float getDamageReductionAmount() {
-        return 0.6f;
+        return 0.5f;
     }
 
     protected boolean isNPCVersion() {

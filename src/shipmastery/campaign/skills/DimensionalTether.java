@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class DimensionalTether {
 
-    public static final float[] HULL_REPAIR_PER_SECOND = {0.04f, 0.02f, 0.01f, 0.005f};
+    public static final float[] HULL_REPAIR_PER_SECOND = {0.04f, 0.03f, 0.02f, 0.01f};
     public static final float ARMOR_REPAIR_MULT = 0.5f;
     public static final float RETREAT_DELAY = 1.5f;
     public static final float ADD_TO_RESERVE_DELAY_PLAYER = 3f;

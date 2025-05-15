@@ -57,7 +57,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     "sms_curator",
                     2f,
                     Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE,
-                    1000f, 0f, 0f, 0f, 0f, 0f, 0f);
+                    1500f, 0f, 0f, 0f, 0f, 0f, 0f);
             fParams.withOfficers = true;
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             fParams.maxNumShips = 60;
