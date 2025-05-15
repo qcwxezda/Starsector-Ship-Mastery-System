@@ -149,7 +149,7 @@ You remember what you read earlier -- that these bays were supposedly out of ser
 You order a small team, selected from among your best repair technicians, down into the landing bay to conduct a more detailed investigation of the area. Their shuttles quickly disappear into the station's vast hull.
 
 When they return, they report that the bay ""seems to be fully functional,"" but that its design is alien to them. One of the surveyors mentions that toward the back of the landing bay was a mountain of eviscerated ship components. Meeting your uneasy gaze, she reassures you: ""I don't think the service bay did that. The damage is too uneven to have been done by a machine -- they were probably salvaged from some shipwreck.""","sms_oConcealedStationAddHullmod:Dock one of your ships at the bay
-sms_oConcealedStationSalvage:Ignore the bay and salvage the station",
+sms_oConcealedStationSalvage:Ignore the bay for now",
 sms_ConcealedStationSuperconstructType,sms_tConcealedStationSuperconstruct,,"sms_cConcealedStationAddSuperconstruct
 SalvageEntity showCost
 FireAll PopulateSalvageOptions2",,,

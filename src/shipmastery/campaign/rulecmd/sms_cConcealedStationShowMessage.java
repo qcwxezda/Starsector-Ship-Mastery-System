@@ -101,7 +101,9 @@ public class sms_cConcealedStationShowMessage extends BaseCommandPlugin {
             if (seen >= Strings.Campaign.messages.length) return false;
             var message = Strings.Campaign.messages[seen];
             localMemory.set(Strings.Campaign.STATION_SEEN_MESSAGE_INDEX, seen);
-            Global.getSector().getIntelManager().addIntel(new ConcealedStationMessageIntel(seen), false, textPanel);
+            var intel = new ConcealedStationMessageIntel(seen);
+            intel.setImportant(true);
+            Global.getSector().getIntelManager().addIntel(intel, false, textPanel);
             addAndGetFormattedMessage(textPanel, dialog.getTextWidth(), message, seen);
         }
 

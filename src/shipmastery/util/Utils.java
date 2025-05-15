@@ -526,7 +526,7 @@ public abstract class Utils {
             return proj.wasRemoved();
         }
         else if (proj instanceof PlasmaShot){
-            return proj.getBrightness() <= 0f;
+            return proj.getElapsed() > 0.01f && proj.getBrightness() <= 0f;
         }
         else {
             return proj.didDamage() || !Global.getCombatEngine().isEntityInPlay(proj);
