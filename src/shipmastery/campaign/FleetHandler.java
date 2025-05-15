@@ -113,7 +113,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         PersonAPI commander = fleet.getCommander();
         if (commander.isPlayer()) return;
 
-        var members = Utils.getMembersNoSync(fleet);
+        List<? extends FleetMemberAPI> members = Utils.getMembersNoSync(fleet);
         var inflater = fleet.getInflater();
         CoreAutofitPlugin auto = new CoreAutofitPlugin(commander);
         Random random = new Random(commander.getId().hashCode());

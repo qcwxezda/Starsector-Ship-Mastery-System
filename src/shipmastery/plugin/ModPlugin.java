@@ -150,10 +150,8 @@ public class ModPlugin extends BaseModPlugin {
                     .sorted((a, b) -> b.getFleetPoints()- a.getFleetPoints())
                     .map(ShipHullSpecAPI::getHullId)
                     .toList();
-            for (int j = 0; j < 10; j++) {
-                if (mostFP[i].size() > j) {
-                    thisFaction.getPriorityShips().add((String) mostFP[i].get(j));
-                }
+            for (int j = 0; j < Math.min(20, mostFP[i].size()); j++) {
+                thisFaction.getPriorityShips().add((String) mostFP[i].get(j));
             }
         }
     }

@@ -1,5 +1,10 @@
+1.0.1
+----------
+- Fixed crash on Linux/Mac related to FleetMember.getHullSpec.
+- Slightly modified a couple of defender fleets.
+
 1.0.0
----------
+----------
 
 *** NOT SAVE COMPATIBLE WITH PREVIOUS VERSIONS ***
 *** ADDITIONALLY, SOME IDS HAVE BEEN RENAMED, IN PARTICULAR, HULLMOD IDS CHANGED FROM CAMEL CASE TO SNAKE CASE ***
