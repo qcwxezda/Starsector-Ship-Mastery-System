@@ -11,9 +11,9 @@
 - Added the option to use SP when building in hullmods. In exchange, the MP cost is reduced to 0 and credits cost is reduced by 90%.
     - Bonus XP is awarded based on the amount of credits saved, with no bonus XP if you saved 250,000 or more credits.
     - When using SP in this manner, you may always build in at least 1 S-mod (3 with engineering override) regardless of the ship's current capacity.
-- Creating (not consuming) knowledge constructs now grants 1 SP per 5 constructs.
+- Creating (not consuming) knowledge constructs now grants 1 SP per 10 constructs.
     - You need a ship of the specified type in your fleet to create constructs for it, so this makes not as strong as it seems for concealed station loot (which gives lots of random constructs).
-    - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 4 of a different type later will grant an SP.
+    - This value is saved and shared across all constructs, so e.g. making 1 construct of a type and then making 9 of a different type later will grant an SP.
 - Added a faction difficulty setting to increase mastery strength on NPC fleets, to compensate for the player's ability to enhance mastery bonuses.
 - Added 7 mastery effects.
 - Added MasteryEffect.getNPCWeight(FleetMemberAPI):float.
