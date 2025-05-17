@@ -1,0 +1,11 @@
+/XF
+	*.bat
+	zip-exclude.txt
+	*.iml
+	*.gitignore 
+	*.rcj
+/XD 
+	.git
+	.idea
+	screenshots
+	out

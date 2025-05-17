@@ -11,7 +11,6 @@
 .mtj.tmp/
 
 *.psd
-*.bat
 # Package Files #
 *.war
 *.nar
