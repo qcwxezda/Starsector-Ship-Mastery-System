@@ -196,7 +196,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
-        float xpPerMult = isCivilian ? 1f/3f : 0.2f;
+        float xpPerMult = isPursuit ? 0.5f : isCivilian ? 1f/3f : 0.2f;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
         float totalMPGained = 0f;
         int count = 0;
@@ -205,14 +205,14 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             count++;
             xp -= xpPer*xpPerMult;
             xpPer *= MULT_PER_MP;
-            if (!isCivilian) {
+            if (!isCivilian && !isPursuit) {
                 xpPerMult = switch (count) {
                     case 1 -> 0.4f;
                     case 2 -> 0.6f;
                     case 3 -> 0.8f;
                     default -> 1f;
                 };
-            } else {
+            } else if (!isPursuit) {
                 xpPerMult = count == 1 ? 2f/3f : 1f;
             }
         }
