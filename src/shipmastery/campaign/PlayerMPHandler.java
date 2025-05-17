@@ -136,11 +136,14 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             ShipHullSpecAPI spec = time.getKey();
             int count = counts.get(spec);
             time.setValue(time.getValue() / count);
-            float weight = time.getValue() * 2f * (1f - (float) Math.pow(0.5f, count));
+            float weight = time.getValue();
+            weight *= 1f + Math.min(1f, 0.2f * count);
             if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
                 weight *= (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec));
             }
-            picker.add(spec, weight);
+            if (weight > 0f) {
+                picker.add(spec, weight);
+            }
         }
         return picker;
     }
@@ -193,35 +196,48 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
+        float xpPerMult = isCivilian ? 1f/3f : 0.2f;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
-        // Scale MP gains to number of ships deployed
-        if (!isCivilian && !isPursuit) {
-            if (uniques.size() == 1) xpPer *= 1.5f;
-            else if (uniques.size() == 2) xpPer *= 1.3f;
-            else if (uniques.size() == 3) xpPer *= 1.1f;
-            else if (uniques.size() == 5) xpPer *= 0.9f;
-            else if (uniques.size() == 6) xpPer *= 0.7f;
-            else if (uniques.size() == 7) xpPer *= 0.6f;
-            else if (uniques.size() >= 8) xpPer *= 0.5f;
-        }
         float totalMPGained = 0f;
-        while (xp > 0 && (random.nextFloat() < xp / (xpPer + xp) || xp > 9f * xpPer)) {
+        int count = 0;
+        while (xp > 0 && (random.nextFloat() < xp / (xpPer*xpPerMult + xp) || xp > 9f * xpPer*xpPerMult)) {
             totalMPGained++;
-            xp -= xpPer;
+            count++;
+            xp -= xpPer*xpPerMult;
             xpPer *= MULT_PER_MP;
+            if (!isCivilian) {
+                xpPerMult = switch (count) {
+                    case 1 -> 0.4f;
+                    case 2 -> 0.6f;
+                    case 3 -> 0.8f;
+                    default -> 1f;
+                };
+            } else {
+                xpPerMult = count == 1 ? 2f/3f : 1f;
+            }
         }
         var stats = Global.getSector().getPlayerStats().getDynamic();
         float additionalCivMult = stats.getStat(CIVILIAN_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
         float additionalCombatMult = stats.getStat(COMBAT_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
         totalMPGained *= (isCivilian ? 0.8f * Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
                 : 1.2f * Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
+        // Scale MP gains to number of ships deployed
+        if (!isCivilian && !isPursuit) {
+            totalMPGained *= switch (uniques.size()) {
+                case 1 -> 0.25f;
+                case 2 -> 0.5f;
+                case 3 -> 0.75f;
+                default -> 1f;
+            };
+        }
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
             totalMPGained++;
         }
         for (int i = 0; i < totalMPGained; i++) {
             ShipHullSpecAPI spec = picker.pick();
-            amounts.compute(spec, (k, amount) -> amount == null ? 1 : 1 + amount);
+            int gain = !isCivilian && !isPursuit && spec.isCivilianNonCarrier() ? 3 : 1;
+            amounts.compute(spec, (k, amount) -> amount == null ? 1 : gain + amount);
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
             ShipMastery.addPlayerMasteryPoints(
