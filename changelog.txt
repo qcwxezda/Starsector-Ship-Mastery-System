@@ -1,3 +1,8 @@
+1.0.4
+----------
+- Adjusted a few hullmods
+- Fixed an issue with a hullmod where every kill was being counted as 100 kills
+
 1.0.3
 ----------
 - Fixed a bug/oversight that caused unvaried fleets to gain more MP than intended.

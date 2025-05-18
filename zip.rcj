@@ -1,6 +1,5 @@
 /XF
 	*.bat
-	zip-exclude.txt
 	*.iml
 	*.gitignore 
 	*.rcj

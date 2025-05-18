@@ -19,7 +19,7 @@ import java.awt.Color;
 public class ExtradimensionalRearrangement2 extends BaseHullMod {
 
     public static final int ADDITIONAL_SMODS = 1;
-    public static final float DAMAGE_DEALT_PER_SMOD = 0.1f;
+    public static final float DAMAGE_DEALT_PER_SMOD = 0.05f;
     public static final float DAMAGE_TAKEN_PER_SMOD = 0.05f;
 
     @Override

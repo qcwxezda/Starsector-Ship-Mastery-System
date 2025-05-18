@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class Utils {
-    public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.##%");
+    public static final DecimalFormat percentFormat = new DecimalFormat("#,##0.###%");
     public static final DecimalFormat percentFormatOneDecimal = new DecimalFormat("#,##0.#%");
     public static final DecimalFormat percentFormatNoDecimal = new DecimalFormat("#,##0%");
     public static final DecimalFormat oneDecimalPlaceFormat = new DecimalFormat("0.#");

@@ -48,12 +48,12 @@ public class ExtradimensionalRearrangement1 extends BaseHullMod {
     private float[] getParams(int seed) {
         Random random = new Random(seed);
         return new float[] {
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat()),
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat()),
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat()),
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat()),
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat()),
-                -20f + 10f * Math.max(random.nextFloat(), random.nextFloat())
+                -20f + 10f * random.nextFloat(),
+                -20f + 10f * random.nextFloat(),
+                -20f + 10f * random.nextFloat(),
+                -20f + 10f * random.nextFloat(),
+                -20f + 10f * random.nextFloat(),
+                -20f + 10f * random.nextFloat()
         };
     }
 

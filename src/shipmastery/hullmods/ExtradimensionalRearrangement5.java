@@ -21,7 +21,9 @@ public class ExtradimensionalRearrangement5 extends BaseHullMod implements HullM
     public static final float SENSOR_RANGE_MULT = 1.1f;
     public static final float SENSOR_PROFILE_MULT = 0.9f;
     public static final int DP_PER_SP = 500;
+    public static final int DP_PER_SP_INCREMENT = 50;
     public static final String CURRENT_DP_DESTROYED_KEY = "$sms_extradimensional_rearrangement5DPDestroyed";
+    public static final String NUM_TIMES_ACTIVATED_KEY = "$sms_extradimensional_rearrangement5Activations";
     public static final String MOD_KEY = "sms_extradimensional_rearrangement5";
     public static final String HULLMOD_ID = "sms_extradimensional_rearrangement5";
 
@@ -43,8 +45,8 @@ public class ExtradimensionalRearrangement5 extends BaseHullMod implements HullM
             if (!counts) return;
             float cur = (float) Global.getSector().getPersistentData().getOrDefault(CURRENT_DP_DESTROYED_KEY, 0f);
             float next = cur + dp;
-            int spGained = (int) next / DP_PER_SP;
-            next = next % DP_PER_SP;
+            int spGained = (int) next / getDpPerSp();
+            next = next % getDpPerSp();
 
             if (spGained > 0) {
                 Global.getSector().getPlayerStats().addStoryPoints(spGained);
@@ -55,10 +57,16 @@ public class ExtradimensionalRearrangement5 extends BaseHullMod implements HullM
                         "" + spGained, Misc.getTextColor(),
                         spGained == 1 ? Strings.Hullmods.rearrangement5Message2Singular
                                 : Strings.Hullmods.rearrangement5Message2Plural);
+                Global.getSector().getPersistentData().compute(NUM_TIMES_ACTIVATED_KEY,
+                        (k, v) -> v == null ? spGained : (int) v + spGained);
             }
 
             Global.getSector().getPersistentData().put(CURRENT_DP_DESTROYED_KEY, next);
         }
+    }
+
+    public static int getDpPerSp() {
+        return DP_PER_SP + DP_PER_SP_INCREMENT * (int) Global.getSector().getPersistentData().getOrDefault(NUM_TIMES_ACTIVATED_KEY, 0);
     }
 
     @Override
@@ -75,9 +83,9 @@ public class ExtradimensionalRearrangement5 extends BaseHullMod implements HullM
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(SENSOR_RANGE_MULT - 1f),
                 Utils.asPercent(1f - SENSOR_PROFILE_MULT),
-                "" + DP_PER_SP,
+                "" + getDpPerSp(),
                 Utils.asInt((float) Global.getSector().getPersistentData().getOrDefault(CURRENT_DP_DESTROYED_KEY, 0f)),
-                "" + DP_PER_SP);
+                "" + getDpPerSp());
     }
 
     @Override

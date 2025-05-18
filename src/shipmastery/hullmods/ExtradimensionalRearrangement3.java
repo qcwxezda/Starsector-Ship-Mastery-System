@@ -18,12 +18,12 @@ import java.util.Objects;
 
 public class ExtradimensionalRearrangement3 extends BaseHullMod {
 
-    public static final float INITIAL_DAMAGE_TAKEN = 1.15f;
-    public static final float INITIAL_DAMAGE_DEALT = 0.85f;
-    public static final float FINAL_DAMAGE_TAKEN = 0.85f;
+    public static final float INITIAL_DAMAGE_TAKEN = 1.1f;
+    public static final float INITIAL_DAMAGE_DEALT = 0.9f;
+    public static final float FINAL_DAMAGE_TAKEN = 0.9f;
     // public static final float FINAL_DAMAGE_DEALT = 1.15f;
-    public static final float[] DAMAGE_TAKEN_PER = {-0.003f, -0.002f, -0.0015f, -0.001f};
-    public static final float[] DAMAGE_DEALT_PER = {0.003f, 0.002f, 0.0015f, 0.001f};
+    public static final float[] DAMAGE_TAKEN_PER = {-0.002f, -0.00125f, -0.0008f, -0.0005f};
+    public static final float[] DAMAGE_DEALT_PER = {0.002f, 0.00125f, 0.0008f, 0.0005f};
     public static final int[] MAX_ACTIVATIONS;
     static {
         MAX_ACTIVATIONS = new int[] {
@@ -60,7 +60,7 @@ public class ExtradimensionalRearrangement3 extends BaseHullMod {
             //noinspection unchecked
             int kills = ((Map<String, Integer>) Global.getSector().getPersistentData()
                     .computeIfAbsent(KILL_COUNT_KEY, k -> new HashMap<>()))
-                    .compute(ship.getFleetMemberId(), (k,v) -> v == null ? 1 : v + 100);
+                    .compute(ship.getFleetMemberId(), (k,v) -> v == null ? 1 : v + 1);
             applyStatMods(ship.getFleetMemberId(), ship.getMutableStats(), ship.getHullSize(), id, kills);
         });
     }
