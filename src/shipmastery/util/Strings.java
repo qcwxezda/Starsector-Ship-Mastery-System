@@ -345,6 +345,8 @@ public interface Strings {
         String SModsOverCapacitySingle = Utils.getString("sms_descriptions", "SModsOverCapacitySingle");
         String SModsOverCapacityPlural = Utils.getString("sms_descriptions", "SModsOverCapacityPlural");
         String SModsOverCapacityPost = Utils.getString("sms_descriptions", "SModsOverCapacityPost");
+        String ReducedDModEffectPos = Utils.getString("sms_descriptions", "ReducedDModEffectPos");
+        String ReducedDModEffectNeg = Utils.getString("sms_descriptions", "ReducedDModEffectNeg");
         String IgnoreNoBuildIn = Utils.getString("sms_descriptions", "IgnoreNoBuildIn");
         String StatIncrease = Utils.getString("sms_descriptions", "StatIncrease");
         String StatDecrease = Utils.getString("sms_descriptions", "StatDecrease");
@@ -362,6 +364,7 @@ public interface Strings {
         String MaxOPForHullPost = Utils.getString("sms_descriptions", "MaxOPForHullPost");
         String DPIfOnlyShip = Utils.getString("sms_descriptions", "DPIfOnlyShip");
         String DPIfOnlyShipNeg = Utils.getString("sms_descriptions", "DPIfOnlyShipNeg");
+        String DPIfOnlyShipPost = Utils.getString("sms_descriptions", "DPIfOnlyShipPost");
         String PeakCRMultipleShips = Utils.getString("sms_descriptions", "PeakCRMultipleShips");
         String PeakCRMultipleShipsNeg = Utils.getString("sms_descriptions", "PeakCRMultipleShipsNeg");
         String PeakCRMultipleShipsPost = Utils.getString("sms_descriptions", "PeakCRMultipleShipsPost");

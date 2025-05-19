@@ -53,7 +53,7 @@ public class DimensionalTether {
     // No CombatEngine.getPlugins or similar, so we need to track the existing repair scripts ourselves
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
     public static final String HAS_ELITE_EFFECT_KEY = "$sms_EliteDimensionalTether";
-    public static final float MIN_CR_COST = 0.05f;
+    public static final float MIN_CR_COST = 0.1f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
 
     private static class RepairScript extends BaseEveryFrameCombatPlugin {
@@ -248,7 +248,13 @@ public class DimensionalTether {
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
-            info.addPara(Strings.Skills.dimensionalTetherEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(HULL_REPAIR_PER_SECOND[0]), Utils.asPercent(HULL_REPAIR_PER_SECOND[1]), Utils.asPercent(HULL_REPAIR_PER_SECOND[2]), Utils.asPercent(HULL_REPAIR_PER_SECOND[3]), Utils.asPercent(ARMOR_REPAIR_MULT));
+            info.addPara(Strings.Skills.dimensionalTetherEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+                    Utils.asPercent(MIN_CR_COST),
+                    Utils.asPercent(HULL_REPAIR_PER_SECOND[0]),
+                    Utils.asPercent(HULL_REPAIR_PER_SECOND[1]),
+                    Utils.asPercent(HULL_REPAIR_PER_SECOND[2]),
+                    Utils.asPercent(HULL_REPAIR_PER_SECOND[3]),
+                    Utils.asPercent(ARMOR_REPAIR_MULT));
         }
     }
 

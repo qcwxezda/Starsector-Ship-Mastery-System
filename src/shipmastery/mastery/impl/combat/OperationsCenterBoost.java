@@ -44,7 +44,7 @@ public class OperationsCenterBoost extends BaseMasteryEffect {
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getOrdnancePoints(null) < Global.getSettings().getHullModSpec(HullMods.OPERATIONS_CENTER).getCostFor(spec.getHullSize())) return null;
-        return 1f;
+        return 0.75f;
     }
 
     @Override

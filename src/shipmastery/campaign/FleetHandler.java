@@ -230,7 +230,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         addIfApplicable(HullMods.INSULATEDENGINE, false, picker, variant, faction);
         addIfApplicable(HullMods.POINTDEFENSEAI, false, picker, variant, faction);
         addIfApplicable(HullMods.SOLAR_SHIELDING, false, picker, variant, faction);
-        addIfApplicable(HullMods.UNSTABLE_INJECTOR, false, picker, variant, faction);
 
         addIfApplicable(HullMods.AUGMENTEDENGINES, true, picker, variant, faction);
         addIfApplicable(HullMods.INSULATEDENGINE, true, picker, variant, faction);
@@ -249,7 +248,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
     }
 
 
-    public static final float EXISTING_HULLMOD_WEIGHT = 3f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
+    public static final float EXISTING_HULLMOD_WEIGHT = 30f, PRIORITY_HULLMOD_WEIGHT = 2f, STANDARD_HULLMOD_WEIGHT = 1f;
     @Override
     public void reportFleetInflated(CampaignFleetAPI fleet, FleetInflater inflater) {
         addMasteriesToFleet(fleet);

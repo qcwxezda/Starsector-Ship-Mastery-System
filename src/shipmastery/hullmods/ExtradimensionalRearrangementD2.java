@@ -13,12 +13,16 @@ public class ExtradimensionalRearrangementD2 extends BaseHullMod {
 
     public static final float DP_PER_SMOD = 0.1f;
 
+    public float getStrength(MutableShipStatsAPI stats) {
+        return DP_PER_SMOD * (stats == null ? 1f : stats.getDynamic().getValue(Stats.DMOD_EFFECT_MULT));
+    }
+
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         if (stats.getVariant() == null) return;
         int nSMods = stats.getVariant().getSMods().size();
         if (nSMods == 0) return;
-        stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(id, 100f*DP_PER_SMOD*nSMods);
+        stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(id, 100f*getStrength(stats)*nSMods);
     }
 
     @Override
@@ -27,6 +31,6 @@ public class ExtradimensionalRearrangementD2 extends BaseHullMod {
                 Strings.Hullmods.rearrangementD2Effect,
                 8f,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(DP_PER_SMOD));
+                Utils.asPercent(getStrength(ship == null ? null : ship.getMutableStats())));
     }
 }

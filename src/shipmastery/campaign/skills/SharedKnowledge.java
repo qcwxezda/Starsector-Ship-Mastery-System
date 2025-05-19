@@ -21,10 +21,10 @@ public class SharedKnowledge {
     public static final float BASE_DAMAGE_BONUS = 0.01f;
     public static final float DAMAGE_BONUS_PER_LEVEL = 0.01f;
     public static final float MAX_DAMAGE_BONUS = 0.1f;
-    public static final float DP_REDUCTION_PER_ENHANCE = 0.02f;
-    public static final float MAX_DP_REDUCTION_ENHANCE = 0.2f;
+    public static final float DP_REDUCTION_PER_ENHANCE = 0.015f;
+    public static final float MAX_DP_REDUCTION_ENHANCE = 0.15f;
     public static final float BASE_DP_REDUCTION_AI_COMMANDER = 0.2f;
-    public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.075f;
+    public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.05f;
 
     public static int getMasteryLevel(PersonAPI fleetCommander, MutableShipStatsAPI stats) {
         if (fleetCommander == null || fleetCommander.isDefault()) return 0;

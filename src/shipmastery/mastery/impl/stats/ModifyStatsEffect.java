@@ -136,7 +136,7 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        return 3.5f;
+        return 5f;
     }
 
     @Override

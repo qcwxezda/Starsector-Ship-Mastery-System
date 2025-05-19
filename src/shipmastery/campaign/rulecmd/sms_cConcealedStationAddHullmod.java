@@ -12,7 +12,6 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -80,7 +79,7 @@ public class sms_cConcealedStationAddHullmod extends BaseCommandPlugin {
                             }
                         }
 
-                        Random random = new Random((num + Global.getSector().getSeedString()).hashCode());
+                        Random random = new Random((num + picked.getId()).hashCode());
                         int dNum = 1 + random.nextInt(4);
                         picked.getVariant().addPermaMod("sms_extradimensional_rearrangement_d" + dNum);
 
@@ -95,9 +94,6 @@ public class sms_cConcealedStationAddHullmod extends BaseCommandPlugin {
                             BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);
                         }
 
-                        Global.getSoundPlayer().setSuspendDefaultMusicPlayback(true);
-                        Global.getSoundPlayer().pauseMusic();
-                        DeferredActionPlugin.performOnUnpause(() -> Global.getSoundPlayer().setSuspendDefaultMusicPlayback(false));
                         FireBest.fire(null, dialog, memoryMap, "sms_tConcealedStationAddedHullmod");
                     }
                 });

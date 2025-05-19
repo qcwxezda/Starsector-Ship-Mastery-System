@@ -18,8 +18,8 @@ import java.util.Set;
 
 public class DamagePerShipDestroyed extends BaseMasteryEffect {
 
-    public static final float AMOUNT_FOR_EQUAL_DP = 0.05f;
-    public static final float BASE_CAP = 0.1f;
+    public static final float AMOUNT_FOR_EQUAL_DP = 0.025f;
+    public static final float BASE_CAP = 0.075f;
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -34,7 +34,7 @@ public class DamagePerShipDestroyed extends BaseMasteryEffect {
                 Strings.Descriptions.DamagePerShipDestroyedPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercentNoDecimal(BASE_CAP * getStrength(selectedModule)));
+                Utils.asPercent(BASE_CAP * getStrength(selectedModule)));
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MultiplicativeMasteryEffect;
 import shipmastery.util.Strings;
@@ -28,6 +29,11 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     }
 
     @Override
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+        tooltip.addPara(Strings.Descriptions.DPIfOnlyShipPost, 0f);
+    }
+
+    @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         FleetMemberAPI fm = stats.getFleetMember();
         if (fm == null) return;
@@ -45,12 +51,17 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
         stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, getIncreaseFor(stats, hullSize) + 1f);
     }
 
+    public float getAdjustedStrength(float strength) {
+        float baseStrength = getStrength((PersonAPI) null);
+        return (strength + baseStrength)/2f;
+    }
+
     public float getIncreaseFor(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize) {
-        return adjustForHullSize(getStrength(stats), hullSize);
+        return adjustForHullSize(getAdjustedStrength(getStrength(stats)), hullSize);
     }
 
     public float getIncreaseFor(PersonAPI commander, ShipAPI.HullSize hullSize) {
-        return adjustForHullSize(getStrength(commander), hullSize);
+        return adjustForHullSize(getAdjustedStrength(getStrength(commander)), hullSize);
     }
 
     public float adjustForHullSize(float amount, ShipAPI.HullSize hullSize) {

@@ -19,6 +19,8 @@ ExpandedFuelBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.Ex
 ExpandedCrewBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
 DriveFieldStabilizerBoost,4,unique logistic,1,0.5,shipmastery.mastery.impl.logistics.DriveFieldStabilizerBoost
 GroundSupportBoost,4,unique logistic,1,100,shipmastery.mastery.impl.logistics.GroundSupportBoost
+# This has to be a mastery effect and not a stat, as the reduced d-mods need to be reapplied for the changes to take effect
+ReducedDModEffect,1,logistic,-1,-0.25,shipmastery.mastery.impl.logistics.ReducedDModEffect
 #### STATS ####
 # Increases are additive while decreases are multiplicative.
 # If amounts aren't specified, the default_amount from stats_list.csv is used
@@ -98,9 +100,9 @@ MinimumReplacementRate,4,combat unique,,0.2,shipmastery.mastery.impl.combat.Mini
 VentSpeedFluxLevel,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentSpeedFluxLevel
 MakeshiftShieldBoost,3,combat unique,,1,shipmastery.mastery.impl.combat.MakeshiftShieldBoost
 MinimumCR,4,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumCR
-NavRelayBoost,4,combat,,1,shipmastery.mastery.impl.combat.NavRelayBoost
-ECMPackageBoost,4,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
-OperationsCenterBoost,4,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
+NavRelayBoost,3,combat,,1,shipmastery.mastery.impl.combat.NavRelayBoost
+ECMPackageBoost,3,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
+OperationsCenterBoost,3,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
 MaxCRFloor,4,combat unique,,0.4,shipmastery.mastery.impl.combat.MaxCRFloor
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
 WeakerDesignCompromises,4,combat unique,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises

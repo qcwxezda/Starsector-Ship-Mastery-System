@@ -36,6 +36,7 @@ public class MinimumCR extends BaseMasteryEffect {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
+        if (ship.getVariant() != null && ship.getVariant().hasHullMod(HullMods.SAFETYOVERRIDES)) return;
         if (!ship.hasListenerOfClass(MinimumCRScript.class)) {
             ship.addListener(new MinimumCRScript(ship, getStrength(ship), id));
         }

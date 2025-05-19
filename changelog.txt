@@ -1,3 +1,30 @@
+1.0.5
+----------
+Note: mastery effect weighting has been changed. After updating, your ships' mastery selections may be slightly modified.
+
+- Reduced base effectiveness of kill-streak mastery:
+    - 5% increase for equal-DP-ship-kill -> 2.5%
+    - 10% maximum damage increase -> 7.5%
+- Adjusted reduced-DP-if-only-ship-in-fleet mastery:
+    - Now is only affected by mastery strength modifiers at 50% rate.
+    - E.g. if base reduction is 10%, and your mastery strength boost is at +100%, modified reduction is 15% (previously: 20%).
+- Added back d-mod effect reduction mastery.
+- Increased chance of rolling stat-modifier mastery effects.
+- Nav relay, ECM package, Operations Center masteries:
+    - Decreased tier from 4 to 3.
+    - Reduced selection weight.
+- CR-doesn't-degrade-past-threshold mastery:
+    - Safety overrides now negates the entire effect.
+- Post-inflation S-mod adder now strongly prefers building in existing hullmods, to lower the chance of triggering magic incompatibilities, etc.
+    - Not feasible to check for incompatibilities beforehand as that is done on the ship level, not the variant level.
+- Custom d-mods now respect DMOD_EFFECT_MULT.
+- Adjusted a defender fleet.
+- Adjusted a couple of skills.
+- Reduced MP multiplier for civilian ships deployed in non-autoresolve combat from 3x to 2x.
+- Concealed stations no longer stop in-game music when interacted with.
+- Fixed issue with d-mod acquisition seed.
+- Fixed issue with certain d-mod not taking beam damage into account properly.
+
 1.0.4
 ----------
 - Adjusted a few hullmods

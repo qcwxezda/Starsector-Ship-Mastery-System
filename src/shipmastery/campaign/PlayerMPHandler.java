@@ -236,7 +236,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         }
         for (int i = 0; i < totalMPGained; i++) {
             ShipHullSpecAPI spec = picker.pick();
-            int gain = !isCivilian && !isPursuit && spec.isCivilianNonCarrier() ? 3 : 1;
+            int gain = !isCivilian && !isPursuit && spec.isCivilianNonCarrier() ? 2 : 1;
             amounts.compute(spec, (k, amount) -> amount == null ? 1 : gain + amount);
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
