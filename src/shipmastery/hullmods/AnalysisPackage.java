@@ -95,13 +95,13 @@ public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
     private IncreaseRecord getCurrentIncrease() {
         float curCiv = 0f, curCombat = 0f;
         var fleet = Global.getSector().getPlayerFleet();
+        if (fleet == null) return new IncreaseRecord(0f, 0f);
 
         var refitShip = (ShipAPI) fleet.getMemoryWithoutUpdate().get(RefitHandler.CURRENT_REFIT_SHIP_KEY);
         FleetMemberAPI refitMember = null;
         if (refitShip != null) {
             refitMember = refitShip.getFleetMember();
         }
-
 
         Set<FleetMemberAPI> withSMod = new HashSet<>();
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleet)) {

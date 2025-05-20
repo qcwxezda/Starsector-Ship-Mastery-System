@@ -6,6 +6,7 @@
 - Fixed issue with and modified a defender fleet.
 - Fixed issue with certain skill applying to modules.
 - Fixed issue with certain skill using fleet member's CR rather than ship's CR.
+- (7:45 PM EST 5/20/2025): Fixed issue with analysis package causing crashing in main menu missions. No new version, just re-download latest.
 
 1.0.5
 ----------
