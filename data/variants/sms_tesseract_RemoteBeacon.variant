@@ -1,6 +1,6 @@
 {
     "displayName": "Attack",
-    "fluxCapacitors": 24,
+    "fluxCapacitors": 29,
     "fluxVents": 30,
     "hullId": "tesseract",
     "hullMods": [
@@ -8,17 +8,17 @@
         "targetingunit",
         "extendedshieldemitter",
         "hardenedshieldemitter",
-        "fluxdistributor"
+        "magazines"
     ],
     "permaMods": [
         "targetingunit",
         "hardenedshieldemitter",
-        "fluxdistributor"
+        "magazines"
     ],
     "sMods": [
         "targetingunit",
         "hardenedshieldemitter",
-        "fluxdistributor"
+        "magazines"
     ],
     "sModdedBuiltIns": ["fluxbreakers"],
     "suppressedMods": ["shard_spawner"],
@@ -27,7 +27,7 @@
         {
             "autofire": true,
             "mode": "LINKED",
-            "weapons": {"WS 009": "riftcascade"}
+            "weapons": {"WS 009": "vpdriver"}
         },
         {
             "autofire": true,
@@ -44,7 +44,13 @@
             "mode": "LINKED",
             "weapons": {
                 "WS 006": "cryoflux",
-                "WS 010": "cryoflux"
+            }
+        },
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS 010": "riftbeam"
             }
         },
         {

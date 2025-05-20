@@ -86,9 +86,11 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
                             return;
                         }
                     }
-                    DeferredActionPlugin.performLater(() -> afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "support_doctrine_ships_0"), 0f);
-                    // SiC version of support doctrine, seems to be a hullmod so can just unapply (can't unapply character skills b/c they happen after hullmods)
-                    afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    if (SUPPORT_DOCTRINE_SKILL_IDS.contains(skillId)) {
+                        DeferredActionPlugin.performLater(() -> afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "support_doctrine_ships_0"), 0f);
+                        // SiC version of support doctrine, seems to be a hullmod so can just unapply (can't unapply character skills b/c they happen after hullmods)
+                        afterCreationEffect.unapplyEffectsAfterShipCreation(ship, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    }
                     afterCreationEffect.unapplyEffectsAfterShipCreation(ship, makeSharedId(this));
                     afterCreationEffect.applyEffectsAfterShipCreation(ship, makeSharedId(this));
                 }
@@ -122,7 +124,9 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
                         }
                     }
                     // SiC version of support doctrine, seems to be a hullmod so can just unapply (can't unapply character skills b/c they happen after hullmods)
-                    effect.getAsShipEffect().unapply(stats, hullSize, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    if (SUPPORT_DOCTRINE_SKILL_IDS.contains(skillId)) {
+                        effect.getAsShipEffect().unapply(stats, hullSize, "sc_skill_controller_sc_smallcraft_support_doctrine");
+                    }
                     effect.getAsShipEffect().apply(stats, hullSize, skillId + "_ship_" + count.value, effect.getRequiredSkillLevel());
                     count.value++;
                 }

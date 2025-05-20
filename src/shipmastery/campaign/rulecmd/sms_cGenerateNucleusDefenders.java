@@ -1,8 +1,10 @@
 package shipmastery.campaign.rulecmd;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
@@ -64,11 +66,12 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
             defenders.getCommander().setId(commanderId);
         }
         for (FleetMemberAPI member : defenders.getFleetData().getMembersListCopy()) {
-            member.getRepairTracker().setCR(1f);
+            member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
         }
 
         defenders.getLocation().set(entity.getLocation());
 
+        Global.getSector().getPlayerFaction().ensureAtBest("sms_curator", RepLevel.HOSTILE);
         defenders.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
         mem.set("$defenderFleet", defenders, 0f);
         return true;

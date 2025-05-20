@@ -268,7 +268,7 @@ sms_NucleusDefenderContinue,DialogOptionSelected,$option == sms_oNucleusDefender
 sms_cGenerateNucleusDefenders
 sms_cNucleusDefenderInteraction","As if on cue, your radar explodes in a frenzy of activity, as unidentified contact after unidentified contact intersects your sensor bubble.
 
-From the depths of hell erupts an unmitigated swarm of frigates and destroyers. At once they form a barricade between your fleet and the dormant siphon.
+From the depths of hell erupts an unmitigated swarm of sub-capital ships. At once they form a barricade between your fleet and the dormant siphon.
 
 The opposing fleet is defending the megastructure. You'll have to defeat them to proceed, but they won't pursue you should you choose to disengage.",,
 sms_NucleusHasDefenders,OpenInteractionDialog,"$customType == sms_station_nucleus score:100

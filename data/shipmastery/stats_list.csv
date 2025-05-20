@@ -20,7 +20,7 @@ Maneuverability,maneuverability in combat,,0.25,,shipmastery.stats.combat.Maneuv
 FluxCapacity,flux capacity,2,0.1,,shipmastery.stats.combat.FluxCapacity
 FluxDissipation,flux dissipation,2,0.1,,shipmastery.stats.combat.FluxDissipation
 MalfunctionChance,malfunction chance at low combat readiness,,-0.3,,shipmastery.stats.combat.MalfunctionChance
-CRPeakDuration,peak combat readiness duration,,0.3,,shipmastery.stats.combat.CRPeakDuration
+CRPeakDuration,peak combat readiness duration,,0.2,,shipmastery.stats.combat.CRPeakDuration
 CRDecayRate,combat readiness decay after peak readiness expires,,-0.25,,shipmastery.stats.combat.CRDecayRate
 HullArmorDamageTaken,hull and armor damage taken,2,-0.075,,shipmastery.stats.combat.HullArmorDamageTaken
 ShieldDamage,shield damage taken,2,-0.08,,shipmastery.stats.combat.ShieldDamage

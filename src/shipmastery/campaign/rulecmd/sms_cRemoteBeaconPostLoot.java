@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.GateTransitListener;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
@@ -82,7 +83,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                 fleet.getFleetData().addFleetMember(tesseractMember);
             }
             for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-                member.getRepairTracker().setCR(1f);
+                member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
             }
 
             fleet.getInflater().setRemoveAfterInflating(false);
@@ -103,6 +104,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             playerFleet.getContainingLocation().addEntity(fleet);
 
             var mem = fleet.getMemoryWithoutUpdate();
+            Global.getSector().getPlayerFaction().ensureAtBest("sms_curator", RepLevel.HOSTILE);
             mem.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_HOLD_VS_STRONGER, true);
@@ -125,7 +127,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     "sms_curator",
                     2f,
                     Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE,
-                    5000f, 0f, 0f, 0f, 0f, 0f, 0f);
+                    1750f, 0f, 0f, 0f, 0f, 0f, 0f);
             fParams.withOfficers = true;
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             fParams.maxNumShips = 60;
@@ -183,7 +185,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             fleet.inflateIfNeeded();
             for (var fm : fleet.getFleetData().getMembersListCopy()) {
                 toTrack.getFleetData().addFleetMember(fm);
-                fm.getRepairTracker().setCR(1f);
+                fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
             }
             toTrack.getFleetData().addFleetMember(flagship);
             toTrack.getFleetData().sort();
@@ -213,10 +215,11 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                         loot.removeStack(stack);
                     }
                 }
-                loot.addWeapons("riftcascade", 1);
+                loot.addWeapons("vpdriver", 1);
                 loot.addWeapons("cryoblaster", 1);
                 loot.addWeapons("disintegrator", 1);
-                loot.addWeapons("cryoflux", 2);
+                loot.addWeapons("cryoflux", 1);
+                loot.addWeapons("riftbeam", 1);
                 loot.addWeapons("minipulser", 2);
                 loot.sort();
                 loot.addCommodity("sms_amorphous_core", 1);
@@ -258,7 +261,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_CORE)) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_HIDDEN)) return;
             if (fleet.getContainingLocation() == toTrack.getContainingLocation()) return;
-            //if (Misc.random.nextFloat() <= 0.85f) return;
+            if (Misc.random.nextFloat() <= 0.85f) return;
 
             regenerateFleet();
             Vector2f loc = MathUtils.randomPointInRing(gateTo.getLocation(), 1000f, 2000f);

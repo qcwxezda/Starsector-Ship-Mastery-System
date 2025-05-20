@@ -1,3 +1,12 @@
+1.0.6
+----------
+- Custom AI cores no longer show up when selecting AI cores for industries.
+- Adjusted a few sprites.
+- Peak CR stat base effect 0.3 -> 0.2.
+- Fixed issue with and modified a defender fleet.
+- Fixed issue with certain skill applying to modules.
+- Fixed issue with certain skill using fleet member's CR rather than ship's CR.
+
 1.0.5
 ----------
 Note: mastery effect weighting has been changed. After updating, your ships' mastery selections may be slightly modified.

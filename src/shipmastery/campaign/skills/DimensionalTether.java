@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
@@ -109,7 +110,7 @@ public class DimensionalTether {
             if (fm == null) return false;
             if (fleetManager == null) return false;
             float crCost = Math.max(fm.getDeployCost(), MIN_CR_COST);
-            if (damageAmount >= ship.getHitpoints() && !isRetreating && fm.getRepairTracker().getCR() >= crCost) {
+            if (damageAmount >= ship.getHitpoints() && !isRetreating && ship.getCurrentCR() >= crCost) {
                 isRetreating = true;
                 JitterEmitter emitter = new JitterEmitter(ship, ship.getSpriteAPI(), new Color(150, 250, 200), 0f, ship.getShieldRadiusEvenIfNoShield()/2f, 0.25f, false, 0.3f, 100);
                 emitter.setBaseIntensity(0.8f);
@@ -152,6 +153,7 @@ public class DimensionalTether {
                                     } else {
                                         listeners.get(0).resetDur(10f);
                                     }
+                                    targetShip.getFluxTracker().forceOverload(15f * (radius + entity.getCollisionRadius() - dist) / radius);
                                 }
                             }
                         }, 0.3f);
@@ -178,6 +180,7 @@ public class DimensionalTether {
                     Global.getSoundPlayer().playSound("sms_dimensional_tether_retreat", 1f, 1f, ship.getLocation(), ship.getVelocity());
                     ship.setRetreating(true, true);
                     ((CombatFleetManager) fleetManager).retreat((Ship) ship);
+                    fm.getRepairTracker().setCR(ship.getCurrentCR());
                     fm.getRepairTracker().applyCREvent(-crCost, Strings.Skills.dimensionalTetherRetreatText);
                     if (fleetManager.getOwner() == 1) {
                         fm.getRepairTracker().performRepairsFraction(1f);
@@ -211,7 +214,7 @@ public class DimensionalTether {
     public static class Standard extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
         @Override
         public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            if (ship.getFleetMemberId() != null) {
+            if (ship.getFleetMemberId() != null && ship.getVariant() != null && !ship.getVariant().getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)) {
                 //noinspection unchecked
                 Map<String, RepairScript> existingScripts = (Map<String, RepairScript>) Global.getCombatEngine().getCustomData().computeIfAbsent(EXISTING_REPAIR_SCRIPTS_KEY, k -> new HashMap<>());
                 if (!existingScripts.containsKey(ship.getFleetMemberId())) {
@@ -219,15 +222,19 @@ public class DimensionalTether {
                     Global.getCombatEngine().addPlugin(script);
                     existingScripts.put(ship.getFleetMemberId(), script);
                 }
+                ship.addListener(new RetreatScript(ship));
             }
-            ship.addListener(new RetreatScript(ship));
         }
 
         @Override
         public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
             ship.removeListenerOfClass(RetreatScript.class);
             // Only add repair script for player, NPCs start with full repairs
-            if (ship.getFleetMemberId() != null && ship.getFleetCommander() != null && ship.getFleetCommander().isPlayer()) {
+            if (ship.getFleetMemberId() != null
+                    && ship.getFleetCommander() != null
+                    && ship.getFleetCommander().isPlayer()
+                    && ship.getVariant() != null
+                    && !ship.getVariant().getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)) {
                 //noinspection unchecked
                 Map<String, RepairScript> existingScripts = (Map<String, RepairScript>) Global.getCombatEngine().getCustomData().computeIfAbsent(EXISTING_REPAIR_SCRIPTS_KEY, k -> new HashMap<>());
                 var script = existingScripts.get(ship.getFleetMemberId());

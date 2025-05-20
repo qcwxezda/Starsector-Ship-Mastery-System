@@ -142,16 +142,31 @@ public class ModPlugin extends BaseModPlugin {
             thisFaction.getKnownShips().addAll(knownShips);
             thisFaction.getShipsWhenImporting().addAll(knownShips);
         }
-        var mostFP = new List[4];
+
+        //noinspection unchecked
+        List<ShipHullSpecAPI>[] mostFP = new List[4];
         for (int i = 0; i < 4; i++) {
             int finalI = i;
             mostFP[i] = thisFaction.getKnownShips().stream()
-                    .map(x -> Global.getSettings().getHullSpec(x)).filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
-                    .sorted((a, b) -> b.getFleetPoints()- a.getFleetPoints())
-                    .map(ShipHullSpecAPI::getHullId)
+                    .map(x -> Global.getSettings().getHullSpec(x))
+                    .filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
+                    .filter(x -> x == Utils.getRestoredHullSpec(x))
+                    .sorted((a, b) -> b.getFleetPoints()-a.getFleetPoints())
                     .toList();
-            for (int j = 0; j < Math.min(20, mostFP[i].size()); j++) {
-                thisFaction.getPriorityShips().add((String) mostFP[i].get(j));
+            float dpLimit = 20f * (i + 1);
+            int picked = 0;
+            int limit = 20;
+            List<ShipHullSpecAPI> shipHullSpecAPIS = mostFP[i];
+            for (int j = 0; j < shipHullSpecAPIS.size(); j++) {
+                var spec = shipHullSpecAPIS.get(j);
+                if (j == 0 || spec.getSuppliesToRecover() <= dpLimit) {
+                    thisFaction.getPriorityShips().add(spec.getHullId());
+                    dpLimit *= 0.965f;
+                    picked++;
+                    if (picked > limit) {
+                        break;
+                    }
+                }
             }
         }
     }
@@ -175,7 +190,7 @@ public class ModPlugin extends BaseModPlugin {
         boolean randomMode = Settings.ENABLE_RANDOM_MODE;
         Global.getSector().getPersistentData().put(RANDOM_MODE_KEY, randomMode);
         new Generator().generate();
-        Global.getSector().getPlayerFaction().setRelationship("sms_curator", RepLevel.HOSTILE);
+        Global.getSector().getPlayerFaction().ensureAtBest("sms_curator", RepLevel.HOSTILE);
 
         // Not transient in case player saves while action queue isn't empty
         // Possibly broken though !! - can't save lambdas
