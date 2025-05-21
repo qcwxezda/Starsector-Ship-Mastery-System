@@ -33,7 +33,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 7500f;
+    public static final float XP_PER_HALF_MP = 4500f;
     public static final float XP_PER_HALF_MP_CIV = 3000f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 600f;
@@ -181,8 +181,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true);
-        // 50% XP penalty for auto pursuits
-        gainMP(0.5f * xpGained, picker, false, true);
+        // 60% XP penalty for auto pursuits
+        gainMP(0.4f * xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {

@@ -6,7 +6,11 @@
 - Fixed issue with and modified a defender fleet.
 - Fixed issue with certain skill applying to modules.
 - Fixed issue with certain skill using fleet member's CR rather than ship's CR.
-- (7:45 PM EST 5/20/2025): Fixed issue with analysis package causing crashing in main menu missions. No new version, just re-download latest.
+
+No new version, just re-download latest:
+- (7:45 PM EST 5/20/2025): Fixed issue with analysis package causing crash in main menu missions.
+- (1:45 AM EST 5/21/2025): Reduced initial XP required for combat MP gain by ~33%.
+- (1:45 AM EST 5/21/2025): Auto-pursuit XP penalty 50% -> 60%.
 
 1.0.5
 ----------
