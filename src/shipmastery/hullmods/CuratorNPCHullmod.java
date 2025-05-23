@@ -59,7 +59,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
     }
 
     protected float getBaseCooldownOmega() {
-        return 25f;
+        return 20f;
     }
 
     protected float getDurationSeconds() {

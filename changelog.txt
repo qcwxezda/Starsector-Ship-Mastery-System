@@ -1,3 +1,10 @@
+1.0.7
+----------
+- For concealed station fights, you may now deploy 240 DP worth of ships (+20% temporary deployment bonus as percentage of battle size) regardless of officer distribution.
+    - Previously was basically impossible to deploy more than 160 DP in later concealed station fights.
+- Updated screenshots and README.
+- Slightly darkened/cleaned up a sprite.
+
 1.0.6
 ----------
 - Custom AI cores no longer show up when selecting AI cores for industries.

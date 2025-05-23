@@ -22,13 +22,14 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - All ships start with 0 S-mod capacity. Level up ship mastery to gain S-mod capacity.
 - Each ship class has exactly 3 available S-mod capacity upgrades, available at levels 3, 6, and 8.
 - Building in hullmods no longer costs story points, instead costing mastery points (MP) and credits.
+  - You may still use story points to reduce the MP and credits cost of building in hullmods, and to build in a single hullmod even if the ship's capacity is 0.
 
 ## Skill Changes
 
 - Best of the Best:
 ![Best of the Best](https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/refs/heads/master/screenshots/best_of_the_best.png)
   - Removed the additional S-mod from Best of the Best; default cap is now 3 (at max mastery) regardless of skills.
-  - Added effect: +30% effectiveness of all mastery bonuses.
+  - Added effect: +25% effectiveness of all mastery bonuses.
   - Added effect: +15% CR, +10% hull and flux capacity for capital ships with officers.
 
 
@@ -65,4 +66,4 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
   - Replay battles in a simulation-like environment -- quit anytime, gain nothing, and lose nothing.
   - Solo replay allows fighting against individual ships from recorded battles.
   - Pin notable battles to keep them in the intel log permanently, allowing you to replay limited boss battles at any time.
-- Adds a small amount of exploration content.
+- Adds some exploration content.
