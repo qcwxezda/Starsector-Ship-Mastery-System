@@ -227,7 +227,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
                 case 1 -> 0.25f;
                 case 2 -> 0.5f;
                 case 3 -> 0.75f;
-                default -> 1f;
+                case 4 -> 1f;
+                case 5 -> 1.2f;
+                default -> 1.4f;
             };
         }
         float fractionalPart = totalMPGained - (int) totalMPGained;

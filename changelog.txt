@@ -5,6 +5,9 @@
 - Updated screenshots and README.
 - Slightly darkened/cleaned up a sprite.
 
+No new version, just re-download latest:
+- (8:55 PM EST 5/22/2025): Non-autoresolve combat MP is now x1.2 if 5 unique ship types deployed, x1.4 if 6 or more unique ship types deployed.
+
 1.0.6
 ----------
 - Custom AI cores no longer show up when selecting AI cores for industries.
