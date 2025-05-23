@@ -181,8 +181,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true);
-        // 60% XP penalty for auto pursuits
-        gainMP(0.4f * xpGained, picker, false, true);
+        // 75% XP penalty for auto pursuits
+        gainMP(0.25f * xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {
