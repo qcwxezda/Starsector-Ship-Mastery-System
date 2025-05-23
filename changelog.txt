@@ -9,6 +9,7 @@ No new version, just re-download latest:
 - (8:55 PM EST 5/22/2025): Non-autoresolve combat MP is now x1.2 if 5 unique ship types deployed, x1.4 if 6 or more unique ship types deployed.
 - (9:30 AM EST 5/23/2025): Salvage rig now gets generic max-level masteries.
 - (12:55 PM EST 5/23/2025): Auto pursuit MP penalty 60% -> 75%.
+- (4:55 PM EST 5/23/2025): Fixed a typo in a hullmod description.
 
 1.0.6
 ----------

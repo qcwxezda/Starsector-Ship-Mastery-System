@@ -477,7 +477,7 @@
     "rearrangement3Effect2Inc": "- Damage taken is increased by %1$s.",
     "rearrangement3Effect2Dec": "- Damage taken is decreased by %1$s.",
     "rearrangement3Effect3Inc": "- Damage dealt is increased by %1$s.",
-    "rearrangement3Effect3Dec": "- Damage taken is decreased by %1$s.",
+    "rearrangement3Effect3Dec": "- Damage dealt is decreased by %1$s.",
     "rearrangement3Effect4": "- Ships destroyed: %1$s.",
     "rearrangement4Effect": "It has been automated in a fashion that does not require special expertise to maintain, and its deployment points are reduced by %1$s/%2$s/%3$s/%4$s.",
     "rearrangement5Effect": "- Fleetwide sensor range increased multiplicatively by %1$s.\n- Fleetwide sensor profile reduced by %2$s.\n- Whenever your fleet destroys %3$s DP of enemy ships while this ship is on the battlefield, gain a story point.\n- Current progress: %4$s/%5$s.",
