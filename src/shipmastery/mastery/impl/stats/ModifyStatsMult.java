@@ -16,7 +16,7 @@ import java.util.Map;
 public class ModifyStatsMult extends ModifyStatsEffect {
     @Override
     protected float getModifiedAmount(ShipStat stat, float amount) {
-        return amount;
+        return Math.max(-1f, amount);
     }
 
     @Override

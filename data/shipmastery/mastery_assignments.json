@@ -453,7 +453,12 @@
   },
 
   "crig": {
-    "maxLevel": 8
+    "levels": {
+      "max": {
+        "A": "ModifyStatsMult 1 SensorProfile -1",
+        "B": "EfficiencyOverhaulBoost"
+      }
+    }
   },
 
   "drover": {
