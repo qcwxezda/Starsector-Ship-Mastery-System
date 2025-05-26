@@ -217,17 +217,28 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         totalMPGained *= (isCivilian ? Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
                 : Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
         // Scale MP gains to number of ships deployed
-        if (!isCivilian && !isPursuit) {
-            totalMPGained *= switch (uniques.size()) {
-                case 1 -> 0.25f;
-                case 2 -> 0.5f;
-                case 3 -> 0.75f;
-                case 4 -> 1f;
-                case 5 -> 1.15f;
-                case 6 -> 1.3f;
-                case 7 -> 1.4f;
-                default -> 1.5f;
-            };
+        if (!isPursuit) {
+            if (!isCivilian) {
+                totalMPGained *= switch (uniques.size()) {
+                    case 1 -> 0.25f;
+                    case 2 -> 0.5f;
+                    case 3 -> 0.75f;
+                    case 4 -> 1f;
+                    case 5 -> 1.15f;
+                    case 6 -> 1.3f;
+                    case 7 -> 1.4f;
+                    default -> 1.5f;
+                };
+            }
+            else {
+                totalMPGained *= switch (uniques.size()) {
+                    case 1 -> 0.3f;
+                    case 2 -> 0.55f;
+                    case 3 -> 0.8f;
+                    case 4 -> 1f;
+                    default -> 1.2f;
+                };
+            }
         }
         float fractionalPart = totalMPGained - (int) totalMPGained;
         if (random.nextFloat() < fractionalPart) {
