@@ -37,6 +37,7 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
         Settings.SHOW_MP_AND_LEVEL_IN_REFIT =
                 LunaSettings.getBoolean(id, "sms_RefitScreenDisplay");
         Settings.ENABLE_COPY_SEED_BUTTON = LunaSettings.getBoolean(id, "sms_EnableCopySeedButton");
+        Settings.ADDITIONAL_MP_PER_REROLL = LunaSettings.getInt(id, "sms_AdditionalMPPerReroll");
 
         Settings.NPC_MASTERY_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyLevelMod");
         Settings.NPC_MASTERY_LEVEL_MODIFIER_CAP = LunaSettings.getInt(id, "sms_DifficultyLevelModCap");

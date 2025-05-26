@@ -1,3 +1,7 @@
+1.1.1
+----------
+- Added a setting to modify or remove the scaling reroll MP cost.
+
 1.1.0
 ----------
 Save-compatible, now requires MagicLib.

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
+import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
@@ -33,7 +34,7 @@ public abstract class MasteryUtils {
         //noinspection unchecked
         Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
         if (rerollMap == null) return 25;
-        return 25+2*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
+        return 25 + Settings.ADDITIONAL_MP_PER_REROLL*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
     }
 
     public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {

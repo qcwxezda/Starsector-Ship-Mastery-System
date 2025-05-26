@@ -8,6 +8,7 @@
 
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
+  "additionalMPPerReroll": 2,
 
   "npcMasteryLevelModifier": -1,
   "npcMasteryLevelModifierCap": 5,

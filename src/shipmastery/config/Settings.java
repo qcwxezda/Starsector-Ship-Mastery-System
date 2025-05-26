@@ -39,6 +39,7 @@ public class Settings {
     public static Boolean ENABLE_RECENT_BATTLES;
     public static Boolean RECENT_BATTLES_PRECISE_MODE;
     public static Boolean ADD_SMOD_AUTOFIT_OPTION;
+    public static Integer ADDITIONAL_MP_PER_REROLL;
 
 
     public static void loadSettingsFromJson() throws JSONException, IOException {
@@ -68,5 +69,7 @@ public class Settings {
         CYBER_AUG_BASE_BONUS = Math.max(0f, (float) json.getDouble("cyberAugBaseBonus"));
         CYBER_AUG_MAX_BONUS = Math.max(0f, (float) json.getDouble("cyberAugMaxBonus"));
         CYBER_AUG_BONUS_PER_GROUP = Math.max(0f, (float) json.getDouble("cyberAugBonusPerGroup"));
+
+        ADDITIONAL_MP_PER_REROLL = Math.max(0, json.getInt("additionalMPPerReroll"));
     }
 }

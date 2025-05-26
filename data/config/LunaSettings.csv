@@ -23,6 +23,7 @@ sms_ClearSModsRefundFraction,S-Mod Removal Refund Fraction,Double,0,,Refunds the
 sms_CombatMPGainMultiplier,Combat MP Gain Multiplier,Double,1,,Multiplies the amount of MP gained for non-civilian ship hulls from actions that also grant XP.,0,5,Mastery
 sms_CivilianMPGainMultiplier,Civilian MP Gain Multiplier,Double,1,,Multiplies the amount of MP gained for civilian ship hulls from actions that also grant XP.,0,5,Mastery
 sms_SModCreditCostMultiplier,S-Mod Credits Cost Multiplier,Double,1,,Multiplies the credits cost of building in hullmods by the specified amount.,0,5,Mastery
+sms_AdditionalMPPerReroll,Regenerate Masteries: Additional MP Cost,Int,2,,"Each time you regenerate randomly-selected masteries, the MP cost of the next regeneration (for that ship spec) increases by this amount.",0,10,Mastery
 sms_RandomMasterySeed,Mastery Generation Seed (requires new game),String,,,"Seed to use for randomly generated mastery effects, applied to all new games. If left empty or whitespace only, the sector seed will be used instead.",,,Mastery
 ,,,,,,,,
 ,,,,,,,,
