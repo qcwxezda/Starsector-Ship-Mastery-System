@@ -33,7 +33,7 @@ public abstract class MasteryUtils {
         //noinspection unchecked
         Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
         if (rerollMap == null) return 25;
-        return 25+5*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
+        return 25+2*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
     }
 
     public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
