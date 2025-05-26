@@ -15,7 +15,9 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.plugins.LevelupPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
+import shipmastery.achievements.LotsOfMP;
 import shipmastery.config.Settings;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
@@ -33,14 +35,15 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 4500f;
-    public static final float XP_PER_HALF_MP_CIV = 3000f;
+    public static final float XP_PER_HALF_MP = 3500f;
+    public static final float XP_PER_HALF_MP_CIV = 1250f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
-    public static final float MIN_XP_CIV = 600f;
-    public static final float MULT_PER_MP = 1.115f;
+    public static final float MIN_XP_CIV = 500f;
+    public static final float MULT_PER_MP = 1.025f;
     /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.985f;
     public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 60f;
+    public static final float FULL_DEPLOYMENT_TIME_MULT = 0.2f;
     private long prevXP;
     private long prevBonusXP;
     private int prevSP;
@@ -125,19 +128,15 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         for (Map.Entry<FleetMemberAPI, Float> entry : deployedTime.entrySet()) {
             FleetMemberAPI fm = entry.getKey();
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
-            Integer count = counts.get(spec);
-            if (count == null) count = 0;
-            counts.put(spec, count + 1);
-            Float totalTime = averageTimes.get(spec);
-            if (totalTime == null) totalTime = 0f;
-            averageTimes.put(spec, totalTime + entry.getValue());
+            counts.compute(spec, (k, v) -> v == null ? 1 : v + 1);
+            averageTimes.compute(spec, (k, v) -> v == null ? entry.getValue() : v + entry.getValue());
         }
         for (Map.Entry<ShipHullSpecAPI, Float> time : averageTimes.entrySet()) {
             ShipHullSpecAPI spec = time.getKey();
             int count = counts.get(spec);
             time.setValue(time.getValue() / count);
             float weight = time.getValue();
-            weight *= 1f + Math.min(1f, 0.2f * count);
+            weight *= 1f + Math.min(0.5f, 0.1f * (count-1));
             if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
                 weight *= (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec));
             }
@@ -181,8 +180,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true);
-        // 75% XP penalty for auto pursuits
-        gainMP(0.25f * xpGained, picker, false, true);
+        gainMP(0.6f*xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {
@@ -196,31 +194,28 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
-        float xpPerMult = isPursuit ? 0.5f : isCivilian ? 1f/3f : 0.2f;
+        float xpPerMult = isPursuit ? 0.5f : isCivilian ? 1f/3f : 0.1f;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
         float totalMPGained = 0f;
         int count = 0;
-        while (xp > 0 && (random.nextFloat() < xp / (xpPer*xpPerMult + xp) || xp > 9f * xpPer*xpPerMult)) {
+        while (xp > 0 && (random.nextFloat() < xp / (xpPer*xpPerMult + xp) || xp > 5f * xpPer*xpPerMult)) {
             totalMPGained++;
             count++;
-            xp -= xpPer*xpPerMult;
+            xp -= xpPer*xpPerMult * MathUtils.randBetween(0.8f, 1.25f, random);
             xpPer *= MULT_PER_MP;
             if (!isCivilian && !isPursuit) {
-                xpPerMult = switch (count) {
-                    case 1 -> 0.4f;
-                    case 2 -> 0.6f;
-                    case 3 -> 0.8f;
-                    default -> 1f;
-                };
+                xpPerMult = Math.min(0.1f * (count+1), 1f);
             } else if (!isPursuit) {
                 xpPerMult = count == 1 ? 2f/3f : 1f;
+            } else {
+                xpPerMult = 1f;
             }
         }
         var stats = Global.getSector().getPlayerStats().getDynamic();
         float additionalCivMult = stats.getStat(CIVILIAN_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
         float additionalCombatMult = stats.getStat(COMBAT_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
-        totalMPGained *= (isCivilian ? 0.8f * Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
-                : 1.2f * Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
+        totalMPGained *= (isCivilian ? Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
+                : Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
         // Scale MP gains to number of ships deployed
         if (!isCivilian && !isPursuit) {
             totalMPGained *= switch (uniques.size()) {
@@ -228,8 +223,10 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
                 case 2 -> 0.5f;
                 case 3 -> 0.75f;
                 case 4 -> 1f;
-                case 5 -> 1.2f;
-                default -> 1.4f;
+                case 5 -> 1.15f;
+                case 6 -> 1.3f;
+                case 7 -> 1.4f;
+                default -> 1.5f;
             };
         }
         float fractionalPart = totalMPGained - (int) totalMPGained;
@@ -238,8 +235,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         }
         for (int i = 0; i < totalMPGained; i++) {
             ShipHullSpecAPI spec = picker.pick();
-            int gain = !isCivilian && !isPursuit && spec.isCivilianNonCarrier() ? 2 : 1;
-            amounts.compute(spec, (k, amount) -> amount == null ? 1 : gain + amount);
+            amounts.compute(spec, (k, amount) -> amount == null ? 1 : 1 + amount);
         }
         for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
             ShipMastery.addPlayerMasteryPoints(
@@ -249,6 +245,11 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
                     !isCivilian && !entry.getKey().isCivilianNonCarrier());
         }
         showMasteryPointGainMessage(amounts);
+
+        // Check for achievement completion
+        if (!isCivilian && totalMPGained >= LotsOfMP.NUM_NEEDED && Settings.COMBAT_MP_GAIN_MULTIPLIER <= 1.001f) {
+            MagicAchievementManager.getInstance().completeAchievement(LotsOfMP.class);
+        }
     }
 
     public void showMasteryPointGainMessage(Map<ShipHullSpecAPI, Integer> amounts) {
@@ -316,6 +317,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
             Float existingTime = deployedTimeInLastBattle.get(fm);
             float newTime = dfm.getShip().getTimeDeployedForCRReduction();
+            // In case a ship doesn't lose CR for some reason
+            newTime += (dfm.getShip().getFullTimeDeployed() - newTime) * FULL_DEPLOYMENT_TIME_MULT;
             float total = existingTime == null ? newTime : existingTime + newTime;
             total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
             deployedTimeInLastBattle.put(fm, total);

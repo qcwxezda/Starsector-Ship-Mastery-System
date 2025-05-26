@@ -2,7 +2,9 @@ package shipmastery.ui.triggers;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
+import shipmastery.achievements.FullEnhance;
 import shipmastery.config.Settings;
 import shipmastery.ui.EnhanceMasteryDisplay;
 import shipmastery.ui.MasteryPanel;
@@ -66,5 +68,10 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
         // bay on ships that filled it
         Utils.fixPlayerFleetInconsistencies();
         masteryPanel.forceRefresh(true, false, true, false);
+
+        // Check for achievement completion
+        if (enhanceCount == MasteryUtils.MAX_ENHANCES) {
+            MagicAchievementManager.getInstance().completeAchievement(FullEnhance.class);
+        }
     }
 }

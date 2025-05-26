@@ -134,7 +134,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
     }
 
     public static int getPrice(ShipHullSpecAPI spec) {
-        return (int) Math.max(20000f, Math.min(60000f, spec.getBaseValue() * 0.25f));
+        return (int) Math.min(30000f, 10000f + spec.getBaseValue() * 0.02f);
     }
 
     @Override
@@ -257,7 +257,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
             float weight = spec.getRarity();
             if (playerFleetSpecs.contains(spec) && tags.contains(PREF_IN_FLEET_TAG)) {
                 weight += Utils.getSelectionWeightScaledByValueDecreasing(
-                        ShipMastery.getPlayerMasteryPoints(spec), 10f, 50f, 150f, 100f);
+                        ShipMastery.getPlayerMasteryPoints(spec), 10f, 50f, 150f, 3000f);
             }
             picker.add(spec, weight);
         }

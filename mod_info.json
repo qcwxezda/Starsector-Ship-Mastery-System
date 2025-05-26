@@ -2,9 +2,10 @@
     "id": "shipmasterysystem",
     "name": "Ship Mastery System",
     "author": "qcwxezda",
-    "version": {"major":1, "minor":0, "patch":7},
+    "version": {"major":1, "minor":1, "patch":0},
     "dependencies":[
-        {"id":"particleengine", "name":"Particle Engine"}
+        {"id":"particleengine", "name":"Particle Engine"},
+        {"id": "MagicLib", "name": "MagicLib"}
     ],
     "description": "Gain mastery in ship hulls to unlock S-mod slots and additional bonuses.",
     "gameVersion": "0.98a-RC8",

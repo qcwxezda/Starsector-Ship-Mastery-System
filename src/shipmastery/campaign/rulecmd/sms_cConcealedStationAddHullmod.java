@@ -90,7 +90,7 @@ public class sms_cConcealedStationAddHullmod extends BaseCommandPlugin {
                             CargoAPI cargo = Global.getFactory().createCargo(true);
                             cargo.addSpecial(
                                     new SpecialItemData("sms_construct", Utils.getRestoredHullSpecId(picked.getHullSpec())),
-                                    3 + Misc.random.nextInt(3)); // 3-5
+                                    4 + Misc.random.nextInt(3)); // 4-6
                             BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);
                         }
 

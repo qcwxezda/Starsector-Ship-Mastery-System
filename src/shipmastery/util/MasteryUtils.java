@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class MasteryUtils {
@@ -29,7 +30,10 @@ public abstract class MasteryUtils {
     public static final int MAX_ENHANCES = 10;
 
     public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
-        return 20;
+        //noinspection unchecked
+        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
+        if (rerollMap == null) return 25;
+        return 25+5*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
     }
 
     public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
@@ -44,16 +48,16 @@ public abstract class MasteryUtils {
         int count = getEnhanceCount(spec);
         if (count >= MAX_ENHANCES) return Integer.MAX_VALUE;
         return switch (count) {
-            case 0 -> 16;
-            case 1 -> 17;
-            case 2 -> 18;
-            case 3 -> 19;
-            case 4 -> 20;
-            case 5 -> 25;
-            case 6 -> 30;
-            case 7 -> 35;
-            case 8 -> 40;
-            case 9 -> 50;
+            case 0 -> 25;
+            case 1 -> 27;
+            case 2 -> 29;
+            case 3 -> 31;
+            case 4 -> 33;
+            case 5 -> 35;
+            case 6 -> 40;
+            case 7 -> 45;
+            case 8 -> 50;
+            case 9 -> 99;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -76,8 +80,18 @@ public abstract class MasteryUtils {
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
-        if (level < 8) return 3 + level;
-        return 15;
+        return switch (level) {
+            case 0 -> 3;
+            case 1 -> 4;
+            case 2 -> 6;
+            case 3 -> 8;
+            case 4 -> 10;
+            case 5 -> 13;
+            case 6 -> 16;
+            case 7 -> 20;
+            case 8 -> 25;
+            default -> 25 + (level-8)*4;
+        };
     }
 
     public static String makeEffectId(MasteryEffect effect, int level, int index) {

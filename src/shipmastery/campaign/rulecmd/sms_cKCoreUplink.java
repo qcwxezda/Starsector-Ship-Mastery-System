@@ -36,6 +36,9 @@ import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import org.magiclib.achievements.MagicAchievementManager;
+import shipmastery.achievements.AmorphousCoreUsed;
+import shipmastery.achievements.PseudocoreCrewedShip;
 import shipmastery.campaign.items.KCoreUplinkPlugin;
 import shipmastery.util.FleetMemberTooltipCreator;
 import shipmastery.util.IntRef;
@@ -409,6 +412,12 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
             helper.removeFromAnyStack(CargoAPI.CargoItemType.RESOURCES, plugin.coreIds.get(plugin.checkedCoreButtonIndex), 1);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             dialog.dismiss();
+
+            // Update achievements
+            MagicAchievementManager.getInstance().completeAchievement(PseudocoreCrewedShip.class);
+            if (AmorphousCoreUsed.canCompleteAchievement(plugin.selectedFleetMember)) {
+                MagicAchievementManager.getInstance().completeAchievement(AmorphousCoreUsed.class);
+            }
         }
 
         @Override

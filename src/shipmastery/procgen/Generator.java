@@ -117,7 +117,6 @@ public class Generator {
     public void generateRemoteSystem() {
 
         Vector2f remoteBeaconLocation = new Vector2f(-SECTOR_WIDTH/2f-15500f, SECTOR_HEIGHT/2f-14500f);
-
         var system = Global.getSector().createStarSystem(Strings.Campaign.remoteBeacon);
         system.getLocation().set(remoteBeaconLocation.x, remoteBeaconLocation.y);
         Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_BEACON_LOCATION, remoteBeaconLocation);
@@ -423,7 +422,8 @@ public class Generator {
     }
 
     public void generateProbes(List<SectorEntityToken> stations, List<StarSystemAPI> eligibleSystems) {
-        for (SectorEntityToken station : stations) {
+        for (int i = 0; i < stations.size(); i++) {
+            SectorEntityToken station = stations.get(i);
             var stationSystem = station.getStarSystem();
             WeightedRandomPicker<StarSystemAPI> picker = new WeightedRandomPicker<>(random);
             for (StarSystemAPI eligibleSystem : eligibleSystems) {
@@ -432,16 +432,27 @@ public class Generator {
                 picker.add(eligibleSystem, 1f / (1f + dist));
             }
             if (picker.isEmpty()) continue;
-            for (int i = 0; i < NUM_PROBES_PER_STATION; i++) {
-                var system = picker.pick();
-                // Why no pick with index??
-                List<StarSystemAPI> items = picker.getItems();
-                for (int j = 0; j < items.size(); j++) {
-                    var sys = items.get(j);
-                    if (sys == system) {
-                        picker.setWeight(j, picker.getWeight(j)/2f);
+            for (int j = 0; j < NUM_PROBES_PER_STATION; j++) {
+                StarSystemAPI system = null;
+                if (j == 0 && i == 0) {
+                    system = Global.getSector().getStarSystem("tia");
+                } else if (j == 0 && i == 1) {
+                    system = Global.getSector().getStarSystem("penelope's star");
+                }
+
+                if (system == null) {
+                    system = picker.pick();
+                    // Why no pick with index??
+                    List<StarSystemAPI> items = picker.getItems();
+                    for (int k = 0; k < items.size(); k++) {
+                        var sys = items.get(k);
+                        if (sys == system) {
+                            picker.setWeight(k, picker.getWeight(k) / 3f);
+                        }
                     }
                 }
+
+                if (system == null) return;
                 BaseThemeGenerator.EntityLocation location = BaseThemeGenerator.pickAnyLocation(random, system, 100f, Collections.singleton(station));
                 BaseThemeGenerator.AddedEntity added = BaseThemeGenerator.addEntity(random, system, location, "sms_concealed_probe",
                         Factions.NEUTRAL);

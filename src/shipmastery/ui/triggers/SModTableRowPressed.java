@@ -26,7 +26,7 @@ public class SModTableRowPressed extends TriggerableProxy {
     final ShipAPI module;
     final ShipAPI root;
     long lastClickTime = 0;
-    public static final float CREDITS_FOR_NO_BONUS_XP = 250000f;
+    public static final float CREDITS_FOR_NO_BONUS_XP = 200000f;
 
     public SModTableRowPressed(MasteryPanel masteryPanel, ShipAPI module, ShipAPI root) {
         super(ClassRefs.uiTableDelegateClass, ClassRefs.uiTableDelegateMethodName);

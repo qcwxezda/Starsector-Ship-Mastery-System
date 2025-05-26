@@ -38,7 +38,7 @@ sms_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the high
 sms_DifficultyText,Difficulty Text,Text,All settings in this category only apply to NPC fleets that have not yet been processed by this mod.,,,,,Difficulty
 sms_HeaderProgression,Progression,Header,Progression,,,,,Difficulty
 sms_ProgressionEnabled,Enable Progression,Boolean,true,,"If [enabled], NPC fleet difficulty settings will [gradually progress] from their initial to their final values. If [disabled], difficulty settings will [remain at their initial values indefinitely].",,,Difficulty
-sms_TotalProgressionMP,Total Player MP to Cap,Int,2000,,"If progression is enabled, controls the [rate] at which NPC fleets' mastery settings progress. The final settings are reached when the player gains the selected number of [MP across all combat ship hulls]. This number only counts MP gained directly from combat, and not MP gained through constructs or passively for skins of a ship hull.",100,10000,Difficulty
+sms_TotalProgressionMP,Total Player MP to Cap,Int,3000,,"If progression is enabled, controls the [rate] at which NPC fleets' mastery settings progress. The final settings are reached when the player gains the selected number of [MP across all combat ship hulls]. This number only counts MP gained directly from combat, and not MP gained through constructs or passively for skins of a ship hull.",100,10000,Difficulty
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderDifficulty,Difficulty Settings,Header,Difficulty Settings,,,,,Difficulty

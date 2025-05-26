@@ -5,6 +5,8 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
+import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.util.MasteryUtils;
@@ -27,11 +29,27 @@ public class ShipDisplay implements CustomUIElement {
         tooltip.setParaOrbitronVeryLarge();
         int enhanceCount = MasteryUtils.getEnhanceCount(spec);
         String enhanceStr = String.format("(+%s)", enhanceCount);
-        String nameStr = spec.getHullName() + " " + (enhanceCount <= 0 ? "" : enhanceStr);
-        tooltip.addPara(nameStr, 0f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.MID);
+        String nameStr = (enhanceCount <= 0 ? "" : enhanceStr) + " " + spec.getHullName();
+        LabelAPI test = Global.getSettings().createLabel(nameStr, Fonts.ORBITRON_24AABOLD);
+        float width = test.computeTextWidth(nameStr);
+        if (width+15f > size) {
+            test = Global.getSettings().createLabel(nameStr, Fonts.ORBITRON_20AABOLD);
+            tooltip.setParaFont(Fonts.ORBITRON_20AABOLD);
+            width = test.computeTextWidth(nameStr);
+            if (width+15f > size) {
+                test = Global.getSettings().createLabel(nameStr, Fonts.ORBITRON_16);
+                tooltip.setParaFont(Fonts.ORBITRON_16);
+                width = test.computeTextWidth(nameStr);
+                if (width+15f > size) {
+                    tooltip.setParaFont(Fonts.ORBITRON_12);
+                }
+            }
+        }
+
+        tooltip.addPara(nameStr, -10f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.MID);
         ButtonAPI outline = tooltip.addAreaCheckbox("", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                                         Misc.getBrightPlayerColor(), size - 5f,
-                                                        size - 5f, 0f);
+                                                        size - 5f, 10f);
         outline.setClickable(false);
         outline.setGlowBrightness(0.3f);
         outline.setMouseOverSound(null);

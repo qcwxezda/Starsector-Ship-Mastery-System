@@ -1,3 +1,31 @@
+1.1.0
+----------
+Save-compatible, now requires MagicLib.
+
+- Added achievements.
+- (New game only, not essential) Added concealed probe to Tia.
+- (New game only, not essential) Added concealed probe to Penelope's Star.
+- Increased MP level-up cost scaling.
+- Increased regenerate and enhance MP cost.
+- Regenerate MP cost now increases each time you use it (per hull spec).
+- Significantly increased early-game MP gain.
+- Generally increased MP gain.
+- Significantly increased civilian MP gain.
+- Reduced price of knowledge constructs from 20000-60000 to 10000-30000.
+- Increased knowledge construct drops from concealed stations.
+- Decreased the no-bonus-XP threshold when using story points to build in hullmods from 250000 to 200000 credits.
+    - Enhancing still always gives 100% bonus XP when using a story point.
+- MP gain now scales less linearly with number of unique ship types deployed, up to 1.5x at 8 or more.
+- MP gain weight multiplier from deploying multiple of the same ship: lowered cap from 2x to 1.5x.
+- Ships that don't lose peak time from battle for whatever reason can now gain MP.
+- Removed the bonus MP that civilian ships get when deployed in battle.
+- Default progression settings 2000 MP -> 3000 MP.
+- Building in S-mods now costs more MP.
+- Adjusted a sprite.
+- Fixed issue with text alignment with hull specs with long names.
+- Fixed issue where pursuit gave 2x the MP as intended, penalty reduced to 40%.
+- Fixed a typo in an intel description.
+
 1.0.7
 ----------
 - For concealed station fights, you may now deploy 240 DP worth of ships (+20% temporary deployment bonus as percentage of battle size) regardless of officer distribution.

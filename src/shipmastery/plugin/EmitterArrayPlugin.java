@@ -65,6 +65,11 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
         beamCoreSprite = Utils.getLoadedSprite(BEAM_CORE_PATH);
         glowSprite = Utils.getLoadedSprite(GLOW_PATH);
         center = entity.getOrbitFocus();
+        if (entity.getMemoryWithoutUpdate().getBoolean(KEY_IS_FIRST_EMITTER) &&
+                center.getMarket() != null &&
+                center.getMarket().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD)) {
+            BluePlanetaryShield.applyVisuals((PlanetAPI) center, 1f);
+        }
         inited = true;
     }
 
@@ -105,6 +110,7 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
         } else {
             rightFader.fadeOut();
         }
+
         rightPower = Math.min(3, power);
     }
 
@@ -197,7 +203,7 @@ public class EmitterArrayPlugin extends BaseCustomEntityPlugin {
             shieldFader.fadeIn();
         }
         if (entity.getMemoryWithoutUpdate().getBoolean(KEY_IS_FIRST_EMITTER)) {
-            if (shieldFader.getBrightness() < 1f) {
+            if (shieldFader.getBrightness() < 1f && shieldFader.getBrightness() > 0f) {
                 BluePlanetaryShield.applyVisuals((PlanetAPI) center, 1f - shieldFader.getBrightness());
             }
             if (shieldFader.getBrightness() >= 1f && center.getMarket().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.REMOTE_BEACON_HAS_SHIELD)) {

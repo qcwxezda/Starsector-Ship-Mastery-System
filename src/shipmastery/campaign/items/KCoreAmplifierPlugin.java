@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.magiclib.achievements.MagicAchievementManager;
+import shipmastery.achievements.PseudocoreAmplifierIntegrated;
 import shipmastery.util.Strings;
 
 public class KCoreAmplifierPlugin extends BaseSpecialItemPlugin {
@@ -25,5 +27,6 @@ public class KCoreAmplifierPlugin extends BaseSpecialItemPlugin {
         Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.K_CORE_AMP_INTEGRATED, true);
         Global.getSoundPlayer().playUISound(getSpec().getSoundId(), 1f, 1f);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(String.format(Strings.Items.ampIntegrated, getName()));
+        MagicAchievementManager.getInstance().completeAchievement(PseudocoreAmplifierIntegrated.class);
     }
 }

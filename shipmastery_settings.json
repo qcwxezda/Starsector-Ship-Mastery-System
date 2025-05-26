@@ -13,7 +13,7 @@
   "npcMasteryLevelModifierCap": 5,
 
   "progressionEnabled": true,
-  "npcTotalProgressionMP": 2000,
+  "npcTotalProgressionMP": 3000,
 
   # Will not undo skill changes due to modding API limitations. This must be done manually; see LunaLib settings
   # for instructions.

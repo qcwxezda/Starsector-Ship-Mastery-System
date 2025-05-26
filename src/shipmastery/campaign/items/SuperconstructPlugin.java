@@ -21,7 +21,7 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
     // Basically a key; if any other string is used with a blank construct,
     // it will not work. This avoids rendering weirdness with the codex (which always passes in null)
     public static final String ACTIVE_STRING = "sms_BlankConstructActive";
-    public static final int SUPERCONSTRUCT1_MP = 100;
+    public static final int SUPERCONSTRUCT1_MP = 150;
     public static final float SUPERCONSTRUCT1_STRENGTH = 0.25f;
     public static final int SUPERCONSTRUCT1_SMODS = 1;
     public static final float SUPERCONSTRUCT2_STRENGTH = 0.1f;
