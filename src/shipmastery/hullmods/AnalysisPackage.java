@@ -21,11 +21,15 @@ public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
 
     public static final float[] BASE_INCREASE_VALUES = new float[] {0.05f, 0.1f, 0.15f, 0.2f};
     public static final float MAX_INCREASE_VALUE = 1f;
+    public static final float HARD_CAP = 1f;
     public static final String STAT_MOD_ID = "sms_analysis_package";
 
     @Override
     public String getDescriptionParam(int index, ShipAPI.HullSize hullSize) {
-        return Utils.asPercent(BASE_INCREASE_VALUES[index % 4]);
+        if (index % 5 == 4) {
+            return Utils.asPercent(HARD_CAP);
+        }
+        return Utils.asPercent(BASE_INCREASE_VALUES[index % 5]);
     }
 
     @Override
@@ -75,9 +79,6 @@ public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
         var lookup = VariantLookup.getVariantInfo(ship.getVariant());
         return lookup == null || lookup.variant == lookup.root;
     }
-
-
-
 
     @Override
     public String getUnapplicableReason(ShipAPI ship) {
@@ -149,6 +150,9 @@ public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
             curCiv += increase;
             curCombat += increase;
         }
+
+        curCiv = Math.min(curCiv, HARD_CAP);
+        curCombat = Math.min(curCombat, HARD_CAP);
 
         return new IncreaseRecord(curCiv, curCombat);
     }
