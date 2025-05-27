@@ -42,10 +42,7 @@ public class SkimmerEMP extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(SkimmerEMPScript.class)) {
             float strength = getStrength(ship);
             int hullSize = Utils.hullSizeToInt(ship.getHullSize());

@@ -16,7 +16,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -50,10 +49,7 @@ public class HEFExplosion extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(HEFExplosionScript.class)) {
             ship.addListener(new HEFExplosionScript(ship, id, getStrength(ship)));
         }

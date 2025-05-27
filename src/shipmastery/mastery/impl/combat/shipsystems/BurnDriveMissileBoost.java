@@ -41,8 +41,7 @@ public class BurnDriveMissileBoost extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(BurnDriveMissileBoostScript.class)) {
             ship.addListener(new BurnDriveMissileBoostScript(ship, getStrength(ship)));
         }

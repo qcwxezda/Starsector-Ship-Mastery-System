@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import particleengine.Emitter;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -24,7 +23,7 @@ import java.util.Iterator;
 public class RecallDeviceDestruction extends ShipSystemEffect {
     public float getEffectRadius(PersonAPI commander, ShipAPI.HullSize hullSize) {
         float strength = getStrength(commander);
-        return strength + Utils.hullSizeToInt(hullSize) * strength/4f;
+        return strength + Utils.hullSizeToInt(hullSize) * strength/3.5f;
     }
 
     @Override
@@ -40,8 +39,7 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(RecallDeviceDestructionScript.class)) {
             ship.addListener(new RecallDeviceDestructionScript(ship, getEffectRadius(commander, ship.getHullSize())));
         }

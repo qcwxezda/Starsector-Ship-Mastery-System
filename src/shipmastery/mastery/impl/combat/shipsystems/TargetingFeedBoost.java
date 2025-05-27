@@ -18,8 +18,7 @@ public class TargetingFeedBoost extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         ship.getSystem().setFluxPerUse(0f);
         if (!ship.hasListenerOfClass(TargetingFeedBoostScript.class)) {
             ship.addListener(new TargetingFeedBoostScript(ship, getStrength(ship), 2f * getStrength(ship), id));

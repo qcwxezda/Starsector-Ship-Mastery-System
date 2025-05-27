@@ -14,10 +14,7 @@ public class LidarArrayFlux extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(LidarArrayFluxScript.class)) {
             ship.addListener(new LidarArrayFluxScript(ship, getStrength(ship), id));
         }

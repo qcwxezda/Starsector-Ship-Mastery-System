@@ -66,8 +66,7 @@ public class DamageChargesDamperField extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(DamageChargesDamperFieldScript.class)) {
             ship.addListener(new DamageChargesDamperFieldScript(
                     ship,

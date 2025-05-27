@@ -42,10 +42,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(EnergyMineConversionScript.class)) {
             ship.addListener(new EnergyMineConversionScript(ship, getStrength(ship), 5f * getStrength(ship), id));
         }

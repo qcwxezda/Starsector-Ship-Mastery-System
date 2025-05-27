@@ -13,13 +13,12 @@ public class MissileAutoforgeExtraCharge extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
-        if (stats.getVariant() == null || stats.getVariant().getHullSpec() == null || !getSystemSpecId().equals(stats.getVariant().getHullSpec().getShipSystemId())) return;
+    public void applyEffectsBeforeShipCreationIfHasSystem(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         stats.getSystemUsesBonus().modifyFlat(id, 1);
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         ship.getSystem().setFluxPerUse(0f);
     }
 

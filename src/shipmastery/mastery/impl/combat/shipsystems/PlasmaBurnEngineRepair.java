@@ -8,7 +8,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
@@ -35,8 +34,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(PlasmaBurnEngineRepairScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new PlasmaBurnEngineRepairScript(ship, 5f * strength, strength, strength));

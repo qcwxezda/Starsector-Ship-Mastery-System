@@ -42,7 +42,7 @@ public class CombatBurnRegen extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         float strength = getStrength(ship);
         ship.addListener(new CombatBurnRegenScript(ship, id, strength, 10f*strength, 2f*strength, strength / 250f));
     }

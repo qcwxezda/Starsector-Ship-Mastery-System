@@ -15,8 +15,7 @@ public class ManeuveringJetsBoost extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ManeuveringJetsBoostScript.class)) {
             ship.addListener(new ManeuveringJetsBoostScript(ship, getStrength(ship), id));
         }

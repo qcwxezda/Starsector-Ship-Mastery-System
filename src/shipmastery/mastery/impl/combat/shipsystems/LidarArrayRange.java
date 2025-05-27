@@ -14,11 +14,7 @@ public class LidarArrayRange extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
-
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(LidarArrayRangeScript.class)) {
             ship.addListener(new LidarArrayRangeScript(ship, getStrength(ship), id));
         }
@@ -29,33 +25,22 @@ public class LidarArrayRange extends ShipSystemEffect {
         return "lidararray";
     }
 
-    static class LidarArrayRangeScript implements AdvanceableListener {
-        final ShipAPI ship;
-        final String id;
-        final float bonus;
-
-        LidarArrayRangeScript(ShipAPI ship, float bonus, String id) {
-            this.ship = ship;
-            this.id = id;
-            this.bonus = bonus;
-        }
-
+    record LidarArrayRangeScript(ShipAPI ship, float bonus, String id) implements AdvanceableListener {
         @Override
-        public void advance(float amount) {
-            if (!ship.getSystem().isActive()) {
-                Utils.maintainStatusForPlayerShip(ship,
-                        id,
-                        "graphics/icons/hullsys/lidar_barrage.png",
-                        Strings.Descriptions.LidarArrayRangeTitle,
-                        String.format(Strings.Descriptions.LidarArrayRangeDesc1, Utils.asPercent(bonus)),
-                        false);
-                ship.getMutableStats().getBallisticWeaponRangeBonus().modifyPercent(id, 100f * bonus);
-                ship.getMutableStats().getEnergyWeaponRangeBonus().modifyPercent(id, 100f * bonus);
-            }
-            else {
-                ship.getMutableStats().getBallisticWeaponRangeBonus().unmodify(id);
-                ship.getMutableStats().getEnergyWeaponRangeBonus().unmodify(id);
+            public void advance(float amount) {
+                if (!ship.getSystem().isActive()) {
+                    Utils.maintainStatusForPlayerShip(ship,
+                            id,
+                            "graphics/icons/hullsys/lidar_barrage.png",
+                            Strings.Descriptions.LidarArrayRangeTitle,
+                            String.format(Strings.Descriptions.LidarArrayRangeDesc1, Utils.asPercent(bonus)),
+                            false);
+                    ship.getMutableStats().getBallisticWeaponRangeBonus().modifyPercent(id, 100f * bonus);
+                    ship.getMutableStats().getEnergyWeaponRangeBonus().modifyPercent(id, 100f * bonus);
+                } else {
+                    ship.getMutableStats().getBallisticWeaponRangeBonus().unmodify(id);
+                    ship.getMutableStats().getEnergyWeaponRangeBonus().unmodify(id);
+                }
             }
         }
-    }
 }

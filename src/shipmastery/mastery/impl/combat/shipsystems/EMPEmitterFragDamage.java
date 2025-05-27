@@ -18,8 +18,7 @@ public class EMPEmitterFragDamage extends ShipSystemEffect {
                                  .params(getSystemName(), Utils.asInt(getStrength(selectedModule)));
     }
 
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(EMPEmitterFragDamageScript.class)) {
             ship.addListener(new EMPEmitterFragDamageScript(ship, getStrength(ship)));
         }

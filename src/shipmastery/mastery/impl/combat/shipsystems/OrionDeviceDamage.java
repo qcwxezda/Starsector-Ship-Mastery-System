@@ -13,7 +13,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
@@ -38,10 +37,7 @@ public class OrionDeviceDamage extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(OrionDeviceDamageScript.class)) {
             ship.addListener(new OrionDeviceDamageScript(ship, getStrength(ship)));
         }

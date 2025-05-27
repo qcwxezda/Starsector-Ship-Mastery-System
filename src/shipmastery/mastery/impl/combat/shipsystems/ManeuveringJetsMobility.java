@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
@@ -29,10 +28,7 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(ManeuveringJetsMobilityScript.class)) {
             ship.addListener(new ManeuveringJetsMobilityScript(ship, getStrength(ship), id));
         }

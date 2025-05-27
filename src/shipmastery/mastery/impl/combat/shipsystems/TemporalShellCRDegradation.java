@@ -15,8 +15,7 @@ public class TemporalShellCRDegradation extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(TemporalShellCRDegradationScript.class)) {
             ship.addListener(new TemporalShellCRDegradationScript(ship, 1f - getStrength(ship), id));
         }

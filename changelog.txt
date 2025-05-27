@@ -1,3 +1,8 @@
+1.1.2
+----------
+- Fixed a possible crash if a ship has a mastery effect for a system that it doesn't have (if a mod changes/removes a ship's system on-the-fly, etc.)
+- Adjusted a mastery effect to have nicer numbers.
+
 1.1.1
 ----------
 - Added a setting to modify or remove the scaling reroll MP cost.

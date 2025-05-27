@@ -17,8 +17,7 @@ public class DecoyFlareBoost extends ShipSystemEffect{
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(DecoyFlareBoostScript.class)) {
             ship.addListener(new DecoyFlareBoostScript(ship, getStrength(ship)));
         }

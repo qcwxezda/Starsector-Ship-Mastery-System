@@ -22,8 +22,7 @@ public class RecallDeviceRegeneration extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(RecallDeviceRegenerationScript.class)) {
             ship.addListener(new RecallDeviceRegenerationScript(ship, getStrength(ship) / 6f, getStrength(ship)));
         }

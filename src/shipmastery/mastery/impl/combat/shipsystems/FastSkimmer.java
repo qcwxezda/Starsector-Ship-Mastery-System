@@ -39,10 +39,7 @@ public class FastSkimmer extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(FastSkimmerScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new FastSkimmerScript(ship, Math.max(0f, 1f-strength/2f), 1f+strength, 1f+strength, id));

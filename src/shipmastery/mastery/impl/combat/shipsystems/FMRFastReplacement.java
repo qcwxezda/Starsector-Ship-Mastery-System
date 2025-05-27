@@ -22,8 +22,7 @@ public class FMRFastReplacement extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(FMRFastReplacementScript.class)) {
             ship.addListener(new FMRFastReplacementScript(ship, getStrength(ship)));
         }

@@ -17,8 +17,7 @@ public class HEFShieldEfficiency extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getShield() == null || ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(HEFShieldEfficiencyScript.class)) {
             ship.addListener(new HEFShieldEfficiencyScript(ship, getStrength(ship), id));
         }

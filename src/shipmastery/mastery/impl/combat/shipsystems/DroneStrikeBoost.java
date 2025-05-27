@@ -19,8 +19,7 @@ public class DroneStrikeBoost extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(DroneStrikeBoostScript.class)) {
             ship.addListener(new DroneStrikeBoostScript(ship, getStrength(ship),  id));
         }

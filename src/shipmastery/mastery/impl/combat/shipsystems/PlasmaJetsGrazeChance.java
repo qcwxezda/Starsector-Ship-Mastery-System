@@ -37,10 +37,7 @@ public class PlasmaJetsGrazeChance extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(PlasmaJetsGrazeChanceScript.class)) {
             ship.addListener(new PlasmaJetsGrazeChanceScript(ship, getStrength(ship), id));
         }

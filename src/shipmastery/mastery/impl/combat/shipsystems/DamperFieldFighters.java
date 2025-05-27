@@ -27,8 +27,7 @@ public class DamperFieldFighters extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(DamperFieldFightersScript.class)) {
             // Also add to carrier just for the invulnerability effect
             ship.addListener(new DamperFieldFightersScript(null, ship, getStrength(ship), id));
@@ -36,8 +35,7 @@ public class DamperFieldFighters extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsToFighterIfHasSystem(ShipAPI fighter, ShipAPI ship) {
         if (!fighter.hasListenerOfClass(DamperFieldFightersScript.class)) {
             fighter.addListener(new DamperFieldFightersScript(fighter, ship, getStrength(ship), id));
         }

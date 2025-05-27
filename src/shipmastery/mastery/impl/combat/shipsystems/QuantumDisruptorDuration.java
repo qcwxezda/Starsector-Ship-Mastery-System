@@ -19,8 +19,7 @@ public class QuantumDisruptorDuration extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(QuantumDisruptorDurationScript.class)) {
             ship.addListener(new QuantumDisruptorDurationScript(ship, getStrength(ship), getStrength(ship) * 0.1f, id));
         }

@@ -10,7 +10,6 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.combat.listeners.ShipDestroyedListener;
@@ -46,10 +45,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
-        if (ship == null || ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(PhaseTeleporterTimeFlowScript.class)) {
             ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 3f*getStrength(ship), 10f*getStrength(ship)));
         }

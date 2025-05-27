@@ -32,10 +32,7 @@ public class SkimmerDR extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(SkimmerDRScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new SkimmerDRScript(ship, 1f - strength, strength * 15f, id));

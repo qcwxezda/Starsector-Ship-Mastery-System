@@ -18,8 +18,7 @@ public class EMPEmitterEnergyDamage extends ShipSystemEffect {
                                  .params(getSystemName(), Utils.asInt(getStrength(selectedModule)));
     }
 
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(EMPEmitterEnergyDamageScript.class)) {
             ship.addListener(new EMPEmitterEnergyDamageScript(ship, getStrength(ship)));
         }
@@ -30,27 +29,20 @@ public class EMPEmitterEnergyDamage extends ShipSystemEffect {
         return "emp";
     }
 
-    static class EMPEmitterEnergyDamageScript implements EMPEmitterDamageListener {
-        final ShipAPI ship;
-        final float strength;
-        EMPEmitterEnergyDamageScript(ShipAPI ship, float strength) {
-            this.ship = ship;
-            this.strength = strength;
-        }
-
+    record EMPEmitterEnergyDamageScript(ShipAPI ship, float strength) implements EMPEmitterDamageListener {
         @Override
-        public void reportEMPEmitterHit(ShipAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            Global.getCombatEngine().applyDamage(
-                    "EMP_SHIP_SYSTEM_PARAM",
-                    target,
-                    point,
-                    strength,
-                    DamageType.ENERGY,
-                    0f,
-                    false,
-                    false,
-                    ship,
-                    true);
+            public void reportEMPEmitterHit(ShipAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+                Global.getCombatEngine().applyDamage(
+                        "EMP_SHIP_SYSTEM_PARAM",
+                        target,
+                        point,
+                        strength,
+                        DamageType.ENERGY,
+                        0f,
+                        false,
+                        false,
+                        ship,
+                        true);
+            }
         }
-    }
 }

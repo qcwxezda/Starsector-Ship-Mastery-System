@@ -39,10 +39,7 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(EntropyAmplifierChainingScript.class)) {
             ship.addListener(new EntropyAmplifierChainingScript(ship, (int) getStrength(ship)));
         }

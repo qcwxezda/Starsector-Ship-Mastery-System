@@ -18,10 +18,7 @@ public class PlasmaJetsDissipation extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(PlasmaJetsDissipationScript.class)) {
             ship.addListener(new PlasmaJetsDissipationScript(ship, 0.5f*getStrength(ship), id));
         }

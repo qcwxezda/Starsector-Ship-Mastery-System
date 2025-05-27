@@ -46,8 +46,7 @@ public class ReactiveFortressShield extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ReactiveFortressShieldScript.class)) {
             float strength = getStrength(ship);
             ship.addListener(new ReactiveFortressShieldScript(
@@ -64,59 +63,52 @@ public class ReactiveFortressShield extends ShipSystemEffect {
         return "fortressshield";
     }
 
-    static class ReactiveFortressShieldScript implements DamageTakenModifier {
-        final ShipAPI ship;
-        final float chance, damage, empDamage, range;
-        ReactiveFortressShieldScript(ShipAPI ship, float chance, float damage, float empDamage, float range) {
-            this.ship = ship;
-            this.chance = chance;
-            this.damage = damage;
-            this.empDamage = empDamage;
-            this.range = range;
-        }
+    record ReactiveFortressShieldScript(ShipAPI ship, float chance, float damage, float empDamage,
+                                        float range) implements DamageTakenModifier {
 
         @Override
-        public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage,
-                                        Vector2f point, boolean shieldHit) {
-            if (!shieldHit || target != ship) return null;
-            if (ship.getSystem().getEffectLevel() <= 0f) return null;
-            // Don't react to beams
-            if (damage.isDps()) return null;
+            public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage,
+                                            Vector2f point, boolean shieldHit) {
+                if (!shieldHit || target != ship) return null;
+                if (ship.getSystem().getEffectLevel() <= 0f) return null;
+                // Don't react to beams
+                if (damage.isDps()) return null;
 
-            float chance = this.chance * ship.getSystem().getEffectLevel();
-            if (Misc.random.nextFloat() <= chance) {
-                ShipAPI targetShip = findTarget(point);
-                if (targetShip != null) {
-                    Global.getCombatEngine()
-                          .spawnEmpArc(ship, point, ship, targetShip,
-                                       DamageType.ENERGY,
-                                       this.damage, // damage
-                                       empDamage, // emp
-                                       100000f, // max range
-                                       "tachyon_lance_emp_impact",
-                                       50f, // thickness
-                                       ship.getShield().getInnerColor(),
-                                       Color.WHITE);
+                float chance = this.chance * ship.getSystem().getEffectLevel();
+                if (Misc.random.nextFloat() <= chance) {
+                    ShipAPI targetShip = findTarget(point);
+                    if (targetShip != null) {
+                        Global.getCombatEngine()
+                                .spawnEmpArc(ship, point, ship, targetShip,
+                                        DamageType.ENERGY,
+                                        this.damage, // damage
+                                        empDamage, // emp
+                                        100000f, // max range
+                                        "tachyon_lance_emp_impact",
+                                        50f, // thickness
+                                        ship.getShield().getInnerColor(),
+                                        Color.WHITE);
+                    }
                 }
+
+                return null;
             }
 
-            return null;
-        }
-
-        private ShipAPI findTarget(Vector2f point) {
-            float dir = Misc.getAngleInDegrees(ship.getLocation(), point);
-            ShipAPI closestTarget = null;
-            float closestDist = Float.MAX_VALUE;
-            for (ShipAPI target : Global.getCombatEngine().getShips()) {
-                if (!target.isAlive() || target.getHitpoints() <= 0f) continue;
-                if (!CollisionUtils.canCollide(target, null, ship, false)) continue;
-                float dist = MathUtils.dist(point, target.getLocation());
-                if (dist > Math.min(closestDist, range + target.getCollisionRadius())) continue;
-                if (Misc.getAngleDiff(dir, Misc.getAngleInDegrees(point, target.getLocation())) > MAX_ARC_DIFF) continue;
-                closestDist = dist;
-                closestTarget = target;
+            private ShipAPI findTarget(Vector2f point) {
+                float dir = Misc.getAngleInDegrees(ship.getLocation(), point);
+                ShipAPI closestTarget = null;
+                float closestDist = Float.MAX_VALUE;
+                for (ShipAPI target : Global.getCombatEngine().getShips()) {
+                    if (!target.isAlive() || target.getHitpoints() <= 0f) continue;
+                    if (!CollisionUtils.canCollide(target, null, ship, false)) continue;
+                    float dist = MathUtils.dist(point, target.getLocation());
+                    if (dist > Math.min(closestDist, range + target.getCollisionRadius())) continue;
+                    if (Misc.getAngleDiff(dir, Misc.getAngleInDegrees(point, target.getLocation())) > MAX_ARC_DIFF)
+                        continue;
+                    closestDist = dist;
+                    closestTarget = target;
+                }
+                return closestTarget;
             }
-            return closestTarget;
         }
-    }
 }

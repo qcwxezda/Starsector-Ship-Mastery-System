@@ -31,10 +31,7 @@ public class NovaBurstDamage extends ShipSystemEffect {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(getSystemName());
     }
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null | !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(NovaBurstDamageScript.class)) {
             ship.addListener(new NovaBurstDamageScript(ship, getStrength(ship)));
         }

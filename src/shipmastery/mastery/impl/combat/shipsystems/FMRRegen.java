@@ -21,10 +21,7 @@ public class FMRRegen extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(FMRRegenScript.class)) {
             ship.addListener(new FMRRegenScript(ship, getStrength(ship)));
         }

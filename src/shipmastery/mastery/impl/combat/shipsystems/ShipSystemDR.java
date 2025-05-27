@@ -38,17 +38,14 @@ public abstract class ShipSystemDR extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) {
-            return;
-        }
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ShipSystemDRScript.class)) {
             ship.addListener(new ShipSystemDRScript(ship, getStrength(ship), getStatusTitle(), id));
         }
     }
 
     @Override
-    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship) {
+    public void applyEffectsToFighterIfHasSystem(ShipAPI fighter, ShipAPI ship) {
         for (ShipSystemDRScript script : ship.getListeners(ShipSystemDRScript.class)) {
             fighter.addListener(new ShipSystemDRModifier(fighter, script));
         }

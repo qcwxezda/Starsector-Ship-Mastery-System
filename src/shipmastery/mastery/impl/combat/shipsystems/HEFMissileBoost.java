@@ -36,8 +36,7 @@ public class HEFMissileBoost extends ShipSystemEffect {
     }
 
     @Override
-    public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (ship.getSystem() == null || !getSystemSpecId().equals(ship.getSystem().getId())) return;
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(HEFMissileBoostScript.class)) {
             ship.addListener(new HEFMissileBoostScript(ship, getStrength(ship), id));
         }
