@@ -3,8 +3,8 @@
 - Added a setting to modify or remove the scaling reroll MP cost.
 
 No new version, just re-download latest:
-(4:20 PM EST 5/26/2025): Civilian MP gain now scales with number of civilian ship types in your fleet, up to a maximum of 5.
-(8:28 PM EST 5/26/2025): Slightly reduced MP gain from large battles, adjusted achievement from 300 MP to 250 MP.
+- (4:20 PM EST 5/26/2025): Civilian MP gain now scales with number of civilian ship types in your fleet, up to a maximum of 5.
+- (8:28 PM EST 5/26/2025): Slightly reduced MP gain from large battles, adjusted achievement from 300 MP to 250 MP.
 
 1.1.0
 ----------
