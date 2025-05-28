@@ -183,7 +183,7 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             for (UIPanelAPI panel : modsPanels) {
                 ButtonAPI perm = (ButtonAPI) ReflectionUtils.invokeMethodNoCatch(panel, "getPerm");
                 if (perm != null) {
-                    ReflectionUtils.invokeMethodNoCatch(perm, "setOpacity", 0f);
+                    perm.setOpacity(0f);
                 }
             }
         } catch (Exception e) {

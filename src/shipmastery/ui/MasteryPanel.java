@@ -106,16 +106,16 @@ public class MasteryPanel {
 
     public void togglePanelVisibility(ButtonAPI button) {
         if (button == sModButton) {
-            ReflectionUtils.invokeMethod(sModPanel, "setOpacity", 1f);
-            ReflectionUtils.invokeMethod(masteryPanel, "setOpacity", 0f);
+            sModPanel.setOpacity(1f);
+            masteryPanel.setOpacity(0f);
             isShowingMasteryPanel = false;
             masteryButton.setChecked(false);
             sModButton.setChecked(true);
             masteryButton.setShortcut(Keyboard.KEY_Q, false);
             sModButton.setShortcut(-1, false);
         } else if (button == masteryButton) {
-            ReflectionUtils.invokeMethod(sModPanel, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(masteryPanel, "setOpacity", 1f);
+            sModPanel.setOpacity(0f);
+            masteryPanel.setOpacity(1f);
             isShowingMasteryPanel = true;
             sModButton.setChecked(false);
             masteryButton.setChecked(true);
@@ -332,7 +332,7 @@ public class MasteryPanel {
             resetButton.setEnabled(false);
         }
         if (!TransientSettings.SMOD_REMOVAL_ENABLED && !Settings.CLEAR_SMODS_ALWAYS_ENABLED) {
-            ReflectionUtils.invokeMethod(resetButton, "setOpacity", 0f);
+            resetButton.setOpacity(0f);
         }
 
         float useSPButtonW = 200f, useSPButtonH = 30f;
@@ -422,18 +422,18 @@ public class MasteryPanel {
 
     void showUpgradeOrConfirmation(boolean canEnhance) {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
-            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 0f : 1f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 1f);
-            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", currentMastery >= maxMastery ? 1f : 0f);
-            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", currentMastery >= maxMastery && canEnhance ? 1f : 0f);
-            ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
+            upgradeMasteryDisplay.setOpacity(currentMastery >= maxMastery ? 0f : 1f);
+            createConstructDisplay.setOpacity(1f);
+            rerollMasteryDisplay.setOpacity(currentMastery >= maxMastery ? 1f : 0f);
+            enhanceMasteryDisplay.setOpacity(currentMastery >= maxMastery && canEnhance ? 1f : 0f);
+            confirmOrCancelDisplay.setOpacity(0f);
         }
         else {
-            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 1f);
+            upgradeMasteryDisplay.setOpacity(0f);
+            createConstructDisplay.setOpacity(0f);
+            rerollMasteryDisplay.setOpacity(0f);
+            enhanceMasteryDisplay.setOpacity(0f);
+            confirmOrCancelDisplay.setOpacity(1f);
         }
     }
 
@@ -478,22 +478,22 @@ public class MasteryPanel {
         masteryPanel.addUIElement(enhanceMasteryDisplay).belowMid(shipDisplay, 130f);
 
         if (currentMastery >= maxMastery) {
-            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 1f);
-            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 1f);
-            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", canEnhance ? 1f : 0f);
+            upgradeMasteryDisplay.setOpacity(0f);
+            createConstructDisplay.setOpacity(1f);
+            rerollMasteryDisplay.setOpacity(1f);
+            enhanceMasteryDisplay.setOpacity(canEnhance ? 1f : 0f);
         } else {
-            ReflectionUtils.invokeMethod(rerollMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(createConstructDisplay, "setOpacity", 1f);
-            ReflectionUtils.invokeMethod(enhanceMasteryDisplay, "setOpacity", 0f);
-            ReflectionUtils.invokeMethod(upgradeMasteryDisplay, "setOpacity", 1f);
+            rerollMasteryDisplay.setOpacity(0f);
+            createConstructDisplay.setOpacity(1f);
+            enhanceMasteryDisplay.setOpacity(0f);
+            upgradeMasteryDisplay.setOpacity(1f);
         }
 
         confirmOrCancelDisplay = masteryPanel.createUIElement(225f, 100f, false);
         new ConfirmOrCancelDisplay(new ConfirmMasteryChangesPressed(this, root.getHullSpec()), new CancelMasteryChangesPressed(this)).create(confirmOrCancelDisplay);
         masteryPanel.addUIElement(confirmOrCancelDisplay).belowMid(shipDisplay, 10f);
 
-        ReflectionUtils.invokeMethod(confirmOrCancelDisplay, "setOpacity", 0f);
+        confirmOrCancelDisplay.setOpacity(0f);
 
         float containerW = 800f, containerH = height - 66f;
         TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH+2f, false);

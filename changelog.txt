@@ -1,3 +1,8 @@
+1.1.3
+----------
+- Replaced ReflectionUtils "setOpacity" with setOpacity calls (added in 0.98).
+- Fixed an issue with an achievement completing when it shouldn't.
+
 1.1.2
 ----------
 - Fixed a possible crash if a ship has a mastery effect for a system that it doesn't have (if a mod changes/removes a ship's system on-the-fly, etc.)
