@@ -204,7 +204,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
                 }
             } else {
                 activeTime += amount;
-                if (Misc.random.nextFloat() < 0.1f) {
+                if (Misc.random.nextFloat() < 0.1f && emitter != null) {
                     emitter.burst(1);
                 }
                 if (activeTime >= getDurationSeconds()) {

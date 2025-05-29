@@ -98,7 +98,7 @@ public class NucleusDefenderHandler extends BaseEveryFrameCombatPlugin implement
                 }
             }
             for (ShipAPI ship : Global.getCombatEngine().getShips()) {
-                if (ship.getOwner() == 1 && MathUtils.dist(loc, ship.getLocation()) <= data.radius) {
+                if (MathUtils.dist(loc, ship.getLocation()) <= data.radius) {
                     var listeners = ship.getListeners(CuratorNPCHullmod.CuratorNPCHullmodScript.class);
                     if (listeners != null) {
                         for (var listener : listeners) {

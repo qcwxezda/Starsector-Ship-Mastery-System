@@ -109,6 +109,8 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             mem.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_HOLD_VS_STRONGER, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);
+            mem.set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
+            mem.set(MemFlags.FLEET_IGNORED_BY_OTHER_FLEETS, true);
             mem.set(MemFlags.MEMORY_KEY_NO_JUMP, true);
             mem.set(MemFlags.FLEET_INTERACTION_DIALOG_CONFIG_OVERRIDE_GEN, new FIDConfigGen());
 
