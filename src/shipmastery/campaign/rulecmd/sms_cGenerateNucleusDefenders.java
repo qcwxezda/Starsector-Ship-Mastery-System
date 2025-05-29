@@ -47,12 +47,12 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
                 "sms_curator",
                 2f,
                 Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE,
-                1500f, 0f, 0f, 0f, 0f, 0f, 0f);
+                1000f, 0f, 0f, 0f, 0f, 0f, 0f);
         fParams.withOfficers = true;
-        fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_MIXED;
-        fParams.maxNumShips = 75;
+        fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_BETA;
+        fParams.maxNumShips = 65;
         fParams.maxShipSize = 2;
-        fParams.averageSMods = 3;
+        fParams.averageSMods = 2;
         fParams.random = new Random(commanderId.hashCode());
         fParams.modeOverride = FactionAPI.ShipPickMode.PRIORITY_ONLY;
         fParams.addShips = new ArrayList<>();

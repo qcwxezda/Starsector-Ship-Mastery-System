@@ -12,8 +12,8 @@ import shipmastery.util.Utils;
 
 public class AmorphousCorePlugin extends BaseKCorePlugin {
     public static final int LEVEL = 9;
-    public static final float BASE_DP_MULT = 6.5f;
-    public static final float MIN_DP_MULT = 4.5f;
+    public static final float BASE_DP_MULT = 5.5f;
+    public static final float MIN_DP_MULT = 3.5f;
     public static final float DP_MULT_PER_ENHANCE = 0.2f;
     public static final String DIMENSIONAL_TETHER_ID = "sms_dimensional_tether";
 

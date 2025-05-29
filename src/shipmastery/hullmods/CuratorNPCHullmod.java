@@ -67,7 +67,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
     }
 
     protected float getDamageReductionAmount() {
-        return 0.5f;
+        return 0.25f;
     }
 
     protected boolean isNPCVersion() {

@@ -40,8 +40,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 500f;
     public static final float MULT_PER_MP = 1.035f;
-    /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
-    public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.985f;
+    /** (DEPRECATED) Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
+    public static final float WEIGHT_MULT_PER_EXTRA_MP = 1f;
     public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 60f;
     public static final float FULL_DEPLOYMENT_TIME_MULT = 0.2f;
     private long prevXP;

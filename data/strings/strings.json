@@ -503,7 +503,7 @@
     "dimensionalTetherRetreatText": "Emergency retreat",
     "dimensionalTetherEliteEffect": "Whenever %1$s activates, release a shockwave dealing overwhelming EMP damage to all ships, fighters, and missiles within %2$s/%3$s/%4$s/%5$s su.",
     "sharedKnowledgeStandardEffect": "+1% damage dealt, plus an additional 1% damage dealt per ship spec's mastery level (maximum of 10%)\n-1% damage taken, minus an additional 1% damage taken per ship spec's mastery level (minimum of -10%)",
-    "sharedKnowledgeEliteEffect": "Reduces deployment points by whichever of the following is greatest:\n  • 20% if the fleet's commander is an AI core with this skill\n  • 5% if the fleet's commander is a human officer with this skill\n  • 1.5% per ship spec's enhance level",
+    "sharedKnowledgeEliteEffect": "Reduces deployment points by whichever of the following is greatest:\n  • 15% if the fleet's commander is an AI core with this skill\n  • 5% if the fleet's commander is a human officer with this skill\n  • 1.5% per ship spec's enhance level",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, excluding civilian ship types, up to a maximum of %5$s).",
     "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
     "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship type.",

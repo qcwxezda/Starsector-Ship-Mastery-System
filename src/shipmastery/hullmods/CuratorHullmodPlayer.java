@@ -16,11 +16,6 @@ public class CuratorHullmodPlayer extends CuratorNPCHullmod implements HullModFl
     }
 
     @Override
-    protected float getDamageReductionAmount() {
-        return 0f;
-    }
-
-    @Override
     protected boolean isNPCVersion() {
         return false;
     }

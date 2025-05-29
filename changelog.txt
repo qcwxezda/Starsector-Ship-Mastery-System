@@ -1,3 +1,12 @@
+1.1.4
+----------
+- Removed the MP "catch-up" mechanic for hulls with comparatively low MP (you already gain MP fast enough now + there are ways to increase MP gain).
+- Changed Pseudocore AI multipliers: (gamma 2.5x -> 2.2x, beta 3.5x -> 3.3x, alpha 4.5x -> 4.4x).
+    - DP reduction was disproportionately favoring alphas previously.
+- Nerfed Pseudocore DP reduction in NPC fleets from 20% -> 15%.
+- Nerfed damage reduction under a certain condition from 50% to 25%.
+- Further nerfed a late-game fight (lowered officer levels, lowered number of ships).
+
 1.1.3
 ----------
 - Replaced ReflectionUtils "setOpacity" with setOpacity calls (added in 0.98).
