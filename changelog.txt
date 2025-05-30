@@ -8,7 +8,9 @@
 - Slightly increased an effect duration.
 - Added back the MP catch-up mechanic, with the caveat that reduced selection weight for MP gain due to having lots of MP is lower-bounded to 0.5, and greatly reduced its effect.
 - Achievements now only unlock when the game is unpaused.
+- Increased the price of an AI core.
 - Fixed an issue where destroying ??? fleets and recovering their ships wouldn't remove the NPC version of their hullmod.
+- Fixed issue with portrait not loading.
 
 1.1.4
 ----------
