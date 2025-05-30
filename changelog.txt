@@ -1,3 +1,8 @@
+1.1.6
+----------
+- [REDACTED] now scales off unspent mastery points rather than enhance level. Removed the cap.
+- Fixed an issue related to unremovable officers on crewed ships.
+
 1.1.5
 ----------
 - Pseudocore automated points multiplier is now based on the ship's unmodified DP cost and will scale accordingly (in both directions).

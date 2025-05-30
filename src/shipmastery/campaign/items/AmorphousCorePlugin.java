@@ -13,8 +13,9 @@ import shipmastery.util.Utils;
 public class AmorphousCorePlugin extends BaseKCorePlugin {
     public static final int LEVEL = 9;
     public static final float BASE_DP_MULT = 5f;
-    public static final float MIN_DP_MULT = 3f;
-    public static final float DP_MULT_PER_ENHANCE = 0.2f;
+    public static final float MIN_DP_MULT = 1f;
+    public static final float DP_MULT_PER_MP_GROUP = 0.01f;
+    public static final float MP_PER_GROUP = 5f;
     public static final String DIMENSIONAL_TETHER_ID = "sms_dimensional_tether";
 
     @Override
@@ -43,7 +44,9 @@ public class AmorphousCorePlugin extends BaseKCorePlugin {
                 10f,
                 Misc.getTextColor(),
                 Misc.getHighlightColor(),
-                "×"+Utils.asFloatOneDecimal(DP_MULT_PER_ENHANCE));
+                "×"+Utils.asFloatTwoDecimals(DP_MULT_PER_MP_GROUP),
+                Utils.asFloatOneDecimal(MP_PER_GROUP),
+                "x"+Utils.asFloatOneDecimal(MIN_DP_MULT));
     }
 
     @Override
