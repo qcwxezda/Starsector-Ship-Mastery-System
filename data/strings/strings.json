@@ -529,7 +529,7 @@
     "superconstruct3RightClick": "Right-click to gain the %1$s skill.",
     "superconstruct3MessageDisplay1": "Learned %1$s",
     "superconstruct3MessageDisplay2": "Learned elite %1$s",
-    "amorphousCorePersonalityText": "Base multiplier is reduced by %1$s per piloted ship's enhance level.",
+    "amorphousCorePersonalityText": "Base multiplier is reduced by %1$s for every %2$s unspent mastery points in the piloted ship's spec, down to a minimum of %3$s.",
     "kCoreAdditionalInfo": "Additional info",
     "kCorePersonalityTableTitle1": "Attribute",
     "kCorePersonalityTableTitle2": "Value",

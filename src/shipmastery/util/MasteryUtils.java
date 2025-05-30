@@ -51,13 +51,13 @@ public abstract class MasteryUtils {
         return switch (count) {
             case 0 -> 25;
             case 1 -> 27;
-            case 2 -> 29;
-            case 3 -> 31;
-            case 4 -> 33;
-            case 5 -> 35;
-            case 6 -> 40;
-            case 7 -> 45;
-            case 8 -> 50;
+            case 2 -> 30;
+            case 3 -> 34;
+            case 4 -> 38;
+            case 5 -> 42;
+            case 6 -> 47;
+            case 7 -> 52;
+            case 8 -> 58;
             case 9 -> 99;
             default -> Integer.MAX_VALUE;
         };

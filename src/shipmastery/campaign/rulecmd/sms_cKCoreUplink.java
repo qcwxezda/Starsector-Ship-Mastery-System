@@ -316,7 +316,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
                     .getFleetData()
                     .getMembersListCopy()
                     .stream()
-                    .filter(x -> !Misc.isAutomated(x) && !x.isFlagship())
+                    .filter(x -> !Misc.isAutomated(x) && !x.isFlagship() && !Misc.isUnremovable(x.getCaptain()))
                     .toList();
 
             fleetMemberPicker.addSpacer(fleetMemberIconSize + itemPad/2f);

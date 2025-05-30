@@ -22,7 +22,7 @@ public abstract class SModUtils {
     public static final float CREDITS_COST_MULT_SP = 0.1f;
 
     public static final int ADDITIONAL_MP_PER_SMOD = 0;
-    public static final float DP_PER_EXTRA_MP = 10f;
+    public static final float DP_PER_EXTRA_MP = 6f;
 
 
     public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {

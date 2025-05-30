@@ -15,7 +15,7 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.CampaignEngine;
-import shipmastery.util.MasteryUtils;
+import shipmastery.ShipMastery;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -73,8 +73,9 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
                         float baseMult = kPlugin.getBaseAIPointsMult();
                         // Special behavior for amorphous cores
                         if ("sms_amorphous_core".equals(id)) {
-                            int enhances = MasteryUtils.getEnhanceCount(fm.getHullSpec());
-                            baseMult = Math.max(AmorphousCorePlugin.MIN_DP_MULT, baseMult - enhances*AmorphousCorePlugin.DP_MULT_PER_ENHANCE);
+                            int points = (int) ShipMastery.getPlayerMasteryPoints(fm.getHullSpec());
+                            int groups = (int) (points / AmorphousCorePlugin.MP_PER_GROUP);
+                            baseMult = Math.max(1f, baseMult - groups*AmorphousCorePlugin.DP_MULT_PER_MP_GROUP);
                         }
                         memory.set("$autoPointsMult", baseMult * ratio);
                     }
