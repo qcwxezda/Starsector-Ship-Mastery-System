@@ -54,6 +54,6 @@ public class HighFrequencyMotes extends ShipSystemEffect {
 
     @Override
     public float getNPCWeight(FleetMemberAPI fm) {
-        return !fm.isFlagship() ? 0f : 10f*super.getNPCWeight(fm);
+        return 0f;
     }
 }

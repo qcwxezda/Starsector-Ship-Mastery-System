@@ -3,7 +3,6 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,21 +11,16 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.Objects;
 
 public class KCoreUplinkPlugin extends BaseSpecialItemPlugin {
 
     public static final float MAX_AUTOCONSTRUCT_PTS_PER_UPLINK = 180f;
-    public static final String IS_AUTOCONSTRUCT_TAG = "sms_k_core";
-    public static final String AUTOCONSTRUCT_PENALTY_CACHE = "sms_KCorePenalty";
 
     public record KCoreUplinkData(int numUplinks, float numPoints, float crPenalty) {}
 
     public static KCoreUplinkData getKCoreCRPointsAndPenalty() {
         if (Global.getSector().getPlayerFleet() == null) return new KCoreUplinkData(0, 0f, 0f); // Not finished loading save yet...
         var fleetData = Global.getSector().getPlayerFleet().getFleetData();
-        var data = (KCoreUplinkData) fleetData.getCacheClearedOnSync().get(AUTOCONSTRUCT_PENALTY_CACHE);
-        if (data != null) return data;
 
         int uplinkCount = Global.getSector().getPlayerFleet().getCargo().getStacksCopy()
                 .stream()
@@ -41,7 +35,7 @@ public class KCoreUplinkPlugin extends BaseSpecialItemPlugin {
             if (fm.getCaptain() == null || !fm.getCaptain().isAICore()) continue;
             if (Misc.isAutomated(fm)) continue;
             var fmCore = Global.getSettings().getCommoditySpec(fm.getCaptain().getAICoreId());
-            if (fmCore == null || !fmCore.hasTag(IS_AUTOCONSTRUCT_TAG)) continue;
+            if (fmCore == null || !fmCore.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) continue;
             autoconstuctPoints += fm.getCaptain().getMemoryWithoutUpdate().getFloat("$autoPointsMult") * fm.getDeploymentPointsCost();
         }
 
@@ -49,27 +43,7 @@ public class KCoreUplinkPlugin extends BaseSpecialItemPlugin {
         autoconstuctPoints = Math.max(autoconstuctPoints, Float.MIN_VALUE);
         maxPoints = Math.max(maxPoints, Float.MIN_VALUE);
         float crPenalty = Math.max(0f, 1f - maxPoints / autoconstuctPoints);
-        data = new KCoreUplinkData(uplinkCount, autoconstuctPoints, crPenalty);
-        fleetData.getCacheClearedOnSync().put(AUTOCONSTRUCT_PENALTY_CACHE, data);
-        return data;
-    }
-
-    public static void applyKCoreCRPenalty(MutableShipStatsAPI stats, String id) {
-        if (Global.getSector().getPlayerFleet() == null) return; // Not finished loading the save yet...
-        if (stats.getFleetMember() == null || stats.getFleetMember().getCaptain() == null) return;
-        if (Misc.isAutomated(stats.getFleetMember())) return;
-        var fleetData = stats.getFleetMember().getFleetData();
-        if (!Objects.equals(fleetData, Global.getSector().getPlayerFleet().getFleetData())) return;
-
-        var captain = stats.getFleetMember().getCaptain();
-        if (!captain.isAICore()) return;
-        var core = Global.getSettings().getCommoditySpec(captain.getAICoreId());
-        if (core == null || !core.hasTag(IS_AUTOCONSTRUCT_TAG)) return;
-
-        float crPenalty = getKCoreCRPointsAndPenalty().crPenalty;
-        if (crPenalty > 0f) {
-            stats.getMaxCombatReadiness().modifyFlat(id, -crPenalty, Strings.Items.uplinkPenaltyDesc);
-        }
+        return new KCoreUplinkData(uplinkCount, autoconstuctPoints, crPenalty);
     }
 
     @Override

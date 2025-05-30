@@ -1,6 +1,7 @@
 package shipmastery.campaign.items;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
@@ -13,12 +14,15 @@ import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.campaign.CampaignEngine;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
@@ -26,6 +30,7 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
     public static final String SHARED_KNOWLEDGE_ID = "sms_shared_knowledge";
+    public static final String IS_K_CORE_TAG = "sms_k_core";
 
     @Override
     public void advanceInCampaign(CampaignFleetAPI fleet) {}
@@ -50,21 +55,29 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (!fleet.isPlayerFleet()) return;
 
+        Map<String, AICoreOfficerPlugin> plugins = new HashMap<>();
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             PersonAPI captain = fm.getCaptain();
-            if (captain == null || captain.getAICoreId() == null) continue;
-            var spec = Global.getSettings().getCommoditySpec(captain.getAICoreId());
-            if (spec.hasTag(COPY_PERSONALITY_TAG)) {
-                setPersonalityToPlayerDoctrine(captain);
-            }
-
-            // Special behavior for amorphous cores
-            if ("sms_amorphous_core".equals(captain.getAICoreId())) {
-                int enhances = MasteryUtils.getEnhanceCount(fm.getHullSpec());
-                float dpMult = Math.max(AmorphousCorePlugin.MIN_DP_MULT, AmorphousCorePlugin.BASE_DP_MULT - enhances * AmorphousCorePlugin.DP_MULT_PER_ENHANCE);
-                var memory = captain.getMemoryWithoutUpdate();
-                if (memory != null) {
-                    memory.set("$autoPointsMult", dpMult);
+            String id = captain == null ? null : captain.getAICoreId();
+            if (id == null) continue;
+            var spec = Global.getSettings().getCommoditySpec(id);
+            if (spec != null) {
+                if (spec.hasTag(COPY_PERSONALITY_TAG)) {
+                    setPersonalityToPlayerDoctrine(captain);
+                }
+                if (spec.hasTag(IS_K_CORE_TAG)) {
+                    float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
+                    var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
+                    var memory = captain.getMemoryWithoutUpdate();
+                    if (memory != null && plugin instanceof BaseKCorePlugin kPlugin) {
+                        float baseMult = kPlugin.getBaseAIPointsMult();
+                        // Special behavior for amorphous cores
+                        if ("sms_amorphous_core".equals(id)) {
+                            int enhances = MasteryUtils.getEnhanceCount(fm.getHullSpec());
+                            baseMult = Math.max(AmorphousCorePlugin.MIN_DP_MULT, baseMult - enhances*AmorphousCorePlugin.DP_MULT_PER_ENHANCE);
+                        }
+                        memory.set("$autoPointsMult", baseMult * ratio);
+                    }
                 }
             }
         }
@@ -128,7 +141,7 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         }
     }
 
-    protected final void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip, String body, Color highlightColor, String... params) {
+    protected final void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip, Color highlightColor, String... params) {
         CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(getCommodityId());
         if (spec == null) return;
 
@@ -157,13 +170,13 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         float w = (tooltip.getTextWidthOverride() <= 10f ? tooltip.getWidthSoFar() : tooltip.getTextWidthOverride()) - 5f;
 
         tooltip.addSectionHeading(Strings.Items.kCoreAdditionalInfo, text, bg, Alignment.MID, w+5f,20f);
-        tooltip.addPara(body, opad, highlightColor, params);
+        tooltip.addPara(Strings.Items.kCorePersonalityText, opad, highlightColor, params);
         tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.kCorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.kCorePersonalityTableTitle2, w / 3f);
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName1, levelColor, Utils.asInt(level));
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, autoMultColor, "×" + Utils.asFloatTwoDecimals(autoMult));
         tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
         tooltip.addTable("", 0, opad);
-        tooltip.addSpacer(opad);
+        tooltip.addPara(Strings.Items.kCorePersonalityText2, opad);
     }
 
     @Override
@@ -172,7 +185,6 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         createPersonalitySection(
                 person,
                 tooltip,
-                Strings.Items.kCorePersonalityText,
                 Misc.getHighlightColor(),
                 spec.getName());
     }

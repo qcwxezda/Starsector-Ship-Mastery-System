@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 
@@ -31,5 +32,15 @@ public class CampaignUtils {
             }
         }
         return commander;
+    }
+
+    public static PersonAPI getCaptain(MutableShipStatsAPI stats) {
+        PersonAPI captain;
+        if (stats.getEntity() instanceof ShipAPI ship) {
+            captain = ship.getCaptain();
+        } else {
+            captain = stats.getFleetMember() == null ? null : stats.getFleetMember().getCaptain();
+        }
+        return captain;
     }
 }

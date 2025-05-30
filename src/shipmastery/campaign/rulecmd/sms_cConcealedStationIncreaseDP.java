@@ -21,8 +21,8 @@ public class sms_cConcealedStationIncreaseDP extends BaseCommandPlugin {
 
         var stats = Global.getSector().getPlayerStats();
         stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MIN_FRACTION_OF_BATTLE_SIZE_BONUS_MOD).modifyFlat(MODIFY_KEY, 0.2f);
-        DeferredActionPlugin.performOnUnpause(() -> stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MIN_FRACTION_OF_BATTLE_SIZE_BONUS_MOD).unmodify(MODIFY_KEY));
-
+        // Not possible to interact with station while paused, therefore not possible to save while this is in queue and this should be safe
+        DeferredActionPlugin.performOnUnpause(() ->  stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MIN_FRACTION_OF_BATTLE_SIZE_BONUS_MOD).unmodify(MODIFY_KEY));
         return true;
     }
 }

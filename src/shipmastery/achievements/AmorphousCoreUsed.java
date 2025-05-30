@@ -10,7 +10,7 @@ import shipmastery.util.Utils;
 public class AmorphousCoreUsed extends MagicAchievement {
     @Override
     public void advanceAfterInterval(float amount) {
-        if (Global.getSector() == null || Global.getCurrentState() != GameState.CAMPAIGN) return;
+        if (Global.getSector() == null || Global.getCurrentState() != GameState.CAMPAIGN || Global.getSector().isPaused()) return;
         if (isComplete()) return;
 
         // It's possible that another mod allows placing AI cores in charge of crewed ships, etc. Want to check for that here.

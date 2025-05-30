@@ -55,7 +55,9 @@ public class DeferredActionPlugin implements EveryFrameScript {
 
         if (!Global.getSector().isPaused()) {
             for (Action action : actionListOnUnpause) {
-                action.perform();
+                if (action != null) {
+                    action.perform();
+                }
             }
             actionListOnUnpause.clear();
         }

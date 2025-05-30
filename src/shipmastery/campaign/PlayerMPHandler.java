@@ -15,9 +15,9 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.plugins.LevelupPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
-import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.LotsOfMP;
+import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.config.Settings;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
@@ -40,8 +40,8 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
     public static final float MIN_XP_CIV = 500f;
     public static final float MULT_PER_MP = 1.035f;
-    /** (DEPRECATED) Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
-    public static final float WEIGHT_MULT_PER_EXTRA_MP = 1f;
+    /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
+    public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.996f;
     public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 60f;
     public static final float FULL_DEPLOYMENT_TIME_MULT = 0.2f;
     private long prevXP;
@@ -137,9 +137,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             time.setValue(time.getValue() / count);
             float weight = time.getValue();
             weight *= 1f + Math.min(0.5f, 0.1f * (count-1));
-            if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
-                weight *= (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec));
-            }
+            weight *= Math.max(0.5f, (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec)));
             if (weight > 0f) {
                 picker.add(spec, weight);
             }
@@ -161,9 +159,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             Integer count = counts.get(spec);
             if (count == null) count = 0;
             float weight = (float) Math.pow(2, -count);
-            if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
-                weight *= (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec));
-            }
+            weight *= Math.max(0.5f, (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec)));
             picker.add(spec, weight);
             counts.put(spec, count + 1);
         }
@@ -259,7 +255,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
         // Check for achievement completion
         if (!isCivilian && totalMPGained >= LotsOfMP.NUM_NEEDED && Settings.COMBAT_MP_GAIN_MULTIPLIER <= 1.001f) {
-            MagicAchievementManager.getInstance().completeAchievement(LotsOfMP.class);
+            UnlockAchievementAction.unlockWhenUnpaused(LotsOfMP.class);
         }
     }
 

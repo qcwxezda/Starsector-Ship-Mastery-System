@@ -59,12 +59,7 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
 
     private int getSkillLevelForStats(MutableShipStatsAPI stats) {
         if (stats == null) return 0;
-        PersonAPI captain;
-        if (stats.getEntity() instanceof ShipAPI ship) {
-            captain = ship.getCaptain();
-        } else {
-            captain = stats.getFleetMember() == null ? null : stats.getFleetMember().getCaptain();
-        }
+        PersonAPI captain = CampaignUtils.getCaptain(stats);
         boolean noCaptain = captain == null || captain.isDefault() || captain.getStats() == null;
         return noCaptain ? 0 : (int) captain.getStats().getSkillLevel(skillId);
     }

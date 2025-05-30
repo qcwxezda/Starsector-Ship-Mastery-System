@@ -240,6 +240,7 @@ public interface Strings {
         String kCorePersonalityTableName2 = Utils.getString("sms_items", "kCorePersonalityTableName2");
         String kCorePersonalityTableName3 = Utils.getString("sms_items", "kCorePersonalityTableName3");
         String kCorePersonalityText = Utils.getString("sms_items", "kCorePersonalityText");
+        String kCorePersonalityText2 = Utils.getString("sms_items", "kCorePersonalityText2");
         String uplinkKCoreSelect = Utils.getString("sms_items", "uplinkKCoreSelect");
         String uplinkSkillSelect = Utils.getString("sms_items", "uplinkSkillSelect");
         String uplinkDesc = Utils.getString("sms_items", "uplinkDesc");

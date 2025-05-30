@@ -3,6 +3,7 @@ package shipmastery.campaign.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.AfterShipCreationSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.characters.ShipSkillEffect;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
@@ -53,8 +54,8 @@ public class DimensionalTether {
     public static final float ADD_TO_RESERVE_DELAY_NPC = 25f;
     // No CombatEngine.getPlugins or similar, so we need to track the existing repair scripts ourselves
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
-    public static final String HAS_ELITE_EFFECT_KEY = "$sms_EliteDimensionalTether";
     public static final float MIN_CR_COST = 0.1f;
+    public static final float FLUX_BOOST_AMOUNT = 0.2f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
 
     private static class RepairScript extends BaseEveryFrameCombatPlugin {
@@ -118,62 +119,60 @@ public class DimensionalTether {
                 Particles.stream(emitter, 1, 80f, 1.25f);
                 CombatDeferredActionPlugin.performLater(() -> {
                     // EMP blast
-                    if (ship.getCustomData().containsKey(HAS_ELITE_EFFECT_KEY)) {
-                        float radius = EMP_RANGE[Utils.hullSizeToInt(ship.getHullSize())];
-                        var loc = new Vector2f(ship.getLocation());
-                        RingBurstEmitter ringEmitter = new RingBurstEmitter(loc, 50f, radius, 10f);
-                        ringEmitter.burst(120);
-                        CombatDeferredActionPlugin.performLater(() -> ringEmitter.burst(120), 0.1f);
-                        CombatDeferredActionPlugin.performLater(() -> ringEmitter.burst(120), 0.2f);
-                        CombatDeferredActionPlugin.performLater(() -> {
-                            for (var itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(loc, 2f * radius, 2f * radius); itr.hasNext(); ) {
-                                var target = itr.next();
-                                if (!(target instanceof CombatEntityAPI entity)) continue;
-                                var dist = MathUtils.dist(entity.getLocation(), loc);
-                                if (dist > radius + entity.getCollisionRadius()) continue;
-                                if (entity instanceof MissileAPI missile) {
-                                    missile.flameOut();
-                                } else if (entity instanceof ShipAPI targetShip) {
-                                    List<Vector2f> targetLocs = new ArrayList<>();
-                                    for (WeaponAPI weapon : targetShip.getUsableWeapons()) {
-                                        targetLocs.add(weapon.getLocation());
-                                    }
-                                    for (ShipEngineControllerAPI.ShipEngineAPI engine : targetShip.getEngineController().getShipEngines()) {
-                                        targetLocs.add(engine.getLocation());
-                                    }
-                                    for (var targetLoc : targetLocs) {
-                                        float emp = MathUtils.randBetween(0f, 150000f);
-                                        if (Misc.random.nextFloat() < 0.75f) {
-                                            Global.getCombatEngine().applyDamage(null, targetShip, targetLoc, 0f, DamageType.ENERGY, emp, true, true, ship, true);
-                                        }
-                                    }
-                                    List<RealityDisruptorChargeGlow.RDRepairRateDebuff> listeners = targetShip.getListeners(RealityDisruptorChargeGlow.RDRepairRateDebuff.class);
-                                    if (listeners.isEmpty()) {
-                                        targetShip.addListener(new RealityDisruptorChargeGlow.RDRepairRateDebuff(targetShip, 10f));
-                                    } else {
-                                        listeners.get(0).resetDur(10f);
-                                    }
-                                    targetShip.getFluxTracker().forceOverload(15f * (radius + entity.getCollisionRadius() - dist) / radius);
+                    float radius = EMP_RANGE[Utils.hullSizeToInt(ship.getHullSize())];
+                    var loc = new Vector2f(ship.getLocation());
+                    RingBurstEmitter ringEmitter = new RingBurstEmitter(loc, 50f, radius, 10f);
+                    ringEmitter.burst(120);
+                    CombatDeferredActionPlugin.performLater(() -> ringEmitter.burst(120), 0.1f);
+                    CombatDeferredActionPlugin.performLater(() -> ringEmitter.burst(120), 0.2f);
+                    CombatDeferredActionPlugin.performLater(() -> {
+                        for (var itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(loc, 2f * radius, 2f * radius); itr.hasNext(); ) {
+                            var target = itr.next();
+                            if (!(target instanceof CombatEntityAPI entity)) continue;
+                            var dist = MathUtils.dist(entity.getLocation(), loc);
+                            if (dist > radius + entity.getCollisionRadius()) continue;
+                            if (entity instanceof MissileAPI missile) {
+                                missile.flameOut();
+                            } else if (entity instanceof ShipAPI targetShip) {
+                                List<Vector2f> targetLocs = new ArrayList<>();
+                                for (WeaponAPI weapon : targetShip.getUsableWeapons()) {
+                                    targetLocs.add(weapon.getLocation());
                                 }
+                                for (ShipEngineControllerAPI.ShipEngineAPI engine : targetShip.getEngineController().getShipEngines()) {
+                                    targetLocs.add(engine.getLocation());
+                                }
+                                for (var targetLoc : targetLocs) {
+                                    float emp = MathUtils.randBetween(0f, 150000f);
+                                    if (Misc.random.nextFloat() < 0.75f) {
+                                        Global.getCombatEngine().applyDamage(null, targetShip, targetLoc, 0f, DamageType.ENERGY, emp, true, true, ship, true);
+                                    }
+                                }
+                                List<RealityDisruptorChargeGlow.RDRepairRateDebuff> listeners = targetShip.getListeners(RealityDisruptorChargeGlow.RDRepairRateDebuff.class);
+                                if (listeners.isEmpty()) {
+                                    targetShip.addListener(new RealityDisruptorChargeGlow.RDRepairRateDebuff(targetShip, 10f));
+                                } else {
+                                    listeners.get(0).resetDur(10f);
+                                }
+                                targetShip.getFluxTracker().forceOverload(15f * (radius + entity.getCollisionRadius() - dist) / radius);
                             }
-                        }, 0.3f);
-                        for (int i = 0; i < 360; i++) {
-                            Vector2f from = MathUtils.randomPointInCircle(loc, ship.getShieldRadiusEvenIfNoShield() / 3f);
-                            Vector2f pt = MathUtils.randomPointInCircle(loc, radius);
-                            EmpArcEntityAPI.EmpArcParams params = new EmpArcEntityAPI.EmpArcParams();
-                            params.segmentLengthMult = 5f;
-                            params.zigZagReductionFactor = 0.3f;
-                            params.minFadeOutMult = 100f;
-                            params.flickerRateMult = 0.25f;
-                            params.nonBrightSpotMinBrightness = 0f;
-                            params.movementDurMin = 0.5f;
-                            params.movementDurMax = 0.9f;
-                            float arcSize = 50f + MathUtils.randBetween(0f, 50f);
-                            var arc = Global.getCombatEngine().spawnEmpArcVisual(from, null, pt, null, arcSize, new Color(50, 150, 100, 100), new Color(150, 250, 200), params);
-                            arc.setCoreWidthOverride(arcSize / 2f);
-                            arc.setRenderGlowAtStart(false);
-                            arc.setSingleFlickerMode(true);
                         }
+                    }, 0.3f);
+                    for (int i = 0; i < 360; i++) {
+                        Vector2f from = MathUtils.randomPointInCircle(loc, ship.getShieldRadiusEvenIfNoShield() / 3f);
+                        Vector2f pt = MathUtils.randomPointInCircle(loc, radius);
+                        EmpArcEntityAPI.EmpArcParams params = new EmpArcEntityAPI.EmpArcParams();
+                        params.segmentLengthMult = 5f;
+                        params.zigZagReductionFactor = 0.3f;
+                        params.minFadeOutMult = 100f;
+                        params.flickerRateMult = 0.25f;
+                        params.nonBrightSpotMinBrightness = 0f;
+                        params.movementDurMin = 0.5f;
+                        params.movementDurMax = 0.9f;
+                        float arcSize = 50f + MathUtils.randBetween(0f, 50f);
+                        var arc = Global.getCombatEngine().spawnEmpArcVisual(from, null, pt, null, arcSize, new Color(50, 150, 100, 100), new Color(150, 250, 200), params);
+                        arc.setCoreWidthOverride(arcSize / 2f);
+                        arc.setRenderGlowAtStart(false);
+                        arc.setSingleFlickerMode(true);
                     }
                     // Retreat
                     Global.getSoundPlayer().playSound("phase_anchor_vanish", 1f, 1f, ship.getLocation(), ship.getVelocity());
@@ -246,16 +245,18 @@ public class DimensionalTether {
         }
 
         @Override
-        public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
-        }
+        public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {}
 
         @Override
-        public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
-        }
+        public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {}
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
             info.addPara(Strings.Skills.dimensionalTetherEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+                    Utils.asInt(EMP_RANGE[0]),
+                    Utils.asInt(EMP_RANGE[1]),
+                    Utils.asInt(EMP_RANGE[2]),
+                    Utils.asInt(EMP_RANGE[3]),
                     Utils.asPercent(MIN_CR_COST),
                     Utils.asPercent(HULL_REPAIR_PER_SECOND[0]),
                     Utils.asPercent(HULL_REPAIR_PER_SECOND[1]),
@@ -265,29 +266,21 @@ public class DimensionalTether {
         }
     }
 
-    public static class Elite extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
-
+    public static class Elite extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
+            stats.getFluxDissipation().modifyPercent(id, 100f * FLUX_BOOST_AMOUNT);
         }
 
         @Override
         public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
+            stats.getFluxDissipation().unmodify(id);
+            stats.getFluxCapacity().unmodify(id);
         }
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
-            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), skill.getName(), Utils.asInt(EMP_RANGE[0]), Utils.asInt(EMP_RANGE[1]), Utils.asInt(EMP_RANGE[2]), Utils.asInt(EMP_RANGE[3]));
-        }
-
-        @Override
-        public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            ship.setCustomData(HAS_ELITE_EFFECT_KEY, true);
-        }
-
-        @Override
-        public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            ship.removeCustomData(HAS_ELITE_EFFECT_KEY);
+            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(FLUX_BOOST_AMOUNT));
         }
     }
 }

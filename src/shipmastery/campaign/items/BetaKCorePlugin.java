@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 public class BetaKCorePlugin extends BaseKCorePlugin {
 
     public static final int LEVEL = 5;
-    public static final float BASE_DP_MULT = 3.3f;
+    public static final float BASE_DP_MULT = 3f;
 
     @Override
     public String getCommodityId() {

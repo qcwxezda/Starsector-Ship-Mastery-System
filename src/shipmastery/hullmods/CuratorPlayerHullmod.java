@@ -6,10 +6,11 @@ import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import shipmastery.campaign.items.BaseKCorePlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class CuratorHullmodPlayer extends CuratorNPCHullmod implements HullModFleetEffect {
+public class CuratorPlayerHullmod extends CuratorNPCHullmod implements HullModFleetEffect {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         // Don't apply crew modification
@@ -38,12 +39,17 @@ public class CuratorHullmodPlayer extends CuratorNPCHullmod implements HullModFl
         if (!fleet.isPlayerFleet()) return;
         boolean active = Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.K_CORE_AMP_INTEGRATED);
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
+            // Remove the NPC version of the hullmod if it exists
+            if (fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
+                fm.getVariant().removePermaMod("sms_curator_npc_hullmod");
+            }
+
             boolean remove = !active;
             remove |= fm.getCaptain() == null || !fm.getCaptain().isAICore() || fm.getCaptain().getAICoreId() == null;
 
             if (!remove) {
                 var spec = Global.getSettings().getCommoditySpec(fm.getCaptain().getAICoreId());
-                remove = spec == null || !spec.hasTag("sms_k_core");
+                remove = spec == null || !spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG);
             }
 
             if (remove) {

@@ -36,10 +36,10 @@ import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.achievements.AmorphousCoreUsed;
 import shipmastery.achievements.PseudocoreCrewedShip;
-import shipmastery.campaign.items.KCoreUplinkPlugin;
+import shipmastery.achievements.UnlockAchievementAction;
+import shipmastery.campaign.items.BaseKCorePlugin;
 import shipmastery.util.FleetMemberTooltipCreator;
 import shipmastery.util.IntRef;
 import shipmastery.util.OnShipButtonClicked;
@@ -211,7 +211,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
             for (CargoStackAPI stack : Global.getSector().getPlayerFleet().getCargo().getStacksCopy()) {
                 if (stack.isCommodityStack()) {
                     var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
-                    if (spec != null && spec.hasTag(KCoreUplinkPlugin.IS_AUTOCONSTRUCT_TAG)) {
+                    if (spec != null && spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) {
                         coreStacksWithOrder.add(new Pair<>(stack, spec.getOrder()));
                     }
                 }
@@ -414,9 +414,9 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
             dialog.dismiss();
 
             // Update achievements
-            MagicAchievementManager.getInstance().completeAchievement(PseudocoreCrewedShip.class);
+            UnlockAchievementAction.unlockWhenUnpaused(PseudocoreCrewedShip.class);
             if (AmorphousCoreUsed.canCompleteAchievement(plugin.selectedFleetMember)) {
-                MagicAchievementManager.getInstance().completeAchievement(AmorphousCoreUsed.class);
+                UnlockAchievementAction.unlockWhenUnpaused(AmorphousCoreUsed.class);
             }
         }
 

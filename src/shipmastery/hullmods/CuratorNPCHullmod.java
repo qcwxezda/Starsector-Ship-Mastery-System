@@ -26,6 +26,10 @@ public class CuratorNPCHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+        if (stats.getFleetMember() == null
+                || stats.getFleetMember().getFleetData() == null
+                || stats.getFleetMember().getFleetData().getCommander() == null
+                || stats.getFleetMember().getFleetData().getCommander().isPlayer()) return;
         stats.getMinCrewMod().modifyMult(id, 0f);
     }
 
@@ -59,11 +63,11 @@ public class CuratorNPCHullmod extends BaseHullMod {
     }
 
     protected float getBaseCooldownOmega() {
-        return 20f;
+        return 24f;
     }
 
     protected float getDurationSeconds() {
-        return 5f;
+        return 6f;
     }
 
     protected float getDamageReductionAmount() {
@@ -146,7 +150,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
         }
 
         private void resetCooldownTime() {
-            cooldownTime = MathUtils.randBetween(0.75f*baseCooldownTime*cooldownMult, 1.25f*baseCooldownTime*cooldownMult);
+            cooldownTime = MathUtils.randBetween(0.8f*baseCooldownTime*cooldownMult, 1.25f*baseCooldownTime*cooldownMult);
         }
 
         private void applyEffects(ShipAPI ship, float effectLevel) {

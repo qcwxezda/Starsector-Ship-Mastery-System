@@ -5,9 +5,9 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.achievements.SalvagedAllStations;
 import shipmastery.achievements.SalvagedStation;
+import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 
@@ -32,9 +32,9 @@ public class sms_cNotifyStationSalvaged extends BaseCommandPlugin {
         ids.add(id);
 
         // Check for achievement completion
-        MagicAchievementManager.getInstance().completeAchievement(SalvagedStation.class);
+        UnlockAchievementAction.unlockWhenUnpaused(SalvagedStation.class);
         if (ids.size() >= Generator.NUM_STATIONS_HULLMOD + Generator.NUM_STATIONS_ITEM) {
-            MagicAchievementManager.getInstance().completeAchievement(SalvagedAllStations.class);
+            UnlockAchievementAction.unlockWhenUnpaused(SalvagedAllStations.class);
         }
 
         return true;

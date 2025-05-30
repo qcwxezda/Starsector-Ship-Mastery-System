@@ -6,10 +6,10 @@ import com.fs.starfarer.api.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.achievements.LevelUp;
 import shipmastery.achievements.MasteredMany;
 import shipmastery.achievements.MaxLevel;
+import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.data.HullMasteryData;
@@ -106,14 +106,14 @@ public abstract class ShipMastery {
             }
         }
 
-        MagicAchievementManager.getInstance().completeAchievement(LevelUp.class);
+        UnlockAchievementAction.unlockWhenUnpaused(LevelUp.class);
 
         if (getPlayerMasteryLevel(spec) >= getMaxMasteryLevel(spec)) {
             CyberneticAugmentation.refreshPlayerMasteredCount();
-            MagicAchievementManager.getInstance().completeAchievement(MaxLevel.class);
+            UnlockAchievementAction.unlockWhenUnpaused(MaxLevel.class);
             Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(CyberneticAugmentation.MASTERED_COUNT_KEY);
             if (count != null && count >= MasteredMany.NUM_NEEDED) {
-                MagicAchievementManager.getInstance().completeAchievement(MasteredMany.class);
+                UnlockAchievementAction.unlockWhenUnpaused(MasteredMany.class);
             }
         }
     }
@@ -473,10 +473,11 @@ public abstract class ShipMastery {
 
     public static void initMasteries(boolean randomMode) throws JSONException, IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
         masteryMap.clear();
+        presetNameToCheckerMap.clear();
 
         JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_presets.json");
 
-        // Populate tag and built-ind mod to default presets map
+        // Populate tag and built-in mod to default presets map
         Iterator<String> itr = presets.keys();
         while (itr.hasNext()) {
             String name = itr.next();

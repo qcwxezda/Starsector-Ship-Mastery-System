@@ -1,3 +1,15 @@
+1.1.5
+----------
+- Pseudocore automated points multiplier is now based on the ship's unmodified DP cost and will scale accordingly (in both directions).
+    - Reduced base multipliers to 2 for gamma, 3 for beta, and 4 for alpha.
+- Reduced pseudocore unique skill base effect by half if not on an AI core.
+- Modified another skill.
+- HF motes mastery no longer gets chosen for NPC fleets (it's just a nerf if they already have the HF motes).
+- Slightly increased an effect duration.
+- Added back the MP catch-up mechanic, with the caveat that reduced selection weight for MP gain due to having lots of MP is lower-bounded to 0.5, and greatly reduced its effect.
+- Achievements now only unlock when the game is unpaused.
+- Fixed an issue where destroying ??? fleets and recovering their ships wouldn't remove the NPC version of their hullmod.
+
 1.1.4
 ----------
 - Removed the MP "catch-up" mechanic for hulls with comparatively low MP (you already gain MP fast enough now + there are ways to increase MP gain).

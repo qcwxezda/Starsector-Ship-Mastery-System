@@ -15,14 +15,16 @@ import shipmastery.campaign.FleetHandler;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 // NPCs don't have enhances, so treat every NPC fleet as having 0 enhances.
 public class SharedKnowledge {
-    public static final float BASE_DAMAGE_BONUS = 0.01f;
-    public static final float DAMAGE_BONUS_PER_LEVEL = 0.01f;
-    public static final float MAX_DAMAGE_BONUS = 0.1f;
+    public static final float BASE_DAMAGE_BONUS = 0.005f;
+    public static final float DAMAGE_BONUS_PER_LEVEL = 0.005f;
+    public static final float MAX_DAMAGE_BONUS = 0.05f;
     public static final float DP_REDUCTION_PER_ENHANCE = 0.015f;
-    public static final float MAX_DP_REDUCTION_ENHANCE = 0.15f;
+    // In practice cap is 0.15f since 10 enhances is max, don't need additional cap
+    public static final float MAX_DP_REDUCTION_ENHANCE = 1f;
     public static final float BASE_DP_REDUCTION_AI_COMMANDER = 0.15f;
     public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.05f;
 
@@ -57,6 +59,10 @@ public class SharedKnowledge {
             PersonAPI commander = CampaignUtils.getFleetCommanderForStats(stats);
             int masteryLevel = getMasteryLevel(commander, stats);
             float bonus = Math.min(MAX_DAMAGE_BONUS, BASE_DAMAGE_BONUS + masteryLevel*DAMAGE_BONUS_PER_LEVEL);
+            PersonAPI captain = CampaignUtils.getCaptain(stats);
+            if (captain != null && captain.isAICore()) {
+                bonus *= 2f;
+            }
             if (bonus <= 0f) return;
             stats.getHullDamageTakenMult().modifyMult(id, 1f-bonus);
             stats.getArmorDamageTakenMult().modifyMult(id, 1f-bonus);
@@ -79,7 +85,13 @@ public class SharedKnowledge {
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
             // Needed because codex doesn't like \n character
-            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, Misc.getHighlightColor(), 0f);
+            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+                    Utils.asPercent(BASE_DAMAGE_BONUS),
+                    Utils.asPercent(DAMAGE_BONUS_PER_LEVEL),
+                    Utils.asPercent(MAX_DAMAGE_BONUS),
+                    Utils.asPercent(-BASE_DAMAGE_BONUS),
+                    Utils.asPercent(DAMAGE_BONUS_PER_LEVEL),
+                    Utils.asPercent(-MAX_DAMAGE_BONUS));
         }
     }
 
@@ -112,7 +124,10 @@ public class SharedKnowledge {
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
             // Need custom description due to elite effect taking multiple lines
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect, Misc.getHighlightColor(), 0f);
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+                    Utils.asPercent(BASE_DP_REDUCTION_AI_COMMANDER),
+                    Utils.asPercent(BASE_DP_REDUCTION_HUMAN_COMMANDER),
+                    Utils.asPercent(DP_REDUCTION_PER_ENHANCE));
         }
     }
 }

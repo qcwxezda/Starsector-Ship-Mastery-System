@@ -5,7 +5,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 
 public class GammaKCorePlugin extends BaseKCorePlugin {
     public static final int LEVEL = 3;
-    public static final float DP_MULT = 2.2f;
+    public static final float DP_MULT = 2f;
 
     @Override
     public float getBaseAIPointsMult() {

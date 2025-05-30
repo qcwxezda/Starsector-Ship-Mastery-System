@@ -4,9 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.util.Misc;
-import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.SPFromConstructs;
+import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
@@ -49,7 +49,7 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
                     Misc.getStoryBrightColor()
             );
             // Achievement for this
-            MagicAchievementManager.getInstance().completeAchievement(SPFromConstructs.class);
+            UnlockAchievementAction.unlockWhenUnpaused(SPFromConstructs.class);
         }
 
         Global.getSector().getPlayerFleet().getCargo().addSpecial(new SpecialItemData("sms_construct", KnowledgeConstructPlugin.PLAYER_CREATED_PREFIX + spec.getHullId()), count.value);
