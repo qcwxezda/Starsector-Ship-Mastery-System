@@ -9,7 +9,6 @@ import shipmastery.config.Settings;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
-import shipmastery.util.Utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,11 +62,7 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
         ShipMastery.addRerolledSpecThisSave(spec);
 
         try {
-            MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(), spec, effect -> effect.onDeactivate(Global.getSector().getPlayerPerson()));
             ShipMastery.generateMasteries(spec, levels, rerollSequence.size(), true);
-            MasteryUtils.applyAllActiveMasteryEffects(
-                    Global.getSector().getPlayerPerson(), spec, effect -> effect.onActivate(Global.getSector().getPlayerPerson()));
 
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -75,9 +70,6 @@ public class ConfirmRerollMasteries extends DialogDismissedListener{
 
         Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
 
-        // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
-        // bay on ships that filled it
-        Utils.fixPlayerFleetInconsistencies();
         masteryPanel.forceRefresh(true, false, true, false);
 
         // Check for achievement completion

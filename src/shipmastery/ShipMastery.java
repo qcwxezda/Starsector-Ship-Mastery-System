@@ -17,6 +17,7 @@ import shipmastery.data.MasteryGenerator;
 import shipmastery.data.MasteryInfo;
 import shipmastery.data.MasteryLevelData;
 import shipmastery.data.SaveData;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.preset.PresetCheckScript;
 import shipmastery.plugin.ModPlugin;
@@ -189,6 +190,7 @@ public abstract class ShipMastery {
         for (MasteryEffect effect : effects) {
             effect.onActivate(Global.getSector().getPlayerPerson());
         }
+        DeferredActionPlugin.performLater(Utils::fixPlayerFleetInconsistencies, 0f);
     }
 
     public static void deactivatePlayerMastery(ShipHullSpecAPI spec, int level, String optionId) {
@@ -200,6 +202,7 @@ public abstract class ShipMastery {
         for (MasteryEffect effect : effects) {
             effect.onDeactivate(Global.getSector().getPlayerPerson());
         }
+        DeferredActionPlugin.performLater(Utils::fixPlayerFleetInconsistencies, 0f);
     }
 
     /**

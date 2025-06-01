@@ -9,6 +9,7 @@
   "doubleClickInterval": 0.75,
   "showMpAndLevelInRefit": true,
   "additionalMPPerReroll": 2,
+  "crPenaltyPerExcessOPPercent": 0.1,
 
   "npcMasteryLevelModifier": -1,
   "npcMasteryLevelModifierCap": 5,

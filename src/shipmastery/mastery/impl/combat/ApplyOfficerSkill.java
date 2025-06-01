@@ -193,6 +193,6 @@ public class ApplyOfficerSkill extends BaseMasteryEffect {
         } else {
             applies = fm.getCaptain().getStats().getSkillLevel(skillId) < 2f;
         }
-        return applies ? super.getNPCWeight(fm) : 0f;
+        return applies ? 2f*super.getNPCWeight(fm) : 0f;
     }
 }

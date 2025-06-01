@@ -1,3 +1,9 @@
+1.1.8
+----------
+- Exceeding a ship's OP no longer forcibly removes caps/vents, it now assesses a CR penalty (player ships only).
+    - Can be adjusted or disabled in the settings to support mods that enable exceeding max OP as a feature.
+- Fixes/changes to account for stealth patches in 0.98 regarding removing wings to cargo when a ship's fighter bay count decreases.
+
 1.1.7
 ----------
 - Reduced alpha Pseudocore drop rate by ~25%.

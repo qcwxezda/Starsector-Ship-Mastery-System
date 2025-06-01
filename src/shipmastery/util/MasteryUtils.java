@@ -179,7 +179,10 @@ public abstract class MasteryUtils {
     }
 
     public static boolean isAutoActivate(MasteryEffect effect) {
-        return !effect.hasTag(MasteryTags.NO_AUTO_ACTIVATE);
+        // Don't auto-activate triggers-autofit effects due to weird edge-case behaviors
+        // e.g. if an effect reduces the number of fighter bays a ship has, then vanilla (added in 0.98) will add excess wings to cargo
+        // but if this can be undone, the excess wings can be duplicated!
+        return !effect.hasTag(MasteryTags.NO_AUTO_ACTIVATE) && !effect.hasTag(MasteryTags.TRIGGERS_AUTOFIT);
     }
 
     public static boolean alwaysShowDescription(MasteryEffect effect) {

@@ -637,6 +637,7 @@
     "excessOPWarning": "Warning: capacitors, vents, and/or hullmods have been removed due to changes causing an OP overflow",
     "selectAShip": "Select a ship",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "excessOP": "Excess OP"
   }
 }

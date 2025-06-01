@@ -36,7 +36,7 @@ public interface MasteryTags {
     /** Effects with this tag won't ever be selected on civilian ships */
     String COMBAT = "combat";
 
-    /** Effects with this tag will propagate to modules */
+    /** Effects with this tag won't propagate to modules */
     String DOESNT_AFFECT_MODULES = "doesnt_affect_modules";
 
     /** Appends "Flagship only: " to the start of the effect description. Actually making the effect flagship only is implementation-dependent. */

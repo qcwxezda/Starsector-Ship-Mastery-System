@@ -63,4 +63,10 @@ public class ConvertedHangarBays extends AdditiveMasteryEffect {
         if (ShipAPI.HullSize.DESTROYER.equals(spec.getHullSize())) return 0f;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (fm.getVariant().hasHullMod(HullMods.CONVERTED_HANGAR)) return 3f*super.getNPCWeight(fm);
+        return 0f;
+    }
 }

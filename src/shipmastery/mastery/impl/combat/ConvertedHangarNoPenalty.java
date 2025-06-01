@@ -38,4 +38,10 @@ public class ConvertedHangarNoPenalty extends BaseMasteryEffect {
         if (spec.getFighterBays() > 0) return null;
         return 1f;
     }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        if (fm.getVariant().hasHullMod(HullMods.CONVERTED_HANGAR)) return 2f*super.getNPCWeight(fm);
+        return 0f;
+    }
 }

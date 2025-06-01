@@ -10,7 +10,6 @@ import shipmastery.ui.EnhanceMasteryDisplay;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
-import shipmastery.util.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
 
         // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
         // bay on ships that filled it
-        Utils.fixPlayerFleetInconsistencies();
+        //Utils.fixPlayerFleetInconsistencies();
         masteryPanel.forceRefresh(true, false, true, false);
 
         // Check for achievement completion

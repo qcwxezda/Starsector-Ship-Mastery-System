@@ -15,6 +15,7 @@ sms_RecentBattles,Recent Battle Replay,Radio,On,"Off,On,Precise","If enabled, sa
 If precise mode is enabled, exact ship variants will be saved to file, ensuring that the same ships that were fought in the field are fought in replay, but this may make your save file noticeably larger.
 Otherwise, only the fleets' inflaters will be saved, meaning variations in ship loadouts may occur due to setting changes, or poorly-seeded or unseeded inflaters.",,,General
 sms_SModAutofitOption,Add S-Mod Autofit Option,Boolean,true,,"If enabled, adds a checkbox to the autofit window that, when checked, will attempt to copy installed S-mods from the goal variant during the autofit process. May conflict with other mods that modify the refit screen autofit behavior.",,,General
+sms_CrPenaltyPerExcessOPPercent,Excess OP Penalty,Double,0.1,,"For each percent of excess OP on a ship, the ship's maximum combat readiness is reduced by this amount. Relevant when unlearning Cybernetic Augmentation and when disabling mastery effects that decrease OP costs. Set to 0 to support mods that enable exceeding max OP as a feature.",0,1,General
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderGameplay,Gameplay,Header,Gameplay,,,,,Mastery

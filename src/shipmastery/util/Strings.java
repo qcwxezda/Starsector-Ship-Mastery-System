@@ -210,6 +210,7 @@ public interface Strings {
         // Duplicate, unused, SiC uses this though
         @SuppressWarnings("unused")
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
+        String excessOP = Utils.getString("sms_misc", "excessOP");
     }
 
     interface Messages {

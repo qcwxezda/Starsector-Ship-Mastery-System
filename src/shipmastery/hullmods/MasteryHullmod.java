@@ -2,6 +2,7 @@ package shipmastery.hullmods;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -50,6 +51,19 @@ public class MasteryHullmod extends BaseHullMod {
             stats.getArmorDamageTakenMult().modifyMult(id, 1f-dr);
             stats.getHullDamageTakenMult().modifyMult(id, 1f-dr);
             stats.getEmpDamageTakenMult().modifyMult(id, 1f-dr);
+        }
+
+        // Penalize CR if the ship's OP is above the limit, for player ships only
+        if (info != null && info.commander != null && info.commander.isPlayer()) {
+            int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
+            int op = variant.computeOPCost(info.commander.getStats());
+            if (op > maxOp) {
+                float frac = (float) (op-maxOp)/maxOp;
+                float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
+                if (penalty > 0f) {
+                    stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
+                }
+            }
         }
 
         applyEffects(variant, (effect, commander, isModule) -> {

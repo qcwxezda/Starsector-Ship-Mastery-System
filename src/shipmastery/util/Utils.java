@@ -3,8 +3,6 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
@@ -19,7 +17,6 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.combat.entities.Missile;
@@ -462,33 +459,33 @@ public abstract class Utils {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
 
-    /** {@code isInPlayerFleet} distinguishes between ships actually in the player's fleet and the temporary ships
-     *  used for refit screen purposes. Only the latter should refund LPCs, etc. */
-    public static boolean fixVariantInconsistencies(MutableShipStatsAPI stats, boolean isInPlayerFleet) {
+    /**
+     * {@code isInPlayerFleet} distinguishes between ships actually in the player's fleet and the temporary ships
+     * used for refit screen purposes. As of 0.98, which seems to have made some stealth changes, only the former
+     * should refund LPCs, etc.
+     */
+    public static void fixVariantInconsistencies(MutableShipStatsAPI stats, boolean isInPlayerFleet) {
         ShipVariantAPI variant = stats.getVariant();
         List<String> wingIds = variant.getWings();
         // TODO: is there a better way to handle this? This doesn't handle the cass where a wing is both modular and
         // built-in on the same ship
         Set<String> nonBuiltIn = new HashSet<>(variant.getNonBuiltInWings());
-        boolean changed = false;
         if (wingIds != null && !wingIds.isEmpty()) {
             for (int i = stats.getNumFighterBays().getModifiedInt(); i < wingIds.size(); i++) {
                 if (variant.getWingId(i) != null) {
-                    if (!isInPlayerFleet && nonBuiltIn.contains(variant.getWingId(i))) {
+                    if (isInPlayerFleet && nonBuiltIn.contains(variant.getWingId(i))) {
                         Global.getSector().getPlayerFleet().getCargo().addFighters(variant.getWingId(i), 1);
                     }
                     variant.setWingId(i, null);
-                    changed = true;
                 }
             }
         }
-        if (clampOP(variant, Global.getSector().getPlayerStats())) {
-            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
-                    Strings.Misc.excessOPWarning,
-                    Misc.getNegativeHighlightColor());
-            changed = true;
-        }
-        return changed;
+//        if (clampOP(variant, Global.getSector().getPlayerStats())) {
+//            Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
+//                    Strings.Misc.excessOPWarning,
+//                    Misc.getNegativeHighlightColor());
+//            changed = true;
+//        }
     }
 
     public static void fixPlayerFleetInconsistencies() {
@@ -608,34 +605,34 @@ public abstract class Utils {
     }
 
     /** Adapted from SkillsChangeRemoveExcessOPEffect */
-    public static boolean clampOP(ShipVariantAPI variant, MutableCharacterStatsAPI stats) {
-        int maxOP = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), stats);
-        int op = variant.computeOPCost(stats);
-        int remove = op - maxOP;
-        if (remove > 0) {
-            int caps = variant.getNumFluxCapacitors();
-            int curr = Math.min(caps, remove);
-            variant.setNumFluxCapacitors(caps - curr);
-            remove -= curr;
-            if (remove > 0) {
-                int vents = variant.getNumFluxVents();
-                curr = Math.min(vents, remove);
-                variant.setNumFluxVents(vents - curr);
-                remove -= curr;
-            }
-            if (remove > 0) {
-                for (String modId : variant.getNonBuiltInHullmods()) {
-                    HullModSpecAPI mod = Global.getSettings().getHullModSpec(modId);
-                    curr = mod.getCostFor(variant.getHullSpec().getHullSize());
-                    variant.removeMod(modId);
-                    remove -= curr;
-                    if (remove <= 0) break;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
+//    public static boolean clampOP(ShipVariantAPI variant, MutableCharacterStatsAPI stats) {
+//        int maxOP = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), stats);
+//        int op = variant.computeOPCost(stats);
+//        int remove = op - maxOP;
+//        if (remove > 0) {
+//            int caps = variant.getNumFluxCapacitors();
+//            int curr = Math.min(caps, remove);
+//            variant.setNumFluxCapacitors(caps - curr);
+//            remove -= curr;
+//            if (remove > 0) {
+//                int vents = variant.getNumFluxVents();
+//                curr = Math.min(vents, remove);
+//                variant.setNumFluxVents(vents - curr);
+//                remove -= curr;
+//            }
+//            if (remove > 0) {
+//                for (String modId : variant.getNonBuiltInHullmods()) {
+//                    HullModSpecAPI mod = Global.getSettings().getHullModSpec(modId);
+//                    curr = mod.getCostFor(variant.getHullSpec().getHullSize());
+//                    variant.removeMod(modId);
+//                    remove -= curr;
+//                    if (remove <= 0) break;
+//                }
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
 
     public static void maintainStatusForPlayerShip(ShipAPI ship, Object id, String spriteName, String title, String desc, boolean isDebuff) {
         if (ship != Global.getCombatEngine().getPlayerShip()) return;
@@ -846,6 +843,7 @@ public abstract class Utils {
     /** Includes the ship itself */
     public static List<ShipAPI> getAllModules(ShipAPI ship) {
         List<ShipAPI> list = new ArrayList<>();
+        if (ship == null) return list;
         getAllModulesHelper(ship, list);
         return list;
     }

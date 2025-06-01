@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import shipmastery.ShipMastery;
 import shipmastery.ui.MasteryPanel;
-import shipmastery.util.Utils;
 
 import java.util.Map;
 import java.util.NavigableMap;
@@ -53,10 +52,6 @@ public class ConfirmMasteryChangesPressed extends ActionListener {
 
         Global.getSoundPlayer().playUISound("sms_change_masteries", 1f, 1f);
 
-        // This may make the player's fleet state invalid, i.e. if changing masteries removed a hangar
-        // bay on ships that filled it
-        Utils.fixPlayerFleetInconsistencies();
-
-        masteryPanel.forceRefresh(true, false, true, false);
+        masteryPanel.forceRefresh(true, true, true, false);
     }
 }

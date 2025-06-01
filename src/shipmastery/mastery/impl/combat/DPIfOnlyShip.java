@@ -90,6 +90,6 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
                 .filter(x -> Objects.equals(specId, Utils.getRestoredHullSpecId(x.getHullSpec())))
                 .count();
 
-        return count > 1 ? 0f : 2f*super.getNPCWeight(fm);
+        return count > 1 ? 0f : 3f*super.getNPCWeight(fm);
     }
 }

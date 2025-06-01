@@ -382,9 +382,6 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             // This call does nothing except set variant.hasOpAffectingMods = null, which
             // triggers the variant to refresh its statsForOpCosts
             module.getVariant().addPermaMod("sms_mastery_handler");
-            if (Utils.fixVariantInconsistencies(module.getMutableStats(), false)) {
-                syncRefitScreenWithVariant(true);
-            }
         }
 
         ShipInfo newShipInfo = new ShipInfo(module, root);

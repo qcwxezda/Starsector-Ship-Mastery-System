@@ -58,6 +58,8 @@ public class DimensionalTether {
     public static final float MIN_CR_COST = 0.1f;
     public static final float FLUX_BOOST_AMOUNT = 0.2f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
+    public static final String REMOVED_PHASE_ANCHOR_KEY = "sms_RemovedPhaseAnchor";
+    public static final String IS_RETREATING_KEY = "sms_DimensionalTetherIsRetreating";
 
     private static class RepairScript extends BaseEveryFrameCombatPlugin {
         private final IntervalUtil updateInterval = new IntervalUtil(0.5f, 0.5f);
@@ -100,7 +102,7 @@ public class DimensionalTether {
                 // This is better than phase anchor, so should supersede it...
                 if (ship.hasListenerOfClass(PhaseAnchor.PhaseAnchorScript.class)) {
                     ship.removeListenerOfClass(PhaseAnchor.PhaseAnchorScript.class);
-                    ship.setCustomData("sms_RemovedPhaseAnchor", true);
+                    ship.setCustomData(REMOVED_PHASE_ANCHOR_KEY, true);
                 }
             }, 0f);
         }
@@ -121,7 +123,8 @@ public class DimensionalTether {
             if (fm == null) return false;
             if (fleetManager == null) return false;
             float crCost = Math.max(fm.getDeployCost(), MIN_CR_COST);
-            if (damageAmount >= ship.getHitpoints() && !isRetreating && !ship.isRetreating() && ship.getCurrentCR() >= crCost) {
+            if (damageAmount >= ship.getHitpoints() && !isRetreating && ship.getCurrentCR() >= crCost) {
+                ship.setCustomData(IS_RETREATING_KEY, true);
                 isRetreating = true;
                 for (ShipAPI module : Utils.getAllModules(ship)) {
                     JitterEmitter emitter = new JitterEmitter(module, module.getSpriteAPI(), new Color(150, 250, 200), 0f, module.getShieldRadiusEvenIfNoShield() / 2f, 0.25f, false, 0.3f, 100);
@@ -243,9 +246,9 @@ public class DimensionalTether {
         public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
             ship.removeListenerOfClass(RetreatScript.class);
             // If removed phase anchor, add it back
-            if (ship.getCustomData() != null && (boolean) ship.getCustomData().getOrDefault("sms_RemovedPhaseAnchor", false)) {
+            if (ship.getCustomData() != null && (boolean) ship.getCustomData().getOrDefault(REMOVED_PHASE_ANCHOR_KEY, false)) {
                 ship.addListener(new PhaseAnchor.PhaseAnchorScript(ship));
-                ship.removeCustomData("sms_RemovedPhaseAnchor");
+                ship.removeCustomData(REMOVED_PHASE_ANCHOR_KEY);
             }
             // Only add repair script for player, NPCs start with full repairs
             var info = VariantLookup.getVariantInfo(ship.getVariant());

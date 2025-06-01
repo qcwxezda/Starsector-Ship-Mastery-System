@@ -72,7 +72,7 @@ SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyO
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
 TimeFlowNearbyEnemies,4,combat,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
-ConvertedHangarBays,4,combat,,0.5,shipmastery.mastery.impl.combat.ConvertedHangarBays
+ConvertedHangarBays,4,combat triggers_autofit,,0.5,shipmastery.mastery.impl.combat.ConvertedHangarBays
 ConvertedCargoBayNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
 ExtraFighterPerWing,3,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
 DamageTakenNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
