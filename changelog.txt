@@ -9,6 +9,7 @@
 
 No new version, just re-download latest:
 - (12:05 AM EST 6/1/2025): Increased constructs per SP from 15 to 20.
+- (12:20 AM EST 6/1/2025): Reduced overall bonus XP from enhancing.
 
 1.1.6
 ----------

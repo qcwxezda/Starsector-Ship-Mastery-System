@@ -27,7 +27,7 @@ public abstract class MasteryUtils {
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
     public static final float[] ENHANCE_MASTERY_AMOUNT = {0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.02f, 0.02f, 0.02f, 0.02f, 0.02f};
     public static final float[] ENHANCE_DR_AMOUNT = {0f, 0f, 0f, 0f, 0f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
-    public static final float[] ENHANCE_BONUS_XP = {1f, 0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f, 0.2f, 0.1f};
+    public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
     public static final int MAX_ENHANCES = 10;
 
     public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
