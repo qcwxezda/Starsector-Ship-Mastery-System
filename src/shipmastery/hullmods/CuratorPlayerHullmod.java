@@ -40,9 +40,7 @@ public class CuratorPlayerHullmod extends CuratorNPCHullmod implements HullModFl
         boolean active = Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.K_CORE_AMP_INTEGRATED);
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             // Remove the NPC version of the hullmod if it exists
-            if (fm.getVariant().hasHullMod("sms_curator_npc_hullmod")) {
-                fm.getVariant().removePermaMod("sms_curator_npc_hullmod");
-            }
+            Utils.removePermaModFromCustomVariant(fm, "sms_curator_npc_hullmod", true);
 
             boolean remove = !active;
             remove |= fm.getCaptain() == null || !fm.getCaptain().isAICore() || fm.getCaptain().getAICoreId() == null;
@@ -54,11 +52,11 @@ public class CuratorPlayerHullmod extends CuratorNPCHullmod implements HullModFl
 
             if (remove) {
                 if (fm.getVariant().hasHullMod("sms_curator_player_hullmod")) {
-                    fm.getVariant().removePermaMod("sms_curator_player_hullmod");
+                    Utils.removePermaModFromCustomVariant(fm, "sms_curator_player_hullmod", true);
                 }
             } else {
                 if (!fm.getVariant().hasHullMod("sms_curator_player_hullmod")) {
-                    Utils.addPermaModCloneVariantIfNeeded(fm, "sms_curator_player_hullmod");
+                    Utils.addPermaModCloneVariantIfNeeded(fm, "sms_curator_player_hullmod", true);
                 }
             }
         }

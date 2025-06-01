@@ -61,7 +61,7 @@ public class KCoreUplinkHullmod extends BaseHullMod implements HullModFleetEffec
                 }
             }
             if (handle) {
-                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_k_core_uplink_handler");
+                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_k_core_uplink_handler", false);
             } else {
                 fm.getVariant().removePermaMod("sms_k_core_uplink_handler");
             }

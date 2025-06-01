@@ -14,13 +14,13 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.impl.combat.RealityDisruptorChargeGlow;
+import com.fs.starfarer.api.impl.hullmods.PhaseAnchor;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -36,6 +36,7 @@ import shipmastery.fx.RingBurstEmitter;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -94,13 +95,22 @@ public class DimensionalTether {
 
         private RetreatScript(ShipAPI ship) {
             this.ship = ship;
-            CombatDeferredActionPlugin.performLater(() -> fleetManager = Global.getCombatEngine().getFleetManager(ship.getOwner()), 0f);
+            CombatDeferredActionPlugin.performLater(() -> {
+                fleetManager = Global.getCombatEngine().getFleetManager(ship.getOwner());
+                // This is better than phase anchor, so should supersede it...
+                if (ship.hasListenerOfClass(PhaseAnchor.PhaseAnchorScript.class)) {
+                    ship.removeListenerOfClass(PhaseAnchor.PhaseAnchorScript.class);
+                    ship.setCustomData("sms_RemovedPhaseAnchor", true);
+                }
+            }, 0f);
         }
 
         @Override
         public void advance(float amount) {
             if (isRetreating) {
-                ship.setExtraAlphaMult2(Math.max(0f, (RETREAT_DELAY - retreatTime) / RETREAT_DELAY));
+                for (ShipAPI module : Utils.getAllModules(ship)) {
+                    module.setExtraAlphaMult2(Math.max(0f, (RETREAT_DELAY - retreatTime) / RETREAT_DELAY));
+                }
                 retreatTime += amount;
             }
         }
@@ -111,12 +121,14 @@ public class DimensionalTether {
             if (fm == null) return false;
             if (fleetManager == null) return false;
             float crCost = Math.max(fm.getDeployCost(), MIN_CR_COST);
-            if (damageAmount >= ship.getHitpoints() && !isRetreating && ship.getCurrentCR() >= crCost) {
+            if (damageAmount >= ship.getHitpoints() && !isRetreating && !ship.isRetreating() && ship.getCurrentCR() >= crCost) {
                 isRetreating = true;
-                JitterEmitter emitter = new JitterEmitter(ship, ship.getSpriteAPI(), new Color(150, 250, 200), 0f, ship.getShieldRadiusEvenIfNoShield()/2f, 0.25f, false, 0.3f, 100);
-                emitter.setBaseIntensity(0.8f);
-                emitter.enableDynamicAnchoring();
-                Particles.stream(emitter, 1, 80f, 1.25f);
+                for (ShipAPI module : Utils.getAllModules(ship)) {
+                    JitterEmitter emitter = new JitterEmitter(module, module.getSpriteAPI(), new Color(150, 250, 200), 0f, module.getShieldRadiusEvenIfNoShield() / 2f, 0.25f, false, 0.3f, 100);
+                    emitter.setBaseIntensity(0.8f);
+                    emitter.enableDynamicAnchoring();
+                    Particles.stream(emitter, 1, 80f, 1.25f);
+                }
                 CombatDeferredActionPlugin.performLater(() -> {
                     // EMP blast
                     float radius = EMP_RANGE[Utils.hullSizeToInt(ship.getHullSize())];
@@ -213,7 +225,9 @@ public class DimensionalTether {
     public static class Standard extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
         @Override
         public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            if (ship.getFleetMemberId() != null && ship.getVariant() != null && !ship.getVariant().getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)) {
+            var info = VariantLookup.getVariantInfo(ship.getVariant());
+            boolean isRoot = info == null || info.root == info.variant;
+            if (ship.getFleetMemberId() != null && ship.getVariant() != null && isRoot) {
                 //noinspection unchecked
                 Map<String, RepairScript> existingScripts = (Map<String, RepairScript>) Global.getCombatEngine().getCustomData().computeIfAbsent(EXISTING_REPAIR_SCRIPTS_KEY, k -> new HashMap<>());
                 if (!existingScripts.containsKey(ship.getFleetMemberId())) {
@@ -228,12 +242,19 @@ public class DimensionalTether {
         @Override
         public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
             ship.removeListenerOfClass(RetreatScript.class);
+            // If removed phase anchor, add it back
+            if (ship.getCustomData() != null && (boolean) ship.getCustomData().getOrDefault("sms_RemovedPhaseAnchor", false)) {
+                ship.addListener(new PhaseAnchor.PhaseAnchorScript(ship));
+                ship.removeCustomData("sms_RemovedPhaseAnchor");
+            }
             // Only add repair script for player, NPCs start with full repairs
+            var info = VariantLookup.getVariantInfo(ship.getVariant());
+            boolean isRoot = info == null || info.root == info.variant;
             if (ship.getFleetMemberId() != null
                     && ship.getFleetCommander() != null
                     && ship.getFleetCommander().isPlayer()
                     && ship.getVariant() != null
-                    && !ship.getVariant().getHints().contains(ShipHullSpecAPI.ShipTypeHints.MODULE)) {
+                    && isRoot) {
                 //noinspection unchecked
                 Map<String, RepairScript> existingScripts = (Map<String, RepairScript>) Global.getCombatEngine().getCustomData().computeIfAbsent(EXISTING_REPAIR_SCRIPTS_KEY, k -> new HashMap<>());
                 var script = existingScripts.get(ship.getFleetMemberId());

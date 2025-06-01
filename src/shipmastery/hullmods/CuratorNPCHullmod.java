@@ -8,11 +8,13 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.Nullable;
 import shipmastery.combat.listeners.ShipDestroyedListener;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.OverlayEmitter;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -35,7 +37,24 @@ public class CuratorNPCHullmod extends BaseHullMod {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        ship.addListener(new CuratorNPCHullmodScript(ship, id));
+        var info = VariantLookup.getVariantInfo(ship.getVariant());
+        boolean isRoot = info == null || info.root == info.variant;
+        if (isRoot) {
+            ship.addListener(new CuratorNPCHullmodScript(ship, id, null));
+        } else {
+            // parent station is null initially, need to wait for it to be populated...
+            CombatDeferredActionPlugin.performLater(() -> {
+                CuratorNPCHullmodScript rootListener = null;
+                var root = ship.getParentStation();
+                if (root != null) {
+                    var listeners = root.getListeners(CuratorNPCHullmodScript.class);
+                    if (listeners != null && !listeners.isEmpty()) {
+                        rootListener = listeners.iterator().next();
+                    }
+                }
+                ship.addListener(new CuratorNPCHullmodScript(ship, id, rootListener));
+            }, 0f);
+        }
     }
 
     @Override
@@ -80,6 +99,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
 
     public class CuratorNPCHullmodScript implements AdvanceableListener, ShipDestroyedListener {
         private final ShipAPI ship;
+        private final CuratorNPCHullmodScript rootShipListener;
         private final String id;
         private final OverlayEmitter emitter;
         private boolean active = false;
@@ -103,8 +123,10 @@ public class CuratorNPCHullmod extends BaseHullMod {
             return emitter;
         }
 
-        public CuratorNPCHullmodScript(ShipAPI ship, String id) {
+        public CuratorNPCHullmodScript(ShipAPI ship, String id, @Nullable CuratorNPCHullmodScript rootShipListener) {
             this.ship = ship;
+            this.rootShipListener = rootShipListener;
+
             this.id = id;
             if (ship.getSpriteAPI() == null) {
                 emitter = null;
@@ -170,6 +192,7 @@ public class CuratorNPCHullmod extends BaseHullMod {
         }
 
         public void activate() {
+            if (rootShipListener != null) return;
             effectFader.fadeIn();
             active = true;
             activeTime = 0f;
@@ -184,7 +207,12 @@ public class CuratorNPCHullmod extends BaseHullMod {
                 return;
             }
 
-            effectFader.advance(amount);
+            if (rootShipListener == null) {
+                effectFader.advance(amount);
+            } else {
+                effectFader.setBrightness(rootShipListener.effectFader.getBrightness());
+            }
+
             //noinspection unchecked
             List<ShipAPI> fighterList = ship.getCustomData() == null ? null : (List<ShipAPI>) ship.getCustomData().get(CUSTOM_DATA_KEY);
             if (fighterList == null) fighterList = new LinkedList<>();
@@ -201,19 +229,25 @@ public class CuratorNPCHullmod extends BaseHullMod {
                 applyEffects(fighter, effectLevel);
             }
 
-            if (!active) {
+            if (rootShipListener != null) {
+                active = rootShipListener.active;
+            }
+
+            if (!active && rootShipListener == null) {
                 cooldownTime -= amount;
                 if (cooldownTime <= 0f) {
                     activate();
                 }
-            } else {
-                activeTime += amount;
+            } else if (active) {
                 if (Misc.random.nextFloat() < 0.1f && emitter != null) {
                     emitter.burst(1);
                 }
-                if (activeTime >= getDurationSeconds()) {
-                    active = false;
-                    effectFader.fadeOut();
+                if (rootShipListener == null) {
+                    activeTime += amount;
+                    if (activeTime >= getDurationSeconds()) {
+                        active = false;
+                        effectFader.fadeOut();
+                    }
                 }
             }
             if (effectFader.getBrightness() > 0f) {
@@ -232,15 +266,18 @@ public class CuratorNPCHullmod extends BaseHullMod {
             if (target.getOriginalOwner() == ship.getOwner()) {
                 float reduction = Utils.hullSizeToInt(target.getHullSize()) * 0.03f;
                 cooldownMult = Math.max(0f, cooldownMult - reduction);
+                float dist = MathUtils.dist(target.getLocation(), ship.getLocation());
+                if (dist > 5000f) return;
+
                 for (int i = 0; i < 5; i++) {
                     EmpArcEntityAPI.EmpArcParams params = new EmpArcEntityAPI.EmpArcParams();
                     params.segmentLengthMult = 4f;
-                    params.zigZagReductionFactor = 0.2f;
+                    params.zigZagReductionFactor = 0.05f;
                     params.minFadeOutMult = 1f;
-                    float dist = MathUtils.dist(target.getLocation(), ship.getLocation());
-                    params.flickerRateMult = 200f/dist;
+                    params.flickerRateMult = MathUtils.randBetween(150f, 250f)/dist;
                     params.nonBrightSpotMinBrightness = 0f;
-                    float arcSize = 100f + MathUtils.randBetween(0f, 100f);
+
+                    float arcSize = 50f + MathUtils.randBetween(0f, 200f);
                     var arc = Global.getCombatEngine().spawnEmpArcVisual(
                             target.getLocation(),
                             target,

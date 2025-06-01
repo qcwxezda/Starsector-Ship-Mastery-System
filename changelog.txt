@@ -1,3 +1,12 @@
+1.1.7
+----------
+- Reduced alpha Pseudocore drop rate by ~25%.
+- Slightly modified a battle.
+- Fixed issue with slowdown in a particular fight with if the opposing fleet contained a certain RAT Exotech ship.
+- Fixed issue where a certain skill clashed with Phase Anchor (it now takes precedence).
+- Fixed issue with a defender fleet that was introduced in a previous patch.
+- Fixed issue with a hullmod and a skill not affecting modules properly.
+
 1.1.6
 ----------
 - [REDACTED] now scales off unspent mastery points rather than enhance level. Removed the cap.

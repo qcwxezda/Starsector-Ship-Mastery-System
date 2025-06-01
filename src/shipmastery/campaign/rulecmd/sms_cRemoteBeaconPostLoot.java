@@ -109,7 +109,6 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             mem.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_HOLD_VS_STRONGER, true);
             mem.set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);
-            mem.set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
             mem.set(MemFlags.FLEET_IGNORED_BY_OTHER_FLEETS, true);
             mem.set(MemFlags.MEMORY_KEY_NO_JUMP, true);
             mem.set(MemFlags.FLEET_INTERACTION_DIALOG_CONFIG_OVERRIDE_GEN, new FIDConfigGen());
@@ -132,7 +131,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     1500f, 0f, 0f, 0f, 0f, 0f, 0f);
             fParams.withOfficers = true;
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
-            fParams.maxNumShips = 50;
+            fParams.maxNumShips = 55;
             fParams.averageSMods = 5;
             fParams.random = new Random(commanderId.hashCode());
             fParams.modeOverride = FactionAPI.ShipPickMode.PRIORITY_ONLY;

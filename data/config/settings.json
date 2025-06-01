@@ -2,7 +2,7 @@
   "drop_prob_officer_sms_fractured_gamma_core": 0.5,
   "drop_prob_officer_sms_gamma_k_core": 0.2,
   "drop_prob_officer_sms_beta_k_core": 0.1,
-  "drop_prob_officer_sms_alpha_k_core": 0.04,
+  "drop_prob_officer_sms_alpha_k_core": 0.03,
 
   "ruleCommandPackages":[
     "shipmastery.campaign.rulecmd"

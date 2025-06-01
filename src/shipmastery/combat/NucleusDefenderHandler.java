@@ -26,11 +26,11 @@ import java.util.TreeMap;
 
 public class NucleusDefenderHandler extends BaseEveryFrameCombatPlugin implements ShipDestroyedListener {
 
-    public static final float RADIUS = 2000f;
+    public static final float RADIUS = 2250f;
     public static final float MIN_DURATION = 20f;
     public static final float MAX_DURATION = 30f;
     public static final int MAX_REGIONS = 10;
-    private final float baseCooldown = 30f;
+    private final float baseCooldown = 25f;
     private float cooldownMult = 1f;
     private float cooldown = baseCooldown;
     private final Map<Vector2f, LocationData> existingLocs = new TreeMap<>((a, b) -> {
