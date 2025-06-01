@@ -29,7 +29,7 @@ public class ConstructButtonPressed extends ActionListener {
     private final IntRef count = new IntRef(1);
     private final int maxCount;
     private final IntRef spGained = new IntRef();
-    public static final int CONSTRUCTS_PER_SP = 15;
+    public static final int CONSTRUCTS_PER_SP = 20;
     public static final String CONSTRUCTS_MADE_KEY = "$sms_constructsMade";
 
     public ConstructButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {

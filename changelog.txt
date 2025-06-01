@@ -7,6 +7,9 @@
 - Fixed issue with a defender fleet that was introduced in a previous patch.
 - Fixed issue with a hullmod and a skill not affecting modules properly.
 
+No new version, just re-download latest:
+- (12:05 AM EST 6/1/2025): Increased constructs per SP from 15 to 20.
+
 1.1.6
 ----------
 - [REDACTED] now scales off unspent mastery points rather than enhance level. Removed the cap.
