@@ -198,7 +198,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             totalMPGained++;
             count++;
             xp -= xpPer*xpPerMult * MathUtils.randBetween(0.8f, 1.25f, random);
-            xpPer *= MULT_PER_MP;
+            xpPer *= isCivilian && totalMPGained >= 12 ? 2f : MULT_PER_MP;
             if (!isCivilian && !isPursuit) {
                 xpPerMult = Math.min(0.1f * (count+1), 1f);
             } else if (!isPursuit) {

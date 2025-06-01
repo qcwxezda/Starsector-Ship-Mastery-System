@@ -153,6 +153,8 @@ public interface Strings {
         String levelUpMastery = Utils.getString("sms_masteryPanel", "levelUpMastery");
         String createConstruct = Utils.getString("sms_masteryPanel", "createConstruct");
         String createConstructConfirmSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmSingular");
+        String constructSinglar = Utils.getString("sms_masteryPanel", "constructSinglar");
+        String constructPlural = Utils.getString("sms_masteryPanel", "constructPlural");
         String createConstructConfirmPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmPlural");
         String createConstructConfirmTextSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmTextSingular");
         String createConstructConfirmTextPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmTextPlural");

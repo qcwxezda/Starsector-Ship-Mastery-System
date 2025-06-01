@@ -6,6 +6,8 @@
 
 No new version, just re-download latest:
 - (3:02 PM EST 6/1/2025): Fixed issue where fleet handler could build in NO_BUILD_IN hullmods.
+- (5:50 PM EST 6/1/2025): Placed a soft cap on civilian MP gain per action, shouldn't affect much other thain raiding.
+- (5:50 PM EST 6/1/2025): Constructs per SP now starts at 10, caps at 40, increases by 1 each time you gain an SP from creating constructs.
 
 1.1.7
 ----------

@@ -29,8 +29,13 @@ public class ConstructButtonPressed extends ActionListener {
     private final IntRef count = new IntRef(1);
     private final int maxCount;
     private final IntRef spGained = new IntRef();
-    public static final int CONSTRUCTS_PER_SP = 20;
-    public static final String CONSTRUCTS_MADE_KEY = "$sms_constructsMade";
+    private final IntRef remainder = new IntRef();
+    public static final int INITIAL_CONSTRUCTS_PER_SP = 10;
+    public static final int MAX_CONSTRUCTS_PER_SP = 40;
+    public static final int CONSTRUCTS_PER_SP_INCREMENT = 1;
+
+    public static final String CONSTRUCTS_MADE_KEY = "$sms_constructsMadeV2";
+    public static final String CONSTRUCTS_NEEDED_KEY = "$sms_constructsNeeded";
 
     public ConstructButtonPressed(MasteryPanel masteryPanel, ShipHullSpecAPI spec) {
         this.masteryPanel = masteryPanel;
@@ -45,14 +50,15 @@ public class ConstructButtonPressed extends ActionListener {
         String creditsStr = Misc.getDGSCredits(credits);
 
         int constructsMade = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_MADE_KEY, 0);
+        int constructsNeeded = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_NEEDED_KEY, INITIAL_CONSTRUCTS_PER_SP);
 
         ReflectionUtils.GenericDialogData dialogData = ReflectionUtils.showGenericDialog(
                 "",
                 Strings.Misc.confirm,
                 Strings.Misc.cancel,
                 550f,
-                170f,
-                new ConfirmCreateConstruct(masteryPanel, spec, count, spGained)
+                185f,
+                new ConfirmCreateConstruct(masteryPanel, spec, count, spGained, remainder)
         );
 
         if (dialogData != null) {
@@ -62,19 +68,23 @@ public class ConstructButtonPressed extends ActionListener {
             confirmLabel = tooltip.addPara(String.format(Strings.MasteryPanel.createConstructConfirmTextSingular, amount, 1, creditsStr), 5f);
             confirmLabel.setHighlight(amount, creditsStr);
             confirmLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
-            boolean nextConstructGrantsSP = (constructsMade+1) % CONSTRUCTS_PER_SP == 0;
+            boolean nextConstructGrantsSP = constructsMade + 1 == constructsNeeded;
             spGained.value = nextConstructGrantsSP ? 1 : 0;
+            remainder.value = nextConstructGrantsSP ? 0 : constructsMade + 1;
             tooltip.setParaFontDefault();
             spInfoLabel = tooltip.addPara(
                     String.format(
                             nextConstructGrantsSP ?
                                     Strings.MasteryPanel.createConstructSPTextSingular :
                                     Strings.MasteryPanel.createConstructSPTextPlural,
-                            CONSTRUCTS_PER_SP,
-                            "" + spGained.value),
+                            spGained.value,
+                            constructsNeeded - remainder.value,
+                            constructsNeeded - remainder.value == 1 ? Strings.MasteryPanel.constructSinglar : Strings.MasteryPanel.constructPlural,
+                            CONSTRUCTS_PER_SP_INCREMENT,
+                            MAX_CONSTRUCTS_PER_SP),
                     25f);
-            spInfoLabel.setHighlight("" + CONSTRUCTS_PER_SP, "" + spGained.value);
-            spInfoLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getStoryBrightColor());
+            spInfoLabel.setHighlight("" + spGained.value, "" + (constructsNeeded - remainder.value), "" + CONSTRUCTS_PER_SP_INCREMENT, "" + MAX_CONSTRUCTS_PER_SP);
+            spInfoLabel.setHighlightColors(Misc.getStoryBrightColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
             selector.addUIElement(tooltip).inTL(8f, 8f);
             TooltipMakerAPI buttons = selector.createUIElement(200f, 50f, false);
             buttons.setButtonFontOrbitron20();
@@ -118,7 +128,7 @@ public class ConstructButtonPressed extends ActionListener {
                 }
             });
 
-            selector.addUIElement(buttons).inBMid(-155f);
+            selector.addUIElement(buttons).inBMid(-170f);
             dialogData.panel.addComponent(selector).inTL(0f, 0f);
             updatePanel();
         }
@@ -138,19 +148,28 @@ public class ConstructButtonPressed extends ActionListener {
         confirmLabel.setHighlightColors(Settings.MASTERY_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
 
         int constructsMade = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_MADE_KEY, 0);
-        spGained.value = count.value / CONSTRUCTS_PER_SP;
-        int rem = count.value % CONSTRUCTS_PER_SP;
-        if (constructsMade % CONSTRUCTS_PER_SP + rem >= CONSTRUCTS_PER_SP) {
+        int constructsNeeded = (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCTS_NEEDED_KEY, INITIAL_CONSTRUCTS_PER_SP);
+        spGained.value = 0;
+
+        constructsMade += count.value;
+        while (constructsMade >= constructsNeeded) {
+            constructsMade -= constructsNeeded;
             spGained.value++;
+            constructsNeeded += CONSTRUCTS_PER_SP_INCREMENT;
+            constructsNeeded = Math.min(constructsNeeded, MAX_CONSTRUCTS_PER_SP);
         }
+        remainder.value = constructsMade;
 
         spInfoLabel.setText(String.format(
                 spGained.value == 1 ? Strings.MasteryPanel.createConstructSPTextSingular : Strings.MasteryPanel.createConstructSPTextPlural,
-                CONSTRUCTS_PER_SP,
-                spGained.value
+                spGained.value,
+                constructsNeeded - remainder.value,
+                constructsNeeded - remainder.value == 1 ? Strings.MasteryPanel.constructSinglar : Strings.MasteryPanel.constructPlural,
+                CONSTRUCTS_PER_SP_INCREMENT,
+                MAX_CONSTRUCTS_PER_SP
         ));
-        spInfoLabel.setHighlight("" + CONSTRUCTS_PER_SP, "" + spGained.value);
-        spInfoLabel.setHighlightColors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getStoryBrightColor());
+        spInfoLabel.setHighlight("" + spGained.value, "" + (constructsNeeded - remainder.value), "" + CONSTRUCTS_PER_SP_INCREMENT, "" + MAX_CONSTRUCTS_PER_SP);
+        spInfoLabel.setHighlightColors(Misc.getStoryBrightColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
 
         min.setEnabled(count.value != 1);
         less.setEnabled(count.value > 1);

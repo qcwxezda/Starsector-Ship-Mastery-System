@@ -20,12 +20,18 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
     final ShipHullSpecAPI spec;
     final IntRef count;
     final IntRef spGained;
+    final IntRef remainder;
 
-    public ConfirmCreateConstruct(MasteryPanel masteryPanel, ShipHullSpecAPI spec, IntRef count, IntRef spGained) {
+    public ConfirmCreateConstruct(MasteryPanel masteryPanel,
+                                  ShipHullSpecAPI spec,
+                                  IntRef count,
+                                  IntRef spGained,
+                                  IntRef remainder) {
         this.masteryPanel = masteryPanel;
         this.spec = spec;
         this.count = count;
         this.spGained = spGained;
+        this.remainder = remainder;
     }
 
     @Override
@@ -40,7 +46,11 @@ public class ConfirmCreateConstruct extends DialogDismissedListener{
                         String.format(Strings.MasteryPanel.createConstructConfirmPlural, count.value),
                 Settings.MASTERY_COLOR);
 
-        Global.getSector().getPersistentData().compute(ConstructButtonPressed.CONSTRUCTS_MADE_KEY, (k,v) -> v == null ? count.value : (int) v + count.value);
+        Global.getSector().getPersistentData().put(ConstructButtonPressed.CONSTRUCTS_MADE_KEY, remainder.value);
+        Global.getSector().getPersistentData().compute(ConstructButtonPressed.CONSTRUCTS_NEEDED_KEY, (k, v) ->
+                Math.min(ConstructButtonPressed.MAX_CONSTRUCTS_PER_SP,
+                        (v == null ? ConstructButtonPressed.INITIAL_CONSTRUCTS_PER_SP : (int) v) + spGained.value));
+
         if (spGained.value > 0) {
             Global.getSector().getPlayerStats().addStoryPoints(spGained.value);
             Global.getSector().getCampaignUI().getMessageDisplay().addMessage(
