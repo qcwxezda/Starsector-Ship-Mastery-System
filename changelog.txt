@@ -4,6 +4,9 @@
     - Can be adjusted or disabled in the settings to support mods that enable exceeding max OP as a feature.
 - Fixes/changes to account for stealth patches in 0.98 regarding removing wings to cargo when a ship's fighter bay count decreases.
 
+No new version, just re-download latest:
+- (3:02 PM EST 6/1/2025): Fixed issue where fleet handler could build in NO_BUILD_IN hullmods.
+
 1.1.7
 ----------
 - Reduced alpha Pseudocore drop rate by ~25%.

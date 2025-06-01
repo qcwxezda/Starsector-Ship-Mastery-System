@@ -210,6 +210,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         picker.setRandom(random);
 
         for (String hullmod : variant.getNonBuiltInHullmods()) {
+            var spec = Global.getSettings().getHullModSpec(hullmod);
+            if (spec == null || spec.hasTag(Tags.HULLMOD_NO_BUILD_IN)) continue;
             picker.add(hullmod, EXISTING_HULLMOD_WEIGHT);
         }
 
