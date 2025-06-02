@@ -33,9 +33,9 @@ ModifyStatsFlat,,varying negative_strength_allowed scale_selection_weight,,1,shi
 ModifyStatsEffect,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsEffect
 #### COMBAT ####
 ApplyOfficerSkill,2,varying combat,,1,shipmastery.mastery.impl.combat.ApplyOfficerSkill
-ShieldHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
+ShieldHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
 ArmorHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ArmorHullmodPackage
-HullHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.HullHullmodPackage
+HullHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.HullHullmodPackage
 EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.EngineHullmodPackage
 FighterHullmodPackage,2,combat unique,,0.15,shipmastery.mastery.impl.hullmods.FighterHullmodPackage
 FluxHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
@@ -57,12 +57,12 @@ BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.
 EnergyDamageFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.EnergyDamageFluxLevel
 MissileRoFFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRoFFluxLevel
 SpeedHullLevel,4,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.SpeedHullLevel
-HitAngleDR,3,combat unique negative_strength_allowed,,-0.2,shipmastery.mastery.impl.combat.HitAngleDR
+HitAngleDR,3,combat unique negative_strength_allowed,,-0.125,shipmastery.mastery.impl.combat.HitAngleDR
 TPCUpgrade,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 ArmorRepair,4,combat unique,,0.03,shipmastery.mastery.impl.combat.ArmorRepair
-HullThresholdDR,4,combat unique,,3,shipmastery.mastery.impl.combat.HullThresholdDR
+HullThresholdDR,4,combat unique,,2.5,shipmastery.mastery.impl.combat.HullThresholdDR
 BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.unused.BackArmorBoost
 FrontArmorBoost,2,combat unique,,0.15,shipmastery.mastery.impl.combat.FrontArmorBoost
 ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
@@ -94,7 +94,7 @@ PhasedArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.PhasedAr
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
 BDeckExtraCharges,4,combat unique,,0.5,shipmastery.mastery.impl.combat.BDeckExtraCharges
 FighterCountDR,3,combat unique doesnt_affect_modules,,0.03,shipmastery.mastery.impl.combat.FighterCountDR
-ShieldEfficiencyHardFlux,3,combat unique,,0.15,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
+ShieldEfficiencyHardFlux,3,combat unique,,0.1,shipmastery.mastery.impl.combat.ShieldEfficiencyHardFlux
 ConvertedHangarNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedHangarNoPenalty
 MinimumReplacementRate,4,combat unique,,0.2,shipmastery.mastery.impl.combat.MinimumReplacementRate
 VentSpeedFluxLevel,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentSpeedFluxLevel

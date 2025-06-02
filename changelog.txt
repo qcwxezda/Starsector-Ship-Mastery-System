@@ -1,3 +1,10 @@
+1.1.9
+----------
+- Phase-cloak-residue mastery: greatly reduced damage reduction while the effect is active.
+- Hull-threshold-DR mastery: reduced base duration to 2.5 seconds.
+- Nerfed most damage reduction masteries.
+- Nerfed many stat effects.
+
 1.1.8
 ----------
 - Exceeding a ship's OP no longer forcibly removes caps/vents, it now assesses a CR penalty (player ships only).

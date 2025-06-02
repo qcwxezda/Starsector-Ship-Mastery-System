@@ -24,7 +24,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
 
     static final float CLOAK_COOLDOWN_MULT = 4f;
     static final float CLOAK_COST_MULT = 5f;
-    static final float MAX_DAMAGE_REDUCTION = 0.75f;
+    static final float MAX_DAMAGE_REDUCTION = 0.25f;
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
