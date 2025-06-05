@@ -5,7 +5,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 
 public class GammaKCorePlugin extends BaseKCorePlugin {
     public static final int LEVEL = 3;
-    public static final float DP_MULT = 2f;
+    public static final float DP_MULT = 2.5f;
 
     @Override
     public float getBaseAIPointsMult() {
@@ -30,8 +30,7 @@ public class GammaKCorePlugin extends BaseKCorePlugin {
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
         stats.setLevel(LEVEL);
-        stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
-        stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
+        stats.setSkillLevel(Skills.COMBAT_ENDURANCE, 2f);
         stats.setSkillLevel(SHARED_KNOWLEDGE_ID, 2f);
     }
 }

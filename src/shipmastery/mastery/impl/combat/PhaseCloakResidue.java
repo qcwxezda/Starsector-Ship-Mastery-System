@@ -23,7 +23,7 @@ import java.awt.Color;
 public class PhaseCloakResidue extends BaseMasteryEffect {
 
     static final float CLOAK_COOLDOWN_MULT = 4f;
-    static final float CLOAK_COST_MULT = 5f;
+    static final float CLOAK_UPKEEP_MULT = 1.25f;
     static final float MAX_DAMAGE_REDUCTION = 0.25f;
 
     @Override
@@ -32,10 +32,11 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
         tooltip.addPara(
                 Strings.Descriptions.PhaseCloakResiduePost,
                 0f,
-                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
+                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(MAX_DAMAGE_REDUCTION),
-                Utils.asFloatOneDecimal(CLOAK_COST_MULT),
-                Utils.asFloatOneDecimal(CLOAK_COOLDOWN_MULT));
+                Utils.asFloatTwoDecimals(CLOAK_UPKEEP_MULT),
+                Utils.asFloatOneDecimal(CLOAK_COOLDOWN_MULT),
+                Utils.asPercent(0.5f));
     }
 
     @Override
@@ -47,15 +48,15 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         float mult = CLOAK_COOLDOWN_MULT;
         if (stats.getVariant().hasHullMod("ex_phase_coils")) {
-            mult *= 5f;
+            mult *= 2.5f;
         }
         stats.getPhaseCloakCooldownBonus().modifyMult(id, mult);
-        stats.getPhaseCloakActivationCostBonus().modifyMult(id, CLOAK_COST_MULT);
+        stats.getPhaseCloakUpkeepCostBonus().modifyMult(id, CLOAK_UPKEEP_MULT);
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(TimeMultUnphasingScript.class)) {
+        if (!ship.hasListenerOfClass(TimeMultUnphasingScript.class) && ship.getPhaseCloak() != null) {
             ship.addListener(new TimeMultUnphasingScript(ship, getStrength(ship), id));
         }
     }
@@ -70,6 +71,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
         final float maxTimeMult;
         final JitterEmitter emitter;
         final int particleCount;
+        final float particleLife = 1f;
         static final int particlesPerSecond = 50;
 
         TimeMultUnphasingScript(ShipAPI ship, float maxTime, String id) {
@@ -85,7 +87,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
                     ship.getSpriteAPI().getAverageColor(),
                     150f,
                     40f,
-                    0.8f,
+                    particleLife,
                     true,
                     0.2f,
                     particleCount);
@@ -98,7 +100,10 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             boolean isUnphasing = ((Ship) ship).isUnphasing();
             if (isUnphasing && !isAcceleratedUnphased) {
                 isAcceleratedUnphased = true;
-                Particles.stream(emitter, 1, particlesPerSecond, maxTime, emitter -> isAcceleratedUnphased);
+                Particles.stream(emitter, 1, particlesPerSecond, maxTime, emitter -> {
+                    emitter.particleLife = particleLife / ship.getMutableStats().getTimeMult().getModifiedValue();
+                    return isAcceleratedUnphased;
+                });
                 timeAcceleratedUnphased = 0f;
             }
 

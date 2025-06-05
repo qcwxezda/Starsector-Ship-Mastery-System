@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.BaseGenericPlugin;
@@ -110,6 +111,7 @@ public class ConcealedEntityDefenderPlugin extends BaseGenericPlugin implements 
         var memory = Global.getSector().getMemoryWithoutUpdate();
         int defeatedNum = memory.getInt(Strings.Campaign.NUM_STATIONS_DEFEATED);
         memory.set(Strings.Campaign.NUM_STATIONS_DEFEATED, defeatedNum + 1);
+        Global.getSector().getPlayerFaction().ensureAtBest("sms_curator", RepLevel.HOSTILE);
     }
 
     @Override

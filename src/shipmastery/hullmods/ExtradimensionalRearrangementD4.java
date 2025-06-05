@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class ExtradimensionalRearrangementD4 extends BaseHullMod {
 
@@ -20,10 +21,13 @@ public class ExtradimensionalRearrangementD4 extends BaseHullMod {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
         ship.addListener((DamageTakenModifier) (param, target, damage, point, shieldHit) -> {
-            if (ship.getCurrentCR() <= 0.2f) return null;
+            if (ship.getCurrentCR() <= 0.3f) return null;
             float amount = damage.getDamage();
             if (damage.isDps()) amount *= damage.getDpsDuration();
-            ship.setCurrentCR(Math.max(0f, ship.getCurrentCR() - Math.min(MAX_CR_LOSS_PER_HIT, getStrength(ship.getMutableStats())*amount/10000f)));
+            float hullSizeMult = 1f+Utils.hullSizeToInt(ship.getHullSize());
+            ship.setCurrentCR(Math.max(0f, ship.getCurrentCR() -
+                    Math.min(MAX_CR_LOSS_PER_HIT/hullSizeMult,
+                            getStrength(ship.getMutableStats())*amount/(10000f*hullSizeMult))));
             return null;
         });
     }

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.listeners.CoreAutoresolveListener;
 import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -14,6 +15,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.BattleAutoresolverPluginImpl;
 import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
@@ -43,7 +45,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener, EveryFrameScript {
+public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener, CoreAutoresolveListener, EveryFrameScript {
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
@@ -444,5 +446,18 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             addMasteriesToFleet(fleet);
         }
         lastSeenFleet = fleet;
+    }
+
+    @Override
+    public void modifyDataForFleet(BattleAutoresolverPluginImpl.FleetAutoresolveData data) {
+        var commander = data.fleet.getCommander();
+        if (commander == null) return;
+
+        data.members.forEach(memberData -> {
+            int level = getActiveMasteriesForCommander(commander, memberData.member.getHullSpec()).size();
+            float origStrength = memberData.strength;
+            memberData.strength *= Math.min(1.35f, 1f + level * 0.035f);
+            data.fightingStrength += memberData.strength - origStrength;
+        });
     }
 }

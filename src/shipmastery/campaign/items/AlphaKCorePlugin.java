@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 public class AlphaKCorePlugin extends BaseKCorePlugin {
 
     public static final int LEVEL = 7;
-    public static final float BASE_DP_MULT = 4f;
+    public static final float BASE_DP_MULT = 4.5f;
 
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {

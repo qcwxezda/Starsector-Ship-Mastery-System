@@ -53,6 +53,21 @@ public class MasteryHullmod extends BaseHullMod {
             stats.getEmpDamageTakenMult().modifyMult(id, 1f-dr);
         }
 
+        applyEffects(variant, (effect, commander, isModule) -> {
+            if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
+                effect.applyEffectsBeforeShipCreation(hullSize, stats);
+                if (effect.hasTag(MasteryTags.TRIGGERS_AUTOFIT) && variant.getStatsForOpCosts() != null) {
+                    effect.applyEffectsBeforeShipCreation(hullSize, variant.getStatsForOpCosts());
+                }
+                // For display purposes only
+                FleetMemberAPI fm = stats.getFleetMember();
+                PersonAPI captain = fm == null ? null : fm.getCaptain();
+                if (commander != null && Objects.equals(commander, captain)) {
+                    effect.onFlagshipStatusGained(commander, stats, null);
+                }
+            }
+        });
+
         // Penalize CR if the ship's OP is above the limit, for player ships only
         if (info != null && info.commander != null && info.commander.isPlayer()) {
             int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
@@ -65,18 +80,6 @@ public class MasteryHullmod extends BaseHullMod {
                 }
             }
         }
-
-        applyEffects(variant, (effect, commander, isModule) -> {
-            if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
-                effect.applyEffectsBeforeShipCreation(hullSize, stats);
-                // For display purposes only
-                FleetMemberAPI fm = stats.getFleetMember();
-                PersonAPI captain = fm == null ? null : fm.getCaptain();
-                if (commander != null && Objects.equals(commander, captain)) {
-                    effect.onFlagshipStatusGained(commander, stats, null);
-                }
-            }
-        });
     }
 
     @Override

@@ -146,7 +146,7 @@
     "HighFrequencyMotes": "Unlocks the %1$s, which upgrades the ship system's motes to deal additional energy damage that arcs through shields.",
     "HighFrequencyMotesPost": "Reduces the range to which motes can be launched by %1$s and reduces the maximum number of motes that can be simultaneously active by %2$s.",
     "PhaseCloakResidue": "The time flow bonus gained from phasing remains active after unphasing, decaying over the course of %1$s seconds.",
-    "PhaseCloakResiduePost": "Damage taken is reduced by up to %1$s depending on local time flow. Cloak activation cost is multiplied by a factor of %2$s and cloak cooldown time is multiplied by a factor of %3$s. Negates the cooldown reduction of experimental phase coils.",
+    "PhaseCloakResiduePost": "Damage taken is reduced by up to %1$s depending on local time flow. Cloak upkeep is multiplied by a factor of %2$s and cloak cooldown time is multiplied by a factor of %3$s. Reduces the cooldown reduction of experimental phase coils to %4$s.",
     "PhaseCloakResidueStatusTitle": "phase cloak residue",
     "PhaseCloakResidueStatusDesc1": "time flow at %1$s",
     "PhaseCloakResidueStatusDesc2": "damage reduced by %1$s",

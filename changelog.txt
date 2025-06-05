@@ -1,3 +1,18 @@
+1.1.10
+----------
+- Mastery levels now modify fleet member strength for autoresolve, if using the vanilla battle autoresolver.
+    - Multiplies member strength by (1 + 0.035 * mastery level), up to a maximum of x1.35.
+- Phase-cloak-residue mastery:
+    - Now only partially negates experimental coils (previously: fully negated it).
+    - Removed increased activation cost, instead multiplies upkeep by 1.25.
+- Increased Pseudocore base auto-points multiplier back to original values (2.5x, 3.5x, 4.5x).
+    - They still scale with deployment points.
+- Nerfed the effect of a rare d-mod (it now also scales with hull size).
+- Salvaging concealed stations now makes ??? hostile (they should always be hostile, but Nexerelin will make them non-hostile).
+- Reduced combat XP-per-MP ramp up from 10 to 8.
+- Fixed an issue where the elite part of a skill description would be highlighted even if not active.
+- (Hopefully) Fixed an issue where OP-affecting masteries sometimes wouldn't apply until the variant was refreshed in the refit screen.
+
 1.1.9
 ----------
 - Phase-cloak-residue mastery: greatly reduced damage reduction while the effect is active.

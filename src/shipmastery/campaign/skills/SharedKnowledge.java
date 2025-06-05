@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.util.CampaignUtils;
@@ -84,8 +83,9 @@ public class SharedKnowledge {
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
+            init(stats, skill);
             // Needed because codex doesn't like \n character
-            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, 0f, hc, hc,
                     Utils.asPercent(BASE_DAMAGE_BONUS),
                     Utils.asPercent(DAMAGE_BONUS_PER_LEVEL),
                     Utils.asPercent(MAX_DAMAGE_BONUS),
@@ -123,8 +123,9 @@ public class SharedKnowledge {
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
+            initElite(stats, skill);
             // Need custom description due to elite effect taking multiple lines
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(),
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect, 0f, hc, hc,
                     Utils.asPercent(BASE_DP_REDUCTION_AI_COMMANDER),
                     Utils.asPercent(BASE_DP_REDUCTION_HUMAN_COMMANDER),
                     Utils.asPercent(DP_REDUCTION_PER_ENHANCE));

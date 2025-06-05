@@ -20,12 +20,12 @@ public class JitterEmitter extends BaseIEmitter {
     final int totalParticleCount;
     final float peakFraction;
     final float maxRadius;
-    float alphaMult = 1f;
+    public float alphaMult = 1f;
     float radius = 0f;
-    final float hueShiftDegrees;
-    final float particleLife;
-    float baseIntensity = 0.45f;
-    float saturationShift = 0f;
+    public float hueShiftDegrees;
+    public float particleLife;
+    public float baseIntensity = 0.45f;
+    public float saturationShift = 0f;
 
     /** Peak fraction: after this fraction of particles is emitted is when the jitter offset and alpha are strongest. */
     public JitterEmitter(CombatEntityAPI target, SpriteAPI sprite, Color color, float hueShiftDegrees, float maxRadius, float particleLife, boolean renderAbove, float peakFraction, int totalParticleCount) {
