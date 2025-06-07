@@ -6,7 +6,7 @@
     {
         "major":1,
         "minor":1,
-        "patch":10,
+        "patch":11,
     },
     "directDownloadURL":"https://github.com/qcwxezda/Starsector-Ship-Mastery-System/releases/latest/download/Ship.Mastery.System.zip",
     "changelogURL":"https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/master/changelog.txt"

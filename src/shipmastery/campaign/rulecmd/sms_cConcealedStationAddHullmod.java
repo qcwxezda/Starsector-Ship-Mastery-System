@@ -11,7 +11,9 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
+import com.fs.starfarer.api.impl.hullmods.Automated;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.hullmods.ExtradimensionalRearrangement4;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -72,7 +74,10 @@ public class sms_cConcealedStationAddHullmod extends BaseCommandPlugin {
                         // Rearrangement 4 (the one that automates the ship) needs most of it done here
                         if (num == 4) {
                             picked.getVariant().addTag(Tags.AUTOMATED);
-                            picked.getVariant().addTag(Tags.TAG_AUTOMATED_NO_PENALTY);
+                            if (!Automated.isAutomatedNoPenalty(picked)) {
+                                picked.getVariant().addTag(Tags.TAG_AUTOMATED_NO_PENALTY);
+                                picked.getVariant().addTag(ExtradimensionalRearrangement4.TAG_WASNT_ALREADY_AUTOMATEDNOPENALTY);
+                            }
                             if (picked.getCaptain() != null && !picked.getCaptain().isAICore()) {
                                 picked.setCaptain(null);
                                 picked.setFlagship(false);

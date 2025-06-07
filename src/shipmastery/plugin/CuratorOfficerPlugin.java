@@ -144,7 +144,6 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             }
             case "sms_amorphous_core" -> {
                 numCommanderSkills = 5;
-                commander.getStats().setSkillLevel("best_of_the_best", 1f);
                 commander.getStats().setSkillLevel("carrier_group", 1f);
                 commander.getStats().setSkillLevel("fighter_uplink", 1f);
                 memory.set(key, 999999f);

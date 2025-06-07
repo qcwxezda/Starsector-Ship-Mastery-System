@@ -3,7 +3,10 @@ package shipmastery.campaign;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.BattleAPI;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
+import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
@@ -23,6 +26,7 @@ import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,14 +46,14 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public static final float MULT_PER_MP = 1.035f;
     /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
     public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.996f;
-    public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 60f;
+    public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 120f;
     public static final float FULL_DEPLOYMENT_TIME_MULT = 0.2f;
     private long prevXP;
     private long prevBonusXP;
     private int prevSP;
     /** Fleet member -> how long they were deployed for in the last battle. */
     private final Map<FleetMemberAPI, Float> deployedTimeInLastBattle = new HashMap<>();
-    private boolean lastXPGainWasBattle = false;
+    private long lastBattleXPGain = 0;
     private final Random random = new Random(90706904117206L);
     public static final String DIFFICULTY_PROGRESSION_KEY = "$sms_DifficultyProgression";
     // Attached to player person
@@ -79,20 +83,9 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         long curBonusXP = playerStats.getBonusXp();
         long xpGained = getXpGained(curXP, curBonusXP, curSP, playerStats);
 
-        if (xpGained > 0) {
-            if (!deployedTimeInLastBattle.isEmpty()) {
-                gainMPFromBattle(xpGained, deployedTimeInLastBattle);
-                deployedTimeInLastBattle.clear();
-            }
-            // means auto-pursuit, treat as if all combat ships were deployed
-            else if (lastXPGainWasBattle) {
-                gainMPFromAutoPursuit(xpGained);
-            }
-            // not from battle, only consider civilian ships
-            else if (xpGained >= MIN_XP_CIV) {
-                gainMPFromOther(xpGained);
-            }
-            lastXPGainWasBattle = false;
+        // Battle XP handled in reportPlayerEngagement
+        if (xpGained > MIN_XP_CIV) {
+            gainMPFromOther(xpGained);
         }
         prevXP = curXP;
         prevBonusXP = curBonusXP;
@@ -110,7 +103,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (playerStats.getLevel() >= maxLevel) {
             xpGained = curXP - prevXP
                     + (plugin.getXPForLevel(maxLevel + 1) - plugin.getXPForLevel(maxLevel))
-                    * ((curXP > prevXP ? 0 : 1) + (curSP - prevSP) / plugin.getStoryPointsPerLevel());
+                    * ((curXP > prevXP ? 0 : 1) + (curSP - prevSP - (curXP > prevXP ? 0 : 1)) / plugin.getStoryPointsPerLevel());
         }
         else {
             xpGained = curXP - prevXP;
@@ -190,7 +183,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (picker.isEmpty()) return;
         Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
         float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
-        float xpPerMult = isPursuit ? 0.5f : isCivilian ? 1f/3f : 1f/8f;
+        float xpPerMult = isPursuit ? 1f/3f : isCivilian ? 0.5f : 1f/8f;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
         float totalMPGained = 0f;
         int count = 0;
@@ -201,7 +194,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
             xpPer *= isCivilian && totalMPGained >= 12 ? 2f : MULT_PER_MP;
             if (!isCivilian && !isPursuit) {
                 xpPerMult = Math.min(1f/8f * (count+1), 1f);
-            } else if (!isPursuit) {
+            } else if (!isCivilian) {
                 xpPerMult = count == 1 ? 2f/3f : 1f;
             } else {
                 xpPerMult = 1f;
@@ -216,13 +209,18 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         if (!isPursuit) {
             if (!isCivilian) {
                 totalMPGained *= switch (uniques.size()) {
-                    case 1 -> 0.25f;
-                    case 2 -> 0.5f;
-                    case 3 -> 0.75f;
-                    case 4 -> 1f;
-                    case 5 -> 1.15f;
-                    case 6 -> 1.3f;
-                    case 7 -> 1.4f;
+                    case 0 -> 0f;
+                    case 1 -> 0.24f;
+                    case 2 -> 0.45f;
+                    case 3 -> 0.63f;
+                    case 4 -> 0.79f;
+                    case 5 -> 0.93f;
+                    case 6 -> 1.04f;
+                    case 7 -> 1.15f;
+                    case 8 -> 1.23f;
+                    case 9 -> 1.32f;
+                    case 10 -> 1.39f;
+                    case 11 -> 1.45f;
                     default -> 1.5f;
                 };
             }
@@ -301,34 +299,65 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     }
 
     @Override
+    public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
+        if (battle == null || !battle.isPlayerInvolved() || lastBattleXPGain == 0) return;
+        if (deployedTimeInLastBattle.isEmpty()) {
+            gainMPFromAutoPursuit(lastBattleXPGain);
+        } else {
+            gainMPFromBattle(lastBattleXPGain, deployedTimeInLastBattle);
+        }
+        deployedTimeInLastBattle.clear();
+        lastBattleXPGain = 0;
+        updateXPValues();
+    }
+
+    @Override
     public void reportPlayerEngagement(EngagementResultAPI result) {
         EngagementResultForFleetAPI playerResult = result.getLoserResult().isPlayer() ? result.getLoserResult() : result.getWinnerResult();
         EngagementResultForFleetAPI enemyResult = result.getLoserResult().isPlayer() ? result.getWinnerResult() : result.getLoserResult();
-
         if (enemyResult.getDestroyed().isEmpty() && enemyResult.getDisabled().isEmpty()) return;
 
         InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
         if (dialog != null) {
             InteractionDialogPlugin plugin = dialog.getPlugin();
-            if (plugin != null && plugin.getContext() instanceof FleetEncounterContext) {
-                if (((FleetEncounterContext) plugin.getContext()).computePlayerContribFraction() <= 0f) return;
-            }
-        }
+            if (plugin != null && plugin.getContext() instanceof FleetEncounterContextPlugin context) {
+                float xpGained = 0f;
+                var destroyed = new ArrayList<>(enemyResult.getDestroyed());
+                destroyed.addAll(enemyResult.getDisabled());
+                xpGained += (float) destroyed.stream().mapToDouble(fm -> 250f * fm.getFleetPointCost() * (1f + fm.getCaptain().getStats().getLevel() / 5f)).sum();
 
-        lastXPGainWasBattle = true;
-        // pursuit, no deployed data
-        if (playerResult.getAllEverDeployedCopy() == null) return;
-        Set<FleetMemberAPI> playerFleetMembers = new HashSet<>(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
-        for (DeployedFleetMemberAPI dfm : playerResult.getAllEverDeployedCopy()) {
-            FleetMemberAPI fm = dfm.getMember();
-            if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
-            Float existingTime = deployedTimeInLastBattle.get(fm);
-            float newTime = dfm.getShip().getTimeDeployedForCRReduction();
-            // In case a ship doesn't lose CR for some reason
-            newTime += (dfm.getShip().getFullTimeDeployed() - newTime) * FULL_DEPLOYMENT_TIME_MULT;
-            float total = existingTime == null ? newTime : existingTime + newTime;
-            total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
-            deployedTimeInLastBattle.put(fm, total);
+                float difficulty = (context instanceof FleetEncounterContext fContext) ? fContext.getDifficulty() : 1f;
+                xpGained *= 2f * Math.max(1f, difficulty) * context.computePlayerContribFraction();
+                // pursuit, no deployed data
+                if (playerResult.getAllEverDeployedCopy() == null) {
+                    return;
+                }
+
+                Set<FleetMemberAPI> playerFleetMembers = new HashSet<>(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
+                for (DeployedFleetMemberAPI dfm : playerResult.getAllEverDeployedCopy()) {
+                    FleetMemberAPI fm = dfm.getMember();
+                    if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
+                    Float existingTime = deployedTimeInLastBattle.get(fm);
+                    float newTime = dfm.getShip().getTimeDeployedForCRReduction();
+                    // In case a ship doesn't lose CR for some reason
+                    newTime += (dfm.getShip().getFullTimeDeployed() - newTime) * FULL_DEPLOYMENT_TIME_MULT;
+                    float total = existingTime == null ? newTime : existingTime + newTime;
+                    total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
+                    deployedTimeInLastBattle.put(fm, total);
+                }
+                lastBattleXPGain += (long) xpGained;
+            }
+            updateXPValues();
         }
+    }
+
+    private void updateXPValues() {
+        MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
+        long curXP = playerStats.getXP();
+        int curSP = playerStats.getStoryPoints();
+        long curBonusXP = playerStats.getBonusXp();
+        prevXP = curXP;
+        prevSP = curSP;
+        prevBonusXP = curBonusXP;
     }
 }

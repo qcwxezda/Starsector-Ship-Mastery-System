@@ -17,20 +17,18 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ExtradimensionalRearrangement3 extends BaseHullMod {
-
-    public static final float INITIAL_DAMAGE_TAKEN = 1.1f;
-    public static final float INITIAL_DAMAGE_DEALT = 0.9f;
-    public static final float FINAL_DAMAGE_TAKEN = 0.9f;
-    // public static final float FINAL_DAMAGE_DEALT = 1.15f;
-    public static final float[] DAMAGE_TAKEN_PER = {-0.002f, -0.00125f, -0.0008f, -0.0005f};
-    public static final float[] DAMAGE_DEALT_PER = {0.002f, 0.00125f, 0.0008f, 0.0005f};
+    public static final float INITIAL_FLUX_CAPACITY = 0.8f;
+    public static final float FINAL_FLUX_CAPACITY = 1.2f;
+    public static final float INITIAL_FLUX_GENERATION = 1.1f;
+    public static final float[] FLUX_CAPACITY_PER = {0.004f, 0.002f, 0.00133333333f, 0.001f};
+    public static final float[] FLUX_GENERATION_PER = {-0.002f, -0.001f, -0.00066666667f, -0.0005f};
     public static final int[] MAX_ACTIVATIONS;
     static {
         MAX_ACTIVATIONS = new int[] {
-                Math.round((FINAL_DAMAGE_TAKEN-INITIAL_DAMAGE_TAKEN)/DAMAGE_TAKEN_PER[0]),
-                Math.round((FINAL_DAMAGE_TAKEN-INITIAL_DAMAGE_TAKEN)/DAMAGE_TAKEN_PER[1]),
-                Math.round((FINAL_DAMAGE_TAKEN-INITIAL_DAMAGE_TAKEN)/DAMAGE_TAKEN_PER[2]),
-                Math.round((FINAL_DAMAGE_TAKEN-INITIAL_DAMAGE_TAKEN)/DAMAGE_TAKEN_PER[3])
+                Math.round((FINAL_FLUX_CAPACITY-INITIAL_FLUX_CAPACITY)/FLUX_CAPACITY_PER[0]),
+                Math.round((FINAL_FLUX_CAPACITY-INITIAL_FLUX_CAPACITY)/FLUX_CAPACITY_PER[1]),
+                Math.round((FINAL_FLUX_CAPACITY-INITIAL_FLUX_CAPACITY)/FLUX_CAPACITY_PER[2]),
+                Math.round((FINAL_FLUX_CAPACITY-INITIAL_FLUX_CAPACITY)/FLUX_CAPACITY_PER[3])
         };
     }
 
@@ -67,17 +65,24 @@ public class ExtradimensionalRearrangement3 extends BaseHullMod {
 
     private void applyStatMods(String fleetMemberId, MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String modifyId, int kills) {
         if (fleetMemberId == null) return;
-        float taken = getDamageTakenMult(kills, hullSize);
-        float dealt = getDamageDealtMult(kills, hullSize);
+        float capacityMod = getFluxCapacityMult(kills, hullSize);
+        float generationMod = getFluxGenerationMult(kills, hullSize);
 
-        stats.getHullDamageTakenMult().modifyMult(modifyId, taken);
-        stats.getArmorDamageTakenMult().modifyMult(modifyId, taken);
-        stats.getShieldDamageTakenMult().modifyMult(modifyId, taken);
-        stats.getEmpDamageTakenMult().modifyMult(modifyId, taken);
+        if (capacityMod > 1f) {
+            stats.getFluxCapacity().modifyPercent(modifyId, (capacityMod - 1f) * 100f);
+        } else {
+            stats.getFluxCapacity().modifyMult(modifyId, capacityMod);
+        }
 
-        stats.getEnergyWeaponDamageMult().modifyMult(modifyId, dealt);
-        stats.getBallisticWeaponDamageMult().modifyMult(modifyId, dealt);
-        stats.getMissileWeaponDamageMult().modifyMult(modifyId, dealt);
+        if (generationMod > 1f) {
+            stats.getMissileWeaponFluxCostMod().modifyPercent(modifyId, (generationMod - 1f) * 100f);
+            stats.getBallisticWeaponFluxCostMod().modifyPercent(modifyId, (generationMod - 1f) * 100f);
+            stats.getEnergyWeaponFluxCostMod().modifyPercent(modifyId, (generationMod - 1f) * 100f);
+        } else {
+            stats.getMissileWeaponFluxCostMod().modifyMult(modifyId, generationMod);
+            stats.getBallisticWeaponFluxCostMod().modifyMult(modifyId, generationMod);
+            stats.getEnergyWeaponFluxCostMod().modifyMult(modifyId, generationMod);
+        }
     }
 
     @Override
@@ -89,37 +94,37 @@ public class ExtradimensionalRearrangement3 extends BaseHullMod {
                 Strings.Hullmods.rearrangement3Effect1,
                 8f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(-DAMAGE_TAKEN_PER[hullSizeInt]),
-                Utils.asPercent(DAMAGE_DEALT_PER[hullSizeInt]),
+                Utils.asPercent(FLUX_CAPACITY_PER[hullSizeInt]),
+                Utils.asPercent(-FLUX_GENERATION_PER[hullSizeInt]),
                 "" + MAX_ACTIVATIONS[hullSizeInt]);
         //noinspection unchecked
         int kills = ((Map<String, Integer>) Global.getSector().getPersistentData()
                 .getOrDefault(KILL_COUNT_KEY, new HashMap<>()))
                 .getOrDefault(ship.getFleetMemberId(), 0);
 
-        float taken = getDamageTakenMult(kills, hullSize);
-        float dealt = getDamageDealtMult(kills, hullSize);
-        if (taken >= 1f) {
-            tooltip.addPara(Strings.Hullmods.rearrangement3Effect2Inc, 8f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent( taken-1f));
+        float capacityMod = getFluxCapacityMult(kills, hullSize);
+        float generationMod = getFluxGenerationMult(kills, hullSize);
+        if (capacityMod >= 1f) {
+            tooltip.addPara(Strings.Hullmods.rearrangement3Effect2Inc, 8f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent( capacityMod-1f));
         } else {
-            tooltip.addPara(Strings.Hullmods.rearrangement3Effect2Dec, 8f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent( 1f-taken));
+            tooltip.addPara(Strings.Hullmods.rearrangement3Effect2Dec, 8f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent( 1f-capacityMod));
         }
-        if (dealt >= 1f) {
-            tooltip.addPara(Strings.Hullmods.rearrangement3Effect3Inc, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent( dealt-1f));
+        if (generationMod >= 1f) {
+            tooltip.addPara(Strings.Hullmods.rearrangement3Effect3Inc, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent( generationMod-1f));
         } else {
-            tooltip.addPara(Strings.Hullmods.rearrangement3Effect3Dec, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent( 1f-dealt));
+            tooltip.addPara(Strings.Hullmods.rearrangement3Effect3Dec, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent( 1f-generationMod));
         }
         tooltip.addPara(Strings.Hullmods.rearrangement3Effect4, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, "" + kills);
     }
 
-    private float getDamageTakenMult(int kills, ShipAPI.HullSize hullSize) {
+    private float getFluxCapacityMult(int kills, ShipAPI.HullSize hullSize) {
         int hullSizeInt = Utils.hullSizeToInt(hullSize);
-        return INITIAL_DAMAGE_TAKEN + DAMAGE_TAKEN_PER[hullSizeInt] * Math.min(kills, MAX_ACTIVATIONS[hullSizeInt]);
+        return INITIAL_FLUX_CAPACITY + FLUX_CAPACITY_PER[hullSizeInt] * Math.min(kills, MAX_ACTIVATIONS[hullSizeInt]);
     }
 
-    private float getDamageDealtMult(int kills, ShipAPI.HullSize hullSize) {
+    private float getFluxGenerationMult(int kills, ShipAPI.HullSize hullSize) {
         int hullSizeInt = Utils.hullSizeToInt(hullSize);
-        return INITIAL_DAMAGE_DEALT + DAMAGE_DEALT_PER[hullSizeInt] * Math.min(kills, MAX_ACTIVATIONS[hullSizeInt]);
+        return INITIAL_FLUX_GENERATION + FLUX_GENERATION_PER[hullSizeInt] * Math.min(kills, MAX_ACTIVATIONS[hullSizeInt]);
     }
 
     @Override

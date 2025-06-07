@@ -317,6 +317,7 @@ public interface Strings {
         String rearrangement3Effect3Dec = Utils.getString("sms_hullmods", "rearrangement3Effect3Dec");
         String rearrangement3Effect4 = Utils.getString("sms_hullmods", "rearrangement3Effect4");
         String rearrangement4Effect = Utils.getString("sms_hullmods", "rearrangement4Effect");
+        String rearrangement4Effect2 = Utils.getString("sms_hullmods", "rearrangement4Effect2");
         String rearrangement5Effect = Utils.getString("sms_hullmods", "rearrangement5Effect");
         String rearrangement5Message1 = Utils.getString("sms_hullmods", "rearrangement5Message1");
         String rearrangement5Message2Singular = Utils.getString("sms_hullmods", "rearrangement5Message2Singular");

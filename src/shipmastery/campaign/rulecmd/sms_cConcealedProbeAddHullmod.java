@@ -30,7 +30,7 @@ public class sms_cConcealedProbeAddHullmod extends BaseCommandPlugin {
             var commanderId = memory.getString(Strings.Campaign.DEFENSES_COMMANDER_ID_KEY);
             if (commanderId == null) commanderId = "";
             Random random = new Random(commanderId.hashCode());
-            if ((Misc.random.nextFloat() < 0.2f && !Global.getSector().getPlayerFaction().knowsHullMod(Strings.Hullmods.ANALYSIS_PACKAGE)) || curNum == 4) {
+            if ((Misc.random.nextFloat() < 1f/3f || curNum == 1 || curNum == 4) && !Global.getSector().getPlayerFaction().knowsHullMod(Strings.Hullmods.ANALYSIS_PACKAGE)) {
                 CargoAPI cargo = Global.getFactory().createCargo(true);
                 cargo.addHullmods(Strings.Hullmods.ANALYSIS_PACKAGE, 1);
                 BaseSalvageSpecial.addExtraSalvage(dialog.getInteractionTarget(), cargo);

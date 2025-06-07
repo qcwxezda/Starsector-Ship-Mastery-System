@@ -14,10 +14,16 @@ import java.awt.Color;
 public class ExtradimensionalRearrangement4 extends BaseHullMod {
 
     public static final int[] DP_REDUCTION = {1, 2, 3, 5};
+    public static final String TAG_WASNT_ALREADY_AUTOMATEDNOPENALTY = "sms_WasntAlreadyAutomatedNoPenalty";
+    public static final float CR_INCREASE_FRAC = 1f;
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyFlat(id, -DP_REDUCTION[Utils.hullSizeToInt(hullSize)]);
+        if (stats.getVariant() != null && stats.getVariant().hasTag(TAG_WASNT_ALREADY_AUTOMATEDNOPENALTY)) {
+            stats.getCRPerDeploymentPercent().modifyPercent(id, 100f * CR_INCREASE_FRAC);
+            stats.getSuppliesPerMonth().modifyPercent(id, 100f * CR_INCREASE_FRAC);
+        }
     }
 
     @Override
@@ -30,6 +36,14 @@ public class ExtradimensionalRearrangement4 extends BaseHullMod {
                 "" + DP_REDUCTION[1],
                 "" + DP_REDUCTION[2],
                 "" + DP_REDUCTION[3]);
+        if (ship == null || (ship.getVariant() != null && ship.getVariant().hasTag(TAG_WASNT_ALREADY_AUTOMATEDNOPENALTY)) ) {
+            tooltip.addPara(
+                    Strings.Hullmods.rearrangement4Effect2,
+                    8f,
+                    Settings.NEGATIVE_HIGHLIGHT_COLOR,
+                    Utils.asPercent(CR_INCREASE_FRAC)
+            );
+        }
     }
 
     @Override

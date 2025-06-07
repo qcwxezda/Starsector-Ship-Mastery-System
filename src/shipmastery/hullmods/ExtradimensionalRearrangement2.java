@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
-import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.lwjgl.util.vector.Vector2f;
@@ -25,6 +24,12 @@ public class ExtradimensionalRearrangement2 extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, ADDITIONAL_SMODS);
+        if (stats.getVariant() == null) return;
+        int num = stats.getVariant().getSMods().size();
+        stats.getArmorDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
+        stats.getHullDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
+        stats.getShieldDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
+        stats.getEmpDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
     }
 
     @Override
@@ -32,23 +37,18 @@ public class ExtradimensionalRearrangement2 extends BaseHullMod {
         ship.addListener(new ExtradimensionalRearrangement2Script(id));
     }
 
-    private record ExtradimensionalRearrangement2Script(String id) implements DamageTakenModifier, DamageDealtModifier {
+    private record ExtradimensionalRearrangement2Script(String id) implements DamageDealtModifier {
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            return modifyDamage(target, damage, DAMAGE_DEALT_PER_SMOD);
+            return modifyDamage(target, damage);
         }
 
-        @Override
-        public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            return modifyDamage(target, damage, DAMAGE_TAKEN_PER_SMOD);
-        }
-
-        private String modifyDamage(CombatEntityAPI target, DamageAPI damage, float amountPerSMod) {
+        private String modifyDamage(CombatEntityAPI target, DamageAPI damage) {
             if (!(target instanceof ShipAPI ship)) return null;
             if (ship.getVariant() == null) return null;
             int sMods = ship.getVariant().getSMods().size();
             if (sMods == 0) return null;
-            damage.getModifier().modifyPercent(id, 100f * amountPerSMod * sMods);
+            damage.getModifier().modifyPercent(id, 100f * ExtradimensionalRearrangement2.DAMAGE_DEALT_PER_SMOD * sMods);
             return id;
         }
     }

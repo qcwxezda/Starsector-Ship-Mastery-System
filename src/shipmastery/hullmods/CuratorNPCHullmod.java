@@ -264,10 +264,11 @@ public class CuratorNPCHullmod extends BaseHullMod {
             if (!isOmegaAndNPC) return;
             if (target.isFighter()) return;
             if (target.getOriginalOwner() == ship.getOwner()) {
+                float dist = MathUtils.dist(target.getLocation(), ship.getLocation());
+                if (dist > 8000f) return;
+
                 float reduction = Utils.hullSizeToInt(target.getHullSize()) * 0.03f;
                 cooldownMult = Math.max(0f, cooldownMult - reduction);
-                float dist = MathUtils.dist(target.getLocation(), ship.getLocation());
-                if (dist > 5000f) return;
 
                 for (int i = 0; i < 5; i++) {
                     EmpArcEntityAPI.EmpArcParams params = new EmpArcEntityAPI.EmpArcParams();

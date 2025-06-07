@@ -1,3 +1,20 @@
+1.1.11
+----------
+- Analysis Package hullmod spec is now guaranteed on your second concealed probe salvaged (previously: was guaranteed on fifth).
+- MP handler now re-calculates XP gain from battles instead of reading from player stats.
+    - This should fix an *extremely rare* issue where gaining an exact multiple of 4000000 XP wouldn't award any MP.
+    - Issue still exists for non-combat MP gain, but gaining that much XP from something that isn't a battle is essentially impossible.
+- Combat MP gain now scales non-linearly up to 12 unique ship types deployed (previously: maxed out at 8).
+- Doubled required time deployed in combat to cap MP gain weight from 60 seconds to 120 seconds.
+    - Note: this doesn't affect total MP gained, it only decreases the chances for a ship that was deployed for less than 120 seconds to gain MP instead of a ship that was deployed for the full 120 seconds.
+- Reduced civilian MP gain ramp-up.
+- Changed a rare hullmod from affecting damage dealt/taken to affecting flux stats to make it less similar to another rare hullmod.
+- Increased variety of ships in a defender fleet.
+- Reduced maximum possible FP of a couple of defender fleets, removed Best of the Best from the commander of a defender fleet.
+- Added another effect (drawback) to a rare hullmod, won't apply retroactively.
+- Fixed an issue where a part of a rare hullmod's effect wasn't reflected in the refit screen.
+- Fixed an issue where a fleet wasn't being seeded properly.
+
 1.1.10
 ----------
 - Mastery levels now modify fleet member strength for autoresolve, if using the vanilla battle autoresolver.

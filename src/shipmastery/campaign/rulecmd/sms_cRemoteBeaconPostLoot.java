@@ -52,12 +52,14 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
         return true;
     }
 
+    public static String makeCommanderId() {
+        return Strings.Campaign.COMMANDER_PREFIX + "RemoteBeacon_" + Global.getSector().getSeedString();
+    }
+
     public static class InitiateDefenderFleet implements Action {
         @Override
         public void perform() {
-            String commanderId = Strings.Campaign.COMMANDER_PREFIX + Misc.genUID();
-
-            var fParams = makeFParams(commanderId);
+            var fParams = makeFParams(makeCommanderId());
             fParams.addShips = new ArrayList<>();
             fParams.addShips.add(TESSERACT_VARIANT_ID);
             fParams.doNotPrune = true; // No safeguard against pruning the tesseract!
@@ -70,7 +72,8 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     break;
                 }
             }
-            FleetFactoryV3.pruneFleet(fParams.maxNumShips, 0, fleet, fParams.combatPts, fParams.random);
+            var doctrineSize = Global.getSector().getFaction(fParams.factionId).getDoctrine().getShipSize();
+            FleetFactoryV3.pruneFleet(fParams.maxNumShips, doctrineSize, fleet, fParams.combatPts, fParams.random);
             // If tesseract was pruned, need to add it back in
             boolean hasTesseract = false;
             for (var fm : fleet.getFleetData().getMembersListCopy()) {
@@ -94,8 +97,14 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             fleet.getFleetData().sort();
             var commander = fleet.getCommander();
             if (commander != null) {
-                commander.setId(commanderId);
+                commander.setId(makeCommanderId());
             }
+
+            var script = new DefendersDefeatedListener(fleet);
+            script.regenerateFleet(false); // This changes the ship size composition for some reason???
+            Global.getSector().getListenerManager().addListener(script, false);
+            Global.getSector().addListener(script);
+            Global.getSector().addScript(script);
 
             var playerFleet = Global.getSector().getPlayerFleet();
             fleet.setLocation(playerFleet.getLocation().x, playerFleet.getLocation().y);
@@ -114,11 +123,6 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             mem.set(MemFlags.FLEET_INTERACTION_DIALOG_CONFIG_OVERRIDE_GEN, new FIDConfigGen());
 
             Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET, fleet);
-
-            var script = new DefendersDefeatedListener(fleet);
-            Global.getSector().getListenerManager().addListener(script, false);
-            Global.getSector().addListener(script);
-            Global.getSector().addScript(script);
         }
 
         public static FleetParamsV3 makeFParams(String commanderId) {
@@ -128,7 +132,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     "sms_curator",
                     2f,
                     Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE,
-                    1500f, 0f, 0f, 0f, 0f, 0f, 0f);
+                    1050f, 0f, 0f, 0f, 0f, 0f, 0f);
             fParams.withOfficers = true;
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             fParams.maxNumShips = 55;
@@ -170,7 +174,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             this.toTrack = toTrack;
         }
 
-        private void regenerateFleet() {
+        private void regenerateFleet(boolean modifySeed) {
             if (toTrack.getCommander() == null) return;
             var flagship = toTrack.getFlagship();
             if (flagship == null ||
@@ -178,17 +182,25 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                             && !TESSERACT_VARIANT_ID.equals(flagship.getVariant().getOriginalVariant()))) return;
 
             toTrack.getFleetData().clear();
-            String id = toTrack.getCommander().getId();
 
-            var params = InitiateDefenderFleet.makeFParams(id + Misc.genUID());
+            String id = makeCommanderId();
+            if (modifySeed) {
+                id += "_" + Misc.genUID();
+            }
+            var params = InitiateDefenderFleet.makeFParams(id);
             var fleet = FleetFactoryV3.createFleet(params);
 
             fleet.inflateIfNeeded();
             for (var fm : fleet.getFleetData().getMembersListCopy()) {
                 toTrack.getFleetData().addFleetMember(fm);
-                fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
+                fm.setFleetCommanderForStats(toTrack.getCommander(), toTrack.getFleetData());
             }
             toTrack.getFleetData().addFleetMember(flagship);
+            for (var fm : toTrack.getFleetData().getMembersListCopy()) {
+                // Have to wait a frame...
+                DeferredActionPlugin.performLater(() -> fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR()), 0.04f);
+            }
+
             toTrack.getFleetData().sort();
             fleet.getFleetData().clear();
         }
@@ -197,6 +209,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
         public void reportFleetDespawned(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
             // We don't despawn this fleet, but some other mod might
             if (fleet == toTrack) {
+                Global.getSector().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET);
                 DeferredActionPlugin.performLater(() -> Global.getSector().removeListener(this), 0f);
             }
         }
@@ -224,6 +237,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                 loot.addWeapons("minipulser", 2);
                 loot.sort();
                 loot.addCommodity("sms_amorphous_core", 1);
+                Global.getSector().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET);
                 DeferredActionPlugin.performLater(() -> Global.getSector().removeListener(this), 0f);
             }
         }
@@ -262,9 +276,9 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_CORE)) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_HIDDEN)) return;
             if (fleet.getContainingLocation() == toTrack.getContainingLocation()) return;
-            if (Misc.random.nextFloat() <= 0.85f) return;
+            if (Misc.random.nextFloat() <= 5f/6f) return;
 
-            regenerateFleet();
+            regenerateFleet(true);
             Vector2f loc = MathUtils.randomPointInRing(gateTo.getLocation(), 1000f, 2000f);
             removeTimer = 10f;
             toTrack.setLocation(loc.x, loc.y);
