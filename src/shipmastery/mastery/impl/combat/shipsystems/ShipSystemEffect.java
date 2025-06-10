@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -65,5 +66,14 @@ public abstract class ShipSystemEffect extends BaseMasteryEffect {
         if (spec.isCivilianNonCarrier()) return null;
         if (spec.getShipSystemId() == null || !spec.getShipSystemId().equals(getSystemSpecId())) return null;
         return 3f;
+    }
+
+    @Override
+    public float getNPCWeight(FleetMemberAPI fm) {
+        var spec = fm.getHullSpec();
+        if (spec == null
+                || spec.getShipSystemId() == null
+                || !spec.getShipSystemId().equals(getSystemSpecId())) return 0f;
+        return 1.5f;
     }
 }

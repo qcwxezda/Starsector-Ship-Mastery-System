@@ -8,6 +8,9 @@
     - Reduced effect to 2.5x base (previously: 10x).
 - Phase cloak cooldown and speed while phased stats: tier 1 -> tier 2
 
+No new version, just re-download latest:
+- (1:43 PM EST 6/10/2025): Updated NPC mastery selection to account for above changes.
+
 1.1.11
 ----------
 - Analysis Package hullmod spec is now guaranteed on your second concealed probe salvaged (previously: was guaranteed on fifth).
