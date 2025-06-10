@@ -1,13 +1,10 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import org.jetbrains.annotations.NotNull;
 import particleengine.Particles;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
@@ -23,7 +20,7 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaBurnEngineRepair).params(getSystemName(),
-                                                                                                           Utils.asFloatOneDecimal(5f * getStrengthForPlayer()));
+                                                                                                           Utils.asFloatOneDecimal(2f * getStrengthForPlayer()));
     }
 
     @Override
@@ -34,19 +31,9 @@ public class PlasmaBurnEngineRepair extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        if (!ship.hasListenerOfClass(PlasmaBurnEngineRepairScript.class)) {
-            float strength = getStrength(ship);
-            ship.addListener(new PlasmaBurnEngineRepairScript(ship, 5f * strength, strength, strength));
-        }
-    }
-
-    @Override
-    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        ship.getMutableStats().getMaxTurnRate().unmodify(id);
-        ship.getMutableStats().getTurnAcceleration().unmodify(id);
-        ship.getMutableStats().getCombatEngineRepairTimeMult().unmodify(id);
-        ship.removeListenerOfClass(PlasmaBurnEngineRepairScript.class);
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
+        float strength = getStrength(ship);
+        ship.addListener(new PlasmaBurnEngineRepairScript(ship, 2f * strength, strength, strength));
     }
 
     @Override

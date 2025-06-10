@@ -32,9 +32,7 @@ public class NovaBurstDamage extends ShipSystemEffect {
     }
     @Override
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(NovaBurstDamageScript.class)) {
-            ship.addListener(new NovaBurstDamageScript(ship, getStrength(ship)));
-        }
+        ship.addListener(new NovaBurstDamageScript(ship, getStrength(ship)));
     }
 
     @Override

@@ -49,8 +49,8 @@ NumFighterBays,fighter bay count,4,0.25,modify_flat require_integer triggers_aut
 FighterCost,the OP cost of all fighters,3,-1.7,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.FighterCost
 BomberCost,the OP cost of all bombers,3,-2.5,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BomberCost
 PhaseCloakCooldown,phase cloak cooldown time,,-0.15,,shipmastery.stats.combat.PhaseCloakCooldown
-PhaseSpeedAcceleration,top speed and acceleration when phased,,0.15,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
-PhaseCloakCost,phase cloak activation and upkeep costs,,-0.15,,shipmastery.stats.combat.PhaseCloakCost
+PhaseSpeedAcceleration,top speed and acceleration when phased,2,0.15,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
+PhaseCloakCost,phase cloak activation and upkeep costs,2,-0.15,,shipmastery.stats.combat.PhaseCloakCost
 PhaseTimeMult,local timeflow when phased,3,0.25,,shipmastery.stats.combat.PhaseTimeMult
 ZeroFluxSpeedBoost,the zero-flux speed boost,2,0.15,,shipmastery.stats.combat.ZeroFluxSpeedBoost
 AllWeaponOPCost,the OP cost of all weapons,4,-0.8,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.AllWeaponOPCost

@@ -1,11 +1,8 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import org.jetbrains.annotations.NotNull;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
@@ -28,18 +25,8 @@ public class ManeuveringJetsMobility extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        if (!ship.hasListenerOfClass(ManeuveringJetsMobilityScript.class)) {
-            ship.addListener(new ManeuveringJetsMobilityScript(ship, getStrength(ship), id));
-        }
-    }
-
-    @Override
-    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        for (ManeuveringJetsMobilityScript listener : ship.getListeners(ManeuveringJetsMobilityScript.class)) {
-            listener.onFullyDeactivate();
-        }
-        ship.removeListenerOfClass(ManeuveringJetsMobilityScript.class);
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
+        ship.addListener(new ManeuveringJetsMobilityScript(ship, getStrength(ship), id));
     }
 
     @Override

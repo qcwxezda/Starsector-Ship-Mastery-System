@@ -1,18 +1,15 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
@@ -37,15 +34,8 @@ public class OrionDeviceDamage extends ShipSystemEffect {
     }
 
     @Override
-    public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        if (!ship.hasListenerOfClass(OrionDeviceDamageScript.class)) {
-            ship.addListener(new OrionDeviceDamageScript(ship, getStrength(ship)));
-        }
-    }
-
-    @Override
-    public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
-        ship.removeListenerOfClass(OrionDeviceDamageScript.class);
+    public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
+        ship.addListener(new OrionDeviceDamageScript(ship, getStrength(ship)));
     }
 
     @Override

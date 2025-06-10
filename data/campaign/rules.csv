@@ -38,7 +38,7 @@ $global.sms_EmitterArrayAllowed = true",,,
 sms_EmitterArraySolved,OpenInteractionDialog,"$customType == sms_emitter_array score:100
 $global.sms_EmitterArraySolved",,"You approach the emitter array, but do not receive a connection request.
 
-There's nothing more to be done here.",,
+There's nothing more to be done here.",defaultLeave:Leave,
 sms_RemoteBeaconShielded,OpenInteractionDialog,"$market.id == sms_remote_beacon score:100
 $market.sms_HasShield
 ",,This planet is encased by a massive barrier. Further interaction is impossible while the shield is deployed.,,

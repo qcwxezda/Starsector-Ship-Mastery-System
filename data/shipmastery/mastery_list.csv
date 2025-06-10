@@ -121,7 +121,7 @@ RecallDeviceDestruction,4,combat unique doesnt_affect_modules prefix_flagship_on
 AAFRangeDamage,4,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.AAFRangeDamage
 ManeuveringJetsBoost,4,combat unique doesnt_affect_modules,,30,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsBoost
 ManeuveringJetsDR,4,combat unique,,0.25,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsDR
-ManeuveringJetsMobility,4,combat unique doesnt_affect_modules prefix_flagship_only,,10,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
+ManeuveringJetsMobility,4,combat unique doesnt_affect_modules,,2.5,shipmastery.mastery.impl.combat.shipsystems.ManeuveringJetsMobility
 HEFExplosion,4,combat unique prefix_flagship_only,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFExplosion
 HEFRangeRoF,4,combat unique,,0.15,shipmastery.mastery.impl.combat.shipsystems.HEFRangeRoF
 HEFMissileBoost,4,combat unique,,0.2,shipmastery.mastery.impl.combat.shipsystems.HEFMissileBoost
@@ -132,12 +132,12 @@ BurnDriveDR,4,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.Bur
 BurnDriveMissileBoost,4,combat unique doesnt_affect_modules,,0.3,shipmastery.mastery.impl.combat.shipsystems.BurnDriveMissileBoost
 BurnDriveImpulse,4,combat unique doesnt_affect_modules,,650,shipmastery.mastery.impl.combat.shipsystems.BurnDriveImpulse
 BurnDriveCooldown,4,combat unique doesnt_affect_modules,,4,shipmastery.mastery.impl.combat.shipsystems.BurnDriveCooldown
-PlasmaBurnEngineRepair,4,combat unique doesnt_affect_modules prefix_flagship_only,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
+PlasmaBurnEngineRepair,4,combat unique doesnt_affect_modules,,2,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEngineRepair
 PlasmaBurnEnergyRoF,4,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.shipsystems.PlasmaBurnEnergyRoF
 FMRFastReplacement,4,combat unique,,0.4,shipmastery.mastery.impl.combat.shipsystems.FMRFastReplacement
 FMRRegen,4,combat unique,,0.03,shipmastery.mastery.impl.combat.shipsystems.FMRRegen
 FMRNoFlux,4,combat unique,,0.3,shipmastery.mastery.impl.combat.shipsystems.FMRNoFlux
-OrionDeviceDamage,4,combat unique doesnt_affect_modules prefix_flagship_only,,1200,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
+OrionDeviceDamage,4,combat unique doesnt_affect_modules,,1200,shipmastery.mastery.impl.combat.shipsystems.OrionDeviceDamage
 NovaBurstDamage,4,combat unique doesnt_affect_modules,,1600,shipmastery.mastery.impl.combat.shipsystems.NovaBurstDamage
 FastSkimmer,4,combat unique doesnt_affect_modules,,1,shipmastery.mastery.impl.combat.shipsystems.FastSkimmer
 SkimmerDR,4,combat unique doesnt_affect_modules,,0.2,shipmastery.mastery.impl.combat.shipsystems.SkimmerDR
