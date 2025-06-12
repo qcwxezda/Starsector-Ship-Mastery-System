@@ -49,8 +49,10 @@ import shipmastery.util.VariantLookup;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -143,24 +145,29 @@ public class ModPlugin extends BaseModPlugin {
             thisFaction.getShipsWhenImporting().addAll(knownShips);
         }
 
-        //noinspection unchecked
-        List<ShipHullSpecAPI>[] mostFP = new List[4];
         for (int i = 0; i < 4; i++) {
             int finalI = i;
-            mostFP[i] = thisFaction.getKnownShips().stream()
+            List<ShipHullSpecAPI> mostFP = thisFaction.getKnownShips().stream()
                     .map(x -> Global.getSettings().getHullSpec(x))
-                    .filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI)
-                    .filter(x -> x == Utils.getRestoredHullSpec(x))
+                    .filter(x -> Utils.hullSizeToInt(x.getHullSize()) == finalI && x == Utils.getRestoredHullSpec(x))
                     .sorted((a, b) -> b.getFleetPoints()-a.getFleetPoints())
                     .toList();
+            Map<String, Integer> manufacturerCount = new HashMap<>();
             float dpLimit = 20f * (i + 1);
             int picked = 0;
             int limit = 20;
-            List<ShipHullSpecAPI> shipHullSpecAPIS = mostFP[i];
-            for (int j = 0; j < shipHullSpecAPIS.size(); j++) {
-                var spec = shipHullSpecAPIS.get(j);
-                if (j == 0 || spec.getSuppliesToRecover() <= dpLimit) {
+            for (int j = 0; j < mostFP.size(); j++) {
+                var spec = mostFP.get(j);
+                int maxPerManufacturer = 3;
+                var manufacturer = spec.getManufacturer();
+                if ("High Tech".equals(manufacturer) || "Midline".equals(manufacturer) || "Low Tech".equals(manufacturer)) {
+                    maxPerManufacturer *= 2;
+                }
+                if (j == 0 || (spec.getSuppliesToRecover() <= dpLimit && manufacturerCount.getOrDefault(manufacturer, 0) < maxPerManufacturer)) {
                     thisFaction.getPriorityShips().add(spec.getHullId());
+                    if (manufacturer != null) {
+                        manufacturerCount.compute(manufacturer, (k, v) -> v == null ? 1 : v + 1);
+                    }
                     dpLimit *= 0.965f;
                     picked++;
                     if (picked > limit) {

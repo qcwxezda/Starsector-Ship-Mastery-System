@@ -86,6 +86,7 @@ public class FlagshipTracker implements EndOfCombatListener {
         for (PersonAPI person : new HashSet<>(activationRecordMap.keySet())) {
             onFlagshipChanged(person, null);
         }
+        commanderToShipMap.clear();
     }
 
     record EffectActivationRecord(MasteryEffect effect, ShipAPI ship) {}

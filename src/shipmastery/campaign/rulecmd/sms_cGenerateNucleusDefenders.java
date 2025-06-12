@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
@@ -64,9 +63,6 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
         defenders.getFleetData().sort();
         if (defenders.getCommander() != null) {
             defenders.getCommander().setId(commanderId);
-        }
-        for (FleetMemberAPI member : defenders.getFleetData().getMembersListCopy()) {
-            member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
         }
 
         defenders.getLocation().set(entity.getLocation());

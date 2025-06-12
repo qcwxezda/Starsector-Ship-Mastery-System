@@ -15,7 +15,6 @@ import com.fs.starfarer.api.campaign.listeners.GateTransitListener;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.BattleCreationContext;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
@@ -60,41 +59,20 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
         @Override
         public void perform() {
             var fParams = makeFParams(makeCommanderId());
+            fParams.maxNumShips = 0; // Regenerated later
+            fParams.combatPts = 0; // Regenerated later
             fParams.addShips = new ArrayList<>();
             fParams.addShips.add(TESSERACT_VARIANT_ID);
             fParams.doNotPrune = true; // No safeguard against pruning the tesseract!
 
             var fleet = FleetFactoryV3.createFleet(fParams);
-            FleetMemberAPI tesseractMember = null;
-            for (var fm : fleet.getFleetData().getMembersListCopy()) {
-                if (TESSERACT_VARIANT_ID.equals(fm.getVariant().getHullVariantId()) || TESSERACT_VARIANT_ID.equals(fm.getVariant().getOriginalVariant())) {
-                    tesseractMember = fm;
-                    break;
-                }
-            }
-            var doctrineSize = Global.getSector().getFaction(fParams.factionId).getDoctrine().getShipSize();
-            FleetFactoryV3.pruneFleet(fParams.maxNumShips, doctrineSize, fleet, fParams.combatPts, fParams.random);
-            // If tesseract was pruned, need to add it back in
-            boolean hasTesseract = false;
-            for (var fm : fleet.getFleetData().getMembersListCopy()) {
-                if (TESSERACT_VARIANT_ID.equals(fm.getVariant().getHullVariantId()) || TESSERACT_VARIANT_ID.equals(fm.getVariant().getOriginalVariant())) {
-                    hasTesseract = true;
-                    break;
-                }
-            }
-            if (!hasTesseract && tesseractMember != null) {
-                fleet.getFleetData().addFleetMember(tesseractMember);
-            }
-            for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-                member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
-            }
 
             fleet.getInflater().setRemoveAfterInflating(false);
             fleet.setName(Strings.Campaign.continuum);
             fleet.removeAbility(Abilities.EMERGENCY_BURN);
             fleet.removeAbility(Abilities.SENSOR_BURST);
             fleet.removeAbility(Abilities.GO_DARK);
-            fleet.getFleetData().sort();
+
             var commander = fleet.getCommander();
             if (commander != null) {
                 commander.setId(makeCommanderId());
@@ -132,7 +110,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                     "sms_curator",
                     2f,
                     Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE,
-                    1050f, 0f, 0f, 0f, 0f, 0f, 0f);
+                    900f, 0f, 0f, 0f, 0f, 0f, 0f);
             fParams.withOfficers = true;
             fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             fParams.maxNumShips = 55;
@@ -187,8 +165,13 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (modifySeed) {
                 id += "_" + Misc.genUID();
             }
+
             var params = InitiateDefenderFleet.makeFParams(id);
+            var doctrine = Global.getSector().getFaction(params.factionId).getDoctrine();
+            var origSize = doctrine.getShipSize();
+            doctrine.setShipSize(1);
             var fleet = FleetFactoryV3.createFleet(params);
+            doctrine.setShipSize(origSize);
 
             fleet.inflateIfNeeded();
             for (var fm : fleet.getFleetData().getMembersListCopy()) {
@@ -196,11 +179,6 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                 fm.setFleetCommanderForStats(toTrack.getCommander(), toTrack.getFleetData());
             }
             toTrack.getFleetData().addFleetMember(flagship);
-            for (var fm : toTrack.getFleetData().getMembersListCopy()) {
-                // Have to wait a frame...
-                DeferredActionPlugin.performLater(() -> fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR()), 0.04f);
-            }
-
             toTrack.getFleetData().sort();
             fleet.getFleetData().clear();
         }
@@ -276,7 +254,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_CORE)) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_HIDDEN)) return;
             if (fleet.getContainingLocation() == toTrack.getContainingLocation()) return;
-            if (Misc.random.nextFloat() <= 5f/6f) return;
+            if (Misc.random.nextFloat() <= 0f/6f) return;
 
             regenerateFleet(true);
             Vector2f loc = MathUtils.randomPointInRing(gateTo.getLocation(), 1000f, 2000f);

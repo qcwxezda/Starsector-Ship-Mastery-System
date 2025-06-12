@@ -283,3 +283,8 @@ sms_NucleusSalvageNoDefenders2,sms_tNucleusSalvageNoDefender,,"$salvageLeaveText
 SalvageEntity showCost
 FireAll PopulateSalvageOptions2",,,
 sms_NucleusPostSalvage,PostSalvagePerform,$customType == sms_station_nucleus score:100,$sms_NucleusSalvaged = true,,,
+sms_SalvageWreckWithAICore,DialogOptionSelected,"$option == salPerform
+$sms_RecoverableWreckAICoreID != null score:9999999","sms_cAddAICoreFromWreckToLoot
+SalvageEntity performSalvage
+FireBest PostSalvagePerform
+",,,

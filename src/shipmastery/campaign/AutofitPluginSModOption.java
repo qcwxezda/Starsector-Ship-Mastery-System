@@ -5,6 +5,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.HullModItemManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.impl.campaign.plog.SModRecord;
@@ -73,13 +74,19 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 : addSModIfPossibleUseMP(hullmod, variant, delegate, sModLimit);
     }
 
+    private boolean canAddSMod(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
+        boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
+        if (!isBuiltIn && variant.getSMods().size() >= sModLimit) return false;
+        if (variant.hasHullMod(hullmod)) return true;
+        if (!delegate.canAddRemoveHullmodInPlayerCampaignRefit(hullmod)) return false;
+        return HullModItemManager.getInstance().isRequiredItemAvailable(hullmod, delegate.getFleetMember(), variant, delegate.getMarket());
+    }
+
     private boolean addSModIfPossibleUseSP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         MutableCharacterStatsAPI playerStats = Global.getSector().getPlayerStats();
         int playerSP = playerStats.getStoryPoints();
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
-        if (playerSP >= 1 &&
-                (variant.getSMods().size() < sModLimit || isBuiltIn) &&
-                (delegate.canAddRemoveHullmodInPlayerCampaignRefit(hullmod) || variant.hasHullMod(hullmod))) {
+        if (playerSP >= 1 && canAddSMod(hullmod, variant, delegate, sModLimit)) {
             playerStats.setStoryPoints(playerSP - 1);
             if (isBuiltIn) {
                 variant.getSModdedBuiltIns().add(hullmod);
@@ -102,8 +109,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
         if (((playerMP >= mpCost &&
                 playerCredits.get() >= creditsCost) || Global.getSettings().isDevMode()) &&
-                (variant.getSMods().size() < sModLimit || isBuiltIn) &&
-                (delegate.canAddRemoveHullmodInPlayerCampaignRefit(hullmod) || variant.hasHullMod(hullmod))) {
+                canAddSMod(hullmod, variant, delegate, sModLimit)) {
             ShipMastery.spendPlayerMasteryPoints(rootSpec, mpCost);
             playerCredits.subtract(creditsCost);
             if (isBuiltIn) {

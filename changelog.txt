@@ -1,3 +1,20 @@
+1.1.13
+----------
+- Player ship graveyards will now retain AI core captains under certain conditions:
+    - The AI core was integrated, and you didn't recover any ships.
+    - You recovered any ship (only if you don't recover any ship do non-integrated AI cores drop as cargo).
+    - The "recovered any ship" condition is a vanilla bug, and will be removed when the bug is fixed in a vanilla release.
+- Choosing to salvage instead of recover a ship in a player graveyard with an AI core will spawn the core as loot.
+    - This occurs even if the core was integrated, similar to if the ship was scuttled from your fleet.
+- (New game only, not essential) Removed remnant tags from a system so it doesn't get selected by the historian.
+- (New game only, not essential) A pair of binary stars no longer orbits each other quite so fast.
+- Diversified ??? ship composition further and added safeguards against modded ships with abnormally high FP (Moar XIV) monopolizing the composition.
+- Fixed issue where S-mod autofit option wasn't checking for required items.
+- Fixed issue where a skill and a mastery effect weren't properly applying to modules.
+- Fixed issue where flagship tracker's EndOfCombat listener wasn't properly triggering.
+- Semi-fixed an issue where concealed station defenders would start with below max CR.
+    - They are occasionally *still* below max CR, but now it's only ~1% and due to an unknown reason, previously was due to crew training threshold changing when officer skills reduced DP.
+
 1.1.12
 ----------
 - Removed knowledge constructs from techmining_first_find (they were diluting the pool).

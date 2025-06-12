@@ -15,6 +15,7 @@ import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
+import shipmastery.util.VariantLookup;
 
 // NPCs don't have enhances, so treat every NPC fleet as having 0 enhances.
 public class SharedKnowledge {
@@ -28,11 +29,13 @@ public class SharedKnowledge {
     public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.05f;
 
     public static int getMasteryLevel(PersonAPI fleetCommander, MutableShipStatsAPI stats) {
-        if (fleetCommander == null || fleetCommander.isDefault()) return 0;
+        if (fleetCommander == null || fleetCommander.isDefault() || stats.getVariant() == null) return 0;
+        var lookup = VariantLookup.getVariantInfo(stats.getVariant());
+        var hullSpec = lookup == null || lookup.root == null ? stats.getVariant().getHullSpec() : lookup.root.getHullSpec();
         if (fleetCommander.isPlayer()) {
-            return ShipMastery.getPlayerMasteryLevel(stats.getVariant().getHullSpec());
+            return ShipMastery.getPlayerMasteryLevel(hullSpec);
         } else {
-            var masteries = FleetHandler.getCachedNPCMasteries(fleetCommander, stats.getVariant().getHullSpec());
+            var masteries = FleetHandler.getCachedNPCMasteries(fleetCommander, hullSpec);
             if (masteries == null || masteries.isEmpty()) return 0;
             return masteries.lastKey();
         }

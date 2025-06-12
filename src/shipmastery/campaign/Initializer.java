@@ -22,7 +22,7 @@ public class Initializer implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
-        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
+        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID(), null);
 
         if (isFirstFrame) {
             // Since the coreUI's "screenPanel" isn't created on the first frame, trying to do anything with the UI

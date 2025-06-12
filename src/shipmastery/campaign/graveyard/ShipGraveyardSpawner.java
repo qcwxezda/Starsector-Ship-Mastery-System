@@ -10,6 +10,8 @@ import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
@@ -26,17 +28,35 @@ import shipmastery.config.Settings;
 import shipmastery.util.MathUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 public class ShipGraveyardSpawner extends BaseCampaignEventListener implements ShipRecoveryListener, EveryFrameScript {
 
     protected final Set<FleetMemberAPI> recoveredShips = new HashSet<>();
     protected boolean weaponsRecovered = false;
+    // Recovering *any* ship prevents *every* AI core on your disabled ships from dropping as cargo
+    // Possibly/probably a vanilla bug?
+    protected boolean shipsRecovered = false;
+
+    protected final Map<FleetMemberAPI, PersonAPI> origAICaptains = new HashMap<>();
+    public static final String AI_CORE_MEM_KEY = "$sms_RecoverableWreckAICoreID";
+
 
     public ShipGraveyardSpawner() {
         super(false);
+    }
+
+    @Override
+    public void reportPlayerEngagement(EngagementResultAPI result) {
+        for (FleetMemberAPI member : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+            if (member.getCaptain() != null && member.getCaptain().isAICore()) {
+                origAICaptains.put(member, member.getCaptain());
+            }
+        }
     }
 
     @Override
@@ -49,9 +69,15 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
 
         if (currentDialog != null && currentDialog.getPlugin() instanceof FleetInteractionDialogPluginImpl plugin) {
             FleetEncounterContext context = (FleetEncounterContext) plugin.getContext();
+            // Have to restore AI core captains because they get removed, but only if the player chooses not to recover any ships????
+            origAICaptains.forEach(FleetMemberAPI::setCaptain);
+
             // Pretend the player is the winning side, otherwise no ships are recoverable
             List<FleetMemberAPI> recoverable = context.getRecoverableShips(battle, battle.getPlayerCombined(), battle.getNonPlayerCombined());
             List<FleetMemberAPI> storyRecoverable = context.getStoryRecoverableShips();
+
+            // Have to restore AI core captains *AGAIN* because getRecoverableShips removes them...
+            origAICaptains.forEach(FleetMemberAPI::setCaptain);
 
             if (recoverable == null) recoverable = new ArrayList<>();
             if (storyRecoverable == null) storyRecoverable = new ArrayList<>();
@@ -76,6 +102,8 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
                 Global.getSector().getIntelManager().addIntel(new ShipGraveyardIntel(lostInfo));
             }
         }
+
+        origAICaptains.clear();
     }
 
     public SectorEntityToken addDerelict(FleetMemberAPI fm, boolean storyPointRecovery) {
@@ -99,6 +127,14 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
         params.ship.nameAlwaysKnown = true;
         params.ship.pruneWeapons = false;
         params.canHaveExtraCargo = false;
+        String aiCoreId = null;
+        if (fm.getCaptain() != null && fm.getCaptain().isAICore() && (Misc.isUnremovable(fm.getCaptain()) || !weaponsRecovered || shipsRecovered)) {
+            fm.getCaptain().getMemoryWithoutUpdate().set(Misc.KEEP_CAPTAIN_ON_SHIP_RECOVERY, true, 0f);
+            params.ship.captain = fm.getCaptain();
+            aiCoreId = fm.getCaptain().getAICoreId();
+        } else {
+            fm.setCaptain(null);
+        }
         SectorEntityToken entity =
                 BaseThemeGenerator.addSalvageEntity(Misc.random, playerFleet.getContainingLocation(), Entities.WRECK,
                                                     Global.getSector().getPlayerFaction().getId(), params);
@@ -108,6 +144,9 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
         entity.setFixedLocation(loc.x, loc.y);
         ShipRecoverySpecial.ShipRecoverySpecialData data =
                 ShipRecoverySpecial.getSpecialData(entity, null, true, false);
+        if (aiCoreId != null) {
+            entity.getMemoryWithoutUpdate().set(AI_CORE_MEM_KEY, aiCoreId);
+        }
         if (data != null) {
             data.ships = new ArrayList<>();
             data.ships.add(params.ship);
@@ -131,6 +170,7 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
     @Override
     public void advance(float amount) {
         weaponsRecovered = false;
+        shipsRecovered = false;
         recoveredShips.clear();
     }
 
@@ -142,5 +182,6 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
     @Override
     public void reportShipsRecovered(List<FleetMemberAPI> list, InteractionDialogAPI interactionDialogAPI) {
         recoveredShips.addAll(list);
+        shipsRecovered = true;
     }
 }

@@ -506,7 +506,7 @@
     "dimensionalTetherRetreatText": "Emergency retreat",
     "dimensionalTetherEliteEffect": "+%1$s flux dissipation",
     "sharedKnowledgeStandardEffect": "+%1$s damage dealt, plus an additional %2$s damage dealt per ship spec's mastery level (maximum of %3$s)\n%4$s damage taken, minus an additional %5$s damage taken per ship spec's mastery level (minimum of %6$s)\nBonuses are doubled for AI core captains",
-    "sharedKnowledgeEliteEffect": "Reduces deployment points by whichever of the following is greatest:\n  • %1$s if the fleet's commander is an AI core with this skill\n  • %2$s if the fleet's commander is a human officer with this skill\n  • %3$s per ship spec's enhance level",
+    "sharedKnowledgeEliteEffect": "Deployment points reduced by whichever of the following is greatest:\n  • %1$s if the fleet's commander is an AI core with this skill\n  • %2$s if the fleet's commander is a human officer with this skill\n  • %3$s per ship spec's enhance level",
     "cyberneticAugmentationDesc": "+%1$s ordnance points (%2$s plus an additional %3$s for every %4$s mastered* ship types, excluding civilian ship types, up to a maximum of %5$s).",
     "cyberneticAugmentationDesc2": "*The base maximum number of elite skills per officer is %1$s.",
     "cyberneticAugmentationDesc3Singular": "*Master a ship type by reaching its maximum mastery level. For the purposes of this bonus, ships that are skins of the same base hull do not count as different ship types. You have mastered %1$s non-civilian ship type.",

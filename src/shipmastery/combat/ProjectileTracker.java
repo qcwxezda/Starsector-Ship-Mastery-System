@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.combat.CombatEngine;
+import shipmastery.combat.listeners.EndOfCombatListener;
 import shipmastery.combat.listeners.ProjectileCreatedListener;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 /** Notifies when projectiles get spawned */
-public class ProjectileTracker {
+public class ProjectileTracker implements EndOfCombatListener {
     private List<DamagingProjectileAPI> projectileList;
     private final Set<DamagingProjectileAPI> seenProjectiles = new HashSet<>();
     private final IntervalUtil seenCleanupInterval = new IntervalUtil(1f, 2f);
@@ -52,5 +53,10 @@ public class ProjectileTracker {
         if (seenCleanupInterval.intervalElapsed()) {
             seenProjectiles.removeIf(entity -> !engine.isEntityInPlay(entity));
         }
+    }
+
+    @Override
+    public void onCombatEnd() {
+        seenProjectiles.clear();
     }
 }

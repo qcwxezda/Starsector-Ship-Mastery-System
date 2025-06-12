@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
@@ -154,11 +155,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 }
             }
 
-            float newMax = fm.getRepairTracker().getMaxCR();
-            float diff = newMax - maxBeforeModification;
-            if (diff > 0f) {
-                fm.getRepairTracker().setCR(Math.min(crBeforeModification + diff, fm.isStation() ? 1f : newMax));
-            }
+            DeferredActionPlugin.performLater(() -> {
+                float newMax = fm.getRepairTracker().getMaxCR();
+                float diff = newMax - maxBeforeModification;
+                if (diff > 0f) {
+                    fm.getRepairTracker().setCR(Math.min(crBeforeModification + diff, fm.isStation() ? 1f : newMax));
+                }
+            }, 0f);
 
             if (!isNoAutofit(fleet, fm)) {
                 boolean canAutofit = false;

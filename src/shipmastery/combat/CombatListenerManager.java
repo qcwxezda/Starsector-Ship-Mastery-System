@@ -61,7 +61,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
 
     @Override
     public void advance(float amount, List<InputEventAPI> events) {
-        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID());
+        StateTracker.setState(AppDriver.getInstance().getCurrentState().getID(), engine);
 
         if (engine == null || engine.isPaused()) return;
 
