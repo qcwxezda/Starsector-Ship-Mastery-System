@@ -1,3 +1,8 @@
+1.1.14
+----------
+- Removed the <???> prefix from ships.
+- Fixed an issue where auto-pursuit was giving MP to civilian instead of combat ships.
+
 1.1.13
 ----------
 - Player ship graveyards will now retain AI core captains under certain conditions:

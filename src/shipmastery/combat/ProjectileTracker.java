@@ -17,7 +17,7 @@ import java.util.Set;
 
 /** Notifies when projectiles get spawned */
 public class ProjectileTracker implements EndOfCombatListener {
-    private List<DamagingProjectileAPI> projectileList;
+    private List<DamagingProjectileAPI> projectileList = null;
     private final Set<DamagingProjectileAPI> seenProjectiles = new HashSet<>();
     private final IntervalUtil seenCleanupInterval = new IntervalUtil(1f, 2f);
 
@@ -27,6 +27,8 @@ public class ProjectileTracker implements EndOfCombatListener {
     }
 
     public void advance(CombatEngineAPI engine, float amount) {
+        if (projectileList == null) return;
+
         Map<ShipAPI, List<DamagingProjectileAPI>> newProjectiles = new HashMap<>();
 
         for (int i = projectileList.size() - 1; i >= 0; i--) {
@@ -58,5 +60,6 @@ public class ProjectileTracker implements EndOfCombatListener {
     @Override
     public void onCombatEnd() {
         seenProjectiles.clear();
+        projectileList = null;
     }
 }

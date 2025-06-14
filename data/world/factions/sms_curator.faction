@@ -11,7 +11,7 @@
 
 	"logo":"graphics/factions/sms_logo_curator.png",
 	"crest":"graphics/factions/sms_crest_curator.png",
-	"shipNamePrefix":"<???>",
+	"shipNamePrefix":"",
 
 	"color":[100,200,150,255],
 	"baseUIColor":[100,200,150,255],

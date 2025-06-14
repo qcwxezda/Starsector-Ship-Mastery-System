@@ -300,11 +300,13 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
-        if (battle == null || !battle.isPlayerInvolved() || lastBattleXPGain == 0) return;
-        if (deployedTimeInLastBattle.isEmpty()) {
-            gainMPFromAutoPursuit(lastBattleXPGain);
-        } else {
-            gainMPFromBattle(lastBattleXPGain, deployedTimeInLastBattle);
+        if (battle == null || !battle.isPlayerInvolved()) return;
+        if (lastBattleXPGain > 0) {
+            if (deployedTimeInLastBattle.isEmpty()) {
+                gainMPFromAutoPursuit(lastBattleXPGain);
+            } else {
+                gainMPFromBattle(lastBattleXPGain, deployedTimeInLastBattle);
+            }
         }
         deployedTimeInLastBattle.clear();
         lastBattleXPGain = 0;
@@ -328,6 +330,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
                 float difficulty = (context instanceof FleetEncounterContext fContext) ? fContext.getDifficulty() : 1f;
                 xpGained *= 2f * Math.max(1f, difficulty) * context.computePlayerContribFraction();
+                lastBattleXPGain += (long) xpGained;
                 // pursuit, no deployed data
                 if (playerResult.getAllEverDeployedCopy() == null) {
                     return;
@@ -345,7 +348,6 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
                     total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
                     deployedTimeInLastBattle.put(fm, total);
                 }
-                lastBattleXPGain += (long) xpGained;
             }
             updateXPValues();
         }
