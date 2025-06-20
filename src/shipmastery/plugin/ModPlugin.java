@@ -226,7 +226,6 @@ public class ModPlugin extends BaseModPlugin {
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
 
-
         try {
             EveryFrameScript initializer = (EveryFrameScript) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.Initializer"));
             Global.getSector().addTransientScript(initializer);

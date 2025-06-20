@@ -18,11 +18,13 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.plugins.LevelupPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import org.apache.log4j.Logger;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.LotsOfMP;
 import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.config.Settings;
 import shipmastery.util.MathUtils;
+import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -53,7 +55,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     private int prevSP;
     /** Fleet member -> how long they were deployed for in the last battle. */
     private final Map<FleetMemberAPI, Float> deployedTimeInLastBattle = new HashMap<>();
-    private long lastBattleXPGain = 0;
+    private long computedLastBattleXPGain = 0;
     private final Random random = new Random(90706904117206L);
     public static final String DIFFICULTY_PROGRESSION_KEY = "$sms_DifficultyProgression";
     // Attached to player person
@@ -301,15 +303,25 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
         if (battle == null || !battle.isPlayerInvolved()) return;
-        if (lastBattleXPGain > 0) {
+
+        long xpGained;
+        try {
+            var context = Global.getSector().getCampaignUI().getCurrentInteractionDialog().getPlugin().getContext();
+            xpGained = (long) (float) ReflectionUtils.fleetEncounterContextXPGained.invoke(context);
+        } catch (Throwable e) {
+            Logger.getLogger(PlayerMPHandler.class).warn("Unable to get XP gained from fleet encounter context; falling back to custom computation");
+            xpGained = computedLastBattleXPGain;
+        }
+
+        if (xpGained > 0) {
             if (deployedTimeInLastBattle.isEmpty()) {
-                gainMPFromAutoPursuit(lastBattleXPGain);
+                gainMPFromAutoPursuit(xpGained);
             } else {
-                gainMPFromBattle(lastBattleXPGain, deployedTimeInLastBattle);
+                gainMPFromBattle(xpGained, deployedTimeInLastBattle);
             }
         }
         deployedTimeInLastBattle.clear();
-        lastBattleXPGain = 0;
+        computedLastBattleXPGain = 0;
         updateXPValues();
     }
 
@@ -330,7 +342,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
 
                 float difficulty = (context instanceof FleetEncounterContext fContext) ? fContext.getDifficulty() : 1f;
                 xpGained *= 2f * Math.max(1f, difficulty) * context.computePlayerContribFraction();
-                lastBattleXPGain += (long) xpGained;
+                computedLastBattleXPGain += (long) xpGained;
                 // pursuit, no deployed data
                 if (playerResult.getAllEverDeployedCopy() == null) {
                     return;

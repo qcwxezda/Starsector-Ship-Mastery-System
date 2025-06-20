@@ -31,6 +31,7 @@ public class GammaKCorePlugin extends BaseKCorePlugin {
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
         stats.setLevel(LEVEL);
         stats.setSkillLevel(Skills.COMBAT_ENDURANCE, 2f);
+        stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
         stats.setSkillLevel(SHARED_KNOWLEDGE_ID, 2f);
     }
 }

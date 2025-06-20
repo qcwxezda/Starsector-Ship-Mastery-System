@@ -163,7 +163,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
         captain.getStats().setLevel(captain.getStats().getLevel() + 1);
         captain.getStats().setSkipRefresh(true);
-        // First, remove all existing skills *except* the unique ones, if they exists
+        // First, remove all existing skills *except* the unique ones if they exist
         IntRef numSkillsRemoved = new IntRef(0);
         var skills = ((CharacterStats) captain.getStats()).getSkills();
         skills.removeIf(skill -> {

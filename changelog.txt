@@ -1,3 +1,14 @@
+1.1.15
+----------
+- Halved the HP bonus mastery effect of dwellers (5% per level to 2.5% per level).
+    - Effective armor bonus of 10 per level unchanged.
+- Halved the DP reduction mastery effect of threat (5% per level to 2.5% per level).
+- Modified/clarified a mastery description.
+- Lowered the drop rate of fractured gamma cores.
+- MP gain handler will now attempt to read the "xpGained" field of the FleetEncounterContextPlugin in order to determine the amount of XP that was gained for a battle.
+    - If this fails, it will then fall back to the custom computed XP gain.
+- Fixed an issue where gamma Pseudocores were missing a skill.
+
 1.1.14
 ----------
 - Removed the <???> prefix from ships.

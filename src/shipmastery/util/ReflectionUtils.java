@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
@@ -32,23 +33,31 @@ import java.lang.reflect.Method;
 public abstract class ReflectionUtils {
 
     private final static MethodHandles.Lookup lookup = MethodHandles.lookup();
+    public static MethodHandle fleetEncounterContextXPGained;
     // MethodHandles for classes that must be loaded by the script classloader, e.g. due to being loaded from rules.csv
     public static MethodHandle uiPanelGetParent;
     public static MethodHandle uiPanelGetChildrenNonCopy;
     public static MethodHandle createSkillTooltip;
+    private static final Class<?> thisClassWithReflectionClassloader;
 
     static {
         try {
-            Class<?> cls = ModPlugin.classLoader.loadClass("shipmastery.util.ReflectionUtils");
+            thisClassWithReflectionClassloader = ModPlugin.classLoader.loadClass("shipmastery.util.ReflectionUtils");
 
             // Have to make sure the init method is called from the class with the reflection-enabled classloader
-            uiPanelGetParent = (MethodHandle) lookup.findStatic(cls, "getUIPanelGetParent", MethodType.methodType(MethodHandle.class)).invoke();
-            uiPanelGetChildrenNonCopy = (MethodHandle) lookup.findStatic(cls, "getUIPanelChildrenNonCopy", MethodType.methodType(MethodHandle.class)).invoke();
-            createSkillTooltip = (MethodHandle) lookup.findStatic(cls, "getCreateSkillTooltip", MethodType.methodType(MethodHandle.class)).invoke();
+            uiPanelGetParent = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelGetParent", MethodType.methodType(MethodHandle.class)).invoke();
+            uiPanelGetChildrenNonCopy = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelChildrenNonCopy", MethodType.methodType(MethodHandle.class)).invoke();
+            createSkillTooltip = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getCreateSkillTooltip", MethodType.methodType(MethodHandle.class)).invoke();
+            fleetEncounterContextXPGained = lookup.findStatic(thisClassWithReflectionClassloader, "getFleetEncounterContextXPGained", MethodType.methodType(long.class, FleetEncounterContext.class));
 
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static long getFleetEncounterContextXPGained(FleetEncounterContext context) {
+        return (long) (float) getField(context, "xpGained");
     }
 
     @SuppressWarnings("unused")
