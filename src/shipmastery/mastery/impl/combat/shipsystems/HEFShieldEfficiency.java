@@ -39,7 +39,9 @@ public class HEFShieldEfficiency extends ShipSystemEffect {
             this.ship = ship;
             this.strength = strength;
             this.id = id;
-            originalColor = ship.getShield().getInnerColor();
+            originalColor = (ship.getShield() != null) // may be null on phase ships, station modules, modded ships, etc.
+                    ? ship.getShield().getInnerColor()
+                    : Color.WHITE;
         }
 
         @Override
