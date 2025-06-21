@@ -3,7 +3,7 @@
 - Made the default color for mastery stuff a little brighter.
 - Building in hullmods no longer costs MP.
 - Reactive-fortress-shield: Increased range.
-- HEF-shield-efficiency: Fixed crash issue with shieldless submodules.
+- HEF-shield-efficiency: Fixed crash issue with shieldless submodules/shield shunt.
 
 1.1.15
 ----------
