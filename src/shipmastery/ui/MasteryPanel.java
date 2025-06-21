@@ -22,6 +22,7 @@ import com.fs.starfarer.campaign.ui.UITable;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.FleetPanelHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
@@ -458,6 +459,14 @@ public class MasteryPanel {
         new ShipDisplay(restoredHullSpec, shipDisplaySize).create(shipDisplay);
         masteryPanel.addUIElement(shipDisplay).inTL(50f, 90f);
 
+        var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(shipDisplay.getPosition());
+        progressBarPlugin.heightOverride = shipDisplaySize - 100f;
+        progressBarPlugin.extraXOffset = 2f;
+        var data = progressBarPlugin.updateFromSpec(root.getHullSpec());
+        CustomPanelAPI progressBar = Global.getSettings().createCustom(shipDisplaySize, shipDisplaySize + 25f, progressBarPlugin);
+        progressBarPlugin.makeOutline(progressBar, data, false);
+        masteryPanel.addComponent(progressBar).inTL(50f, 90f);
+
         upgradeMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
         new UpgradeMasteryDisplay(this, restoredHullSpec).create(upgradeMasteryDisplay);
         masteryPanel.addUIElement(upgradeMasteryDisplay).belowMid(shipDisplay, 30f);
@@ -550,15 +559,7 @@ public class MasteryPanel {
         masteryButtonsPanel.addUIElement(levelButtonsTTM).inTMid(0f);
         masteryPanel.addComponent(masteryButtonsPanel).inTR(54f-buttonPad/2f,containerH + 25f + buttonH);
 
-        int maxLevel = ShipMastery.getPlayerMasteryLevel(root.getHullSpec());
-        Set<Integer> assignedLevels = ShipMastery.getPlayerActiveMasteriesCopy(root.getHullSpec()).keySet();
-        int unassignedLevels = 0;
-        for (int i = 1; i <= maxLevel; i++) {
-            if (!assignedLevels.contains(i)) {
-                unassignedLevels++;
-            }
-        }
-
+        int unassignedLevels = MasteryUtils.getPlayerUnassignedCount(root.getHullSpec());
         if (unassignedLevels > 0) {
             TooltipMakerAPI unassignedWarning = masteryPanel.createUIElement(300f, 20f, false);
             String warningText = unassignedLevels == 1 ? Strings.MasteryPanel.unassignedWarningTextSingular : Strings.MasteryPanel.unassignedWarningTextPlural;

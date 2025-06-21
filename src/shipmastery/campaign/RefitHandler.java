@@ -255,25 +255,28 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
             Map<ButtonAPI, FleetMember> buttonToMemberMap = (Map<ButtonAPI, FleetMember>) ReflectionUtils.invokeMethodNoCatch(
                     currentTab, "getButtonToMember");
             if (buttonToMemberMap != null && !buttonToMemberMap.isEmpty()) {
-                UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(
+                UIPanelAPI scroller = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(
                         ReflectionUtils.invokeMethodNoCatch(currentTab, "getFleetList"),
                         "getScroller");
+                UIPanelAPI container =  (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(scroller, "getContentContainer");
 
-                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(
-                        ReflectionUtils.invokeMethod(parent, "getContentContainer"),
-                        "getChildrenNonCopy");
+                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(container, "getChildrenNonCopy");
                 sortedButtonList.removeIf(child -> child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof FleetPanelHandler.FleetPanelItemUIPlugin);
 
                 buttonToMemberMap.forEach((button, member) -> {
                     if (member.getShipName() == null) return;
                     var pos = button.getPosition();
+                    var w = pos.getWidth();
+                    var h = pos.getHeight();
                     var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(pos);
+                    plugin.heightOverride = 40f;
+                    plugin.numBars = 20;
                     plugin.extraYOffset = -10f;
                     plugin.extraXOffset = -3f;
-                    plugin.showSmallText = true;
-                    plugin.updateFromSpec(member.getHullSpec());
-                    CustomPanelAPI custom = Global.getSettings().createCustom(pos.getWidth(), pos.getHeight(), plugin);
-                    parent.addComponent(custom).inMid();
+                    var data = plugin.updateFromSpec(member.getHullSpec());
+                    CustomPanelAPI custom = Global.getSettings().createCustom(w, h, plugin);
+                    plugin.makeOutline(custom, data, true);
+                    scroller.addComponent(custom).setYAlignOffset(pos.getY() - container.getPosition().getY());
                 });
 
 //                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");

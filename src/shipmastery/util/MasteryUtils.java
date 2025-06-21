@@ -195,6 +195,18 @@ public abstract class MasteryUtils {
         applyMasteryEffects(spec, levelsToApply, false, action);
     }
 
+    public static int getPlayerUnassignedCount(ShipHullSpecAPI spec) {
+        int maxLevel = ShipMastery.getPlayerMasteryLevel(spec);
+        Set<Integer> assignedLevels = ShipMastery.getPlayerActiveMasteriesCopy(spec).keySet();
+        int unassignedLevels = 0;
+        for (int i = 1; i <= maxLevel; i++) {
+            if (!assignedLevels.contains(i)) {
+                unassignedLevels++;
+            }
+        }
+        return unassignedLevels;
+    }
+
     public interface MasteryAction {
         void perform(MasteryEffect effect);
     }
