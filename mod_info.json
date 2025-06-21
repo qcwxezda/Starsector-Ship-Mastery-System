@@ -5,7 +5,8 @@
     "version": {"major":1, "minor":1, "patch":15},
     "dependencies":[
         {"id":"particleengine", "name":"Particle Engine"},
-        {"id": "MagicLib", "name": "MagicLib"}
+        {"id": "MagicLib", "name": "MagicLib"},
+        {"id": "lw_lazylib", "name": "LazyLib"}
     ],
     "description": "Gain mastery in ship hulls to unlock S-mod slots and additional bonuses.",
     "gameVersion": "0.98a-RC8",

@@ -33,8 +33,8 @@ public abstract class MasteryUtils {
     public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
         //noinspection unchecked
         Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
-        if (rerollMap == null) return 25;
-        return 25 + Settings.ADDITIONAL_MP_PER_REROLL*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
+        if (rerollMap == null) return 250;
+        return 250 + Settings.ADDITIONAL_MP_PER_REROLL*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
     }
 
     public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
@@ -49,16 +49,16 @@ public abstract class MasteryUtils {
         int count = getEnhanceCount(spec);
         if (count >= MAX_ENHANCES) return Integer.MAX_VALUE;
         return switch (count) {
-            case 0 -> 25;
-            case 1 -> 27;
-            case 2 -> 30;
-            case 3 -> 34;
-            case 4 -> 38;
-            case 5 -> 42;
-            case 6 -> 47;
-            case 7 -> 52;
-            case 8 -> 58;
-            case 9 -> 99;
+            case 0 -> 500;
+            case 1 -> 700;
+            case 2 -> 1000;
+            case 3 -> 1400;
+            case 4 -> 2000;
+            case 5 -> 2750;
+            case 6 -> 4000;
+            case 7 -> 5500;
+            case 8 -> 7500;
+            case 9 -> 10000;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -82,16 +82,16 @@ public abstract class MasteryUtils {
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
         return switch (level) {
-            case 0 -> 3;
-            case 1 -> 4;
-            case 2 -> 6;
-            case 3 -> 8;
-            case 4 -> 10;
-            case 5 -> 13;
-            case 6 -> 16;
-            case 7 -> 20;
-            case 8 -> 25;
-            default -> 25 + (level-8)*4;
+            case 0 -> 100;
+            case 1 -> 120;
+            case 2 -> 150;
+            case 3 -> 190;
+            case 4 -> 240;
+            case 5 -> 300;
+            case 6 -> 370;
+            case 7 -> 450;
+            case 8 -> 540;
+            default -> 540 + (level-8)*100;
         };
     }
 

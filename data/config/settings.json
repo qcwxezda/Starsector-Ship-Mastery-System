@@ -11,5 +11,11 @@
   "plugins": {
     "sms_CombatListenerManager": "shipmastery.combat.CombatListenerManager",
     "sms_CombatDeferredActionPlugin": "shipmastery.deferred.CombatDeferredActionPlugin"
+  },
+
+  "graphics": {
+    "ui": {
+      "sms_mastery_bar": "graphics/hud/bar_white.png"
+    }
   }
 }

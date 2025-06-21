@@ -30,9 +30,9 @@ sms_RandomMasterySeed,Mastery Generation Seed (requires new game),String,,,"Seed
 ,,,,,,,,
 sms_HeaderUI,Interface,Header,Interface,,,,,Mastery
 sms_DoubleClickInterval,Double-Click Interval,Double,0.75,,"For options that require a double-click to confirm, sets the time window for a subsequent click to register as a double-click.",0.1,5,Mastery
-sms_RefitScreenDisplay,Refit Screen Display,Boolean,true,,"If enabled, displays current mastery points and level next to each ship while in the refit screen.",,,Mastery
+sms_RefitScreenDisplay,Fleet/Refit Screen Display,Boolean,true,,"If enabled, displays mastery level info next to each ship while in the fleet and refit screens.",,,Mastery
 sms_EnableCopySeedButton,Copy Seed Button,Boolean,false,,"If enabled, the mastery panel will include a button to copy the current save's mastery generation seed, for debugging purposes.",,,Mastery
-sms_MasteryColor,Mastery Color,Color,#60c0ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,Mastery
+sms_MasteryColor,Mastery Color,Color,#60e1ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,Mastery
 sms_PositiveHighlightColor,Positive Highlight Color,Color,#ffd200,,Sets the highlight color for general highlighted text and positive effects in the mastery selection panel.,,,Mastery
 sms_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the highlight color for negative effects in the mastery selection panel.,,,Mastery
 ,,,,,,,,

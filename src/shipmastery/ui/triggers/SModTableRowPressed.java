@@ -7,7 +7,6 @@ import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
@@ -97,7 +96,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                         ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
                         record.getSMods().add(rowData.hullModSpecId);
                         record.setSPSpent(masteryPanel.isUsingSP() ? 1 : 0);
-                        record.setMPSpent(rowData.mpCost);
+                        record.setMPSpent(0);
                         record.setBonusXPFractionGained(bonusXPFraction);
                         record.setCreditsSpent(rowData.creditsCost);
                         PlaythroughLog.getInstance().getSModsInstalled().add(record);
@@ -128,7 +127,6 @@ public class SModTableRowPressed extends TriggerableProxy {
                         variant.addPermaMod(Strings.Hullmods.ENGINEERING_OVERRIDE, false);
                     }
 
-                    ShipMastery.spendPlayerMasteryPoints(rootVariant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true, true, true, false);
                 }

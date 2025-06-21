@@ -100,6 +100,7 @@ public interface Strings {
         String sModAutofitName = Utils.getString("sms_refitScreen", "sModAutofitName");
         String sModAutofitDesc = Utils.getString("sms_refitScreen", "sModAutofitDesc");
         String sModAutofitSPText = Utils.getString("sms_refitScreen", "sModAutofitSPText");
+        String mpToNextLevel = Utils.getString("sms_refitScreen", "mpToNextLevel");
     }
 
     interface RecentBattles {

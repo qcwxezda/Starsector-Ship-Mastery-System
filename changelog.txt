@@ -1,3 +1,9 @@
+1.2.0
+----------
+- Made the default color for mastery stuff a little brighter.
+- Building in hullmods no longer costs MP.
+- Reactive-fortress-shield: Increased range.
+
 1.1.15
 ----------
 - Halved the HP bonus mastery effect of dwellers (5% per level to 2.5% per level).

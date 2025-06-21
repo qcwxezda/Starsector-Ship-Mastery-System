@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
+import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
@@ -87,12 +88,8 @@ public abstract class ReflectionUtils {
         return lookup.unreflect(temp.getClass().getMethod("getChildrenNonCopy"));
     }
 
-    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
-        return makeButton(text, handler, base, bg, Alignment.MID, CutStyle.ALL, width, height, -1);
-    }
-
-    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
-        CustomPanelAPI container = Global.getSettings().createCustom(width, height, null);
+    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, CustomUIPanelPlugin plugin, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
+        CustomPanelAPI container = Global.getSettings().createCustom(width, height, plugin);
         TooltipMakerAPI ttm = container.createUIElement(width, height, false);
         ttm.setButtonFontOrbitron20();
         ButtonAPI button = ttm.addButton(text, null, base, bg, align, style, width, height, 0f);

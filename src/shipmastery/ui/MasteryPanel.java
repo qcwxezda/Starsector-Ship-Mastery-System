@@ -57,20 +57,19 @@ public class MasteryPanel {
     UIPanelAPI rootPanel;
     static final String tableFont = Fonts.INSIGNIA_LARGE;
     static final String checkboxFont = Fonts.ORBITRON_24AABOLD;
-    public final static Float[] columnWidths = new Float[]{50f, 400f, 175f, 100f, 100f, 200f, 125f};
+    public final static Float[] columnWidths = new Float[]{50f, 425f, 200f, 125f, 225f, 125f};
     public final static String[] columnNames =
             new String[]{
                     Strings.MasteryPanel.iconHeader,
                     Strings.MasteryPanel.hullmodHeader,
                     Strings.MasteryPanel.designTypeHeader,
                     Strings.MasteryPanel.ordnancePointsHeader,
-                    Strings.MasteryPanel.masteryPointsHeader,
                     Strings.MasteryPanel.creditsHeader,
                     Strings.MasteryPanel.modularHeader};
     public static final float tableEntryHeight = 38f;
 
 
-    String currentColumnName = columnNames[6];
+    String currentColumnName = columnNames[5];
     Comparator<HullModSpecAPI> comparator = makeComparator(currentColumnName);
     UIPanelAPI sModPanel, masteryPanel;
     ButtonAPI sModButton, masteryButton;
@@ -584,23 +583,19 @@ public class MasteryPanel {
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
         String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
-        int mpCost = SModUtils.getMPCost(spec, module, usingSP);
-        String mpCostStr = "" + mpCost;
         int creditsCost = SModUtils.getCreditsCost(spec, module, usingSP);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
-        Color masteryColor = Settings.MASTERY_COLOR;
         Color creditsColor = Misc.getHighlightColor();
-        String cantBuildInReason = getCantBuildInReason(spec, modular, mpCost, creditsCost);
+        String cantBuildInReason = getCantBuildInReason(spec, modular, creditsCost);
 
         if (cantBuildInReason != null) {
-            nameColor = masteryColor = creditsColor = Misc.getGrayColor();
+            nameColor = creditsColor = Misc.getGrayColor();
         }
 
         boolean isExtraLogistics = cantBuildInReason == null && modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
         tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, isExtraLogistics ? Misc.getStoryBrightColor() : nameColor),
-                                Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost,
-                                Alignment.MID, Settings.MASTERY_COLOR, label(mpCostStr, masteryColor), Alignment.MID,
+                                Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost, Alignment.MID,
                                 Misc.getHighlightColor(), label(creditsCostStr, creditsColor), Alignment.MID, nameColor,
                                 label(modularString, nameColor));
 
@@ -640,7 +635,7 @@ public class MasteryPanel {
             }
         }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
 
-        TableRowData rowData = new TableRowData(spec.getId(), mpCost, creditsCost, cantBuildInReason, modular);
+        TableRowData rowData = new TableRowData(spec.getId(), creditsCost, cantBuildInReason, modular);
         List<?> rows = (List<?>) ReflectionUtils.invokeMethod(table, "getRows");
         Object lastRow = rows.get(rows.size() - 1);
         ReflectionUtils.invokeMethodExtWithClasses(
@@ -650,7 +645,7 @@ public class MasteryPanel {
     /**
      * Gives reason the mod can't be built in; returns null if hullmod can be built in
      */
-    @Nullable String getCantBuildInReason(HullModSpecAPI spec, boolean modular, int mpCost, int creditsCost) {
+    @Nullable String getCantBuildInReason(HullModSpecAPI spec, boolean modular, int creditsCost) {
         if (spec.hasTag(Tags.HULLMOD_NO_BUILD_IN) && !TransientSettings.IGNORE_NO_BUILD_IN_HULLMOD_IDS.contains(spec.getId())) {
             return spec.getDisplayName() + Strings.MasteryPanel.cantBuildIn;
         }
@@ -663,19 +658,13 @@ public class MasteryPanel {
         }
 
         int credits = (int) Utils.getPlayerCredits().get();
-        int mp = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
         int sp = Global.getSector().getPlayerStats().getStoryPoints();
 
         String notEnoughCredits = Strings.MasteryPanel.notEnoughCredits;
-        String notEnoughMasteryPoints = Strings.MasteryPanel.notEnoughMasteryPoints;
         String notEnoughStoryPoints = Strings.MasteryPanel.notEnoughStoryPoints;
 
         StringBuilder sb = new StringBuilder();
         if (sp < 1 && usingSP) sb.append(notEnoughStoryPoints);
-        if (mpCost > mp) {
-            if (!sb.isEmpty()) sb.append("; ");
-            sb.append(notEnoughMasteryPoints);
-        }
         if (creditsCost > credits) {
             if (!sb.isEmpty()) sb.append("; ");
             sb.append(notEnoughCredits);
@@ -687,15 +676,13 @@ public class MasteryPanel {
 
     public static class TableRowData {
         public final String hullModSpecId;
-        public final int mpCost;
         public final int creditsCost;
         public final String cantBuildInReason;
         public final boolean isModular;
 
         // Can be built in <==> cantBuildInReason == null
-        public TableRowData(String id, int mp, int credits, @Nullable String cantBuildInReason, boolean isModular) {
+        public TableRowData(String id, int credits, @Nullable String cantBuildInReason, boolean isModular) {
             hullModSpecId = id;
-            mpCost = mp;
             creditsCost = credits;
             this.cantBuildInReason = cantBuildInReason;
             this.isModular = isModular;
@@ -721,14 +708,10 @@ public class MasteryPanel {
         }
 
         if (columnNames[4].equals(columnName)) {
-            return SModUtils.getMPCost(spec, module);
-        }
-
-        if (columnNames[5].equals(columnName)) {
             return SModUtils.getCreditsCost(spec, module);
         }
 
-        if (columnNames[6].equals(columnName)) {
+        if (columnNames[5].equals(columnName)) {
             return !SModUtils.isHullmodBuiltIn(spec, module.getVariant());
         }
 

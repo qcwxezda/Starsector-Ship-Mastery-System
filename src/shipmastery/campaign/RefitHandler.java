@@ -1,20 +1,20 @@
 package shipmastery.campaign;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CoreInteractionListener;
 import com.fs.starfarer.api.campaign.CoreUITabId;
+import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
-import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.CutStyle;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
@@ -22,6 +22,7 @@ import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
@@ -44,14 +45,14 @@ import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
 
-public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshListener {
+public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListener {
     boolean insideRefitPanel = false;
     static final String MASTERY_BUTTON_TAG = "sms_mastery_button_tag";
     static final Logger logger = Logger.getLogger(RefitHandler.class);
     public static final String CURRENT_REFIT_SHIP_KEY = "$sms_CurrentRefitShip";
 
     // Keep track of added panels to remove them in later inject calls
-    WeakReference<UIPanelAPI> mpPanelRef = new WeakReference<>(null), masteryButtonPanelRef = new WeakReference<>(null);
+    WeakReference<UIPanelAPI> masteryButtonPanelRef = new WeakReference<>(null);
 
     // Keep track of the current ship's hull spec and active mastery set in the refit panel
     // Use this info to determine when to call applyEffectsOnBeginRefit and unapplyEffectsOnBeginRefit
@@ -191,6 +192,38 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         }
     }
 
+    public static class ButtonFlasherPlugin implements CustomUIPanelPlugin {
+        private ButtonAPI button;
+        private final float flashTime = 0.6f;
+        private final IntervalUtil flashInterval = new IntervalUtil(flashTime, flashTime);
+
+        @Override
+        public void positionChanged(PositionAPI position) {
+            flashInterval.forceIntervalElapsed();
+        }
+
+        @Override
+        public void renderBelow(float alphaMult) {}
+
+        @Override
+        public void render(float alphaMult) {}
+
+        @Override
+        public void advance(float amount) {
+            if (button == null) return;
+            flashInterval.advance(amount);
+            if (flashInterval.intervalElapsed()) {
+                button.flash(false, flashTime/2f, flashTime/2f);
+            }
+        }
+
+        @Override
+        public void processInput(List<InputEventAPI> events) {}
+
+        @Override
+        public void buttonPressed(Object buttonId) {}
+    }
+
     void updateMasteryButton(UIPanelAPI coreUI, boolean shouldHide) {
         UIPanelAPI modsPanel = getModsPanel(coreUI);
 
@@ -202,11 +235,12 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
 
         ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
         Pair<ButtonAPI, CustomPanelAPI> masteryButtonPair = ReflectionUtils.makeButton(
-                Strings.RefitScreen.masteryButton, new MasteryButtonPressed(this),
+                Strings.RefitScreen.masteryButton, new ButtonFlasherPlugin(), new MasteryButtonPressed(this),
                 Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM,
                 permButton.getPosition().getWidth(), permButton.getPosition().getHeight(), Keyboard.KEY_Q);
         ButtonAPI masteryButton = masteryButtonPair.one;
         masteryButton.setCustomData(MASTERY_BUTTON_TAG);
+        ((ButtonFlasherPlugin) (masteryButtonPair.two.getPlugin())).button =  masteryButton;
         UIPanelAPI masteryButtonPanel = masteryButtonPair.two;
 
         modsPanel.addComponent(masteryButtonPanel).belowMid(permButton, -25f).setXAlignOffset(-5f);
@@ -221,68 +255,77 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             Map<ButtonAPI, FleetMember> buttonToMemberMap = (Map<ButtonAPI, FleetMember>) ReflectionUtils.invokeMethodNoCatch(
                     currentTab, "getButtonToMember");
             if (buttonToMemberMap != null && !buttonToMemberMap.isEmpty()) {
-                // Find a random button to get the sorted button list
-                // However, if that button is for selecting a module, it's a different type of button
-                // So, skip those with fleet member name == null
-                Map.Entry<ButtonAPI, FleetMember> randomEntry = null;
-                for (Map.Entry<ButtonAPI, FleetMember> entry : buttonToMemberMap.entrySet()) {
-                    randomEntry = entry;
-                    if (randomEntry.getValue() != null && randomEntry.getValue().getShipName() != null) {
-                        break;
-                    }
-                }
-                ButtonAPI randomButton = randomEntry.getKey();
-                UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(randomButton, "getParent");
-                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");
-                // Delete MP panels we may have previously added
-                sortedButtonList.removeIf(child -> child == mpPanelRef.get());
-                float w = parent.getPosition().getWidth(), h = parent.getPosition().getHeight();
-                CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
+                UIPanelAPI parent = (UIPanelAPI) ReflectionUtils.invokeMethodNoCatch(
+                        ReflectionUtils.invokeMethodNoCatch(currentTab, "getFleetList"),
+                        "getScroller");
 
-                TooltipMakerAPI tooltipMaker = custom.createUIElement(w, h, false);
-                tooltipMaker.setParaFontColor(Settings.MASTERY_COLOR);
-                for (int i = 0; i < sortedButtonList.size(); i++) {
-                    // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
-                    if (!(sortedButtonList.get(i) instanceof ButtonAPI button)) continue;
-                    float h2 = tooltipMaker.getHeightSoFar();
-                    //noinspection SuspiciousMethodCalls
-                    FleetMemberAPI fm = buttonToMemberMap.get(sortedButtonList.get(i));
-                    if (fm != null) {
-                        ShipHullSpecAPI spec = fm.getHullSpec();
-                        int currentMastery = ShipMastery.getPlayerMasteryLevel(spec);
-                        int maxMastery = ShipMastery.getMaxMasteryLevel(spec);
-                        boolean padded = false;
-                        if (currentMastery < maxMastery) {
-                            boolean canLevelUp = ShipMastery.getPlayerMasteryPoints(spec) >= MasteryUtils.getUpgradeCost(spec);
-                            String canLevelUpStr = "+";
-                            tooltipMaker.addPara(
-                                    Strings.RefitScreen.masteryLabel + String.format("%s/%s", currentMastery, maxMastery) + " " + (canLevelUp ? canLevelUpStr : ""),
-                                    10f,
-                                    Settings.POSITIVE_HIGHLIGHT_COLOR,
-                                    canLevelUpStr).setAlignment(Alignment.LMID);
-                            padded = true;
-                        }
-                        int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
-                        if (mp > 0) {
-                            tooltipMaker.addPara(
-                                    mp + " MP",
-                                    padded ? 0f : 10f).setAlignment(Alignment.LMID);
-                            padded = true;
-                        }
-                        int enhanceCount = MasteryUtils.getEnhanceCount(spec);
-                        if (enhanceCount > 0) {
-                            String enhanceStr = "+" + enhanceCount;
-                            tooltipMaker.addPara(enhanceStr, padded ? 0f : 10f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.LMID);
-                        }
-                    }
-                    float hDiff = tooltipMaker.getHeightSoFar() - h2;
-                    if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI nextButton) {
-                        tooltipMaker.addSpacer(button.getPosition().getY() - nextButton.getPosition().getY() - hDiff);
-                    }
-                }
-                custom.addUIElement(tooltipMaker);
-                parent.addComponent(custom).inBL(2f, -6f);
-                mpPanelRef = new WeakReference<>(custom);
+                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(
+                        ReflectionUtils.invokeMethod(parent, "getContentContainer"),
+                        "getChildrenNonCopy");
+                sortedButtonList.removeIf(child -> child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof FleetPanelHandler.FleetPanelItemUIPlugin);
+
+                buttonToMemberMap.forEach((button, member) -> {
+                    if (member.getShipName() == null) return;
+                    var pos = button.getPosition();
+                    var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(pos);
+                    plugin.extraYOffset = -10f;
+                    plugin.extraXOffset = -3f;
+                    plugin.showSmallText = true;
+                    plugin.updateFromSpec(member.getHullSpec());
+                    CustomPanelAPI custom = Global.getSettings().createCustom(pos.getWidth(), pos.getHeight(), plugin);
+                    parent.addComponent(custom).inMid();
+                });
+
+//                List<?> sortedButtonList = (List<?>) ReflectionUtils.invokeMethodNoCatch(parent, "getChildrenNonCopy");
+//                // Delete MP panels we may have previously added
+//                sortedButtonList.removeIf(child -> child == mpPanelRef.get());
+//                float w = parent.getPosition().getWidth(), h = parent.getPosition().getHeight();
+//                CustomPanelAPI custom = Global.getSettings().createCustom(w, h, null);
+//
+//                TooltipMakerAPI tooltipMaker = custom.createUIElement(w, h, false);
+//                tooltipMaker.setParaFontColor(Settings.MASTERY_COLOR);
+//                for (int i = 0; i < sortedButtonList.size(); i++) {
+//                    // Should be all buttons, but the item we add isn't a button so technically the list can contain non-buttons...
+//                    if (!(sortedButtonList.get(i) instanceof ButtonAPI button)) continue;
+//                    float h2 = tooltipMaker.getHeightSoFar();
+//                    //noinspection SuspiciousMethodCalls
+//                    FleetMemberAPI fm = buttonToMemberMap.get(sortedButtonList.get(i));
+//                    if (fm != null) {
+//                        ShipHullSpecAPI spec = fm.getHullSpec();
+//                        int currentMastery = ShipMastery.getPlayerMasteryLevel(spec);
+//                        int maxMastery = ShipMastery.getMaxMasteryLevel(spec);
+//                        boolean padded = false;
+//                        if (currentMastery < maxMastery) {
+//                            boolean canLevelUp = ShipMastery.getPlayerMasteryPoints(spec) >= MasteryUtils.getUpgradeCost(spec);
+//                            String canLevelUpStr = "+";
+//                            tooltipMaker.addPara(
+//                                    Strings.RefitScreen.masteryLabel + String.format("%s/%s", currentMastery, maxMastery) + " " + (canLevelUp ? canLevelUpStr : ""),
+//                                    10f,
+//                                    Settings.POSITIVE_HIGHLIGHT_COLOR,
+//                                    canLevelUpStr).setAlignment(Alignment.LMID);
+//                            padded = true;
+//                        }
+//                        int mp = (int) ShipMastery.getPlayerMasteryPoints(spec);
+//                        if (mp > 0) {
+//                            tooltipMaker.addPara(
+//                                    mp + " MP",
+//                                    padded ? 0f : 10f).setAlignment(Alignment.LMID);
+//                            padded = true;
+//                        }
+//                        int enhanceCount = MasteryUtils.getEnhanceCount(spec);
+//                        if (enhanceCount > 0) {
+//                            String enhanceStr = "+" + enhanceCount;
+//                            tooltipMaker.addPara(enhanceStr, padded ? 0f : 10f, Misc.getStoryBrightColor(), enhanceStr).setAlignment(Alignment.LMID);
+//                        }
+//                    }
+//                    float hDiff = tooltipMaker.getHeightSoFar() - h2;
+//                    if (i < sortedButtonList.size() - 1 && sortedButtonList.get(i + 1) instanceof ButtonAPI nextButton) {
+//                        tooltipMaker.addSpacer(button.getPosition().getY() - nextButton.getPosition().getY() - hDiff);
+//                    }
+//                }
+//                custom.addUIElement(tooltipMaker);
+//                //parent.addComponent(custom).inBL(2f, -6f);
+//                mpPanelRef = new WeakReference<>(custom);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -313,39 +356,6 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
             syncRefitScreenWithVariant(shouldSaveIfSyncing);
         }
     }
-
-    interface CoreInteractionListenerExt extends CoreInteractionListener {}
-    @Override
-    public void reportAboutToOpenCoreTab(CoreUITabId id, Object param) {
-        if (CoreUITabId.REFIT.equals(id)) {
-            DeferredActionPlugin.performLater(() -> {
-                injectRefitScreen(false);
-                UIPanelAPI core = ReflectionUtils.getCoreUI();
-                checkIfRefitShipChanged(core);
-                final CoreInteractionListener origListener = (CoreInteractionListener) ReflectionUtils.invokeMethod(core, "getListener");
-                if (!(origListener instanceof CoreInteractionListenerExt)) {
-                    ReflectionUtils.invokeMethodExtWithClasses(
-                            core,
-                            "setListener",
-                            false,
-                            new Class<?>[]{CoreInteractionListener.class},
-                            (CoreInteractionListenerExt) () -> {
-                                if (origListener != null) {
-                                    origListener.coreUIDismissed();
-                                }
-                                insideRefitPanel = false;
-                                checkIfRefitShipChanged(core);
-                            });
-                }
-            }, 0f);
-            insideRefitPanel = true;
-        }
-        else {
-            insideRefitPanel = false;
-            checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
-        }
-    }
-
 
     /** This is called every time the active ship in the refit screen changes. */
     @Override
@@ -425,6 +435,24 @@ public class RefitHandler implements CoreUITabListener, CharacterStatsRefreshLis
         }
 
         //System.out.println("-------------");
+    }
+
+    @Override
+    public void onCoreTabOpened(CoreUITabId id) {
+        if (id != CoreUITabId.REFIT) {
+            insideRefitPanel = false;
+            checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
+            return;
+        }
+        injectRefitScreen(false);
+        checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
+        insideRefitPanel = true;
+    }
+
+    @Override
+    public void onCoreUIDismissed() {
+        insideRefitPanel = false;
+        checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
     }
 
     record EffectActivationRecord(MasteryEffect effect, ShipVariantAPI moduleVariant, boolean isModule) {}

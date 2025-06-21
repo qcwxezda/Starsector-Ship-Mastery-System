@@ -37,3 +37,4 @@ KCore Handler,sms_k_core_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmast
 KCore Uplink Handler,sms_k_core_uplink_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.KCoreUplinkHullmod,,,,graphics/hullmods/generic_mod.png
 Curator Modifier,sms_curator_npc_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorNPCHullmod,,,,graphics/hullmods/generic_mod.png
 Curator Modifier (Player),sms_curator_player_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorPlayerHullmod,,,,graphics/hullmods/generic_mod.png
+Fleet Sync Listener Handler,sms_fleet_sync_listener_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.campaign.listeners.FleetSyncListenerHandler,,,,graphics/hullmods/generic_mod.png

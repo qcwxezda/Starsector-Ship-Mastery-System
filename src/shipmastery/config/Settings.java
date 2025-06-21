@@ -10,7 +10,7 @@ import java.awt.Color;
 import java.io.IOException;
 
 public class Settings {
-    public static Color MASTERY_COLOR = new Color(96, 192, 255);
+    public static Color MASTERY_COLOR = new Color(96, 225, 255);
     public static Color POSITIVE_HIGHLIGHT_COLOR = Misc.getHighlightColor();
     public static Color NEGATIVE_HIGHLIGHT_COLOR = Misc.getNegativeHighlightColor();
     public static Boolean CLEAR_SMODS_ALWAYS_ENABLED;

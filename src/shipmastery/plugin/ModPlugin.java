@@ -21,6 +21,7 @@ import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.PlayerFleetHandler;
@@ -34,6 +35,7 @@ import shipmastery.campaign.items.BetaKCorePlugin;
 import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.KCoreInterface;
 import shipmastery.campaign.items.GammaKCorePlugin;
+import shipmastery.campaign.listeners.FleetSyncListenerHandler;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
 import shipmastery.campaign.skills.CyberneticAugmentation;
@@ -46,6 +48,8 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -225,6 +229,7 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
+        FleetSyncListenerHandler.clearListeners();
 
         try {
             EveryFrameScript initializer = (EveryFrameScript) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.Initializer"));
@@ -258,11 +263,32 @@ public class ModPlugin extends BaseModPlugin {
                 throw new RuntimeException(e);
             }
 
+            Object refitHandler;
             try {
-                Object refitModifier = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.RefitHandler"));
-                listeners.addListener(refitModifier, true);
+                refitHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.RefitHandler"));
+                listeners.addListener(refitHandler, true);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to add refit tab modifier", e);
+            }
+
+            Object fleetPanelHandler;
+            try {
+                fleetPanelHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.FleetPanelHandler"));
+                Global.getSector().addTransientScript((EveryFrameScript) fleetPanelHandler);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to add fleet panel modifier", e);
+            }
+
+            try {
+                Object coreTabListenerHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.listeners.CoreTabListenerHandler"));
+                // Can't do normal casting cause different classloaders
+                MethodHandles.Lookup lookup = MethodHandles.lookup();
+                var register = lookup.findVirtual(coreTabListenerHandler.getClass(), "registerListener", MethodType.methodType(void.class, CoreTabListener.class));
+                register.invoke(coreTabListenerHandler, refitHandler);
+                register.invoke(coreTabListenerHandler, fleetPanelHandler);
+                listeners.addListener(coreTabListenerHandler, true);
+            } catch (Throwable e) {
+                throw new RuntimeException("Failed to add core UI listener modifier", e);
             }
 
             // May need to be permanent if NPC fleets can stay inflated through game loads
@@ -358,6 +384,8 @@ public class ModPlugin extends BaseModPlugin {
 
     private static final String[] reflectionWhitelist = new String[] {
             "shipmastery.campaign.RefitHandler",
+            "shipmastery.campaign.listeners.CoreTabListenerHandler",
+            "shipmastery.campaign.FleetPanelHandler",
             "shipmastery.campaign.Initializer",
             "shipmastery.campaign.AutofitPluginSModOption",
             "shipmastery.campaign.graveyard.ClaimsHistoryGetter",

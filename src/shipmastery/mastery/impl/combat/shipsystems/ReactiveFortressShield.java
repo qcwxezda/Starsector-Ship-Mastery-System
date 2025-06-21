@@ -10,7 +10,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.CollisionUtils;
 import shipmastery.util.MathUtils;
@@ -22,7 +21,7 @@ import java.awt.Color;
 public class ReactiveFortressShield extends ShipSystemEffect {
 
     public static final float MAX_ARC_DIFF = 60f;
-    public static final float[] BASE_RANGE = new float[] {500f, 600f, 700f, 800f};
+    public static final float[] BASE_RANGE = new float[] {600f, 725f, 850f, 1000f};
 
     @Override
     public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
@@ -40,7 +39,7 @@ public class ReactiveFortressShield extends ShipSystemEffect {
         tooltip.addPara(
                 Strings.Descriptions.ReactiveFortressShieldPost,
                 0f,
-                Settings.POSITIVE_HIGHLIGHT_COLOR,
+                Misc.getTextColor(),
                 Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(BASE_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())])),
                 Utils.asFloatOneDecimal(2f * MAX_ARC_DIFF));
     }

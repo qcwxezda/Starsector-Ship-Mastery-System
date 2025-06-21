@@ -4,7 +4,8 @@
     "masteryLabel": "L: ",
     "sModAutofitName": "Include S-mods in fit",
     "sModAutofitDesc": "Attempts to copy S-mods installed from the selected goal variant.\n\nPrioritizes enhancing built-ins, followed by S-modding modular hullmods. This step is performed prior to any other autofit step.\n\nIf S-mods are installed, the autofit cannot be undone.",
-    "sModAutofitSPText": "Built-in hullmods on %s (%s): %s"
+    "sModAutofitSPText": "Built-in hullmods on %s (%s): %s",
+    "mpToNextLevel": "%1$s / %2$s"
   },
 
   "sms_recentBattles": {
