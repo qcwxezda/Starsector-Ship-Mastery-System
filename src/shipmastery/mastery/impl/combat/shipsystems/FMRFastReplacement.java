@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -15,10 +16,10 @@ import java.util.List;
 
 public class FMRFastReplacement extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.FMRFastReplacement)
-                .params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(), Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

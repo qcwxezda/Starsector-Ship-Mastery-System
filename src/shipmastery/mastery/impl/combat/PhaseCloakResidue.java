@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.PhaseCloakStats;
@@ -27,7 +28,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
     static final float MAX_DAMAGE_REDUCTION = 0.25f;
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.PhaseCloakResiduePost,
@@ -40,7 +41,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseCloakResidue).params(Utils.asFloatOneDecimal(getStrengthForPlayer()));
     }
 

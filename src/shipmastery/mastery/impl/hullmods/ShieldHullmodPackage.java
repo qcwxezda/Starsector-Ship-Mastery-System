@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,10 +19,10 @@ public class ShieldHullmodPackage extends HullmodPackage {
     public static final float SHIELD_UPKEEP_MULT = 0.5f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .init(getDescriptionString())
-                .params((Object[]) getDescriptionParams(selectedModule))
+                .params((Object[]) getDescriptionParams(selectedVariant))
                 .colors(Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
@@ -36,22 +37,22 @@ public class ShieldHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.ShieldHullmodPackagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(getStrength(selectedModule)*REQ_NOT_MET_MULT));
+                Utils.asPercent(getStrength(selectedVariant)*REQ_NOT_MET_MULT));
     }
 
     @Override
-    protected String[] getDescriptionParams(ShipAPI selectedModule) {
+    protected String[] getDescriptionParams(ShipVariantAPI selectedVariant) {
         return new String[] {
                 Utils.getHullmodName(HullMods.ACCELERATED_SHIELDS),
                 Utils.getHullmodName(HullMods.EXTENDED_SHIELDS),
                 Utils.getHullmodName(HullMods.HARDENED_SHIELDS),
                 Utils.getHullmodName(HullMods.STABILIZEDSHIELDEMITTER),
-                Utils.asPercent(getStrength(selectedModule)),
+                Utils.asPercent(getStrength(selectedVariant)),
                 Utils.asPercent(1f - SHIELD_UPKEEP_MULT)
         };
     }

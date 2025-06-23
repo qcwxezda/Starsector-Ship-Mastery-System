@@ -6,6 +6,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,7 +19,7 @@ import java.util.Objects;
 
 public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.DPIfOnlyShip,
                 Strings.Descriptions.DPIfOnlyShipNeg,
@@ -29,7 +30,7 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.DPIfOnlyShipPost, 0f);
     }
 

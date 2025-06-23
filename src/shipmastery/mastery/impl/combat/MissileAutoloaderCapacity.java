@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader;
@@ -14,10 +15,10 @@ import shipmastery.util.Utils;
 
 public class MissileAutoloaderCapacity extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.MissileAutoloaderCapacity).params(
                 Global.getSettings().getHullModSpec(HullMods.MISSILE_AUTOLOADER).getDisplayName(),
-                Utils.asPercent(getStrength(selectedModule)));
+                Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

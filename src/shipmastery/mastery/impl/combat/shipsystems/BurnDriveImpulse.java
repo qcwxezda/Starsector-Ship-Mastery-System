@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.OrionDeviceStats;
@@ -22,12 +23,12 @@ import java.awt.Color;
 public class BurnDriveImpulse extends ShipSystemEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveImpulse).params(getSystemName());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.BurnDriveImpulsePost, 0f);
     }

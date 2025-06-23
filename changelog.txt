@@ -1,7 +1,18 @@
 1.2.0
 ----------
-- Made the default color for mastery stuff a little brighter.
+- Reverted skill changes.
+- Reduced maximum mastery level to 7, reduced the 3rd S-mod slot (along with the +30% mastery boost other option).
+- Updated refit screen visual UI.
+    - No longer shows MP and level text, now shows a progress bar with mastery info.
+- Added progress bar with mastery info to ships in the fleet screen.
+- Added custom level up prompt allowing selection of a perk for a given level.
+    - Can be accessed from the fleet screen by clicking on the flashing progress bar.
+- MasteryEffect.getDescription, MasteryEffect.addPostDescriptionSection, MasteryEffect.addTooltipIfHasTooltipTag:
+    - Changed ShipAPI parameter to ShipVariantAPI parameter.
+    - This should make it substantially easier to actually call the methods, including outside the refit screen where a ShipAPI instance isn't readily available.
+    - Has some small side effects, such as adjusted effect ranges due to ship system range stat no longer showing.
 - Building in hullmods no longer costs MP.
+- Made the default color for mastery stuff a little brighter.
 - Reactive-fortress-shield: Increased range.
 - HEF-shield-efficiency: Fixed crash issue with shieldless submodules/shield shunt.
 

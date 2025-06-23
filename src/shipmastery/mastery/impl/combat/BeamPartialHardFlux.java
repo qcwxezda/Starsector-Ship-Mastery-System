@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -29,12 +30,12 @@ public class BeamPartialHardFlux extends BaseMasteryEffect {
     public static final float BASE_MAX_RANGE_FRAC = 0.7f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BeamPartialHardFlux);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.BeamPartialHardFluxPost,
                 0f,
@@ -42,7 +43,7 @@ public class BeamPartialHardFlux extends BaseMasteryEffect {
                 Utils.asPercent(CLOSE_RANGE_FRAC),
                 Utils.asPercent(MIN_RANGE_FRAC),
                 Utils.asPercent(LONG_RANGE_FRAC),
-                Utils.asPercent(BASE_MAX_RANGE_FRAC * getStrength(selectedModule)));
+                Utils.asPercent(BASE_MAX_RANGE_FRAC * getStrength(selectedVariant)));
     }
 
     @Override

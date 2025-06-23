@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,17 +22,17 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
     public static final float REGEN_RATE = 3f;
     public static final float[] HULL_SIZE_MULT = new float[] {2f, 1.5f, 1f, 1f};
 
-    public float getRegenAmount(ShipAPI ship) {
-        return Math.min(1f, HULL_SIZE_MULT[Utils.hullSizeToInt(ship.getHullSize())] * getStrength(ship));
+    public float getRegenAmount(ShipVariantAPI variant) {
+        return Math.min(1f, HULL_SIZE_MULT[Utils.hullSizeToInt(variant.getHullSize())] * getStrength(variant));
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LimitedArmorRegen).params(Utils.asPercent(getRegenAmount(selectedModule)));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LimitedArmorRegen).params(Utils.asPercent(getRegenAmount(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.LimitedArmorRegenPost, 0f);
     }
@@ -39,7 +40,7 @@ public class LimitedArmorRegen extends BaseMasteryEffect {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(LimitedArmorRegenScript.class)) {
-            ship.addListener(new LimitedArmorRegenScript(ship, getRegenAmount(ship)));
+            ship.addListener(new LimitedArmorRegenScript(ship, getRegenAmount(ship.getVariant())));
         }
     }
 

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -17,14 +18,14 @@ import java.util.List;
 
 public class ExtraMiningDrones extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.ExtraMiningDrones)
-                .params(Utils.asInt(getStrength(selectedModule)));
+                .params(Utils.asInt(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ExtraMiningDronesPost, 0f);
     }

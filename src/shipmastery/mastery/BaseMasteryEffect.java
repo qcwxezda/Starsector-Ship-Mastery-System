@@ -115,11 +115,11 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {}
 
     @Override
-    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {}
 
     @Override
@@ -165,40 +165,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         this.priority = priority;
     }
 
-//    @Override
-//    public final void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) {
-//            modifier = new MutableStat(1f);
-//            strengthModifierMap.put(id, modifier);
-//        }
-//        modifier.modifyMult(sourceId, fraction);
-//    }
-//
-//    @Override
-//    public final void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) {
-//            modifier = new MutableStat(1f);
-//            strengthModifierMap.put(id, modifier);
-//        }
-//        modifier.modifyPercent(sourceId, 100f*(fraction - 1f));
-//    }
-//
-//    @Override
-//    public final void unmodifyStrength(PersonAPI commander, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) return;
-//        modifier.unmodify(sourceId);
-//    }
-
-
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {}
 
@@ -214,10 +180,6 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         // global mod is always additive
         strength += commander.getStats().getDynamic().getMod(GLOBAL_MASTERY_STRENGTH_MOD).computeEffective(baseStrength) - baseStrength;
         return strength;
-/*        String id = commander.getId();
-        MutableStat modifier = strengthModifierMap.get(id);
-        if (modifier == null) return baseStrength;
-        return baseStrength * modifier.getModifiedValue();*/
     }
 
     public final float getStrengthForPlayer() {

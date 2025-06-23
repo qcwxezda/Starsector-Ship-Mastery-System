@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
@@ -15,9 +16,9 @@ import shipmastery.util.Utils;
 
 public class VentSpeedFluxLevel extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.VentSpeedFluxLevel)
-                                 .params(Utils.asPercent(0.75f * getStrength((PersonAPI) null)), Utils.asPercent(getStrength(selectedModule)))
+                                 .params(Utils.asPercent(0.75f * getStrength((PersonAPI) null)), Utils.asPercent(getStrength(selectedVariant)))
                                  .colors(Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 

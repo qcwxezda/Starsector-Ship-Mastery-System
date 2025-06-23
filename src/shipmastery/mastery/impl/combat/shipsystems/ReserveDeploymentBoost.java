@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.ReserveWingStats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -13,13 +14,13 @@ import shipmastery.util.Utils;
 
 public class ReserveDeploymentBoost extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ReserveDeploymentBoost).params(
-                Utils.asInt(getCount(selectedModule)), getSystemName(), Utils.asPercent(getRefitTimeDecrease(selectedModule)));
+                Utils.asInt(getCount(selectedVariant)), getSystemName(), Utils.asPercent(getRefitTimeDecrease(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ReserveDeploymentBoostPost, 0f);
     }
@@ -27,16 +28,16 @@ public class ReserveDeploymentBoost extends ShipSystemEffect {
     @Override
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ReserveDeploymentBoostScript.class)) {
-            ship.addListener(new ReserveDeploymentBoostScript(ship, getCount(ship), getRefitTimeDecrease(ship), id));
+            ship.addListener(new ReserveDeploymentBoostScript(ship, getCount(ship.getVariant()), getRefitTimeDecrease(ship.getVariant()), id));
         }
     }
 
-    public int getCount(ShipAPI ship) {
-        return (int) getStrength(ship);
+    public int getCount(ShipVariantAPI variant) {
+        return (int) getStrength(variant);
     }
 
-    public float getRefitTimeDecrease(ShipAPI ship) {
-        return getStrength(ship) * 0.25f / 3.5f;
+    public float getRefitTimeDecrease(ShipVariantAPI variant) {
+        return getStrength(variant) * 0.25f / 3.5f;
     }
 
     @Override

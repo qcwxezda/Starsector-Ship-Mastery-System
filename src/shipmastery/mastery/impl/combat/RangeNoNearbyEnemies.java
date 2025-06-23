@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,36 +22,36 @@ public class RangeNoNearbyEnemies extends BaseMasteryEffect {
 
     public static final float[] MAX_RANGE = new float[] {600f, 800f, 1000f, 1250f};
 
-    float getIncreaseRate(ShipAPI ship) {
-        return getStrength(ship) / 5f;
+    float getIncreaseRate(ShipVariantAPI variant) {
+        return getStrength(variant) / 5f;
     }
 
-    float getDecayRate(ShipAPI ship) {
-        return getStrength(ship) / 10f;
+    float getDecayRate(ShipVariantAPI variant) {
+        return getStrength(variant) / 10f;
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RangeNoNearbyEnemies).params(
-                Utils.asPercent(getStrength(selectedModule)));
+                Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.RangeNoNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asInt(MAX_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())]),
-                Utils.asPercent(getIncreaseRate(selectedModule)),
-                Utils.asPercent(getDecayRate(selectedModule)));
+                Utils.asInt(MAX_RANGE[Utils.hullSizeToInt(selectedVariant.getHullSize())]),
+                Utils.asPercent(getIncreaseRate(selectedVariant)),
+                Utils.asPercent(getDecayRate(selectedVariant)));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(RangeNoNearbyEnemiesScript.class)) {
-            ship.addListener(new RangeNoNearbyEnemiesScript(ship, getIncreaseRate(ship), getDecayRate(ship), getStrength(ship), id));
+            ship.addListener(new RangeNoNearbyEnemiesScript(ship, getIncreaseRate(ship.getVariant()), getDecayRate(ship.getVariant()), getStrength(ship), id));
         }
     }
 

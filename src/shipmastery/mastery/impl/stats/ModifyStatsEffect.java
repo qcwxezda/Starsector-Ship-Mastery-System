@@ -1,8 +1,8 @@
 package shipmastery.mastery.impl.stats;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
@@ -68,7 +68,7 @@ public class ModifyStatsEffect extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         List<Pair<ShipStat, Float>> positiveAmounts = new ArrayList<>();
         List<Pair<ShipStat, Float>> negativeAmounts = new ArrayList<>();
 

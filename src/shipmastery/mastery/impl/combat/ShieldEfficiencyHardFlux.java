@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -19,12 +20,12 @@ public class ShieldEfficiencyHardFlux extends BaseMasteryEffect {
     public static final float MIN_THRESHOLD = 0.2f, MAX_THRESHOLD = 0.9f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ShieldEfficiencyHardFlux).params(Utils.asPercent(getStrength(selectedModule)));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ShieldEfficiencyHardFlux).params(Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ShieldEfficiencyHardFluxPost, 0f, Misc.getTextColor(), Utils.asPercent(MIN_THRESHOLD), Utils.asPercent(MAX_THRESHOLD));
     }

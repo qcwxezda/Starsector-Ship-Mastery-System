@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.logistics;
 
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -15,7 +14,7 @@ import shipmastery.util.Utils;
 
 public class SModRemoval extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.SModRemoval);
     }
 
@@ -40,7 +39,7 @@ public class SModRemoval extends BaseMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         if (Settings.CLEAR_SMODS_REFUND_FRACTION <= 0f) {
             tooltip.addPara(Strings.Descriptions.SModRemovalPost, 0f);

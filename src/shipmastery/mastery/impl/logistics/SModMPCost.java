@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.logistics;
 
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -11,7 +10,7 @@ import shipmastery.util.Strings;
 
 public class SModMPCost extends AdditiveMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescriptionStatic(Strings.Descriptions.SModMPCost, Strings.Descriptions.SModMPCostNeg, true, getIncreasePlayer());
     }
 

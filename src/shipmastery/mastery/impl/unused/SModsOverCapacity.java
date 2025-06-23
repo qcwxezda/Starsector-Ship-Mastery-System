@@ -27,7 +27,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     public static final Map<String, Set<Integer>> overCapacityMap = new HashMap<>();
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         int increase = getIncreasePlayer();
         return MasteryDescription.initDefaultHighlight(
                                          increase == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
@@ -78,7 +78,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asInt((100f * DP_PENALTY_PER_SMOD)) + "%");
     }

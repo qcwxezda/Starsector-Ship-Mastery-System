@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.items.KnowledgeConstructPlugin;
@@ -29,6 +30,26 @@ public abstract class MasteryUtils {
     public static final float[] ENHANCE_DR_AMOUNT = {0f, 0f, 0f, 0f, 0f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
     public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
     public static final int MAX_ENHANCES = 10;
+    public static final int UNLOCK_SELECTIVE_RESTORATION_LEVEL;
+    public static final int UNLOCK_SMOD_REMOVAL_LEVEL;
+    public static final int UNLOCK_MASTERY_SHARING_LEVEL;
+    public static final int UNLOCK_REROLL_LEVEL;
+    public static final int UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL;
+
+    static {
+        try {
+            JSONObject presets = Global.getSettings().getMergedJSON("data/shipmastery/mastery_unlocks.json");
+            UNLOCK_SELECTIVE_RESTORATION_LEVEL = presets.getInt("unlockSelectiveRestorationLevel");
+            UNLOCK_SMOD_REMOVAL_LEVEL = presets.getInt("unlockSModRemovalLevel");
+            UNLOCK_MASTERY_SHARING_LEVEL = presets.getInt("unlockMasterySharingLevel");
+            UNLOCK_REROLL_LEVEL = presets.getInt("unlockRerollLevel");
+            UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL = presets.getInt("unlockPseudocoreIntegrationLevel");
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+
 
     public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
         //noinspection unchecked
@@ -77,6 +98,15 @@ public abstract class MasteryUtils {
     public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return 0;
         return 1;
+    }
+
+    public static boolean canUpgradeOrEnhance(ShipHullSpecAPI spec) {
+        var pts = ShipMastery.getPlayerMasteryPoints(spec);
+        if (ShipMastery.getPlayerMasteryLevel(spec) < ShipMastery.getMaxMasteryLevel(spec)) {
+            return pts >= getUpgradeCost(spec);
+        }
+        return pts >= getEnhanceMPCost(spec)
+                && Global.getSector().getPlayerStats().getStoryPoints() >= getEnhanceSPCost(spec);
     }
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {

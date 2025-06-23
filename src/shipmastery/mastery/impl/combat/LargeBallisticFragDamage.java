@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -35,14 +36,14 @@ public class LargeBallisticFragDamage extends BaseMasteryEffect {
     public static final float DAMAGE_FRAC = 0.5f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.LargeBallisticFragDamage).params(
-                Utils.asPercent(DAMAGE_FRAC), Utils.asInt(getStrength(selectedModule)))
+                Utils.asPercent(DAMAGE_FRAC), Utils.asInt(getStrength(selectedVariant)))
                 .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.LargeBallisticFragDamagePost, 0f);
     }

@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.AcausalDisruptorStats;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -11,8 +12,8 @@ import shipmastery.util.Utils;
 
 public class QuantumDisruptorDuration extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float str = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float str = getStrength(selectedVariant);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.QuantumDisruptorDuration)
                 .params(getSystemName(), Utils.asPercent(str), Utils.asPercent(str * 0.1f));

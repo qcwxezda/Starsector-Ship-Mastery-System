@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -14,13 +15,13 @@ public class FrontArmorBoost extends BaseMasteryEffect {
     public static final float[] HULL_SIZE_MULTS = {2f, 1.66666667f, 1.3333333f, 1f};
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FrontArmorBoost).params(
-                Utils.asPercent(getStrength(selectedModule)*HULL_SIZE_MULTS[Utils.hullSizeToInt(selectedModule.getHullSize())]));
+                Utils.asPercent(getStrength(selectedVariant)*HULL_SIZE_MULTS[Utils.hullSizeToInt(selectedVariant.getHullSize())]));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.FrontArmorBoostPost, 0f);
     }

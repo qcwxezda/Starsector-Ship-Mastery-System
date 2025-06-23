@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
@@ -20,9 +21,9 @@ import shipmastery.util.Utils;
 
 public class OperationsCenterBoost extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.OperationsCenterBoost)
-                                 .params(Global.getSettings().getHullModSpec(HullMods.OPERATIONS_CENTER).getDisplayName(), Utils.asPercent(getStrength(selectedModule)));    }
+                                 .params(Global.getSettings().getHullModSpec(HullMods.OPERATIONS_CENTER).getDisplayName(), Utils.asPercent(getStrength(selectedVariant)));    }
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {

@@ -17,7 +17,7 @@ public interface MasteryTags {
      *  only allow deactivation if no such ship exists! */
     String NO_DISABLE = "no_disable";
 
-    /** Set in conjunction with {@link MasteryEffect#addTooltipIfHasTooltipTag(TooltipMakerAPI, com.fs.starfarer.api.combat.ShipAPI, com.fs.starfarer.api.fleet.FleetMemberAPI)} to add a tooltip on mouse hover */
+    /** Set in conjunction with {@link MasteryEffect#addTooltipIfHasTooltipTag(TooltipMakerAPI, com.fs.starfarer.api.combat.ShipVariantAPI, com.fs.starfarer.api.fleet.FleetMemberAPI)} to add a tooltip on mouse hover */
     String HAS_TOOLTIP = "has_tooltip";
 
     /** If set, will not be automatically activated when unlocked. Should be used for effects that have a downside

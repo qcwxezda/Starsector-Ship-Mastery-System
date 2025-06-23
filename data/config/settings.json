@@ -15,7 +15,21 @@
 
   "graphics": {
     "ui": {
-      "sms_mastery_bar": "graphics/hud/bar_white.png"
+      "sms_mastery_bar": "graphics/hud/bar_armor.png",
+      "sms_upgrade_icon": "graphics/icons/ui/sms_upgrade_icon.png",
+      "sms_upgrade_icon_green": "graphics/icons/ui/sms_upgrade_icon_green.png",
+      "sms_reroll_icon": "graphics/icons/ui/sms_reroll_icon.png",
+      "sms_reroll_icon_green": "graphics/icons/ui/sms_reroll_icon_green.png",
+      "sms_confirm_icon": "graphics/icons/ui/sms_confirm_icon.png",
+      "sms_cancel_icon": "graphics/icons/ui/sms_cancel_icon.png",
+      "sms_construct_icon": "graphics/icons/ui/sms_construct_icon.png",
+      "sms_remove_smod_icon": "graphics/icons/ui/sms_remove_smod_icon.png",
+      "sms_remove_smod_icon_green": "graphics/icons/ui/sms_remove_smod_icon_green.png",
+      "sms_restore_icon": "graphics/icons/ui/sms_restore_icon.png",
+      "sms_restore_icon_green": "graphics/icons/ui/sms_restore_icon_green.png",
+      "sms_integrate_icon": "graphics/icons/ui/sms_integrate_icon.png",
+      "sms_integrate_icon_green": "graphics/icons/ui/sms_integrate_icon_green.png",
+      "sms_sp_icon": "graphics/icons/ui/sms_sp_icon.png"
     }
   }
 }

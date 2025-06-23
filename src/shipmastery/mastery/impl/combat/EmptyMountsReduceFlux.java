@@ -33,8 +33,8 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EmptyMountsReduceFlux)
                                  .params(Utils.asPercent(strength * getReductionMultiplier(WeaponAPI.WeaponSize.SMALL)),
                                          Utils.asPercent(strength * getReductionMultiplier(WeaponAPI.WeaponSize.MEDIUM)),
@@ -42,7 +42,7 @@ public class EmptyMountsReduceFlux extends BaseMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.EmptyMountsReduceFluxPost, 0f, Misc.getTextColor(), Utils.asPercent(HARD_CAP));
     }

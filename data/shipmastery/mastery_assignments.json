@@ -969,7 +969,6 @@
   },
 
   "guardian": {
-    "preset": "automated",
     "levels": {
       "max": {
         "A": "PlasmaJetsDissipation",
@@ -1102,37 +1101,5 @@
         "B": "PhaseCloakResidue"
       }
     }
-  },
-
-  "shrouded_tendril": {
-    "preset": "dweller"
-  },
-  "shrouded_eye": {
-    "preset": "dweller"
-  },
-  "shrouded_maelstrom": {
-    "preset": "dweller"
-  },
-  "shrouded_maw": {
-    "preset": "dweller"
-  },
-
-  "skirmish_unit": {
-    "preset": "threat"
-  },
-  "overseer_unit": {
-    "preset": "threat"
-  },
-  "assault_unit": {
-    "preset": "threat"
-  },
-  "hive_unit": {
-    "preset": "threat"
-  },
-  "standoff_unit": {
-    "preset": "threat"
-  },
-  "fabricator_unit": {
-    "preset": "threat"
   }
 }

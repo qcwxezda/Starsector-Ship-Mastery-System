@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -12,8 +13,8 @@ import shipmastery.util.Utils;
 
 public class RegroupReplacement extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        String str = Utils.asPercent(getStrength(selectedModule));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        String str = Utils.asPercent(getStrength(selectedVariant));
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RegroupReplacement).params(str, str);
     }
 

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -26,15 +27,15 @@ public class MissileRegenOnKill extends BaseMasteryEffect {
     public static final float DAMAGE_MULT = 0.75f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .init(Strings.Descriptions.MissileRegenOnKill)
-                .params(Misc.getHullSizeStr(selectedModule.getHullSize()), Utils.asPercent(getStrength(selectedModule)), Utils.asPercent(1f - DAMAGE_MULT))
+                .params(Misc.getHullSizeStr(selectedVariant.getHullSize()), Utils.asPercent(getStrength(selectedVariant)), Utils.asPercent(1f - DAMAGE_MULT))
                 .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.MissileRegenOnKillPost, 0f);
     }

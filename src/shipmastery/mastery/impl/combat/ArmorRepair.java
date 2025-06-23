@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -19,23 +20,23 @@ public class ArmorRepair extends BaseMasteryEffect {
 
     public static final float MIN_ARMOR_FRAC = 0.75f;
 
-    public float getFlatMax(ShipAPI ship) {
-        return getStrength(ship) * 150f * (Utils.hullSizeToInt(ship.getHullSize()) + 1);
+    public float getFlatMax(ShipVariantAPI variant) {
+        return getStrength(variant) * 150f * (Utils.hullSizeToInt(variant.getHullSize()) + 1);
     }
 
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ArmorRepair);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ArmorRepairPost, 0f, new Color[] {
                 Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                        Utils.asPercent(getStrength(selectedModule)),
-                        Utils.asFloatOneDecimal(getFlatMax(selectedModule)),
+                        Utils.asPercent(getStrength(selectedVariant)),
+                        Utils.asFloatOneDecimal(getFlatMax(selectedVariant)),
                         Utils.asPercent(1f - MIN_ARMOR_FRAC));
     }
 
@@ -47,7 +48,7 @@ public class ArmorRepair extends BaseMasteryEffect {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ArmorRepairScript.class)) {
-            ship.addListener(new ArmorRepairScript(ship, getStrength(ship), getFlatMax(ship)));
+            ship.addListener(new ArmorRepairScript(ship, getStrength(ship), getFlatMax(ship.getVariant())));
         }
     }
 

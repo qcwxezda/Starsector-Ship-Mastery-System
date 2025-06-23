@@ -6,6 +6,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -22,7 +23,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     static final float MAX_INCREASE = 1f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.PeakCRMultipleShips,
                 Strings.Descriptions.PeakCRMultipleShipsNeg,
@@ -52,7 +53,7 @@ public class PeakCRMultipleShips extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.PeakCRMultipleShipsPost, 0f, Misc.getTextColor(), "" + MAX_STACKS,
                         Utils.absValueAsPercent(MAX_INCREASE));

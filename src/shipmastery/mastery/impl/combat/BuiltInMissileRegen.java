@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
@@ -14,9 +15,9 @@ import shipmastery.util.Utils;
 public class BuiltInMissileRegen extends BaseMasteryEffect {
     public static final int NUM_SALVOS_REGEN = 1;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BuiltInMissileRegen)
-                                 .params(NUM_SALVOS_REGEN, Utils.asFloatOneDecimal(1f / getStrength(selectedModule)));
+                                 .params(NUM_SALVOS_REGEN, Utils.asFloatOneDecimal(1f / getStrength(selectedVariant)));
     }
 
     @Override

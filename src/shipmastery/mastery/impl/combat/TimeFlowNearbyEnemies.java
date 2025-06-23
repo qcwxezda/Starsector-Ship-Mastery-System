@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -23,30 +24,30 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.TimeFlowNearbyEnemies)
-                .params(Utils.asPercent(getStrength(selectedModule)), Utils.asInt(getRange(selectedModule)));
+                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.TimeFlowNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR},
                 "" + MAX_EFFECT_STACKS,
-                Utils.asPercent(getStrength(selectedModule) * MAX_EFFECT_STACKS));
+                Utils.asPercent(getStrength(selectedVariant) * MAX_EFFECT_STACKS));
     }
 
-    public float getRange(ShipAPI ship) {
-        return getStrength(ship) * 40000f;
+    public float getRange(ShipVariantAPI variant) {
+        return getStrength(variant) * 40000f;
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
+        ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship.getVariant()), getStrength(ship), id));
     }
 
     static class TimeFlowNearbyEnemiesScript implements AdvanceableListener {

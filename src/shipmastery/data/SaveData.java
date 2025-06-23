@@ -23,11 +23,11 @@ public class SaveData {
         activeLevels = new TreeMap<>();
     }
 
-    public void activateLevel(int level, String id) {
-        activeLevels.put(level, id);
+    public boolean activateLevel(int level, String id) {
+        return !id.equals(activeLevels.put(level, id));
     }
 
-    public void deactivateLevel(int level) {
-        activeLevels.remove(level);
+    public boolean deactivateLevel(int level) {
+        return activeLevels.remove(level) != null;
     }
 }

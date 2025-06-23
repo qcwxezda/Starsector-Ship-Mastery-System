@@ -268,14 +268,13 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
                     var pos = button.getPosition();
                     var w = pos.getWidth();
                     var h = pos.getHeight();
-                    var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(pos);
+                    var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(member, pos);
                     plugin.heightOverride = 40f;
                     plugin.numBars = 20;
                     plugin.extraYOffset = -10f;
                     plugin.extraXOffset = -3f;
-                    var data = plugin.updateFromSpec(member.getHullSpec());
                     CustomPanelAPI custom = Global.getSettings().createCustom(w, h, plugin);
-                    plugin.makeOutline(custom, data, true);
+                    plugin.makeOutline(custom, true);
                     scroller.addComponent(custom).setYAlignOffset(pos.getY() - container.getPosition().getY());
                 });
 

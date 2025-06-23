@@ -1,7 +1,6 @@
 package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -12,7 +11,7 @@ import shipmastery.util.Strings;
 
 public class RestorationCost extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.RestorationCost,
                 Strings.Descriptions.RestorationCostNeg,

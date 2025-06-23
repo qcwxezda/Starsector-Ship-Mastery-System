@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -34,20 +35,20 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
         return 0.5f;
     }
 
-    public float getDuration(ShipAPI ship) {
-        return getStrength(ship) * 3f;
+    public float getDuration(ShipVariantAPI variant) {
+        return getStrength(variant) * 3f;
     }
 
-    public float getChancePerSecond(ShipAPI ship) {
-        return getStrength(ship) * 0.2f;
+    public float getChancePerSecond(ShipVariantAPI variant) {
+        return getStrength(variant) * 0.2f;
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RandomBeamIntensity).params(
-                Utils.asInt(getStrength(selectedModule) * 200f),
+                Utils.asInt(getStrength(selectedVariant) * 200f),
                 Utils.asPercent(getDamageIncrease()),
-                Utils.asFloatOneDecimal(getDuration(selectedModule)))
+                Utils.asFloatOneDecimal(getDuration(selectedVariant)))
                 .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
@@ -57,15 +58,15 @@ public class RandomBeamIntensity extends BaseMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.RandomBeamIntensityPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(getChancePerSecond(selectedModule)));
+        tooltip.addPara(Strings.Descriptions.RandomBeamIntensityPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(getChancePerSecond(selectedVariant)));
     }
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
         if (ship != null && !ship.hasListenerOfClass(RandomBeamIntensityScript.class)) {
-            ship.addListener(new RandomBeamIntensityScript(ship, getChancePerSecond(ship), getDamageIncrease(), getDuration(ship), id));
+            ship.addListener(new RandomBeamIntensityScript(ship, getChancePerSecond(ship.getVariant()), getDamageIncrease(), getDuration(ship.getVariant()), id));
         }
     }
 

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -24,15 +25,15 @@ import java.util.Map;
 public class HEFMissileBoost extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {100f, 200f, 300f, 400f};
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFMissileBoost).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.HEFMissileBoostPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]));
+                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedVariant.getHullSize())]));
     }
 
     @Override

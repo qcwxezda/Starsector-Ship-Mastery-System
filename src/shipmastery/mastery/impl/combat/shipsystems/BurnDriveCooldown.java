@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -13,15 +14,15 @@ import shipmastery.util.Utils;
 
 public class BurnDriveCooldown extends ShipSystemEffect{
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BurnDriveCooldown).params(getSystemName());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.BurnDriveCooldownPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Utils.asFloatOneDecimal(getStrength(selectedModule)));
+                        Utils.asFloatOneDecimal(getStrength(selectedVariant)));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -14,7 +15,7 @@ import shipmastery.util.Utils;
 
 public class FluxByShieldUpkeep extends BaseMasteryEffect {
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.FluxByShieldUpkeepPost, 0f);
     }
@@ -33,7 +34,7 @@ public class FluxByShieldUpkeep extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         float increase = Math.max(getStrengthForPlayer(), -1f);
         return MultiplicativeMasteryEffect.makeGenericDescriptionStatic(
                 Strings.Descriptions.FluxByShieldUpkeep,

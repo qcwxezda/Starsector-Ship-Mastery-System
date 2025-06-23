@@ -185,7 +185,7 @@ public abstract class ShipMastery {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
-        data.activateLevel(level, optionId);
+        if (!data.activateLevel(level, optionId)) return;
         List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onActivate(Global.getSector().getPlayerPerson());
@@ -197,7 +197,7 @@ public abstract class ShipMastery {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
-        data.deactivateLevel(level);
+        if (!data.deactivateLevel(level)) return;
         List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onDeactivate(Global.getSector().getPlayerPerson());
@@ -484,7 +484,8 @@ public abstract class ShipMastery {
         Iterator<String> itr = presets.keys();
         while (itr.hasNext()) {
             String name = itr.next();
-            JSONObject obj = presets.getJSONObject(name);
+            JSONObject obj = presets.optJSONObject(name);
+            if (obj == null) continue;
             if (obj.has(PRESET_CHECK_KEY)) {
                 String className = obj.getString(PRESET_CHECK_KEY);
                 presetNameToCheckerMap.put(name,

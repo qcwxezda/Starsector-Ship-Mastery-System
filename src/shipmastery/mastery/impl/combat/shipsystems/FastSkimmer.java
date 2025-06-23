@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -16,14 +17,14 @@ public class FastSkimmer extends ShipSystemEffect {
     public static final float RANGE_MULT = 0.4f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FastSkimmer).params(getSystemName());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+        float strength = getStrength(selectedVariant);
         tooltip.addPara(
                 Strings.Descriptions.FastSkimmerPost,
                 0f,

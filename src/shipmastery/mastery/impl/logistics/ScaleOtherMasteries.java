@@ -1,8 +1,8 @@
 package shipmastery.mastery.impl.logistics;
 
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.mastery.MasteryDescription;
@@ -11,7 +11,7 @@ import shipmastery.util.Strings;
 public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.ScaleOtherMasteries,
                 Strings.Descriptions.ScaleOtherMasteriesNeg,
@@ -52,7 +52,7 @@ public class ScaleOtherMasteries extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ScaleOtherMasteriesPost, 0f);
     }

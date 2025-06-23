@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.logistics;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import shipmastery.config.Settings;
@@ -13,7 +14,7 @@ import shipmastery.util.Strings;
 public class SModCapacity extends AdditiveMasteryEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .init(Strings.Descriptions.SModCapacity)
                 .params(getIncreasePlayer())

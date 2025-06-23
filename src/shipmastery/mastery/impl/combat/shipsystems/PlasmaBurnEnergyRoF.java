@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -20,20 +21,20 @@ import java.awt.Color;
 public class PlasmaBurnEnergyRoF extends ShipSystemEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.PlasmaBurnEnergyRoF)
-                .params(getSystemName(),Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(),Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.PlasmaBurnEnergyRoFPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asFloatOneDecimal(getStrength(selectedModule) * 20f),
+                Utils.asFloatOneDecimal(getStrength(selectedVariant) * 20f),
                 getSystemName());
     }
 

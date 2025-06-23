@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -24,8 +25,8 @@ public class ReactiveFortressShield extends ShipSystemEffect {
     public static final float[] BASE_RANGE = new float[] {600f, 725f, 850f, 1000f};
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ReactiveFortressShield)
                                  .params(getSystemName(),
                                          Utils.asPercent(strength),
@@ -34,13 +35,13 @@ public class ReactiveFortressShield extends ShipSystemEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.ReactiveFortressShieldPost,
                 0f,
                 Misc.getTextColor(),
-                Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(BASE_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())])),
+                Utils.asFloatOneDecimal(BASE_RANGE[Utils.hullSizeToInt(selectedVariant.getHullSize())]),
                 Utils.asFloatOneDecimal(2f * MAX_ARC_DIFF));
     }
 

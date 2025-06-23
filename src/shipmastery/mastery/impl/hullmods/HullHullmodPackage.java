@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -20,21 +21,21 @@ public class HullHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    protected String[] getDescriptionParams(ShipAPI selectedModule) {
+    protected String[] getDescriptionParams(ShipVariantAPI selectedVariant) {
         return new String[] {
                 Utils.getHullmodName(HullMods.REINFORCEDHULL),
                 Utils.getHullmodName(HullMods.BLAST_DOORS),
-                Utils.asPercent(getStrength(selectedModule))
+                Utils.asPercent(getStrength(selectedVariant))
         };
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.HullHullmodPackagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(getStrength(selectedModule)*REQ_NOT_MET_MULT));
+                Utils.asPercent(getStrength(selectedVariant)*REQ_NOT_MET_MULT));
     }
 
     @Override

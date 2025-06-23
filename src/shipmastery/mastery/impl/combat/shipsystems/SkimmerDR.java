@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -17,8 +18,8 @@ import java.awt.Color;
 public class SkimmerDR extends ShipSystemEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerDR).params(
                 getSystemName(),
                 Utils.asPercent(strength),
@@ -26,7 +27,7 @@ public class SkimmerDR extends ShipSystemEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SkimmerDRPost, 0f);
     }

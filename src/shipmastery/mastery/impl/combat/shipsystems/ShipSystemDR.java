@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -24,15 +25,15 @@ public abstract class ShipSystemDR extends ShipSystemEffect {
     protected abstract String getStatusTitle();
     protected abstract boolean affectsFighters();
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ShipSystemDR).params(
                 Global.getSettings().getShipSystemSpec(getSystemSpecId()).getName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        if (selectedModule.getNumFighterBays() > 0 && affectsFighters()) {
+        if (selectedVariant.getHullSpec().getFighterBays() > 0 && affectsFighters()) {
             tooltip.addPara(Strings.Descriptions.ShipSystemDRPost, 0f);
         }
     }

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.EntropyAmplifierStats;
@@ -25,15 +26,15 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
     public static final String ENTROPY_AMPLIFIER_ID = "entropyamplifier";
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EntropyAmplifierChaining)
                                  .params(getSystemName(),
-                                         Utils.asInt(getStrength(selectedModule)),
-                                         Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(MAX_RANGE)));
+                                         Utils.asInt(getStrength(selectedVariant)),
+                                         Utils.asFloatOneDecimal(MAX_RANGE));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.EntropyAmplifierChainingPost, 0f);
     }

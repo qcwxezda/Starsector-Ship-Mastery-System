@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -20,10 +21,10 @@ import java.awt.Color;
 
 public class DamperFieldFighters extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.DamperFieldFighters)
-                .params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
+                .params(getSystemName(), Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

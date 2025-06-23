@@ -14,6 +14,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -30,6 +31,8 @@ import shipmastery.hullmods.EngineeringOverride;
 import shipmastery.ui.triggers.CancelMasteryChangesPressed;
 import shipmastery.ui.triggers.ClearSModsPressed;
 import shipmastery.ui.triggers.ConfirmMasteryChangesPressed;
+import shipmastery.ui.triggers.ConstructButtonPressed;
+import shipmastery.ui.triggers.RerollButtonPressed;
 import shipmastery.ui.triggers.SModTableHeaderPressed;
 import shipmastery.ui.triggers.SModTableRowPressed;
 import shipmastery.ui.triggers.TabButtonPressed;
@@ -49,7 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class MasteryPanel {
     ShipAPI root;
@@ -77,7 +79,7 @@ public class MasteryPanel {
     boolean isShowingMasteryPanel = false;
     boolean isInRestorableMarket = false;
     MasteryDisplay savedMasteryDisplay;
-    TooltipMakerAPI upgradeMasteryDisplay, confirmOrCancelDisplay, createConstructDisplay, rerollMasteryDisplay, enhanceMasteryDisplay;
+    ButtonWithIcon upgradeButton, confirmButton, cancelButton, constructButton, rerollButton;
     int currentMastery, maxMastery;
     boolean hasLogisticBuiltIn = false, hasLogisticEnhanceBonus = false, usingSP = false;
 
@@ -420,25 +422,42 @@ public class MasteryPanel {
         return new Pair<>(sModLimit, limitEnhancedBySP);
     }
 
-    void showUpgradeOrConfirmation(boolean canEnhance) {
+    void updateButtonStatuses(ShipHullSpecAPI spec) {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
-            upgradeMasteryDisplay.setOpacity(currentMastery >= maxMastery ? 0f : 1f);
-            createConstructDisplay.setOpacity(1f);
-            rerollMasteryDisplay.setOpacity(currentMastery >= maxMastery ? 1f : 0f);
-            enhanceMasteryDisplay.setOpacity(currentMastery >= maxMastery && canEnhance ? 1f : 0f);
-            confirmOrCancelDisplay.setOpacity(0f);
+            int level = ShipMastery.getPlayerMasteryLevel(spec);
+            boolean canUpgrade = MasteryUtils.canUpgradeOrEnhance(spec);
+            upgradeButton.setEnabled(canUpgrade, "Not enough XP");
+            boolean canConstruct = level >= MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL;
+            constructButton.setEnabled(canConstruct, "Unlocks at level " + MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
+            boolean canReroll = level >= MasteryUtils.UNLOCK_REROLL_LEVEL;
+            rerollButton.setEnabled(canReroll, "Unlocks at level " + MasteryUtils.UNLOCK_REROLL_LEVEL);
+            confirmButton.setEnabled(false, "No changes pending");
+            cancelButton.setEnabled(false, "No changes pending");
         }
         else {
-            upgradeMasteryDisplay.setOpacity(0f);
-            createConstructDisplay.setOpacity(0f);
-            rerollMasteryDisplay.setOpacity(0f);
-            enhanceMasteryDisplay.setOpacity(0f);
-            confirmOrCancelDisplay.setOpacity(1f);
+            upgradeButton.setEnabled(false, "Changes pending");
+            constructButton.setEnabled(false, "Changes pending");
+            rerollButton.setEnabled(false, "Changes pending");
+            confirmButton.setEnabled(true, null);
+            cancelButton.setEnabled(true, null);
         }
     }
 
     public Map<Integer, String> getSelectedMasteryButtons() {
         return savedMasteryDisplay == null ? new HashMap<>() : savedMasteryDisplay.getSelectedLevels();
+    }
+
+    private ButtonWithIcon addButton(CustomPanelAPI panel, String spriteLoc, TooltipMakerAPI anchor, boolean anchorLeft, float extraXOffset, boolean useStoryColors) {
+        var ttm = panel.createUIElement(32f, 32f, false);
+        var button = new ButtonWithIcon(spriteLoc, 32f, 32f, useStoryColors);
+        button.create(ttm);
+        PositionAPI pos;
+        if (anchorLeft)
+            pos = panel.addUIElement(ttm).belowLeft(anchor, 30f);
+        else
+            pos = panel.addUIElement(ttm).belowRight(anchor, 30f);
+        pos.setXAlignOffset(extraXOffset);
+        return button;
     }
 
     UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation, boolean scrollToStart) {
@@ -459,49 +478,32 @@ public class MasteryPanel {
         new ShipDisplay(restoredHullSpec, shipDisplaySize).create(shipDisplay);
         masteryPanel.addUIElement(shipDisplay).inTL(50f, 90f);
 
-        var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(shipDisplay.getPosition());
-        progressBarPlugin.heightOverride = shipDisplaySize - 100f;
-        progressBarPlugin.extraXOffset = 2f;
-        var data = progressBarPlugin.updateFromSpec(root.getHullSpec());
+        var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(root.getFleetMember(), shipDisplay.getPosition(), () -> forceRefresh(true, false, false, false));
+        progressBarPlugin.heightOverride = 16f;
+        progressBarPlugin.numBars = 80;
+        progressBarPlugin.widthOverride = shipDisplaySize-5f;
+        progressBarPlugin.extraXOffset = -5f;
+        progressBarPlugin.extraYOffset = shipDisplaySize-10f;
         CustomPanelAPI progressBar = Global.getSettings().createCustom(shipDisplaySize, shipDisplaySize + 25f, progressBarPlugin);
-        progressBarPlugin.makeOutline(progressBar, data, false);
+        progressBarPlugin.makeOutline(progressBar, false);
         masteryPanel.addComponent(progressBar).inTL(50f, 90f);
 
-        upgradeMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
-        new UpgradeMasteryDisplay(this, restoredHullSpec).create(upgradeMasteryDisplay);
-        masteryPanel.addUIElement(upgradeMasteryDisplay).belowMid(shipDisplay, 30f);
-
-        createConstructDisplay = masteryPanel.createUIElement(200f, 100f, false);
-        new CreateConstructDisplay(this, restoredHullSpec).create(createConstructDisplay);
-        masteryPanel.addUIElement(createConstructDisplay).belowMid(shipDisplay, currentMastery >= maxMastery ? 0f : 95f);
-
-        rerollMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
-        new RerollMasteryDisplay(this, restoredHullSpec).create(rerollMasteryDisplay);
-        masteryPanel.addUIElement(rerollMasteryDisplay).belowMid(shipDisplay, 65f);
-
-        final boolean canEnhance = MasteryUtils.getEnhanceCount(restoredHullSpec) < MasteryUtils.MAX_ENHANCES;
-
-        enhanceMasteryDisplay = masteryPanel.createUIElement(200f, 100f, false);
-        new EnhanceMasteryDisplay(this, restoredHullSpec).create(enhanceMasteryDisplay);
-        masteryPanel.addUIElement(enhanceMasteryDisplay).belowMid(shipDisplay, 130f);
-
-        if (currentMastery >= maxMastery) {
-            upgradeMasteryDisplay.setOpacity(0f);
-            createConstructDisplay.setOpacity(1f);
-            rerollMasteryDisplay.setOpacity(1f);
-            enhanceMasteryDisplay.setOpacity(canEnhance ? 1f : 0f);
-        } else {
-            rerollMasteryDisplay.setOpacity(0f);
-            createConstructDisplay.setOpacity(1f);
-            enhanceMasteryDisplay.setOpacity(0f);
-            upgradeMasteryDisplay.setOpacity(1f);
-        }
-
-        confirmOrCancelDisplay = masteryPanel.createUIElement(225f, 100f, false);
-        new ConfirmOrCancelDisplay(new ConfirmMasteryChangesPressed(this, root.getHullSpec()), new CancelMasteryChangesPressed(this)).create(confirmOrCancelDisplay);
-        masteryPanel.addUIElement(confirmOrCancelDisplay).belowMid(shipDisplay, 10f);
-
-        confirmOrCancelDisplay.setOpacity(0f);
+        upgradeButton = addButton(masteryPanel, currentMastery >= maxMastery ? "graphics/icons/ui/sms_upgrade_icon_green.png" : "graphics/icons/ui/sms_upgrade_icon.png", shipDisplay, true, 0f, currentMastery >= maxMastery);
+        upgradeButton.onClick(() -> new LevelUpDialog(root.getFleetMember(), () -> forceRefresh(true, false, false, false)).show());
+        upgradeButton.setButtonTooltip(upgradeButton::makeUpgradeTooltip);
+        constructButton = addButton(masteryPanel, "graphics/icons/ui/sms_construct_icon.png",  shipDisplay, true, 45f, false);
+        constructButton.onClick(() -> new ConstructButtonPressed(this, restoredHullSpec).trigger());
+        constructButton.setButtonTooltip(constructButton::makeConstructTooltip);
+        constructButton.isCheckbox = true;
+        rerollButton = addButton(masteryPanel, "graphics/icons/ui/sms_reroll_icon_green.png", shipDisplay, true, 90f, true);
+        rerollButton.onClick(() -> new RerollButtonPressed(this, restoredHullSpec).trigger());
+        rerollButton.setButtonTooltip(rerollButton::makeRerollTooltip);
+        confirmButton = addButton(masteryPanel, "graphics/icons/ui/sms_confirm_icon.png", shipDisplay, false, -49f, false);
+        confirmButton.onClick(() -> new ConfirmMasteryChangesPressed(this, restoredHullSpec).trigger());
+        confirmButton.setButtonTooltip(confirmButton::makeConfirmTooltip);
+        cancelButton = addButton(masteryPanel, "graphics/icons/ui/sms_cancel_icon.png", shipDisplay, false, -4f, false);
+        cancelButton.onClick(() -> new CancelMasteryChangesPressed(this).trigger());
+        cancelButton.setButtonTooltip(cancelButton::makeCancelTooltip);
 
         float containerW = 800f, containerH = height - 66f;
         TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH+2f, false);
@@ -512,7 +514,16 @@ public class MasteryPanel {
         float masteryDisplayWidth = containerW + 50f - containerPadX, masteryDisplayHeight = containerH + 2f - containerPadY;
         float pad = 120f;
 
-        MasteryDisplay display = new MasteryDisplay(this, module, root, containerW, containerH, pad, !useSavedScrollerLocation, () -> showUpgradeOrConfirmation(canEnhance));
+        MasteryDisplay display = new MasteryDisplay(
+                this,
+                module.getVariant(),
+                root.getFleetMember(),
+                module.getFleetMember() != root.getFleetMember(),
+                containerW,
+                containerH,
+                pad,
+                !useSavedScrollerLocation,
+                () -> updateButtonStatuses(restoredHullSpec));
         CustomPanelAPI masteryDisplayPanel = masteryPanel.createCustomPanel(masteryDisplayWidth, masteryDisplayHeight, display.new MasteryDisplayPlugin());
         TooltipMakerAPI masteryDisplayTTM =
                 masteryDisplayPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
@@ -538,6 +549,8 @@ public class MasteryPanel {
         }
 
         savedMasteryDisplay = display;
+        updateButtonStatuses(restoredHullSpec);
+
 
         float buttonW = 40f, buttonH = 35f, buttonPad = 25f;
         int maxButtons = (int) (containerW / (buttonW + buttonPad));

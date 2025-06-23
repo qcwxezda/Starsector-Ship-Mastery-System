@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -12,15 +13,15 @@ import shipmastery.util.Utils;
 public class AAFRangeDamage extends ShipSystemEffect {
     static final float[] FLUX_PER_SECOND = new float[] {50f, 100f, 150f, 200f};
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.AAFRangeDamage).params(getSystemName(), Utils.asPercent(getStrengthForPlayer()));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.AAFRangeDamagePost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
-                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedModule.getHullSize())]));
+                        Utils.asInt(FLUX_PER_SECOND[Utils.hullSizeToInt(selectedVariant.getHullSize())]));
     }
 
     @Override

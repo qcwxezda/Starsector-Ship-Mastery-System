@@ -23,9 +23,9 @@ import org.lwjgl.opengl.GL14;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.config.Settings;
+import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.LevelUpDialog;
-import shipmastery.ui.triggers.ActionListener;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
@@ -90,7 +90,7 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
         float y;
         private float width;
         private float height;
-        private ShipHullSpecAPI spec;
+        private final FleetMemberAPI member;
         public Float widthOverride = null;
         public Float heightOverride = null;
         public float numBars = 40;
@@ -110,9 +110,11 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
         public Color brightHighlightColor = Utils.mixColor(Settings.POSITIVE_HIGHLIGHT_COLOR, Color.WHITE, 0.4f);
 
         public record MasteryData(ShipHullSpecAPI spec, int level, int maxLevel, int enhances, float curPts, float reqPts) {}
+        public MasteryData data;
+        private final Action onLevelUp;
 
-        public MasteryData updateFromSpec(ShipHullSpecAPI spec) {
-            this.spec = spec;
+        public void updateFromMember(FleetMemberAPI member) {
+            var spec = member.getHullSpec();
             int level = ShipMastery.getPlayerMasteryLevel(spec);
             int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
             int enhances = MasteryUtils.getEnhanceCount(spec);
@@ -124,11 +126,11 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             brightMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.6f);
             brightHighlightColor = Utils.mixColor(Settings.POSITIVE_HIGHLIGHT_COLOR, Color.WHITE, 0.4f);
 
-            if (enhances >= MasteryUtils.MAX_ENHANCES) {
+            if (level >= maxLevel || member.getFleetCommander() == null || !member.getFleetCommander().isPlayer()) {
                 forceNoFlash = true;
             }
 
-            return new MasteryData(spec, level, maxLevel, enhances, curPts, reqPts);
+            data = new MasteryData(spec, level, maxLevel, enhances, curPts, reqPts);
         }
 
         private void updatePosition(PositionAPI position) {
@@ -139,9 +141,16 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             flashFader.fadeOut();
         }
 
-        public FleetPanelItemUIPlugin(PositionAPI position) {
+        public FleetPanelItemUIPlugin(FleetMemberAPI member, PositionAPI position) {
+            this(member, position, null);
+        }
+
+        public FleetPanelItemUIPlugin(FleetMemberAPI member, PositionAPI position, Action onLevelUp) {
             this.position = position;
+            this.member = member;
+            this.onLevelUp = onLevelUp;
             updatePosition(position);
+            updateFromMember(member);
         }
 
         @Override
@@ -155,17 +164,29 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
         }
 
         private void drawRect(float x, float y, float width, float height, float fractionFilledStart, float fractionFilledEnd, Color color, float alpha) {
-            float texX = 0.625f, texY = 0.00785f * numBars;
+            float texXStart = 0.1f, texYStart = 0f;
+            float texXEnd = 0.525f, texYEnd = 0.00785f * numBars;
             float[] comps = color.getRGBComponents(null);
             GL11.glColor4f(comps[0], comps[1], comps[2], alpha);
-            GL11.glTexCoord2f(0f, texY * fractionFilledStart);
-            GL11.glVertex2f(x, y + height * fractionFilledStart);
-            GL11.glTexCoord2f(texX, texY * fractionFilledStart);
-            GL11.glVertex2f(x + width, y + height * fractionFilledStart);
-            GL11.glTexCoord2f(texX, texY * fractionFilledEnd);
-            GL11.glVertex2f(x + width, y + height * fractionFilledEnd);
-            GL11.glTexCoord2f(0f, texY * fractionFilledEnd);
-            GL11.glVertex2f(x, y + height * fractionFilledEnd);
+            if (height > width) {
+                GL11.glTexCoord2f(texXStart, texYStart + (texYEnd - texYStart) * fractionFilledStart);
+                GL11.glVertex2f(x, y + height * fractionFilledStart);
+                GL11.glTexCoord2f(texXEnd, texYStart + (texYEnd - texYStart) * fractionFilledStart);
+                GL11.glVertex2f(x + width, y + height * fractionFilledStart);
+                GL11.glTexCoord2f(texXEnd, texYStart + (texYEnd - texYStart) * fractionFilledEnd);
+                GL11.glVertex2f(x + width, y + height * fractionFilledEnd);
+                GL11.glTexCoord2f(texXStart, texYStart + (texYEnd - texYStart) * fractionFilledEnd);
+                GL11.glVertex2f(x, y + height * fractionFilledEnd);
+            } else {
+                GL11.glTexCoord2f(texXStart, texYStart + (texYEnd - texYStart) * fractionFilledStart);
+                GL11.glVertex2f(x + width * fractionFilledStart, y);
+                GL11.glTexCoord2f(texXEnd, texYStart + (texYEnd - texYStart) * fractionFilledStart);
+                GL11.glVertex2f(x + width * fractionFilledStart, y + height);
+                GL11.glTexCoord2f(texXEnd, texYStart + (texYEnd - texYStart) * fractionFilledEnd);
+                GL11.glVertex2f(x + width * fractionFilledEnd, y + height);
+                GL11.glTexCoord2f(texXStart, texYStart + (texYEnd - texYStart) * fractionFilledEnd);
+                GL11.glVertex2f(x + width * fractionFilledEnd, y);
+            }
         }
 
         @Override
@@ -199,14 +220,13 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
 
         @Override
         public void buttonPressed(Object buttonId) {
-            if (spec == null) return;
-            new LevelUpDialog(spec).show();
+            new LevelUpDialog(member, onLevelUp).show();
         }
 
-        public void makeOutline(CustomPanelAPI panel, MasteryData data, boolean smallText) {
-            TooltipMakerAPI outline = panel.createUIElement(width + 2f, height + 1f, false);
-            var box = outline.addAreaCheckbox("", null, Color.WHITE, brightMasteryColor, Color.WHITE, width + 2f, height + 1f, -1f);
-            box.setEnabled(progress >= 1f);
+        public void makeOutline(CustomPanelAPI panel, boolean smallText) {
+            TooltipMakerAPI outline = panel.createUIElement(width + 2f, height + 2f, false);
+            var box = outline.addAreaCheckbox("", null, Color.WHITE, brightMasteryColor, Color.WHITE, width + 2f, height + 2f, -1f);
+            box.setEnabled(progress >= 1f && member.getFleetCommander() != null && member.getFleetCommander().isPlayer());
             box.setButtonDisabledPressedSound(null);
             box.setMouseOverSound(null);
             box.setOpacity(0.15f);
@@ -238,14 +258,14 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             LabelAPI temp = Global.getSettings().createLabel("" + data.level, font);
             var textWidth = temp.computeTextWidth(temp.getText());
             outline.setTextWidthOverride(textWidth);
-            var levelLabel = outline.addPara("" + data.level, MasteryUtils.getPlayerUnassignedCount(data.spec) > 0 ? brightHighlightColor : brightMasteryColor, -height/2f-10f);
-            levelLabel.getPosition().setXAlignOffset(-textWidth + (smallText ? 12.5f : 14f));
+            var levelLabel = outline.addPara("" + data.level, MasteryUtils.getPlayerUnassignedCount(data.spec) > 0 ? brightHighlightColor : brightMasteryColor, -height/2f-(smallText ? 8f : 11f));
+            levelLabel.getPosition().setXAlignOffset(-textWidth/2f + 1f + width/2f);
 //            if (MasteryUtils.getPlayerUnassignedCount(data.spec) > 0) {
 //                var asterisk = outline.addPara("*", FleetPanelItemUIPlugin.brightMasteryColor, -2f);
 //                asterisk.getPosition().setXAlignOffset(textWidth - (smallText ? 8f : 11f));
 //            }
 
-            panel.addUIElement(outline).inTR(xPad + 4f + extraXOffset, yPad + extraYOffset);
+            panel.addUIElement(outline).inTR(xPad + 4f + extraXOffset, yPad  + extraYOffset);
         }
     }
 
@@ -271,14 +291,12 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
                             // make sure the injector doesn't duplicate stuff
                             if (isAlreadyInjected(item)) continue;
                             var member = (FleetMemberAPI) ReflectionUtils.invokeMethod(item, "getMember");
-                            var spec = member.getHullSpec();
 
                             var pos = ((UIComponentAPI) item).getPosition();
-                            var plugin = new FleetPanelItemUIPlugin(pos);
-                            var data = plugin.updateFromSpec(spec);
+                            var plugin = new FleetPanelItemUIPlugin(member, pos, () -> ReflectionUtils.invokeMethod(fleetPanel, "recreateUI", false));
 
                             CustomPanelAPI custom = Global.getSettings().createCustom(pos.getWidth(), pos.getHeight(), plugin);
-                            plugin.makeOutline(custom, data, false);
+                            plugin.makeOutline(custom, false);
                             ((UIPanelAPI) item).addComponent(custom).inMid();
                         }
                     }, 0.01f);

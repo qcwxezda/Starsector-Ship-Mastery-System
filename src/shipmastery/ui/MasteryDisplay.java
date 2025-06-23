@@ -3,8 +3,8 @@ package shipmastery.ui;
 import com.fs.graphics.util.Fader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
@@ -14,6 +14,7 @@ import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
@@ -42,13 +43,14 @@ public class MasteryDisplay implements CustomUIElement {
     final float w, h;
     final NavigableMap<Integer, String> activeLevels;
     final NavigableMap<Integer, String> selectedLevels;
-    final ShipAPI selectedModule, rootShip;
+    final ShipVariantAPI selectedVariant;
     final ShipHullSpecAPI rootSpec;
     final FleetMemberAPI rootFleetMember;
     final MasteryPanel parentPanel;
-    final Action onButtonClick;
+    Action onButtonClick;
     final float paddingBetweenLevels;
     float totalHeight;
+    final boolean isModule;
     int levelToScrollTo;
     final boolean resetScrollbar;
     float savedScrollerHeight = 0f;
@@ -61,19 +63,31 @@ public class MasteryDisplay implements CustomUIElement {
     final List<Float> scrollerHeights = new ArrayList<>();
     final List<Float> contentHeights = new ArrayList<>();
 
-    public MasteryDisplay(MasteryPanel parentPanel, ShipAPI selectedModule, ShipAPI rootShip, float width, float height, float pad, boolean resetScrollbar, Action onButtonClick) {
+    public MasteryDisplay(@Nullable MasteryPanel parentPanel,
+                          ShipVariantAPI selectedVariant,
+                          FleetMemberAPI member,
+                          boolean isModule,
+                          float width,
+                          float height,
+                          float pad,
+                          boolean resetScrollbar,
+                          Action onButtonClick) {
         w = width;
         h = height;
         this.parentPanel = parentPanel;
-        this.selectedModule = selectedModule;
-        this.rootShip = rootShip;
-        rootSpec = Utils.getRestoredHullSpec(rootShip.getHullSpec());
-        rootFleetMember = rootShip.getFleetMember();
+        this.selectedVariant = selectedVariant;
+        this.isModule = isModule;
+        rootSpec = Utils.getRestoredHullSpec(member.getHullSpec());
+        rootFleetMember = member;
         this.onButtonClick = onButtonClick;
         activeLevels = ShipMastery.getPlayerActiveMasteriesCopy(rootSpec);
         selectedLevels = new TreeMap<>(activeLevels);
         this.resetScrollbar = resetScrollbar;
         paddingBetweenLevels = pad;
+    }
+
+    public void setOnButtonClick(Action onButtonClick) {
+        this.onButtonClick = onButtonClick;
     }
 
     public float getTotalHeight() {
@@ -191,13 +205,13 @@ public class MasteryDisplay implements CustomUIElement {
         scrollToLevel(snapTo);
     }
 
-    @Override
-    public void create(TooltipMakerAPI tooltip) {
-        int maxMastery = ShipMastery.getMaxMasteryLevel(rootSpec);
+    public void create(TooltipMakerAPI tooltip, int startLevel, int endLevel, boolean alwaysEnabled) {
         float spacerHeight = h/2f - MIN_DESC_HEIGHT/2f;
-        tooltip.addSpacer(spacerHeight);
-        totalHeight += spacerHeight;
-        for (int i = 1; i <= maxMastery; i++) {
+        if (endLevel > startLevel) {
+            tooltip.addSpacer(spacerHeight);
+            totalHeight += spacerHeight;
+        }
+        for (int i = startLevel; i <= endLevel; i++) {
             List<String> optionIds = ShipMastery.getMasteryOptionIds(rootSpec, i);
             boolean singleOption = optionIds.size() == 1;
             float height = 0f;
@@ -205,27 +219,36 @@ public class MasteryDisplay implements CustomUIElement {
                 CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
                 TooltipMakerAPI description = descriptionPanel.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
                 tooltip.addComponent(descriptionPanel).inTL(0f, totalHeight + height);
-                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption);
+                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption, alwaysEnabled);
             }
-            CustomPanelAPI titlePanel = Global.getSettings().createCustom(w + 50f, 50f, null);
-            TooltipMakerAPI titleMaker = titlePanel.createUIElement(w-8f, 50f, false);
-            titleMaker.setTitleFont(Fonts.ORBITRON_24AABOLD);
-            titleMaker.addTitle(Strings.MasteryPanel.levelText + " " + i, i > ShipMastery.getPlayerMasteryLevel(rootSpec) ? Misc.getGrayColor() : Misc.getBasePlayerColor()).setAlignment(Alignment.MID);
-            titlePanel.addUIElement(titleMaker).inTR(0f, 0f);
-            tooltip.addComponent(titlePanel).inTR(-3f, totalHeight-30f);
+            if (endLevel > startLevel) {
+                CustomPanelAPI titlePanel = Global.getSettings().createCustom(w + 50f, 50f, null);
+                TooltipMakerAPI titleMaker = titlePanel.createUIElement(w - 8f, 50f, false);
+                titleMaker.setTitleFont(Fonts.ORBITRON_24AABOLD);
+                titleMaker.addTitle(Strings.MasteryPanel.levelText + " " + i, i > ShipMastery.getPlayerMasteryLevel(rootSpec) ? Misc.getGrayColor() : Misc.getBasePlayerColor()).setAlignment(Alignment.MID);
+                titlePanel.addUIElement(titleMaker).inTR(0f, 0f);
+                tooltip.addComponent(titlePanel).inTR(-3f, totalHeight - 30f);
+            }
             totalHeight += paddingBetweenLevels + height;
             contentHeights.add(height);
             scrollerHeights.add(totalHeight-height);
         }
-        tooltip.addSpacer(spacerHeight);
-        totalHeight += spacerHeight;
+        if (endLevel > startLevel) {
+            tooltip.addSpacer(spacerHeight);
+            totalHeight += spacerHeight;
+        }
         savedTooltip = tooltip;
+    }
+
+    @Override
+    public void create(TooltipMakerAPI tooltip) {
+        create(tooltip, 1, ShipMastery.getMaxMasteryLevel(rootSpec), false);
     }
 
     void addMasteryDescriptions(List<MasteryEffect> effects, TooltipMakerAPI tooltip) {
         for (int i = 0; i < effects.size(); i++) {
             MasteryEffect effect = effects.get(i);
-            MasteryDescription effectDescription = effect.getDescription(selectedModule, rootFleetMember);
+            MasteryDescription effectDescription = effect.getDescription(selectedVariant, rootFleetMember);
             if (effectDescription != null) {
                 if (effect.hasTag(MasteryTags.PREFIX_FLAGSHIP_ONLY)) {
                     effectDescription.addLabelWithPrefix(tooltip, Strings.Misc.flagshipOnly, Misc.getBasePlayerColor());
@@ -235,9 +258,8 @@ public class MasteryDisplay implements CustomUIElement {
             }
             tooltip.setParaFontDefault();
             tooltip.addSpacer(5f);
-            effect.addPostDescriptionSection(tooltip, selectedModule, rootFleetMember);
-            if (!rootFleetMember.equals(selectedModule.getFleetMember()) && effect.hasTag(
-                    MasteryTags.DOESNT_AFFECT_MODULES)) {
+            effect.addPostDescriptionSection(tooltip, selectedVariant, rootFleetMember);
+            if (isModule && effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                 tooltip.addPara(Strings.Misc.doesntAffectModules, Settings.NEGATIVE_HIGHLIGHT_COLOR, 5f);
             }
             tooltip.addSpacer(i == effects.size() - 1 ? 20f : 5f);
@@ -245,9 +267,10 @@ public class MasteryDisplay implements CustomUIElement {
     }
 
     /** Returns the final height of the description. */
-    float addEffectsDisplay(final List<MasteryEffect> effects, int level, String optionId, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter) {
+    float addEffectsDisplay(final List<MasteryEffect> effects, int level, String optionId, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter, boolean alwaysEnabled) {
         int currentMastery = ShipMastery.getPlayerMasteryLevel(rootSpec);
         boolean alwaysShow = true;
+        boolean enabled = level <= currentMastery || alwaysEnabled;
         for (MasteryEffect effect : effects) {
             if (!MasteryUtils.alwaysShowDescription(effect)) {
                 alwaysShow = false;
@@ -268,11 +291,11 @@ public class MasteryDisplay implements CustomUIElement {
         innerPanel.getPosition().setSize(w - 15f, descH);
 
         TooltipMakerAPI descriptionButton = innerPanel.createUIElement(w, descH, false);
-        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.MasteryPanel.unknownMastery : "", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.MasteryPanel.unknownMastery : "", optionId, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                                                                   Misc.getGrayColor(), w - 5f, descH, 0f);
-        descOutline.setClickable(level <= currentMastery);
-        descOutline.setGlowBrightness(level <= currentMastery ? 0.8f : 0.15f);
-        if (level > currentMastery) {
+        descOutline.setClickable(enabled);
+        descOutline.setGlowBrightness(enabled ? 0.8f : 0.15f);
+        if (!enabled) {
             descOutline.setButtonPressedSound(null);
         }
 
@@ -302,7 +325,7 @@ public class MasteryDisplay implements CustomUIElement {
                 @Override
                 public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                     for (MasteryEffect effect : effects) {
-                        effect.addTooltipIfHasTooltipTag(tooltip, selectedModule, rootFleetMember);
+                        effect.addTooltipIfHasTooltipTag(tooltip, selectedVariant, rootFleetMember);
                     }
                 }
             }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
@@ -317,7 +340,7 @@ public class MasteryDisplay implements CustomUIElement {
 
         levelButton.highlight();
 
-        if (level <= currentMastery) {
+        if (enabled) {
             descOutline.highlight();
             levelButton.setHighlightBrightness(0.5f);
             descOutline.setHighlightBrightness(0.25f);
@@ -340,7 +363,7 @@ public class MasteryDisplay implements CustomUIElement {
 
         // Cheap trick: to simulate darken effect, render the outline area checkbox above the text
         innerPanel.addUIElement(levelButtonTTM).inLMid(11f);
-        if (level > currentMastery) {
+        if (!enabled) {
             innerPanel.addUIElement(innerTooltip).inLMid(60f);
             innerPanel.addUIElement(descriptionButton).inLMid(45f);
         } else {
@@ -392,13 +415,17 @@ public class MasteryDisplay implements CustomUIElement {
                     else if (val == Keyboard.KEY_G || val == Keyboard.KEY_SPACE) {
                         if (!activeLevels.equals(selectedLevels)) {
                             event.consume();
-                            new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
+                            if (parentPanel != null) {
+                                new ConfirmMasteryChangesPressed(parentPanel, rootSpec).trigger();
+                            }
                         }
                     }
                     else if (val == Keyboard.KEY_ESCAPE) {
                         if (!activeLevels.equals(selectedLevels)) {
                             event.consume();
-                            new CancelMasteryChangesPressed(parentPanel).trigger();
+                            if (parentPanel != null) {
+                                new CancelMasteryChangesPressed(parentPanel).trigger();
+                            }
                         }
                     }
                 }
