@@ -7,8 +7,8 @@ RandomMastery,,,,1,shipmastery.mastery.impl.random.RandomMastery
 SModCapacity,,no_disable logistic,,0.5,shipmastery.mastery.impl.logistics.SModCapacity
 SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.SModCreditsCost
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
-RestorationCost,,negative_strength_allowed logistic,,-0.25,shipmastery.mastery.impl.logistics.RestorationCost
-SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
+RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
+# SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.unused.SModRemoval
 SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.unused.SModsOverCapacity
 ScaleOtherMasteries,4,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]

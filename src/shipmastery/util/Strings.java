@@ -195,7 +195,33 @@ public interface Strings {
         String enhanceMasteryConfirmText3 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText3");
         String unassignedWarningTextPlural = Utils.getString("sms_masteryPanel", "unassignedWarningTextPlural");
         String unassignedWarningTextSingular = Utils.getString("sms_masteryPanel", "unassignedWarningTextSingular");
-        String useSPHint = Utils.getString("sms_masteryPanel", "useSPHint");
+        String useSPTooltip = Utils.getString("sms_masteryPanel", "useSPTooltip");
+        String levelUpSelect = Utils.getString("sms_masteryPanel", "levelUpSelect");
+        String levelUpTooltip = Utils.getString("sms_masteryPanel", "levelUpTooltip");
+        String masterySharing = Utils.getString("sms_masteryPanel", "masterySharing");
+        String active = Utils.getString("sms_masteryPanel", "active");
+        String inactive = Utils.getString("sms_masteryPanel", "inactive");
+        String masterySharingTooltip = Utils.getString("sms_masteryPanel", "masterySharingTooltip");
+        String rerollTooltip = Utils.getString("sms_masteryPanel", "rerollTooltip");
+        String confirmChangesTooltipTitle = Utils.getString("sms_masteryPanel", "confirmChangesTooltipTitle");
+        String confirmChangesTooltipText = Utils.getString("sms_masteryPanel", "confirmChangesTooltipText");
+        String cancelChangesTitle = Utils.getString("sms_masteryPanel", "cancelChangesTitle");
+        String cancelChangesTooltipText = Utils.getString("sms_masteryPanel", "cancelChangesTooltipText");
+        String noChangesPending = Utils.getString("sms_masteryPanel", "noChangesPending");
+        String unlockAtLevel = Utils.getString("sms_masteryPanel", "unlockAtLevel");
+        String notEnoughXP = Utils.getString("sms_masteryPanel", "notEnoughXP");
+        String hotkey = Utils.getString("sms_masteryPanel", "hotkey");
+        String buttonStatus = Utils.getString("sms_masteryPanel", "buttonStatus");
+        String selectiveRestorationButton = Utils.getString("sms_masteryPanel", "selectiveRestorationButton");
+        String selectiveRestorationTooltip = Utils.getString("sms_masteryPanel", "selectiveRestorationTooltip");
+        String selectiveRestorationPanelText = Utils.getString("sms_masteryPanel", "selectiveRestorationPanelText");
+        String cantRestore = Utils.getString("sms_masteryPanel", "cantRestore");
+        String removeSModsButton = Utils.getString("sms_masteryPanel", "removeSModsButton");
+        String removeSModsTooltip = Utils.getString("sms_masteryPanel", "removeSModsTooltip");
+        String integrationButton = Utils.getString("sms_masteryPanel", "integrationButton");
+        String integrationTooltip = Utils.getString("sms_masteryPanel", "integrationTooltip");
+        String noDMods = Utils.getString("sms_masteryPanel", "noDMods");
+        String noSMods = Utils.getString("sms_masteryPanel", "noSMods");
     }
 
     interface Misc {
@@ -214,6 +240,10 @@ public interface Strings {
         @SuppressWarnings("unused")
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
         String excessOP = Utils.getString("sms_misc", "excessOP");
+        String storyPoint = Utils.getString("sms_misc", "storyPoint");
+        String requiresStoryPointNoBonus = Utils.getString("sms_misc", "requiresStoryPointNoBonus");
+        String requiresStoryPointWithBonus = Utils.getString("sms_misc", "requiresStoryPointWithBonus");
+        String noStoryPoints = Utils.getString("sms_misc", "noStoryPoints");
     }
 
     interface Messages {

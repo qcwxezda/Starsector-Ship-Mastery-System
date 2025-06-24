@@ -17,6 +17,8 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
 import com.fs.starfarer.campaign.fleet.FleetData;
 import com.fs.starfarer.combat.entities.Missile;
@@ -850,5 +852,12 @@ public abstract class Utils {
     private static void getAllModulesHelper(ShipAPI ship, List<ShipAPI> list) {
         list.add(ship);
         ship.getChildModulesCopy().forEach(child -> getAllModulesHelper(child, list));
+    }
+
+    public static LabelAPI addStoryPointUseInfo(TooltipMakerAPI tooltip, float bonusXPFrac) {
+        if (bonusXPFrac <= 0f) {
+            return tooltip.addPara(Strings.Misc.requiresStoryPointNoBonus, 10f, Misc.getStoryOptionColor(), Strings.Misc.storyPoint);
+        }
+        return tooltip.addPara(Strings.Misc.requiresStoryPointWithBonus, 10f, Misc.getStoryOptionColor(), Strings.Misc.storyPoint, asPercent(bonusXPFrac));
     }
 }

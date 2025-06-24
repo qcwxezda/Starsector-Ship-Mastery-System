@@ -251,7 +251,7 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
                             "" + (int) data.curPts,
                             "" + (int) data.reqPts).setAlignment(Alignment.MID);
                 }
-            }, TooltipMakerAPI.TooltipLocation.RIGHT);
+            }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
 
             String font = smallText ? Fonts.ORBITRON_12 : Fonts.ORBITRON_20AA;
             outline.setParaFont(font);

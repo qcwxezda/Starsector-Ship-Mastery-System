@@ -12,7 +12,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.ReflectionUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.ShipMasterySModRecord;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -75,10 +75,10 @@ public class SModTableRowPressed extends TriggerableProxy {
                 if (rootVariant != null) {
                     String name = spec.getDisplayName();
 
-                    boolean isEnhance = SModUtils.isHullmodBuiltIn(spec, variant);
+                    boolean isEnhance = HullmodUtils.isHullmodBuiltIn(spec, variant);
                     float bonusXPFraction = 0f;
                     if (masteryPanel.isUsingSP()) {
-                        float origCreditsCost = SModUtils.getCreditsCost(spec, module);
+                        float origCreditsCost = HullmodUtils.getCreditsCost(spec, module);
                         bonusXPFraction = isEnhance ? 1f : 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
                         Global.getSector().getPlayerStats().spendStoryPoints(
                                 1,

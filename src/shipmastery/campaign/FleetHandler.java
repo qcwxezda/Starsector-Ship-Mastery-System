@@ -32,7 +32,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.SizeLimitedMap;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -175,7 +175,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     }
                 }
 
-                int sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
+                int sModsToAdd = HullmodUtils.getMaxSMods(fm) - variant.getSMods().size();
                 float prob = difficultyData.baseSModProb() * (float) Math.pow(difficultyData.sModProbMultPerDMod(), DModManager.getNumDMods(variant));
                 addAdditionalSModsToVariant(variant, sModsToAdd, fleet, random, prob);
 

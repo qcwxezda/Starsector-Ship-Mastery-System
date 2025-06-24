@@ -100,13 +100,12 @@ public abstract class MasteryUtils {
         return 1;
     }
 
-    public static boolean canUpgradeOrEnhance(ShipHullSpecAPI spec) {
+    public static boolean hasEnoughXPToUpgradeOrEnhance(ShipHullSpecAPI spec) {
         var pts = ShipMastery.getPlayerMasteryPoints(spec);
         if (ShipMastery.getPlayerMasteryLevel(spec) < ShipMastery.getMaxMasteryLevel(spec)) {
             return pts >= getUpgradeCost(spec);
         }
-        return pts >= getEnhanceMPCost(spec)
-                && Global.getSector().getPlayerStats().getStoryPoints() >= getEnhanceSPCost(spec);
+        return pts >= getEnhanceMPCost(spec);
     }
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {

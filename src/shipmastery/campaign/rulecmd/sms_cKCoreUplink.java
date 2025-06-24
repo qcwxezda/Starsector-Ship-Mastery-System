@@ -244,7 +244,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
                         tooltip.addPara(Global.getSettings().getDescription(spec.getId(), Description.Type.RESOURCE).getText1(), 10f);
                         ListenerUtil.addCommodityTooltipSectionAfterPrice(tooltip, 600f, false, stack);
                     }
-                }, TooltipMakerAPI.TooltipLocation.RIGHT);
+                }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
 
                 corePicker.addImage(spec.getIconName(), itemSize, itemSize, -itemSize);
                 return 0f;

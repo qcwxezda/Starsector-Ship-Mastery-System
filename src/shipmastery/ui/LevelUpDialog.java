@@ -12,6 +12,8 @@ import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class LevelUpDialog {
 
@@ -49,7 +51,7 @@ public class LevelUpDialog {
         float displayH = Math.min(500f, tempDisplay.getTotalHeight() + 5f);
         float height =  displayH + 100f;
 
-        ReflectionUtils.GenericDialogData data = ReflectionUtils.showGenericDialog("", "Confirm", "Cancel", width, height, new DialogDismissedListener() {
+        ReflectionUtils.GenericDialogData data = ReflectionUtils.showGenericDialog("", Strings.Misc.confirm, Strings.Misc.cancel, width, height, new DialogDismissedListener() {
             @Override
             public void trigger(Object... args) {
                 if ((int) args[1] == 1 || selectedLevelId == null) return;
@@ -76,7 +78,7 @@ public class LevelUpDialog {
 
         TooltipMakerAPI levelUpTitle = panel.createUIElement(width, height, false);
         levelUpTitle.setTitleFont(Fonts.ORBITRON_24AA);
-        levelUpTitle.addTitle(String.format("Select a perk for %s ships", spec.getHullNameWithDashClass())).setAlignment(Alignment.MID);
+        levelUpTitle.addTitle(String.format(Strings.MasteryPanel.levelUpSelect, Utils.getRestoredHullSpec(spec).getHullNameWithDashClass())).setAlignment(Alignment.MID);
         panel.addUIElement(levelUpTitle).inTR(30f, 25f);
 
         TooltipMakerAPI outline = panel.createUIElement(displayW, displayH, false);

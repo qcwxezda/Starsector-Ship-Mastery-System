@@ -5,13 +5,14 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -28,19 +29,23 @@ import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.hullmods.EngineeringOverride;
-import shipmastery.ui.triggers.CancelMasteryChangesPressed;
-import shipmastery.ui.triggers.ClearSModsPressed;
-import shipmastery.ui.triggers.ConfirmMasteryChangesPressed;
-import shipmastery.ui.triggers.ConstructButtonPressed;
-import shipmastery.ui.triggers.RerollButtonPressed;
+import shipmastery.ui.buttons.ButtonWithIcon;
+import shipmastery.ui.buttons.CancelButton;
+import shipmastery.ui.buttons.ConfirmButton;
+import shipmastery.ui.buttons.IntegrateButton;
+import shipmastery.ui.buttons.LevelUpButton;
+import shipmastery.ui.buttons.MasterySharingButton;
+import shipmastery.ui.buttons.RemoveSModsButton;
+import shipmastery.ui.buttons.RerollButton;
+import shipmastery.ui.buttons.SelectiveRestoreButton;
+import shipmastery.ui.buttons.UseSPButton;
 import shipmastery.ui.triggers.SModTableHeaderPressed;
 import shipmastery.ui.triggers.SModTableRowPressed;
 import shipmastery.ui.triggers.TabButtonPressed;
-import shipmastery.ui.triggers.UseSPButtonPressed;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -165,7 +170,7 @@ public class MasteryPanel {
         TooltipMakerAPI thisShipTab = tabsPanel.createUIElement(w, h, false);
         thisShipTab.setAreaCheckboxFont(checkboxFont);
         sModButton = thisShipTab.addAreaCheckbox(Strings.MasteryPanel.hullmodsTab, null, Misc.getBasePlayerColor(),
-                                                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
+                Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), w, h, 0f);
 
         ReflectionUtils.setButtonListener(sModButton, tabButtonListener);
         thisShipTab.setAreaCheckboxFontDefault();
@@ -195,7 +200,7 @@ public class MasteryPanel {
         hullTypeTab.setAreaCheckboxFont(checkboxFont);
         masteryButton =
                 hullTypeTab.addAreaCheckbox(Strings.MasteryPanel.masteryTab, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                            Misc.getBrightPlayerColor(), w, h, 0f);
+                        Misc.getBrightPlayerColor(), w, h, 0f);
 
         ReflectionUtils.setButtonListener(masteryButton, tabButtonListener);
         hullTypeTab.setAreaCheckboxFontDefault();
@@ -225,7 +230,7 @@ public class MasteryPanel {
         int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
         String masteryPointsString = Strings.MasteryPanel.masteryPointsDisplay + masteryPointsAmt;
         float masteryPointsStringWidth = 10f + Global.getSettings().computeStringWidth(masteryPointsString,
-                                                                                 "graphics/fonts/orbitron20aabold.fnt");
+                "graphics/fonts/orbitron20aabold.fnt");
         TooltipMakerAPI masteryPoints = labelsPanel.createUIElement(masteryPointsStringWidth, 30f, false);
         masteryPoints.setParaOrbitronLarge();
         LabelAPI masteryPointsLabel = masteryPoints.addPara(masteryPointsString, 10f);
@@ -250,10 +255,71 @@ public class MasteryPanel {
         return labelsPanel;
     }
 
+    private void addShipPanelButtons(ShipAPI selectedShip, FleetMemberAPI member, CustomPanelAPI panel) {
+        var spec = member.getHullSpec();
+        int level = ShipMastery.getPlayerMasteryLevel(spec);
+        int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
+        int sp = Global.getSector().getPlayerStats().getStoryPoints();
+        var selectedVariant = selectedShip.getVariant();
+
+        var integrateButton = new IntegrateButton(usingSP);
+        addButton(integrateButton, panel, null, false, -38f, 25f);
+        int integrateUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL);
+        integrateButton.setEnabled(level >= integrateUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, integrateUnlockLevel));
+        if (integrateButton.isEnabled() && usingSP && sp <= 0) {
+            integrateButton.setEnabled(false, Strings.Misc.noStoryPoints);
+        }
+        integrateButton.onFinish(() -> forceRefresh(true, true, true, false));
+
+        var removeSModsButton = new RemoveSModsButton(usingSP);
+        addButton(removeSModsButton, panel, null, false, -83f, 25f);
+        int removalUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_SMOD_REMOVAL_LEVEL);
+        removeSModsButton.setEnabled(level >= removalUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, removalUnlockLevel));
+        if (removeSModsButton.isEnabled() && selectedVariant.getSMods().isEmpty()) {
+            removeSModsButton.setEnabled(false, Strings.MasteryPanel.noSMods);
+        }
+        if (removeSModsButton.isEnabled() && usingSP && sp <= 0) {
+            removeSModsButton.setEnabled(false, Strings.Misc.noStoryPoints);
+        }
+        removeSModsButton.onFinish(() -> forceRefresh(true, true, true, false));
+
+        var selectiveRestoreButton = new SelectiveRestoreButton(usingSP, selectedShip);
+        addButton(selectiveRestoreButton, panel, null, false, -128f, 25f);
+        int restoreUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_SELECTIVE_RESTORATION_LEVEL);
+        boolean unrestorable = selectedVariant.hasTag(Tags.VARIANT_UNRESTORABLE) || selectedVariant.getHullSpec().hasTag(Tags.HULL_UNRESTORABLE);
+        selectiveRestoreButton.setEnabled(level >= restoreUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, restoreUnlockLevel));
+        int numDMods = DModManager.getNumDMods(selectedVariant);
+        if (selectiveRestoreButton.isEnabled()) {
+            if (unrestorable) {
+                selectiveRestoreButton.setEnabled(false, Strings.MasteryPanel.cantRestore);
+            } else if (numDMods <= 0) {
+                selectiveRestoreButton.setEnabled(false, Strings.MasteryPanel.noDMods);
+            }
+        }
+        if (selectiveRestoreButton.isEnabled() && usingSP && sp <= 0) {
+            selectiveRestoreButton.setEnabled(false, Strings.Misc.noStoryPoints);
+        }
+        selectiveRestoreButton.onFinish(() -> {
+            forceRefresh(true, true, true, false);
+            if (DModManager.getNumDMods(selectedVariant) <= 0) {
+                RefitHandler.setForceNullMemberAndDisableRestoreButton();
+            }
+        });
+
+        var useSPButton = new UseSPButton();
+        addButton(useSPButton, panel, null, false, -173f, 25f);
+        useSPButton.setChecked(usingSP);
+        useSPButton.onFinish(() -> {
+            usingSP = !usingSP;
+            forceRefresh(false, false, true, false);
+        });
+        useSPButton.isCheckbox = true;
+    }
+
     UIPanelAPI makeThisShipPanel(float width, float height) {
         ShipVariantAPI moduleVariant = module.getVariant();
-        hasLogisticBuiltIn = SModUtils.hasLogisticSMod(moduleVariant);
-        hasLogisticEnhanceBonus = SModUtils.hasBonusLogisticSlot(moduleVariant);
+        hasLogisticBuiltIn = HullmodUtils.hasLogisticSMod(moduleVariant);
+        hasLogisticEnhanceBonus = HullmodUtils.hasBonusLogisticSlot(moduleVariant);
 
         List<HullModSpecAPI> applicableSpecs = new ArrayList<>();
         for (String id : moduleVariant.getHullSpec().getBuiltInMods()) {
@@ -308,13 +374,13 @@ public class MasteryPanel {
                 false,
                 columnData);
         ReflectionUtils.invokeMethodExtWithClasses(table, "setRowClickDelegate", false,
-                                                   new Class[]{ClassRefs.uiTableDelegateClass},
-                                                   new SModTableRowPressed(this, module, root).getProxy());
+                new Class[]{ClassRefs.uiTableDelegateClass},
+                new SModTableRowPressed(this, module, root).getProxy());
 
         buildInList.addSpacer(7f);
 
         for (HullModSpecAPI spec : applicableSpecs) {
-            addRowToHullModTable(buildInList, table, spec, !SModUtils.isHullmodBuiltIn(spec, moduleVariant));
+            addRowToHullModTable(buildInList, table, spec, !HullmodUtils.isHullmodBuiltIn(spec, moduleVariant));
             buildInList.addImage(spec.getSpriteName(), 50f, tableEntryHeight - 6f, 6f);
         }
 
@@ -323,55 +389,10 @@ public class MasteryPanel {
             table.autoSizeToRows(13);
         }
 
-        float resetButtonW = 150f, resetButtonH = 30f;
-        TooltipMakerAPI resetButtonTTM = thisShipPanel.createUIElement(resetButtonW, resetButtonH, false);
-        resetButtonTTM.setButtonFontOrbitron20();
-        ButtonAPI resetButton =
-                resetButtonTTM.addButton(Strings.MasteryPanel.clearButton, null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                         Alignment.MID, CutStyle.TL_BR, resetButtonW, resetButtonH, 0f);
-        ReflectionUtils.setButtonListener(resetButton, new ClearSModsPressed(this, module, root, Strings.MasteryPanel.clearButton));
-        if (moduleVariant.getSMods().isEmpty()) {
-            resetButton.setEnabled(false);
-        }
-        if (!TransientSettings.SMOD_REMOVAL_ENABLED && !Settings.CLEAR_SMODS_ALWAYS_ENABLED) {
-            resetButton.setOpacity(0f);
-        }
-
-        float useSPButtonW = 200f, useSPButtonH = 30f;
-        TooltipMakerAPI useSPButtonTTM = thisShipPanel.createUIElement(useSPButtonW, useSPButtonH, false);
-        useSPButtonTTM.setAreaCheckboxFont(Fonts.ORBITRON_20AABOLD);
-        ButtonAPI useSPButton = useSPButtonTTM.addAreaCheckbox(Strings.MasteryPanel.useSPButton, null, Misc.getStoryOptionColor(), Misc.getStoryDarkColor(),
-                Misc.getStoryBrightColor(), useSPButtonW, useSPButtonH, 0f);
-        useSPButtonTTM.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public boolean isTooltipExpandable(Object tooltipParam) {
-                return false;
-            }
-
-            @Override
-            public float getTooltipWidth(Object tooltipParam) {
-                return 425f;
-            }
-
-            @Override
-            public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                tooltip.addPara(
-                        Strings.MasteryPanel.useSPHint,
-                        0f,
-                        Settings.POSITIVE_HIGHLIGHT_COLOR,
-                        Utils.asPercentNoDecimal(1f-SModUtils.CREDITS_COST_MULT_SP),
-                        Misc.getDGSCredits(SModTableRowPressed.CREDITS_FOR_NO_BONUS_XP),
-                        "" + 1,
-                        "" + (1+EngineeringOverride.NUM_ADDITIONAL_SMODS),
-                        Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).getDisplayName());
-            }
-        }, TooltipMakerAPI.TooltipLocation.ABOVE);
-        ReflectionUtils.setButtonListener(useSPButton, new UseSPButtonPressed(this));
-        useSPButton.setChecked(isUsingSP());
+        addShipPanelButtons(module, root.getFleetMember(), thisShipPanel);
 
         float modularCountW = 200f, modularCountH = 40f;
         int nSMods = moduleVariant.getSMods().size();
-
 
         var limit = getSModLimit(module);
         int sModLimit = limit.one;
@@ -396,9 +417,6 @@ public class MasteryPanel {
 
         thisShipPanel.addUIElement(buildInList).inTMid(37f);
         thisShipPanel.addUIElement(buildInListHeader).inTMid(20f);
-
-        thisShipPanel.addUIElement(resetButtonTTM).inTR(30f, -20f);
-        thisShipPanel.addUIElement(useSPButtonTTM).inTL(13f, -20f);
 
         thisShipPanel.addUIElement(hintTextTTM).inBL(20f, -2f);
         thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
@@ -425,19 +443,26 @@ public class MasteryPanel {
     void updateButtonStatuses(ShipHullSpecAPI spec) {
         if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
             int level = ShipMastery.getPlayerMasteryLevel(spec);
-            boolean canUpgrade = MasteryUtils.canUpgradeOrEnhance(spec);
-            upgradeButton.setEnabled(canUpgrade, "Not enough XP");
-            boolean canConstruct = level >= MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL;
-            constructButton.setEnabled(canConstruct, "Unlocks at level " + MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
-            boolean canReroll = level >= MasteryUtils.UNLOCK_REROLL_LEVEL;
-            rerollButton.setEnabled(canReroll, "Unlocks at level " + MasteryUtils.UNLOCK_REROLL_LEVEL);
-            confirmButton.setEnabled(false, "No changes pending");
-            cancelButton.setEnabled(false, "No changes pending");
-        }
-        else {
-            upgradeButton.setEnabled(false, "Changes pending");
-            constructButton.setEnabled(false, "Changes pending");
-            rerollButton.setEnabled(false, "Changes pending");
+            int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
+            int sp = Global.getSector().getPlayerStats().getStoryPoints();
+            boolean canUpgrade = MasteryUtils.hasEnoughXPToUpgradeOrEnhance(spec);
+            upgradeButton.setEnabled(canUpgrade, Strings.MasteryPanel.notEnoughXP);
+            if (upgradeButton.isEnabled() && level >= maxLevel && sp <= 0) {
+                upgradeButton.setEnabled(false, Strings.Misc.noStoryPoints);
+            }
+            int constructLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
+            constructButton.setEnabled(level >= constructLevel, String.format(Strings.MasteryPanel.unlockAtLevel, constructLevel));
+            int rerollLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_REROLL_LEVEL);
+            rerollButton.setEnabled(level >= rerollLevel, String.format(Strings.MasteryPanel.unlockAtLevel, rerollLevel));
+            if (rerollButton.isEnabled() && sp <= 0) {
+                rerollButton.setEnabled(false, Strings.Misc.noStoryPoints);
+            }
+            confirmButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
+            cancelButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
+        } else {
+            upgradeButton.setEnabled(false, Strings.MasteryPanel.changesPending);
+            constructButton.setEnabled(false, Strings.MasteryPanel.changesPending);
+            rerollButton.setEnabled(false, Strings.MasteryPanel.changesPending);
             confirmButton.setEnabled(true, null);
             cancelButton.setEnabled(true, null);
         }
@@ -447,17 +472,40 @@ public class MasteryPanel {
         return savedMasteryDisplay == null ? new HashMap<>() : savedMasteryDisplay.getSelectedLevels();
     }
 
-    private ButtonWithIcon addButton(CustomPanelAPI panel, String spriteLoc, TooltipMakerAPI anchor, boolean anchorLeft, float extraXOffset, boolean useStoryColors) {
-        var ttm = panel.createUIElement(32f, 32f, false);
-        var button = new ButtonWithIcon(spriteLoc, 32f, 32f, useStoryColors);
+    private void addButton(ButtonWithIcon button, CustomPanelAPI panel, @Nullable TooltipMakerAPI anchor, boolean anchorLeft, float extraXOffset, float extraYOffset) {
+        var ttm = panel.createUIElement(button.width, button.height, false);
         button.create(ttm);
         PositionAPI pos;
         if (anchorLeft)
-            pos = panel.addUIElement(ttm).belowLeft(anchor, 30f);
+            if (anchor != null)
+                pos = panel.addUIElement(ttm).belowLeft(anchor, 0f);
+            else
+                pos = panel.addUIElement(ttm).inTL(0f, 0f);
+        else if (anchor != null)
+            pos = panel.addUIElement(ttm).belowRight(anchor, 0f);
         else
-            pos = panel.addUIElement(ttm).belowRight(anchor, 30f);
+            pos = panel.addUIElement(ttm).inTR(0f, 0f);
         pos.setXAlignOffset(extraXOffset);
-        return button;
+        pos.setYAlignOffset(extraYOffset);
+    }
+
+    void addMasteryPanelButtons(CustomPanelAPI panel, FleetMemberAPI member, TooltipMakerAPI anchor) {
+        var spec = member.getHullSpec();
+        upgradeButton = new LevelUpButton(member, ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec));
+        addButton(upgradeButton, panel, anchor, true, 0f, -30f);
+        upgradeButton.onFinish(() -> forceRefresh(true, false, false, false));
+        constructButton = new MasterySharingButton(spec);
+        addButton(constructButton, panel, anchor, true, 45f, -30f);
+        constructButton.onFinish(() -> forceRefresh(true, false, true, false));
+        constructButton.isCheckbox = true;
+        rerollButton = new RerollButton();
+        addButton(rerollButton, panel, anchor, true, 90f, -30f);
+        confirmButton = new ConfirmButton(spec, getSelectedMasteryButtons());
+        addButton(confirmButton, panel, anchor, false, -49f, -30f);
+        confirmButton.onFinish(() -> forceRefresh(true, true, true, false));
+        cancelButton = new CancelButton();
+        addButton(cancelButton, panel, anchor, false, -4f, -30f);
+        cancelButton.onFinish(() -> forceRefresh(false, false, true, false));
     }
 
     UIPanelAPI makeMasteryPanel(float width, float height, boolean useSavedScrollerLocation, boolean scrollToStart) {
@@ -481,33 +529,16 @@ public class MasteryPanel {
         var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(root.getFleetMember(), shipDisplay.getPosition(), () -> forceRefresh(true, false, false, false));
         progressBarPlugin.heightOverride = 16f;
         progressBarPlugin.numBars = 80;
-        progressBarPlugin.widthOverride = shipDisplaySize-5f;
+        progressBarPlugin.widthOverride = shipDisplaySize - 5f;
         progressBarPlugin.extraXOffset = -5f;
-        progressBarPlugin.extraYOffset = shipDisplaySize-10f;
+        progressBarPlugin.extraYOffset = shipDisplaySize - 10f;
         CustomPanelAPI progressBar = Global.getSettings().createCustom(shipDisplaySize, shipDisplaySize + 25f, progressBarPlugin);
         progressBarPlugin.makeOutline(progressBar, false);
         masteryPanel.addComponent(progressBar).inTL(50f, 90f);
 
-        upgradeButton = addButton(masteryPanel, currentMastery >= maxMastery ? "graphics/icons/ui/sms_upgrade_icon_green.png" : "graphics/icons/ui/sms_upgrade_icon.png", shipDisplay, true, 0f, currentMastery >= maxMastery);
-        upgradeButton.onClick(() -> new LevelUpDialog(root.getFleetMember(), () -> forceRefresh(true, false, false, false)).show());
-        upgradeButton.setButtonTooltip(upgradeButton::makeUpgradeTooltip);
-        constructButton = addButton(masteryPanel, "graphics/icons/ui/sms_construct_icon.png",  shipDisplay, true, 45f, false);
-        constructButton.onClick(() -> new ConstructButtonPressed(this, restoredHullSpec).trigger());
-        constructButton.setButtonTooltip(constructButton::makeConstructTooltip);
-        constructButton.isCheckbox = true;
-        rerollButton = addButton(masteryPanel, "graphics/icons/ui/sms_reroll_icon_green.png", shipDisplay, true, 90f, true);
-        rerollButton.onClick(() -> new RerollButtonPressed(this, restoredHullSpec).trigger());
-        rerollButton.setButtonTooltip(rerollButton::makeRerollTooltip);
-        confirmButton = addButton(masteryPanel, "graphics/icons/ui/sms_confirm_icon.png", shipDisplay, false, -49f, false);
-        confirmButton.onClick(() -> new ConfirmMasteryChangesPressed(this, restoredHullSpec).trigger());
-        confirmButton.setButtonTooltip(confirmButton::makeConfirmTooltip);
-        cancelButton = addButton(masteryPanel, "graphics/icons/ui/sms_cancel_icon.png", shipDisplay, false, -4f, false);
-        cancelButton.onClick(() -> new CancelMasteryChangesPressed(this).trigger());
-        cancelButton.setButtonTooltip(cancelButton::makeCancelTooltip);
-
         float containerW = 800f, containerH = height - 66f;
-        TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH+2f, false);
-        new MasteryDisplayOutline(containerW, containerH+2f).create(masteryContainer);
+        TooltipMakerAPI masteryContainer = masteryPanel.createUIElement(containerW, containerH + 2f, false);
+        new MasteryDisplayOutline(containerW, containerH + 2f).create(masteryContainer);
         masteryPanel.addUIElement(masteryContainer).inTR(51f, 17f);
 
         float containerPadX = 4f, containerPadY = 8f;
@@ -537,27 +568,26 @@ public class MasteryPanel {
         ReflectionUtils.invokeMethod(masteryDisplayTTM.getExternalScroller(), "setMaxShadowHeight", 0f);
 
         if (savedMasteryDisplay != null) {
-            display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight()-containerH-pad+6f)));
+            display.scrollToHeight(Math.max(0f, Math.min(savedMasteryDisplay.getSavedScrollerHeight(), display.getTotalHeight() - containerH - pad + 6f)));
         }
         if (!useSavedScrollerLocation) {
             if (scrollToStart) {
                 display.scrollToLevel(1, savedMasteryDisplay == null);
-            }
-            else {
+            } else {
                 display.scrollToLevel(display.getLevelToScrollTo(), savedMasteryDisplay == null);
             }
         }
 
         savedMasteryDisplay = display;
-        updateButtonStatuses(restoredHullSpec);
-
 
         float buttonW = 40f, buttonH = 35f, buttonPad = 25f;
         int maxButtons = (int) (containerW / (buttonW + buttonPad));
         int buttonsPerRow;
         int numButtons;
         if (maxButtons < maxMastery) {
-            buttonW = 28f; buttonH = 24f; buttonPad = 4f;
+            buttonW = 28f;
+            buttonH = 24f;
+            buttonPad = 4f;
             buttonsPerRow = Math.min(maxMastery, (int) (containerW / (buttonW + buttonPad)));
             numButtons = Math.min(maxMastery, 2 * buttonsPerRow);
         } else {
@@ -570,7 +600,7 @@ public class MasteryPanel {
         TooltipMakerAPI levelButtonsTTM = masteryButtonsPanel.createUIElement(buttonsW, buttonH, false);
         masteryButtons.create(levelButtonsTTM);
         masteryButtonsPanel.addUIElement(levelButtonsTTM).inTMid(0f);
-        masteryPanel.addComponent(masteryButtonsPanel).inTR(54f-buttonPad/2f,containerH + 25f + buttonH);
+        masteryPanel.addComponent(masteryButtonsPanel).inTR(54f - buttonPad / 2f, containerH + 25f + buttonH);
 
         int unassignedLevels = MasteryUtils.getPlayerUnassignedCount(root.getHullSpec());
         if (unassignedLevels > 0) {
@@ -581,6 +611,9 @@ public class MasteryPanel {
             warningLabel.setColor(Misc.getGrayColor());
             masteryPanel.addUIElement(unassignedWarning).inTR(-240f + warningLabel.computeTextWidth(warningTextFmt), -10f);
         }
+
+        addMasteryPanelButtons(masteryPanel, root.getFleetMember(), shipDisplay);
+        updateButtonStatuses(restoredHullSpec);
 
         return masteryPanel;
     }
@@ -597,7 +630,7 @@ public class MasteryPanel {
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
         String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
-        int creditsCost = SModUtils.getCreditsCost(spec, module, usingSP);
+        int creditsCost = HullmodUtils.getCreditsCost(spec, module, usingSP);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
         Color creditsColor = Misc.getHighlightColor();
@@ -609,45 +642,14 @@ public class MasteryPanel {
 
         boolean isExtraLogistics = cantBuildInReason == null && modular && !hasLogisticBuiltIn && hasLogisticEnhanceBonus && spec.hasUITag(HullMods.TAG_UI_LOGISTICS);
         tableTTM.addRowWithGlow(Alignment.MID, nameColor, " ", Alignment.LMID, nameColor, label(name, isExtraLogistics ? Misc.getStoryBrightColor() : nameColor),
-                                Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost, Alignment.MID,
-                                Misc.getHighlightColor(), label(creditsCostStr, creditsColor), Alignment.MID, nameColor,
-                                label(modularString, nameColor));
+                Alignment.MID, designColor, designType, Alignment.MID, designColor, opCost, Alignment.MID,
+                Misc.getHighlightColor(), label(creditsCostStr, creditsColor), Alignment.MID, nameColor,
+                label(modularString, nameColor));
 
-        tableTTM.addTooltipToAddedRow(new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                HullModEffect effect = spec.getEffect();
-                ShipAPI.HullSize hullSize = module.getHullSize();
-                tooltip.addTitle(spec.getDisplayName());
-                tooltip.addSpacer(10f);
-                if (effect.shouldAddDescriptionToTooltip(hullSize, module, false)) {
-                    List<String> highlights = new ArrayList<>();
-                    String descParam;
-                    // hard cap at 100 just in case getDescriptionParam for some reason
-                    // doesn't default to null
-                    for (int i = 0; i < 100 && (descParam = effect.getDescriptionParam(i, hullSize, module)) != null;
-                         i++) {
-                        highlights.add(descParam);
-                    }
-                    tooltip.addPara(spec.getDescription(hullSize).replaceAll("%", "%%"), 0f, Misc.getHighlightColor(),
-                                    highlights.toArray(new String[0]));
-                }
-                effect.addPostDescriptionSection(tooltip, hullSize, module, getTooltipWidth(tooltipParam), true);
-                if (effect.hasSModEffectSection(hullSize, module, false)) {
-                    effect.addSModSection(tooltip, hullSize, module, getTooltipWidth(tooltipParam), false, true);
-                }
-            }
-
-            @Override
-            public float getTooltipWidth(Object tooltipParam) {
-                return 500f;
-            }
-
-            @Override
-            public boolean isTooltipExpandable(Object tooltipParam) {
-                return false;
-            }
-        }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
+        tableTTM.addTooltipToAddedRow(
+                new HullmodUtils.HullmodTooltipCreator(spec, module),
+                TooltipMakerAPI.TooltipLocation.BELOW,
+                false);
 
         TableRowData rowData = new TableRowData(spec.getId(), creditsCost, cantBuildInReason, modular);
         List<?> rows = (List<?>) ReflectionUtils.invokeMethod(table, "getRows");
@@ -675,7 +677,7 @@ public class MasteryPanel {
         int sp = Global.getSector().getPlayerStats().getStoryPoints();
 
         String notEnoughCredits = Strings.MasteryPanel.notEnoughCredits;
-        String notEnoughStoryPoints = Strings.MasteryPanel.notEnoughStoryPoints;
+        String notEnoughStoryPoints = Strings.Misc.noStoryPoints;
 
         StringBuilder sb = new StringBuilder();
         if (sp < 1 && usingSP) sb.append(notEnoughStoryPoints);
@@ -722,11 +724,11 @@ public class MasteryPanel {
         }
 
         if (columnNames[4].equals(columnName)) {
-            return SModUtils.getCreditsCost(spec, module);
+            return HullmodUtils.getCreditsCost(spec, module);
         }
 
         if (columnNames[5].equals(columnName)) {
-            return !SModUtils.isHullmodBuiltIn(spec, module.getVariant());
+            return !HullmodUtils.isHullmodBuiltIn(spec, module.getVariant());
         }
 
         return null;

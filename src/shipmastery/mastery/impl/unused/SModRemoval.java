@@ -1,4 +1,4 @@
-package shipmastery.mastery.impl.logistics;
+package shipmastery.mastery.impl.unused;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -12,6 +12,7 @@ import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+@Deprecated
 public class SModRemoval extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {

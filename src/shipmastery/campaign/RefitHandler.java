@@ -19,6 +19,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
 import com.fs.starfarer.coreui.refit.ModPickerDialogV3;
+import com.fs.starfarer.loading.specs.HullVariantSpec;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
@@ -36,6 +37,8 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -85,6 +88,48 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
             return new Pair<>(ship, ship);
         }
         return new Pair<>(ship, lastSelectedRealShip);
+    }
+
+    public static String restoreButtonFieldName;
+    public static void setForceNullMemberAndDisableRestoreButton() {
+        try {
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(ReflectionUtils.getCoreUI(), "getCurrentTab");
+            Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
+            Object shipDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getShipDisplay");
+            Object designDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getDesignDisplay");
+            Object member = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getMember");
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "setForceSetMemberNextCall", true);
+            ReflectionUtils.invokeMethodNoCatchExtWithClasses(
+                    shipDisplay,
+                    "setFleetMember",
+                    false,
+                    new Class<?>[] {FleetMember.class, HullVariantSpec.class},
+                    new Object[] {member, null});
+            ReflectionUtils.invokeMethodNoCatch(refitPanel, "setForceSetMemberNextCall", false);
+            if (designDisplay == null) return;
+
+            if (restoreButtonFieldName == null) {
+                for (Field field : designDisplay.getClass().getDeclaredFields()) {
+                    if (ButtonAPI.class.isAssignableFrom(field.getType())) {
+                        ButtonAPI button = (ButtonAPI) ReflectionUtils.getFieldNoCatch(designDisplay, field.getName());
+                        var shortcut = ReflectionUtils.invokeMethodNoCatch(button, "getShortcut");
+                        if (!(shortcut instanceof Enum<?> e)) continue;
+                        if ("REFIT_RESTORE".equals(e.name())) {
+                            restoreButtonFieldName = field.getName();
+                            break;
+                        }
+                    }
+                }
+            }
+            if (restoreButtonFieldName != null) {
+                var restoreButton = ReflectionUtils.getFieldNoCatch(designDisplay, restoreButtonFieldName);
+                var array = Array.newInstance(restoreButton.getClass(), 1);
+                Array.set(array, 0, restoreButton);
+                ReflectionUtils.invokeMethodNoCatch(designDisplay, "disable", array);
+            }
+        } catch (Exception e) {
+            logger.error("[Ship Mastery System] Failed to sync refit screen with variant", e);
+        }
     }
 
     public static void syncRefitScreenWithVariant(boolean saveVariant) {

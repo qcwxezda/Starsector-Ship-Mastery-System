@@ -14,7 +14,7 @@ import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
@@ -31,7 +31,7 @@ public class MasteryHullmod extends BaseHullMod {
         ShipVariantAPI variant = stats.getVariant();
         // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
         if (shouldApplyEffects(variant)) {
-            if (SModUtils.hasBonusLogisticSlot(variant) && SModUtils.hasLogisticSMod(variant)) {
+            if (HullmodUtils.hasBonusLogisticSlot(variant) && HullmodUtils.hasLogisticSMod(variant)) {
                 stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
             } else {
                 stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);

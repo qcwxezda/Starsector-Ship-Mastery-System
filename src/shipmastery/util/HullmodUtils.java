@@ -1,25 +1,35 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.hullmods.EngineeringOverride;
 
-public abstract class SModUtils {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class HullmodUtils {
 
     public static final int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
     public static final float CREDITS_HARD_CAP = 9999999f;
     public static final int MP_HARD_CAP = 99;
     public static final float CREDITS_COST_MULT_SP = 0.1f;
+    public static final float CREDITS_COST_BXP_CAP = 200000f;
+    public static final float SELECTIVE_RESTORE_COST_MULT_MIN = 0.2f;
+    public static final float SELECTIVE_RESTORE_COST_MULT_MAX = 1f;
+    public static final float SMOD_REMOVAL_COST_MULT = 0.5f;
 
     public static final int ADDITIONAL_MP_PER_SMOD = 0;
     public static final float DP_PER_EXTRA_MP = 6f;
@@ -127,5 +137,64 @@ public abstract class SModUtils {
         ShipVariantAPI rootVariant = info == null || info.root == null ? variant : info.root;
         return !variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)
                 && MasteryUtils.getEnhanceCount(rootVariant.getHullSpec()) >= MasteryUtils.bonusLogisticSlotEnhanceNumber;
+    }
+
+    public record HullmodTooltipCreator(HullModSpecAPI hullmod, ShipAPI ship) implements TooltipMakerAPI.TooltipCreator {
+
+        @Override
+        public boolean isTooltipExpandable(Object tooltipParam) {
+            return false;
+        }
+
+        @Override
+        public float getTooltipWidth(Object tooltipParam) {
+            return 500f;
+        }
+
+        @Override
+        public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+            HullModEffect effect = hullmod.getEffect();
+            ShipAPI.HullSize hullSize = ship.getHullSize();
+            tooltip.addTitle(hullmod.getDisplayName());
+            tooltip.addSpacer(10f);
+            if (effect.shouldAddDescriptionToTooltip(hullSize, ship, false)) {
+                List<String> highlights = new ArrayList<>();
+                String descParam;
+                // hard cap at 100 just in case getDescriptionParam for some reason
+                // doesn't default to null
+                for (int i = 0; i < 100 && (descParam = effect.getDescriptionParam(i, hullSize, ship)) != null;
+                     i++) {
+                    highlights.add(descParam);
+                }
+                tooltip.addPara(hullmod.getDescription(hullSize).replaceAll("%", "%%"), 0f, Misc.getHighlightColor(),
+                        highlights.toArray(new String[0]));
+            }
+            effect.addPostDescriptionSection(tooltip, hullSize, ship, getTooltipWidth(tooltipParam), true);
+            if (effect.hasSModEffectSection(hullSize, ship, false)) {
+                effect.addSModSection(tooltip, hullSize, ship, getTooltipWidth(tooltipParam), false, true);
+            }
+        }
+    }
+
+    public static float getRestorationCost(ShipVariantAPI variant) {
+        if (!variant.isDHull()) {
+            return 0;
+        } else {
+            var spec = variant.getHullSpec();
+            var base = spec.getBaseHull();
+            if (base == null) {
+                base = spec;
+            }
+
+            float baseCostMult = Global.getSettings().getFloat("baseRestoreCostMult");
+            float costPerMult = Global.getSettings().getFloat("baseRestoreCostMultPerDMod");
+            int count = DModManager.getNumDMods(variant);
+
+            return Math.max(spec.getBaseValue(), base.getBaseValue()) * baseCostMult * (float) Math.pow(costPerMult, count);
+        }
+    }
+
+    public static float getBonusXPFraction(float cost) {
+        return Math.min(1f, Math.max(0f, (CREDITS_COST_BXP_CAP - cost) / CREDITS_COST_BXP_CAP));
     }
 }

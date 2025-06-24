@@ -12,7 +12,7 @@ import shipmastery.config.TransientSettings;
 import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -48,7 +48,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         if (stats == null || stats.getVariant() == null || stats.getFleetMember() == null) return;
 
-        int overMax = stats.getVariant().getSMods().size() - SModUtils.getMaxSMods(stats);
+        int overMax = stats.getVariant().getSMods().size() - HullmodUtils.getMaxSMods(stats);
         if (overMax > 0) {
             Set<Integer> ids = overCapacityMap.get(stats.getFleetMember().getId());
             overMax = Math.min(overMax, ids == null ? 0 : ids.size());

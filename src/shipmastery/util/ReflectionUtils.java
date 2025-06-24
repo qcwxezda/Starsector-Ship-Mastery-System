@@ -16,6 +16,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.plugin.ModPlugin;
@@ -30,6 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ReflectionUtils {
 
@@ -40,6 +43,7 @@ public abstract class ReflectionUtils {
     public static MethodHandle uiPanelGetChildrenNonCopy;
     public static MethodHandle createSkillTooltip;
     private static final Class<?> thisClassWithReflectionClassloader;
+    public static final Logger logger = Logger.getLogger(ReflectionUtils.class);
 
     static {
         try {
@@ -277,6 +281,52 @@ public abstract class ReflectionUtils {
             return tradeMode == CampaignUIAPI.CoreUITradeMode.OPEN && other != null && other.getMarket() != null && !other.getMarket().isPlanetConditionMarketOnly();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    private static List<Method> getRendererButtonMethods(Class<?> rendererClass) {
+        List<Method> methods = new ArrayList<>();
+        for (Method method : rendererClass.getMethods()) {
+            if (method.getParameterCount() == 1 && void.class.equals(method.getReturnType()) && Color.class.equals(method.getParameterTypes()[0])) {
+                methods.add(method);
+            }
+        }
+        return methods;
+    }
+
+    private static String setButtonColorName;
+    public static void setButtonColor(ButtonAPI button, Color color) {
+        try {
+            var renderer = invokeMethodNoCatch(button, "getRenderer");
+            if (setButtonColorName == null) {
+                var methods = getRendererButtonMethods(renderer.getClass());
+                if (methods.size() >= 2) {
+                    setButtonColorName = methods.get(1).getName();
+                }
+            }
+            if (setButtonColorName != null) {
+                ReflectionUtils.invokeMethodNoCatch(renderer, setButtonColorName, color);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to set button color", e);
+        }
+    }
+
+    private static String setButtonTextName;
+    public static void setButtonTextColor(ButtonAPI button, Color color) {
+        try {
+            var renderer = invokeMethodNoCatch(button, "getRenderer");
+            if (setButtonTextName == null) {
+                var methods = getRendererButtonMethods(renderer.getClass());
+                if (methods.size() >= 2) {
+                    setButtonTextName = methods.get(0).getName();
+                }
+            }
+            if (setButtonTextName != null) {
+                ReflectionUtils.invokeMethodNoCatch(renderer, setButtonTextName, color);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to set button text color", e);
         }
     }
 }
