@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class ReflectionUtils {
@@ -294,15 +295,46 @@ public abstract class ReflectionUtils {
         return methods;
     }
 
+    private static void getSetButtonColorAndTextColorNames() {
+        try {
+            var temp = Global.getSettings().createCustom(0f, 0f, null);
+            var ttmTemp = temp.createUIElement(0f, 0f, false);
+            var buttonTemp = ttmTemp.addButton("", null, 0f, 0f, 0f);
+            var renderer = invokeMethodNoCatch(buttonTemp, "getRenderer");
+            var setColorMethods = getRendererButtonMethods(renderer.getClass());
+            // Both methods are indistinguishable, except for the fact that only one modifies a field
+            // that has a getter.
+            Arrays.stream(renderer.getClass().getMethods())
+                    .filter(method -> method.getParameterCount() == 0 && Color.class.equals(method.getReturnType()))
+                    .findFirst()
+                    .ifPresent(getMethod -> {
+                        setColorMethods.forEach(setMethod -> {
+                            try {
+                                setMethod.invoke(renderer, Color.WHITE);
+                                Color color = (Color) getMethod.invoke(renderer);
+                                if (Color.WHITE.equals(color)) {
+                                    setButtonTextName = setMethod.getName();
+                                    setMethod.invoke(renderer, Color.BLACK);
+                                } else {
+                                    setButtonColorName = setMethod.getName();
+                                }
+                            } catch (Exception e) {
+                                logger.error("Error when finding button color and text color setters", e);
+                            }
+                        });
+                    });
+        } catch (Exception e) {
+            logger.error("Failed to find button color and text color setters", e);
+        }
+    }
+
+
     private static String setButtonColorName;
     public static void setButtonColor(ButtonAPI button, Color color) {
         try {
             var renderer = invokeMethodNoCatch(button, "getRenderer");
             if (setButtonColorName == null) {
-                var methods = getRendererButtonMethods(renderer.getClass());
-                if (methods.size() >= 2) {
-                    setButtonColorName = methods.get(1).getName();
-                }
+                getSetButtonColorAndTextColorNames();
             }
             if (setButtonColorName != null) {
                 ReflectionUtils.invokeMethodNoCatch(renderer, setButtonColorName, color);
@@ -317,10 +349,7 @@ public abstract class ReflectionUtils {
         try {
             var renderer = invokeMethodNoCatch(button, "getRenderer");
             if (setButtonTextName == null) {
-                var methods = getRendererButtonMethods(renderer.getClass());
-                if (methods.size() >= 2) {
-                    setButtonTextName = methods.get(0).getName();
-                }
+                getSetButtonColorAndTextColorNames();
             }
             if (setButtonTextName != null) {
                 ReflectionUtils.invokeMethodNoCatch(renderer, setButtonTextName, color);

@@ -32,10 +32,10 @@ import shipmastery.hullmods.EngineeringOverride;
 import shipmastery.ui.buttons.ButtonWithIcon;
 import shipmastery.ui.buttons.CancelButton;
 import shipmastery.ui.buttons.ConfirmButton;
+import shipmastery.ui.buttons.HullReversionButton;
 import shipmastery.ui.buttons.IntegrateButton;
 import shipmastery.ui.buttons.LevelUpButton;
 import shipmastery.ui.buttons.MasterySharingButton;
-import shipmastery.ui.buttons.RemoveSModsButton;
 import shipmastery.ui.buttons.RerollButton;
 import shipmastery.ui.buttons.SelectiveRestoreButton;
 import shipmastery.ui.buttons.UseSPButton;
@@ -259,27 +259,23 @@ public class MasteryPanel {
         var spec = member.getHullSpec();
         int level = ShipMastery.getPlayerMasteryLevel(spec);
         int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
-        int sp = Global.getSector().getPlayerStats().getStoryPoints();
         var selectedVariant = selectedShip.getVariant();
 
         var integrateButton = new IntegrateButton(usingSP);
         addButton(integrateButton, panel, null, false, -38f, 25f);
         int integrateUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL);
         integrateButton.setEnabled(level >= integrateUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, integrateUnlockLevel));
-        if (integrateButton.isEnabled() && usingSP && sp <= 0) {
-            integrateButton.setEnabled(false, Strings.Misc.noStoryPoints);
+        if (integrateButton.isEnabled() && selectedShip.getFleetMember() != member) {
+            integrateButton.setEnabled(false, Strings.Misc.doesntAffectModules);
         }
         integrateButton.onFinish(() -> forceRefresh(true, true, true, false));
 
-        var removeSModsButton = new RemoveSModsButton(usingSP);
+        var removeSModsButton = new HullReversionButton(usingSP, selectedShip);
         addButton(removeSModsButton, panel, null, false, -83f, 25f);
         int removalUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_SMOD_REMOVAL_LEVEL);
         removeSModsButton.setEnabled(level >= removalUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, removalUnlockLevel));
         if (removeSModsButton.isEnabled() && selectedVariant.getSMods().isEmpty()) {
             removeSModsButton.setEnabled(false, Strings.MasteryPanel.noSMods);
-        }
-        if (removeSModsButton.isEnabled() && usingSP && sp <= 0) {
-            removeSModsButton.setEnabled(false, Strings.Misc.noStoryPoints);
         }
         removeSModsButton.onFinish(() -> forceRefresh(true, true, true, false));
 
@@ -295,9 +291,6 @@ public class MasteryPanel {
             } else if (numDMods <= 0) {
                 selectiveRestoreButton.setEnabled(false, Strings.MasteryPanel.noDMods);
             }
-        }
-        if (selectiveRestoreButton.isEnabled() && usingSP && sp <= 0) {
-            selectiveRestoreButton.setEnabled(false, Strings.Misc.noStoryPoints);
         }
         selectiveRestoreButton.onFinish(() -> {
             forceRefresh(true, true, true, false);
@@ -440,29 +433,25 @@ public class MasteryPanel {
         return new Pair<>(sModLimit, limitEnhancedBySP);
     }
 
-    void updateButtonStatuses(ShipHullSpecAPI spec) {
-        if (Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels())) {
-            int level = ShipMastery.getPlayerMasteryLevel(spec);
-            int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
-            int sp = Global.getSector().getPlayerStats().getStoryPoints();
-            boolean canUpgrade = MasteryUtils.hasEnoughXPToUpgradeOrEnhance(spec);
-            upgradeButton.setEnabled(canUpgrade, Strings.MasteryPanel.notEnoughXP);
-            if (upgradeButton.isEnabled() && level >= maxLevel && sp <= 0) {
-                upgradeButton.setEnabled(false, Strings.Misc.noStoryPoints);
-            }
-            int constructLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
-            constructButton.setEnabled(level >= constructLevel, String.format(Strings.MasteryPanel.unlockAtLevel, constructLevel));
-            int rerollLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_REROLL_LEVEL);
-            rerollButton.setEnabled(level >= rerollLevel, String.format(Strings.MasteryPanel.unlockAtLevel, rerollLevel));
-            if (rerollButton.isEnabled() && sp <= 0) {
-                rerollButton.setEnabled(false, Strings.Misc.noStoryPoints);
-            }
-            confirmButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
-            cancelButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
-        } else {
-            upgradeButton.setEnabled(false, Strings.MasteryPanel.changesPending);
-            constructButton.setEnabled(false, Strings.MasteryPanel.changesPending);
-            rerollButton.setEnabled(false, Strings.MasteryPanel.changesPending);
+    void updateMasteryPanelButtons(ShipHullSpecAPI spec) {
+        boolean changesPending = !Objects.equals(savedMasteryDisplay.getActiveLevels(), savedMasteryDisplay.getSelectedLevels());
+        int level = ShipMastery.getPlayerMasteryLevel(spec);
+        int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
+        boolean canUpgrade = MasteryUtils.hasEnoughXPToUpgradeOrEnhance(spec);
+        upgradeButton.setEnabled(canUpgrade, Strings.MasteryPanel.notEnoughXP);
+        int constructLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
+        constructButton.setEnabled(level >= constructLevel, String.format(Strings.MasteryPanel.unlockAtLevel, constructLevel));
+        int rerollLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_REROLL_LEVEL);
+        rerollButton.setEnabled(level >= rerollLevel, String.format(Strings.MasteryPanel.unlockAtLevel, rerollLevel));
+        confirmButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
+        cancelButton.setEnabled(false, Strings.MasteryPanel.noChangesPending);
+        if (changesPending) {
+            if (upgradeButton.isEnabled())
+                upgradeButton.setEnabled(false, Strings.MasteryPanel.changesPending);
+            if (constructButton.isEnabled())
+                constructButton.setEnabled(false, Strings.MasteryPanel.changesPending);
+            if (rerollButton.isEnabled())
+                rerollButton.setEnabled(false, Strings.MasteryPanel.changesPending);
             confirmButton.setEnabled(true, null);
             cancelButton.setEnabled(true, null);
         }
@@ -554,7 +543,7 @@ public class MasteryPanel {
                 containerH,
                 pad,
                 !useSavedScrollerLocation,
-                () -> updateButtonStatuses(restoredHullSpec));
+                () -> updateMasteryPanelButtons(restoredHullSpec));
         CustomPanelAPI masteryDisplayPanel = masteryPanel.createCustomPanel(masteryDisplayWidth, masteryDisplayHeight, display.new MasteryDisplayPlugin());
         TooltipMakerAPI masteryDisplayTTM =
                 masteryDisplayPanel.createUIElement(masteryDisplayWidth, masteryDisplayHeight, true);
@@ -613,7 +602,7 @@ public class MasteryPanel {
         }
 
         addMasteryPanelButtons(masteryPanel, root.getFleetMember(), shipDisplay);
-        updateButtonStatuses(restoredHullSpec);
+        updateMasteryPanelButtons(restoredHullSpec);
 
         return masteryPanel;
     }
@@ -630,7 +619,7 @@ public class MasteryPanel {
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
         String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
-        int creditsCost = HullmodUtils.getCreditsCost(spec, module, usingSP);
+        int creditsCost = HullmodUtils.getBuildInCost(spec, module, usingSP);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
         Color creditsColor = Misc.getHighlightColor();
@@ -724,7 +713,7 @@ public class MasteryPanel {
         }
 
         if (columnNames[4].equals(columnName)) {
-            return HullmodUtils.getCreditsCost(spec, module);
+            return HullmodUtils.getBuildInCost(spec, module);
         }
 
         if (columnNames[5].equals(columnName)) {

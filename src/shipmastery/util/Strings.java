@@ -215,13 +215,17 @@ public interface Strings {
         String selectiveRestorationButton = Utils.getString("sms_masteryPanel", "selectiveRestorationButton");
         String selectiveRestorationTooltip = Utils.getString("sms_masteryPanel", "selectiveRestorationTooltip");
         String selectiveRestorationPanelText = Utils.getString("sms_masteryPanel", "selectiveRestorationPanelText");
+        String selectiveRestorationUsedSPText = Utils.getString("sms_masteryPanel", "selectiveRestorationUsedSPText");
         String cantRestore = Utils.getString("sms_masteryPanel", "cantRestore");
         String removeSModsButton = Utils.getString("sms_masteryPanel", "removeSModsButton");
         String removeSModsTooltip = Utils.getString("sms_masteryPanel", "removeSModsTooltip");
+        String removeSModsPanelText = Utils.getString("sms_masteryPanel", "removeSModsPanelText");
+        String removeSModsPanelUsedSPText = Utils.getString("sms_masteryPanel", "removeSModsPanelUsedSPText");
         String integrationButton = Utils.getString("sms_masteryPanel", "integrationButton");
         String integrationTooltip = Utils.getString("sms_masteryPanel", "integrationTooltip");
         String noDMods = Utils.getString("sms_masteryPanel", "noDMods");
         String noSMods = Utils.getString("sms_masteryPanel", "noSMods");
+        String toggleAllButton = Utils.getString("sms_masteryPanel", "toggleAllButton");
     }
 
     interface Misc {
@@ -244,6 +248,7 @@ public interface Strings {
         String requiresStoryPointNoBonus = Utils.getString("sms_misc", "requiresStoryPointNoBonus");
         String requiresStoryPointWithBonus = Utils.getString("sms_misc", "requiresStoryPointWithBonus");
         String noStoryPoints = Utils.getString("sms_misc", "noStoryPoints");
+        String noEffect = Utils.getString("sms_misc", "noEffect");
     }
 
     interface Messages {
@@ -284,6 +289,7 @@ public interface Strings {
         String uplinkPenaltyDesc = Utils.getString("sms_items", "uplinkPenaltyDesc");
         String ampRightClick = Utils.getString("sms_items", "ampRightClick");
         String ampIntegrated = Utils.getString("sms_items", "ampIntegrated");
+        String cargoCount = Utils.getString("sms_items", "cargoCount");
     }
 
     interface Skills {

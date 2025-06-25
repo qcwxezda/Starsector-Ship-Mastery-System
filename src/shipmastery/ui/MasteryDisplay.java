@@ -277,7 +277,7 @@ public class MasteryDisplay implements CustomUIElement {
                 break;
             }
         }
-        boolean hidden = !alwaysShow && level > currentMastery + 1;
+        boolean hidden = !alwaysShow && level > currentMastery && !alwaysEnabled;
 
         if (!hidden) {
             innerTooltip.addSpacer(20f);

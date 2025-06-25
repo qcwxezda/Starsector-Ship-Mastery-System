@@ -63,8 +63,8 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         hullmods.sort((s1, s2) -> {
             HullModSpecAPI hm1 = Global.getSettings().getHullModSpec(s1);
             HullModSpecAPI hm2 = Global.getSettings().getHullModSpec(s2);
-            float cost1 = HullmodUtils.getCreditsCost(hm1, ship);
-            float cost2 = HullmodUtils.getCreditsCost(hm2, ship);
+            float cost1 = HullmodUtils.getBuildInCost(hm1, ship);
+            float cost2 = HullmodUtils.getBuildInCost(hm2, ship);
             return (int) (cost2 - cost1);
         });
     }
@@ -103,7 +103,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         ShipAPI ship = delegate.getShip();
         HullModSpecAPI modSpec = Global.getSettings().getHullModSpec(hullmod);
         float mpCost = HullmodUtils.getMPCost(modSpec, ship);
-        float creditsCost = HullmodUtils.getCreditsCost(modSpec, ship);
+        float creditsCost = HullmodUtils.getBuildInCost(modSpec, ship);
         float playerMP = ShipMastery.getPlayerMasteryPoints(rootSpec);
         MutableValue playerCredits = Utils.getPlayerCredits();
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
@@ -146,7 +146,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 if (addSModIfPossible(sMod, current, delegate, limit)) {
                     HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
                     sModCreditsCostMap.put(
-                            sMod, HullmodUtils.getCreditsCost(hullModSpec, ship));
+                            sMod, HullmodUtils.getBuildInCost(hullModSpec, ship));
                     sModMPCostMap.put(sMod, HullmodUtils.getMPCost(hullModSpec, ship));
                     modified = true;
                 } else break;
@@ -163,7 +163,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 boolean isFirstLogistic = HullmodUtils.hasBonusLogisticSlot(current) && !hasLogisticsSMod && hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS);
                 if (addSModIfPossible(sMod, current, delegate, limit + (isFirstLogistic ? 1 : 0))) {
                     sModCreditsCostMap.put(
-                            sMod, HullmodUtils.getCreditsCost(hullModSpec, ship));
+                            sMod, HullmodUtils.getBuildInCost(hullModSpec, ship));
                     sModMPCostMap.put(sMod, HullmodUtils.getMPCost(hullModSpec, ship));
                     modified = true;
                     if (isFirstLogistic) limit++;
@@ -242,7 +242,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                                             ship.getName(),
                                             ship.getHullSpec().getNameWithDesignationWithDashClass(),
                                             sb));
-                            Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+                            Global.getSoundPlayer().playUISound("ui_char_spent_story_point_industry", 1f, 1f);
                         }
 
                         for (String mod : sModCreditsCostMap.keySet()) {

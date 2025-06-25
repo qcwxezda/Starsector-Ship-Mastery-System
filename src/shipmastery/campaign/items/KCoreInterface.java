@@ -3,7 +3,7 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 
-public interface KCoreInterface extends AICoreOfficerPlugin {
+public interface KCoreInterface extends AICoreOfficerPlugin, PseudocoreIntegrationPlugin {
     String getCommodityId();
     int getBaseLevel();
     void setPersonSkills(MutableCharacterStatsAPI stats, String factionId);

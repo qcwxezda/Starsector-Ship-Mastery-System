@@ -1,5 +1,6 @@
 package shipmastery.ui.buttons;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -11,6 +12,7 @@ import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
+import java.awt.Color;
 import java.util.Collection;
 
 public class SelectiveRestoreButton extends ButtonForHullmodSelection {
@@ -31,6 +33,7 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
 
     @Override
     protected void onConfirm() {
+        float cost = getModifiedCost();
         var baseSpec = Utils.getRestoredHullSpec(selectedShip.getHullSpec());
         var variant = selectedShip.getVariant();
         selectedIds.forEach(id -> {
@@ -41,6 +44,21 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
         });
         if (DModManager.getNumDMods(variant) <= 0) {
             variant.setHullSpecAPI(baseSpec);
+        }
+
+        Utils.getPlayerCredits().subtract(cost);
+        if (isStoryOption) {
+            Global.getSector().getPlayerStats().spendStoryPoints(
+                    1,
+                    true,
+                    null,
+                    true,
+                    HullmodUtils.getBonusXPFraction(cost),
+                    String.format(
+                            Strings.MasteryPanel.selectiveRestorationUsedSPText,
+                            selectedIds.size(),
+                            selectedShip.getName(),
+                            selectedShip.getHullSpec().getNameWithDesignationWithDashClass()));
         }
     }
 
@@ -60,6 +78,11 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
     }
 
     @Override
+    protected Color getButtonTextColor() {
+        return Misc.getNegativeHighlightColor();
+    }
+
+    @Override
     protected float getBaseCost() {
         var variant = selectedShip.getVariant();
         float base = HullmodUtils.getRestorationCost(selectedShip.getVariant());
@@ -67,7 +90,7 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
         float minMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MIN;
         float maxMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MAX;
         int toRestore = selectedIds.size();
-        return toRestore == 0 ? 0f : base * (minMult + (maxMult - minMult) * (float) toRestore / count);
+        return toRestore == 0 || count == 0 ? 0f : base * (minMult + (maxMult - minMult) * (float) toRestore / count);
     }
 
     @Override
@@ -77,10 +100,10 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        float frac = useStoryColors ? HullmodUtils.CREDITS_COST_MULT_SP : 1f;
+        float frac = isStoryOption ? HullmodUtils.CREDITS_COST_MULT_SP : 1f;
         tooltip.addPara(Strings.MasteryPanel.selectiveRestorationTooltip,
                 10f,
-                useStoryColors ? Misc.getStoryBrightColor() : Settings.POSITIVE_HIGHLIGHT_COLOR,
+                isStoryOption ? Misc.getStoryBrightColor() : Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MIN * frac),
                 Utils.asPercent(HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MAX * frac));
     }

@@ -32,19 +32,19 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     protected ButtonAPI button;
     protected String disabledReason;
     protected TooltipMakerAPI tooltip;
-    protected final boolean useStoryColors;
+    protected final boolean isStoryOption;
     private final List<Action> onFinish = new ArrayList<>();
 
-    public ButtonWithIcon(String spriteName, boolean useStoryColors) {
-        this(spriteName, 32f, 32f, useStoryColors);
+    public ButtonWithIcon(String spriteName, boolean isStoryOption) {
+        this(spriteName, 32f, 32f, isStoryOption);
     }
 
-    public ButtonWithIcon(String spriteName, float width, float height, boolean useStoryColors) {
+    public ButtonWithIcon(String spriteName, float width, float height, boolean isStoryOption) {
         this.spriteName = spriteName;
         this.width = width;
         this.height = height;
-        this.useStoryColors = useStoryColors;
-        if (!useStoryColors) {
+        this.isStoryOption = isStoryOption;
+        if (!isStoryOption) {
             darkColor = new Color(39, 125, 143);
             baseColor = Misc.getBasePlayerColor();
             brightColor = Misc.getBrightPlayerColor();
@@ -76,33 +76,37 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     @Override
     public void create(TooltipMakerAPI tooltip) {
         button = tooltip.addAreaCheckbox("", null, baseColor, darkColor, brightColor, width, height, 0f);
-        tooltip.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public boolean isTooltipExpandable(Object tooltipParam) {return false;}
+        String title = getTooltipTitle();
+        if (title != null) {
+            tooltip.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+                @Override
+                public boolean isTooltipExpandable(Object tooltipParam) {
+                    return false;
+                }
 
-            @Override
-            public float getTooltipWidth(Object tooltipParam) {return 500f;}
+                @Override
+                public float getTooltipWidth(Object tooltipParam) {
+                    return ButtonWithIcon.this.getTooltipWidth();
+                }
 
-            @Override
-            public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                String title = getTooltipTitle();
-                if (title != null) {
+                @Override
+                public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                     tooltip.setTitleFont(Fonts.ORBITRON_20AA);
-                    if (useStoryColors) {
+                    if (isStoryOption) {
                         tooltip.setTitleFontColor(Misc.getStoryBrightColor());
                     }
                     tooltip.addTitle(title);
+                    appendToTooltip(tooltip);
+                    showDisabledReasonIfDisabled(tooltip);
                 }
-                appendToTooltip(tooltip);
-                showDisabledReasonIfDisabled(tooltip);
-            }
-        }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
+            }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
+        }
         ReflectionUtils.setButtonListener(button, new ActionListener() {
             @Override
             public void trigger(Object... args) {
                 onClick();
                 if (!isCheckbox) {
-                    button.setChecked(false);
+                    button.setChecked(!button.isChecked());
                 }
             }
         });
@@ -127,6 +131,9 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     public abstract void onClick();
     public abstract String getTooltipTitle();
     public abstract void appendToTooltip(TooltipMakerAPI tooltip);
+    public float getTooltipWidth() {
+        return 500f;
+    }
 
     public void showDisabledReasonIfDisabled(TooltipMakerAPI tooltip) {
         if (disabledReason != null && !button.isEnabled()) {

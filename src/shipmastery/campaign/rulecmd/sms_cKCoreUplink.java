@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SpecialItemPlugin;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -52,10 +53,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @SuppressWarnings("unused")
 public class sms_cKCoreUplink extends BaseCommandPlugin {
@@ -207,17 +210,24 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
             //corePicker.getPosition().setXAlignOffset(-itemPad);
             int itemsPerRow = (int) corePanelWidth / (int) itemSize;
 
-            List<Pair<CargoStackAPI, Float>> coreStacksWithOrder = new ArrayList<>();
-            for (CargoStackAPI stack : Global.getSector().getPlayerFleet().getCargo().getStacksCopy()) {
-                if (stack.isCommodityStack()) {
-                    var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
-                    if (spec != null && spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) {
-                        coreStacksWithOrder.add(new Pair<>(stack, spec.getOrder()));
-                    }
-                }
-            }
+            var coreStacks = Global.getSector().getPlayerFleet().getCargo().getStacksCopy()
+                    .stream()
+                    .<Map.Entry<CommoditySpecAPI, CargoStackAPI>>mapMulti((stack, consumer) -> {
+                        var id = stack.getCommodityId();
+                        if (id == null) return;
+                        var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
+                        if (spec == null || !spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) return;
+                        consumer.accept(Map.entry(spec, stack));
+                    })
+                    .<TreeMap<CommoditySpecAPI, CargoStackAPI>>collect(() -> new TreeMap<>(
+                                    Comparator.comparingDouble(CommoditySpecAPI::getOrder)
+                                            .thenComparing((x, y) -> CharSequence.compare(x.getId(), y.getId()))),
+                            (map, entry) -> map.putIfAbsent(entry.getKey(), entry.getValue()),
+                            Map::putAll)
+                    .values()
+                    .stream()
+                    .toList();
 
-            var coreStacks = coreStacksWithOrder.stream().sorted((a, b) -> Float.compare(a.two, b.two)).map(x -> x.one).toList();
             for (var stack : coreStacks) {
                 var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
                 var aiPlugin = ((CampaignEngine) Global.getSector()).getModAndPluginData().pickAICoreOfficerPlugin(spec.getId());
@@ -243,6 +253,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
                         tooltip.addTitle(spec.getName());
                         tooltip.addPara(Global.getSettings().getDescription(spec.getId(), Description.Type.RESOURCE).getText1(), 10f);
                         ListenerUtil.addCommodityTooltipSectionAfterPrice(tooltip, 600f, false, stack);
+                        tooltip.addPara(Strings.Items.cargoCount, 10f, Misc.getGrayColor(), Misc.getHighlightColor(), "" + (int) helper.getNumItems(CargoAPI.CargoItemType.RESOURCES, spec.getId()));
                     }
                 }, TooltipMakerAPI.TooltipLocation.RIGHT, false);
 

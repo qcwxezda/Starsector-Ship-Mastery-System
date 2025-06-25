@@ -29,7 +29,8 @@
       "sms_restore_icon_green": "graphics/icons/ui/sms_restore_icon_green.png",
       "sms_integrate_icon": "graphics/icons/ui/sms_integrate_icon.png",
       "sms_integrate_icon_green": "graphics/icons/ui/sms_integrate_icon_green.png",
-      "sms_lightbulb_icon": "graphics/icons/ui/sms_lightbulb_icon.png"
+      "sms_lightbulb_icon": "graphics/icons/ui/sms_lightbulb_icon.png",
+      "sms_all_icon": "graphics/icons/ui/sms_all_icon.png"
     }
   }
 }

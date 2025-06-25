@@ -110,7 +110,7 @@
     "cancelChangesTitle": "Cancel Changes",
     "cancelChangesTooltipText": "Cancel the pending changes to your active mastery effects.",
     "upgradeConfirm": "Advanced mastery to level ",
-    "unknownMastery": "Unlock previous tier to reveal",
+    "unknownMastery": "Locked",
     "changesPending": "Changes pending",
     "noChangesPending": "No changes pending",
     "unlockAtLevel": "Unlock at mastery level %1$s",
@@ -120,13 +120,17 @@
     "selectiveRestorationButton": "Selective Restoration",
     "selectiveRestorationTooltip": "Partially or fully restore this ship, choosing the d-mods you wish to repair.\n\nThe credits required to do this ranges from %1$s to %2$s of the cost of a standard restoration, depending on the number of d-mods repaired.",
     "selectiveRestorationPanelText": "Repairing the selected d-mods will cost %1$s.",
+    "selectiveRestorationUsedSPText": "Made exceptional efforts to restore %1$s d-mods from %2$s (%3$s)",
     "cantRestore": "This hull cannot be restored",
     "noDMods": "This hull does not have any d-mods",
     "noSMods": "This hull does not have any S-mods",
     "removeSModsButton": "Hull Reversion",
     "removeSModsTooltip": "Partially or fully standardize this ship, choosing the S-mods you wish to uninstall.\n\nThe credits required to do this is equal to %1$s of the typical cost of building the same S-mods into the ship.",
+    "removeSModsPanelText": "Uninstalling the selected S-mods will cost %1$s.",
+    "removeSModsPanelUsedSPText": "Made exceptional efforts to uninstall %1$s S-mods from %2$s (%3$s).",
     "integrationButton": "Pseudocore Integration",
-    "integrationTooltip": "Install a Pseudocore into this ship, allowing it to oversee and bolster various subsystems.\n\nThe cost and effect depend on the type of Pseudocore used. Click for more info."
+    "integrationTooltip": "Install a Pseudocore into this ship, allowing it to oversee and bolster various subsystems.\n\nThe cost and effect depend on the type of Pseudocore used. Click for more info.",
+    "toggleAllButton": "Toggle All"
   },
 
   "sms_descriptions": {
@@ -576,7 +580,8 @@
     "uplinkPenaltyDesc": "Pseudocore penalty",
     "uplinkRightClick": "Right-click to assign a Pseudocore to a crewed ship not under your direct command.",
     "ampRightClick": "Right-click to integrate the %1$s with your fleet",
-    "ampIntegrated": "%1$s integrated - ???"
+    "ampIntegrated": "%1$s integrated - ???",
+    "cargoCount": "%1$s in cargo"
   },
 
   "sms_graveyard": {
@@ -657,7 +662,7 @@
   },
 
   "sms_misc": {
-    "doesntAffectModules": "This effect doesn't apply to modules.",
+    "doesntAffectModules": "Not applicable to modules",
     "flagshipOnly": "Flagship only: ",
     "effectCantBeDeactivated": "Effect can't be deactivated",
     "effectCantBeDeactivatedWarning": "Warning: effect can't be deactivated once active",
@@ -672,6 +677,7 @@
     "storyPoint": "story point",
     "requiresStoryPointNoBonus": "Requires a %1$s and does not grant any bonus experience.",
     "requiresStoryPointWithBonus": "Requires a %1$s and grants %2$s bonus experience.",
-    "noStoryPoints": "No story points available"
+    "noStoryPoints": "No story points available",
+    "noEffect": "No effect."
   }
 }

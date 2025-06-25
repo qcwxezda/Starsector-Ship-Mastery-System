@@ -78,7 +78,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     boolean isEnhance = HullmodUtils.isHullmodBuiltIn(spec, variant);
                     float bonusXPFraction = 0f;
                     if (masteryPanel.isUsingSP()) {
-                        float origCreditsCost = HullmodUtils.getCreditsCost(spec, module);
+                        float origCreditsCost = HullmodUtils.getBuildInCost(spec, module);
                         bonusXPFraction = isEnhance ? 1f : 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
                         Global.getSector().getPlayerStats().spendStoryPoints(
                                 1,
@@ -117,7 +117,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
 
                     if (masteryPanel.isUsingSP()) {
-                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_industry", 1f, 1f);
                     } else {
                         Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
                     }

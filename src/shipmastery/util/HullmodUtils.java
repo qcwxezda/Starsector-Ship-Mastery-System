@@ -70,11 +70,11 @@ public abstract class HullmodUtils {
         return (int) Math.min(cost, MP_HARD_CAP);
     }
 
-    public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship) {
-        return getCreditsCost(spec, ship, false);
+    public static int getBuildInCost(HullModSpecAPI spec, ShipAPI ship) {
+        return getBuildInCost(spec, ship, false);
     }
 
-    public static int getCreditsCost(HullModSpecAPI spec, ShipAPI ship, boolean usingSP) {
+    public static int getBuildInCost(HullModSpecAPI spec, ShipAPI ship, boolean usingSP) {
         ShipVariantAPI variant = ship.getVariant();
         if (variant == null) return 0;
         int hullSizeOrd = Utils.hullSizeToInt(ship.getHullSize());
