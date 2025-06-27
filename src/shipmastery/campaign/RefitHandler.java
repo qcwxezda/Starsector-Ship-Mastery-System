@@ -411,9 +411,6 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
     /** This is called every time the active ship in the refit screen changes. */
     @Override
     public void reportRefreshedCharacterStatEffects() {
-        // checkIfRefitShipChanged will call syncRefitScreenWithVariant,
-        // which internally refreshes the character stats, so use a flag
-        // to prevent recursion.
         if (insideRefitPanel) {
             checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
         }

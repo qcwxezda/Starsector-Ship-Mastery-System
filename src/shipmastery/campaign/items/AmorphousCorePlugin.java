@@ -18,6 +18,7 @@ public class AmorphousCorePlugin extends BaseKCorePlugin {
     public static final float MP_PER_GROUP = 5f;
     public static final String DIMENSIONAL_TETHER_ID = "sms_dimensional_tether";
 
+
     @Override
     public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
         stats.setLevel(LEVEL);

@@ -27,13 +27,12 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
     }
 
     @Override
-    protected String getDescriptionFormat() {
+    protected String getCostDescriptionFormat() {
         return Strings.MasteryPanel.selectiveRestorationPanelText;
     }
 
     @Override
-    protected void onConfirm() {
-        float cost = getModifiedCost();
+    protected void applyEffects() {
         var baseSpec = Utils.getRestoredHullSpec(selectedShip.getHullSpec());
         var variant = selectedShip.getVariant();
         selectedIds.forEach(id -> {
@@ -45,25 +44,19 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
         if (DModManager.getNumDMods(variant) <= 0) {
             variant.setHullSpecAPI(baseSpec);
         }
-
-        Utils.getPlayerCredits().subtract(cost);
-        if (isStoryOption) {
-            Global.getSector().getPlayerStats().spendStoryPoints(
-                    1,
-                    true,
-                    null,
-                    true,
-                    HullmodUtils.getBonusXPFraction(cost),
-                    String.format(
-                            Strings.MasteryPanel.selectiveRestorationUsedSPText,
-                            selectedIds.size(),
-                            selectedShip.getName(),
-                            selectedShip.getHullSpec().getNameWithDesignationWithDashClass()));
-        }
     }
 
     @Override
-    protected String[] getDescriptionArgs() {
+    protected String getUsedSPDescription() {
+        return String.format(
+                Strings.MasteryPanel.selectiveRestorationUsedSPText,
+                selectedIds.size(),
+                selectedShip.getName(),
+                selectedShip.getHullSpec().getNameWithDesignationWithDashClass());
+    }
+
+    @Override
+    protected String[] getCostDescriptionArgs() {
         return new String[] {Misc.getDGSCredits(getModifiedCost())};
     }
 

@@ -1,7 +1,13 @@
 package shipmastery.campaign.items;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.config.Settings;
+import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class GammaKCorePlugin extends BaseKCorePlugin {
     public static final int LEVEL = 3;

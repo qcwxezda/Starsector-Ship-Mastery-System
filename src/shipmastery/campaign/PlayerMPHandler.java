@@ -1,8 +1,7 @@
 package shipmastery.campaign;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListenerAndScript;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
@@ -37,7 +36,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class PlayerMPHandler extends BaseCampaignEventListener implements EveryFrameScript {
+public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
 
     /** On average, amount of XP required for 50% chance of obtaining 1 MP
      *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
@@ -63,13 +62,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public static final String CIVILIAN_MP_GAIN_STAT_MULT_KEY = "sms_MPGainMultCivilian";
 
     public PlayerMPHandler() {
-        super(false);
         prevXP = Global.getSector().getPlayerPerson().getStats().getXP();
-    }
-
-    @Override
-    public boolean isDone() {
-        return false;
     }
 
     @Override

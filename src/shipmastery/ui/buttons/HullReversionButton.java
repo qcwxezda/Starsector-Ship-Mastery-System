@@ -25,33 +25,27 @@ public class HullReversionButton extends ButtonForHullmodSelection {
     }
 
     @Override
-    protected String getDescriptionFormat() {
+    protected String getCostDescriptionFormat() {
         return Strings.MasteryPanel.removeSModsPanelText;
     }
 
     @Override
-    protected void onConfirm() {
-        float cost = getModifiedCost();
+    protected void applyEffects() {
         var variant = selectedShip.getVariant();
         selectedIds.forEach(variant::removePermaMod);
-        Utils.getPlayerCredits().subtract(cost);
-        if (isStoryOption) {
-            Global.getSector().getPlayerStats().spendStoryPoints(
-                    1,
-                    true,
-                    null,
-                    true,
-                    HullmodUtils.getBonusXPFraction(cost),
-                    String.format(
-                            Strings.MasteryPanel.removeSModsPanelUsedSPText,
-                            selectedIds.size(),
-                            selectedShip.getName(),
-                            selectedShip.getHullSpec().getNameWithDesignationWithDashClass()));
-        }
     }
 
     @Override
-    protected String[] getDescriptionArgs() {
+    protected String getUsedSPDescription() {
+        return String.format(
+                Strings.MasteryPanel.removeSModsPanelUsedSPText,
+                selectedIds.size(),
+                selectedShip.getName(),
+                selectedShip.getHullSpec().getNameWithDesignationWithDashClass());
+    }
+
+    @Override
+    protected String[] getCostDescriptionArgs() {
         return new String[] {Misc.getDGSCredits(getModifiedCost())};
     }
 

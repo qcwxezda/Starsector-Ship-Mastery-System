@@ -65,6 +65,7 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
         public void advance(float amount) {
             if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
                 ship.removeListener(this);
+                return;
             }
             checkerInterval.advance(amount);
 

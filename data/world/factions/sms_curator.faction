@@ -21,7 +21,7 @@
 	"shipNameSources":{
 		"SPACE":1,
 		"BEASTS":1,
-		"DERELICT_DRONE":1
+		"DERELICT_DRONE":1,
 	},
 	"names":{
 		"ai":1,
@@ -97,7 +97,7 @@
 	"illegalCommodities":[],
 	"music":{
 		"encounter_hostile":"music_encounter_mysterious_non_aggressive",
-		"encounter_neutral":"music_encounter_mysterious_non_aggressive"
+		"encounter_neutral":"music_encounter_mysterious_non_aggressive",
 	},
 	"portraits":{
 		"standard_male":[

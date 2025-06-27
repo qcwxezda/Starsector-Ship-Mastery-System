@@ -7,10 +7,8 @@ import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.Fonts;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.config.Settings;
 import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.HullmodUtils;
 import shipmastery.util.ReflectionUtils;
@@ -24,15 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class ButtonForHullmodSelection extends ButtonWithIcon{
+public abstract class ButtonForHullmodSelection extends ButtonWithCost {
 
-    protected final ShipAPI selectedShip;
     protected final Set<String> selectedIds = new HashSet<>();
     protected final List<ButtonAPI> buttons = new ArrayList<>();
-    protected LabelAPI costLabel;
-    protected LabelAPI spLabel;
-    protected ButtonAPI confirmButton;
     protected PickerPanelPlugin plugin;
+    protected final ShipAPI selectedShip;
 
     public ButtonForHullmodSelection(String spriteName, boolean useStoryColors, ShipAPI selectedShip) {
         super(spriteName, useStoryColors);
@@ -56,33 +51,9 @@ public abstract class ButtonForHullmodSelection extends ButtonWithIcon{
         }
     }
 
-    protected final void updateLabels() {
-        float baseCost = getBaseCost();
-        float cost = getModifiedCost();
-        boolean canAfford = cost <= Utils.getPlayerCredits().get();
-        boolean hasEnoughSP = Global.getSector().getPlayerStats().getStoryPoints() >= 1;
-
-        if (costLabel != null) {
-            costLabel.setText(String.format(getDescriptionFormat(), (Object[]) getDescriptionArgs()));
-            costLabel.setHighlight(getDescriptionArgs());
-            costLabel.setHighlightColor(canAfford ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR);
-        }
-        if (confirmButton != null) {
-            confirmButton.setEnabled(!selectedIds.isEmpty() && canAfford && (!isStoryOption || hasEnoughSP));
-        }
-        if (spLabel != null && isStoryOption) {
-            float bxp = HullmodUtils.getBonusXPFraction(baseCost);
-            String bxpStr = Utils.asPercent(bxp);
-            if (bxp <= 0f) {
-                spLabel.setText(String.format(Strings.Misc.requiresStoryPointNoBonus, Strings.Misc.storyPoint));
-                spLabel.setHighlight(Strings.Misc.storyPoint);
-                spLabel.setHighlightColor(hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR);
-            } else {
-                spLabel.setText(String.format(Strings.Misc.requiresStoryPointWithBonus, Strings.Misc.storyPoint, bxpStr));
-                spLabel.setHighlight(Strings.Misc.storyPoint, bxpStr);
-                spLabel.setHighlightColors(hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getStoryOptionColor());
-            }
-        }
+    @Override
+    protected boolean canApplyEffects() {
+        return !selectedIds.isEmpty();
     }
 
     @Override
@@ -105,12 +76,7 @@ public abstract class ButtonForHullmodSelection extends ButtonWithIcon{
                     @Override
                     public void trigger(Object... args) {
                         if ((int) args[1] == 0 && confirmButton != null && confirmButton.isEnabled()) {
-                            onConfirm();
-                            if (isStoryOption) {
-                                Global.getSoundPlayer().playUISound("ui_char_spent_story_point_industry", 1f, 1f);
-                            } else {
-                                Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
-                            }
+                            applyEffects();
                             finish();
                         }
                     }
@@ -159,30 +125,14 @@ public abstract class ButtonForHullmodSelection extends ButtonWithIcon{
                             false);
                 });
         panel.addUIElement(buttonsList).inTMid(0f).setXAlignOffset(5f);
-
-        var costText = panel.createUIElement(buttonListWidth, 50f, false);
-        costLabel = costText.addPara(getDescriptionFormat(), 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, getDescriptionArgs());
-        if (isStoryOption) {
-            spLabel = Utils.addStoryPointUseInfo(costText, 1f);
-        }
-        updateLabels();
-
-        panel.addUIElement(costText).inTMid(buttonListHeight + 10f);
+        addCostLabels(panel, buttonListWidth, buttonListHeight + 10f);
         dialogData.panel.addComponent(panel).inTMid(45f);
     }
 
-    protected abstract String getTitle();
-    protected abstract String getDescriptionFormat();
-    protected abstract void onConfirm();
-    protected abstract String[] getDescriptionArgs();
     protected abstract Collection<String> getEligibleHullmodIds();
-    protected abstract float getBaseCost();
+    protected abstract String getTitle();
     protected abstract Color getButtonTextColor();
-
-    protected final float getModifiedCost() {
-        var base = getBaseCost();
-        return isStoryOption ? base * HullmodUtils.CREDITS_COST_MULT_SP : base;
-    }
+    protected abstract void applyEffects();
 
     public class SelectAllButton extends ButtonWithIcon {
         public SelectAllButton() {
@@ -214,6 +164,4 @@ public abstract class ButtonForHullmodSelection extends ButtonWithIcon{
         @Override
         public void appendToTooltip(TooltipMakerAPI tooltip) {}
     }
-
-
 }

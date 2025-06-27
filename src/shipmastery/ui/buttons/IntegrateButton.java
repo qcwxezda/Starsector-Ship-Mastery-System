@@ -1,28 +1,135 @@
 package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import org.lwjgl.opengl.GL11;
 import shipmastery.campaign.items.BaseKCorePlugin;
-import shipmastery.campaign.items.PseudocoreIntegrationPlugin;
+import shipmastery.hullmods.integration.PseudocoreIntegrationPlugin;
+import shipmastery.config.Settings;
+import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
-public class IntegrateButton extends ButtonWithIcon {
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-    public IntegrateButton(boolean useSP) {
+public class IntegrateButton extends ButtonWithCost {
+
+    private final List<ButtonAPI> coreButtons = new ArrayList<>();
+    private String selectedCoreId;
+    private final FleetMemberAPI member;
+    private final ShipVariantAPI selectedVariant;
+    private String existingIntegrated;
+
+    public IntegrateButton(boolean useSP, FleetMemberAPI member, ShipVariantAPI selectedVariant) {
         super(useSP ? "graphics/icons/ui/sms_integrate_icon_green.png" : "graphics/icons/ui/sms_integrate_icon.png", useSP);
+        this.member = member;
+        this.selectedVariant = selectedVariant;
+    }
+
+    @Override
+    protected String getCostDescriptionFormat() {
+        return Strings.MasteryPanel.integrationPanelText;
+    }
+
+    @Override
+    protected String getUsedSPDescription() {
+        return String.format(Strings.MasteryPanel.integrationPanelUsedSPText,
+                selectedCoreId == null ? "?" : Global.getSettings().getCommoditySpec(selectedCoreId).getName(),
+                member.getShipName(),
+                member.getHullSpec().getNameWithDesignationWithDashClass());
+    }
+
+    @Override
+    protected boolean canApplyEffects() {
+        return selectedCoreId != null;
+    }
+
+    @Override
+    protected String getUsedSPSound() {
+        return "ui_char_spent_story_point_technology";
+    }
+
+    @Override
+    protected String getNormalSound() {
+        return "ui_neural_transfer_complete";
+    }
+
+    @Override
+    protected String[] getCostDescriptionArgs() {
+        return new String[] {
+                selectedCoreId == null ? "" : Global.getSettings().getCommoditySpec(selectedCoreId).getName(),
+                Misc.getDGSCredits(getModifiedCost())};
+    }
+    @Override
+    protected float getBaseCost() {
+        if (selectedCoreId == null) return 0f;
+        var plugin = Global.getSettings().getHullModSpec(selectedCoreId + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
+        if (!(plugin instanceof PseudocoreIntegrationPlugin p)) return 0f;
+        return p.getIntegrationCost(member);
+    }
+
+    public class IntegratePanelPlugin extends BaseCustomUIPanelPlugin {
+
+        private float x = 0f, y = 0f, w = 0f, h = 0f;
+
+        @Override
+        public void positionChanged(PositionAPI position) {
+            x = position.getX();
+            y = position.getY();
+            w = position.getWidth();
+            h = position.getHeight();
+        }
+
+        @Override
+        public void renderBelow(float alphaMult) {
+            if (h < 300f) return;
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_QUADS);
+            var color = Utils.mixColor(darkColor, Color.BLACK, 0.8f);
+            GL11.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+            GL11.glVertex2f(x+20f, y+150f);
+            GL11.glVertex2f(x+w-20f, y+150f);
+            GL11.glVertex2f(x+w-20f, y+h-50f);
+            GL11.glVertex2f(x+20f, y+h-50f);
+            GL11.glEnd();
+        }
+
+        @Override
+        public void buttonPressed(Object buttonId) {
+            for (var button : coreButtons) {
+                button.setChecked(Objects.equals(buttonId, button.getCustomData()));
+                if (button.isChecked() && confirmButton != null) {
+                    selectedCoreId = (String) buttonId;
+                }
+            }
+            updateLabels();
+        }
     }
 
     @Override
     public void onClick() {
+        if (existingIntegrated != null) return;
 
-        float width = 600f, height = 600f;
+        selectedCoreId = null;
+        coreButtons.clear();
+
+        var counts = CampaignUtils.getPlayerCommodityCounts(x -> x.hasTag(BaseKCorePlugin.IS_K_CORE_TAG));
+        float width = counts.isEmpty() ? 400f : 600f, height = counts.isEmpty() ? 200f : 600f;
 
         var dialogData = ReflectionUtils.showGenericDialog(
                 "",
@@ -30,58 +137,71 @@ public class IntegrateButton extends ButtonWithIcon {
                 Strings.Misc.cancel,
                 width,
                 height,
-                null);
+                new DialogDismissedListener() {
+                    @Override
+                    public void trigger(Object... args) {
+                        if ((int) args[1] == 1 || !confirmButton.isEnabled() || selectedCoreId == null) return;
+                        selectedVariant.addPermaMod(selectedCoreId + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX, false);
+                        finish();
+                    }
+                });
 
         if (dialogData == null) return;
 
-        var confirmButton = dialogData.confirmButton;
+        confirmButton = dialogData.confirmButton;
         confirmButton.setEnabled(false);
         if (isStoryOption) {
             ReflectionUtils.setButtonColor(confirmButton, Misc.getStoryDarkColor());
             ReflectionUtils.setButtonTextColor(confirmButton, Misc.getStoryOptionColor());
         }
 
-        var panel = Global.getSettings().createCustom(width, height, null);
+        var panel = Global.getSettings().createCustom(width, height, new IntegratePanelPlugin());
         var title = panel.createUIElement(width, 30f, false);
         title.setTitleFont(Fonts.ORBITRON_24AA);
         title.setTitleFontColor(isStoryOption ? Misc.getStoryBrightColor() : Misc.getBrightPlayerColor());
         title.addTitle(Strings.MasteryPanel.integrationButton).setAlignment(Alignment.MID);
         panel.addUIElement(title).inTMid(15f);
 
-        var buttonList = panel.createUIElement(width-45f, 500f, true);
-        var counts = CampaignUtils.getPlayerCommodityCounts(x -> x.hasTag(BaseKCorePlugin.IS_K_CORE_TAG));
+        if (counts.isEmpty()) {
+            var info = panel.createUIElement(width-45f, 50f, false);
+            info.addPara(Strings.Items.noneInCargo, Misc.getGrayColor(), 10f).setAlignment(Alignment.MID);
+            panel.addUIElement(info).inMid();
+        } else {
+            var buttonList = panel.createUIElement(width-45f, 400f, true);
+            counts.forEach((spec, num) -> addSectionForPseudocore(buttonList, spec, num, width - 50f, 90f));
+            panel.addUIElement(buttonList).inTMid(50f).setXAlignOffset(5f);
+            ReflectionUtils.invokeMethod(buttonList.getExternalScroller(), "setMaxShadowHeight", 0f);
+        }
 
-        counts.forEach((spec, num) -> addSectionForPseudocore(buttonList, spec, num,width-50f, 100f));
-        panel.addUIElement(buttonList).inTMid(50f).setXAlignOffset(5f);
+
+        addCostLabels(panel, width-75f, height-125f);
         dialogData.panel.addComponent(panel).inTMid(0f);
     }
 
     public void addSectionForPseudocore(TooltipMakerAPI tooltip, CommoditySpecAPI spec, int numInCargo, float width, float minHeight) {
-
         String id = spec.getId();
-        var plugin = Misc.getAICoreOfficerPlugin(id);
-        if (!(plugin instanceof PseudocoreIntegrationPlugin)) plugin = new BaseKCorePlugin();
-        PseudocoreIntegrationPlugin integrationPlugin = (PseudocoreIntegrationPlugin) plugin;
+        var plugin = Global.getSettings().getHullModSpec(id + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
+        if (!(plugin instanceof PseudocoreIntegrationPlugin integrationPlugin)) return;
 
         float leftPad = 100f;
-        float textWidth = width - leftPad;
+        float textWidth = width - leftPad - 20f;
         CustomPanelAPI tempPanel = Global.getSettings().createCustom(textWidth, 0f, null);
         TooltipMakerAPI tempTTM = tempPanel.createUIElement(textWidth, 0f, false);
         float h = tempTTM.getHeightSoFar();
-        integrationPlugin.addDescriptionToTooltip(tempTTM);
+        integrationPlugin.addIntegrationDescriptionToTooltip(tempTTM);
         float diff = tempTTM.getHeightSoFar() - h;
-        float height = Math.max(minHeight, diff + 10f);
+        float height = Math.max(minHeight, diff + 18f);
 
         tooltip.beginTable(baseColor, darkColor, brightColor, height, spec.getName(), width-10f);
         tooltip.addRow(baseColor, "");
         tooltip.addTable("", 0, 0f);
 
-        tooltip.addAreaCheckbox("", null, baseColor, darkColor, brightColor, width-10f, height+8f, -height-4f);
-        tooltip.addSpacer(-height).getPosition().setXAlignOffset(leftPad);
-        tooltip.setTextWidthOverride(width - leftPad);
-        integrationPlugin.addDescriptionToTooltip(tooltip);
+        coreButtons.add(tooltip.addAreaCheckbox("", id, darkColor, darkColor, brightColor, width-10f, height+8f, -height-4f));
+        tooltip.addSpacer(-height+5f).getPosition().setXAlignOffset(leftPad);
+        tooltip.setTextWidthOverride(textWidth);
+        integrationPlugin.addIntegrationDescriptionToTooltip(tooltip);
 //        tooltip.addPara(text, 0f);
-        tooltip.addSpacer(Math.max(0f, height - diff)).getPosition().setXAlignOffset(-leftPad);
+        tooltip.addSpacer(Math.max(-5f, height-diff-5f)).getPosition().setXAlignOffset(-leftPad);
 
         tooltip.addImage(spec.getIconName(), 64f, 64f, -height/2f - 32f);
         tooltip.getPrev().getPosition().setXAlignOffset(20f);
@@ -101,12 +221,30 @@ public class IntegrateButton extends ButtonWithIcon {
     }
 
     @Override
+    protected boolean shouldShowCostLabels() {
+        return selectedCoreId != null;
+    }
+
+    @Override
+    public void afterCreate() {
+        existingIntegrated = PseudocoreIntegrationPlugin.getIntegratedPseudocore(selectedVariant);
+        button.setChecked(existingIntegrated != null);
+    }
+
+    @Override
     public String getTooltipTitle() {
         return Strings.MasteryPanel.integrationButton;
     }
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.MasteryPanel.integrationTooltip, 10f);
+        if (existingIntegrated == null) {
+            tooltip.addPara(Strings.MasteryPanel.integrationTooltip, 10f);
+        } else {
+            tooltip.addPara(Strings.MasteryPanel.integratedTooltip, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, Global.getSettings().getCommoditySpec(existingIntegrated).getName());
+            tooltip.addSpacer(10f);
+            var plugin = (PseudocoreIntegrationPlugin) Global.getSettings().getHullModSpec(existingIntegrated + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
+            plugin.addIntegrationDescriptionToTooltip(tooltip);
+        }
     }
 }

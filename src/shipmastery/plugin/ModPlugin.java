@@ -43,6 +43,7 @@ import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.hullmods.integration.IntegratedFracturedGammaCore;
 import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -298,15 +299,14 @@ public class ModPlugin extends BaseModPlugin {
 
             PlayerMPHandler xpTracker = new PlayerMPHandler();
             Global.getSector().addTransientScript(xpTracker);
-            Global.getSector().addTransientListener(xpTracker);
 
             FleetHandler fleetHandler = new FleetHandler();
             listeners.addListener(fleetHandler, true);
-            Global.getSector().addTransientListener(fleetHandler);
             Global.getSector().addTransientScript(fleetHandler);
             listeners.addListener(new PlayerFleetHandler(), true);
             FleetHandler.NPC_MASTERY_CACHE.clear();
 
+            Global.getSector().addTransientScript(new IntegratedFracturedGammaCore.IntegrationScript());
             CyberneticAugmentation.refreshPlayerMasteredCount();
 
             // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
@@ -328,7 +328,6 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener(new CuratorFleetHandler(), true);
 
         ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
-        Global.getSector().addTransientListener(graveyardSpawner);
         Global.getSector().addTransientScript(graveyardSpawner);
         listeners.addListener(graveyardSpawner, true);
 

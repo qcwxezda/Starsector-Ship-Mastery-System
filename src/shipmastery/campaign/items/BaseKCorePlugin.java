@@ -85,14 +85,6 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
     }
 
     @Override
-    public void addDescriptionToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.Misc.noEffect, 0f);
-    }
-
-    @Override
-    public void applyEffect(FleetMemberAPI member) {}
-
-    @Override
     public String getCommodityId() {
         throw new RuntimeException("commodity id not set");
     }

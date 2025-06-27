@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FleetSyncListenerHandler extends BaseHullMod implements HullModFleetEffect {
-    private final List<FleetSyncListener> listeners = new ArrayList<>();
+    private final List<PlayerFleetSyncListener> listeners = new ArrayList<>();
 
     @Override
     public void advanceInCampaign(CampaignFleetAPI fleet) {}
@@ -22,12 +22,13 @@ public class FleetSyncListenerHandler extends BaseHullMod implements HullModFlee
 
     @Override
     public void onFleetSync(CampaignFleetAPI fleet) {
+        if (!fleet.isPlayerFleet()) return;
         for (var listener : listeners) {
             listener.onFleetSync(fleet);
         }
     }
 
-    public static void registerListener(FleetSyncListener listener) {
+    public static void registerListener(PlayerFleetSyncListener listener) {
         ((FleetSyncListenerHandler) Global.getSettings().getHullModSpec("sms_fleet_sync_listener_handler").getFleetEffect()).listeners.add(listener);
     }
 

@@ -115,6 +115,7 @@ public abstract class ButtonWithIcon implements CustomUIElement {
         tooltip.addImage(spriteName, width, height, -height);
         image = tooltip.getPrev();
         this.tooltip = tooltip;
+        afterCreate();
     }
 
     public void setEnabled(boolean enabled, @Nullable String disabledReason) {
@@ -128,6 +129,7 @@ public abstract class ButtonWithIcon implements CustomUIElement {
         }
     }
 
+    public void afterCreate() {}
     public abstract void onClick();
     public abstract String getTooltipTitle();
     public abstract void appendToTooltip(TooltipMakerAPI tooltip);

@@ -224,6 +224,13 @@ public abstract class MasteryUtils {
         applyMasteryEffects(spec, levelsToApply, false, action);
     }
 
+    public static float getModifiedMasteryEffectStrength(PersonAPI commander, ShipHullSpecAPI spec, float baseStrength) {
+        if (commander == null) return baseStrength;
+        return commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD)
+                .computeEffective(commander.getStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
+                                .computeEffective(baseStrength));
+    }
+
     public static int getPlayerUnassignedCount(ShipHullSpecAPI spec) {
         int maxLevel = ShipMastery.getPlayerMasteryLevel(spec);
         Set<Integer> assignedLevels = ShipMastery.getPlayerActiveMasteriesCopy(spec).keySet();

@@ -223,9 +223,14 @@ public interface Strings {
         String removeSModsPanelUsedSPText = Utils.getString("sms_masteryPanel", "removeSModsPanelUsedSPText");
         String integrationButton = Utils.getString("sms_masteryPanel", "integrationButton");
         String integrationTooltip = Utils.getString("sms_masteryPanel", "integrationTooltip");
+        String integratedTooltip = Utils.getString("sms_masteryPanel", "integratedTooltip");
         String noDMods = Utils.getString("sms_masteryPanel", "noDMods");
         String noSMods = Utils.getString("sms_masteryPanel", "noSMods");
         String toggleAllButton = Utils.getString("sms_masteryPanel", "toggleAllButton");
+        String integrationPanelText = Utils.getString("sms_masteryPanel", "integrationPanelText");
+        String integrationPanelRemoveText = Utils.getString("sms_masteryPanel", "integrationPanelRemoveText");
+        String integrationPanelUsedSPText = Utils.getString("sms_masteryPanel", "integrationPanelUsedSPText");
+        String integrationPanelRemoveUsedSPText = Utils.getString("sms_masteryPanel", "integrationPanelRemoveUsedSPText");
     }
 
     interface Misc {
@@ -290,14 +295,25 @@ public interface Strings {
         String ampRightClick = Utils.getString("sms_items", "ampRightClick");
         String ampIntegrated = Utils.getString("sms_items", "ampIntegrated");
         String cargoCount = Utils.getString("sms_items", "cargoCount");
+        String fracturedIntegrationEffect = Utils.getString("sms_items", "fracturedIntegrationEffect");
+        String gammaIntegrationEffect = Utils.getString("sms_items", "gammaIntegrationEffect");
+        String betaIntegrationEffect = Utils.getString("sms_items", "betaIntegrationEffect");
+        String alphaIntegrationEffect = Utils.getString("sms_items", "alphaIntegrationEffect");
+        String amorphousIntegrationEffect = Utils.getString("sms_items", "amorphousIntegrationEffect");
+        String noneInCargo = Utils.getString("sms_items", "noneInCargo");
+        String integrationDesc = Utils.getString("sms_items", "integrationDesc");
     }
 
     interface Skills {
         String dimensionalTetherEffect = Utils.getString("sms_skills", "dimensionalTetherEffect");
         String dimensionalTetherRetreatText = Utils.getString("sms_skills", "dimensionalTetherRetreatText");
         String dimensionalTetherEliteEffect = Utils.getString("sms_skills", "dimensionalTetherEliteEffect");
-        String sharedKnowledgeStandardEffect = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect");
-        String sharedKnowledgeEliteEffect = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect");
+        String sharedKnowledgeStandardEffect1 = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect1");
+        String sharedKnowledgeStandardEffect2 = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect2");
+        String sharedKnowledgeEliteEffect1 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect1");
+        String sharedKnowledgeEliteEffect2 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect2");
+        String sharedKnowledgeEliteEffect3 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect3");
+        String sharedKnowledgeEliteEffect4 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect4");
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
         String bestOfTheBestDesc2 = Utils.getString("sms_skills", "bestOfTheBestDesc2");
         String bestOfTheBestDesc3 = Utils.getString("sms_skills", "bestOfTheBestDesc3");

@@ -1,122 +1,59 @@
 package shipmastery.campaign.skills;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.characters.AfterShipCreationSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.ShipSkillEffect;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.IntervalUtil;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.util.CampaignUtils;
-import shipmastery.util.MasteryUtils;
+import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
 // NPCs don't have enhances, so treat every NPC fleet as having 0 enhances.
 public class SharedKnowledge {
-    public static final float BASE_DAMAGE_BONUS = 0.005f;
-    public static final float DAMAGE_BONUS_PER_LEVEL = 0.005f;
-    public static final float MAX_DAMAGE_BONUS = 0.05f;
-    public static final float DP_REDUCTION_PER_ENHANCE = 0.015f;
-    // In practice cap is 0.15f since 10 enhances is max, don't need additional cap
-    public static final float MAX_DP_REDUCTION_ENHANCE = 1f;
-    public static final float BASE_DP_REDUCTION_AI_COMMANDER = 0.15f;
-    public static final float BASE_DP_REDUCTION_HUMAN_COMMANDER = 0.05f;
+    public static final float MAX_DP_REDUCTION = 0.075f;
+    public static final int MAX_FIRE_RATE_STACKS = 5;
+    public static final float MAX_FIRE_RATE = 0.075f;
+    public static final float FIRE_RATE_RANGE = 2500f;
+    public static final String FIRE_RATE_STACKS_MOD = "$sms_SharedKnowledgeStacksModifier";
 
-    public static int getMasteryLevel(PersonAPI fleetCommander, MutableShipStatsAPI stats) {
-        if (fleetCommander == null || fleetCommander.isDefault() || stats.getVariant() == null) return 0;
-        var lookup = VariantLookup.getVariantInfo(stats.getVariant());
-        var hullSpec = lookup == null || lookup.root == null ? stats.getVariant().getHullSpec() : lookup.root.getHullSpec();
-        if (fleetCommander.isPlayer()) {
-            return ShipMastery.getPlayerMasteryLevel(hullSpec);
-        } else {
-            var masteries = FleetHandler.getCachedNPCMasteries(fleetCommander, hullSpec);
-            if (masteries == null || masteries.isEmpty()) return 0;
-            return masteries.lastKey();
-        }
-    }
-
-    public static int getEnhanceCount(MutableShipStatsAPI stats) {
-        if (stats.getVariant() == null || stats.getVariant().getHullSpec() == null) return 0;
-        var commander = CampaignUtils.getFleetCommanderForStats(stats);
-        if (commander == null || !commander.isPlayer()) {
-            return 0;
-        }
-        return MasteryUtils.getEnhanceCount(stats.getVariant().getHullSpec());
-    }
-
-    public static boolean hasEliteSharedKnowledge(PersonAPI person) {
+    public static boolean hasSharedKnowledge(PersonAPI person) {
         if (person == null || person.getStats() == null) return false;
-        return person.getStats().getSkillLevel("sms_shared_knowledge") >= 2f;
+        return person.getStats().getSkillLevel("sms_shared_knowledge") >= 1f;
     }
 
     public static class Standard extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
             PersonAPI commander = CampaignUtils.getFleetCommanderForStats(stats);
-            int masteryLevel = getMasteryLevel(commander, stats);
-            float bonus = Math.min(MAX_DAMAGE_BONUS, BASE_DAMAGE_BONUS + masteryLevel*DAMAGE_BONUS_PER_LEVEL);
-            PersonAPI captain = CampaignUtils.getCaptain(stats);
-            if (captain != null && captain.isAICore()) {
-                bonus *= 2f;
-            }
-            if (bonus <= 0f) return;
-            stats.getHullDamageTakenMult().modifyMult(id, 1f-bonus);
-            stats.getArmorDamageTakenMult().modifyMult(id, 1f-bonus);
-            stats.getShieldDamageTakenMult().modifyMult(id, 1f-bonus);
-            stats.getBallisticWeaponDamageMult().modifyPercent(id, 100f*bonus);
-            stats.getEnergyWeaponDamageMult().modifyPercent(id, 100f*bonus);
-            stats.getMissileWeaponDamageMult().modifyPercent(id, 100f*bonus);
-        }
-
-        @Override
-        public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
-            stats.getHullDamageTakenMult().unmodify(id);
-            stats.getArmorDamageTakenMult().unmodify(id);
-            stats.getShieldDamageTakenMult().unmodify(id);
-            stats.getBallisticWeaponDamageMult().unmodify(id);
-            stats.getEnergyWeaponDamageMult().unmodify(id);
-            stats.getMissileWeaponDamageMult().unmodify(id);
-        }
-
-        @Override
-        public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
-            init(stats, skill);
-            // Needed because codex doesn't like \n character
-            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect, 0f, hc, hc,
-                    Utils.asPercent(BASE_DAMAGE_BONUS),
-                    Utils.asPercent(DAMAGE_BONUS_PER_LEVEL),
-                    Utils.asPercent(MAX_DAMAGE_BONUS),
-                    Utils.asPercent(-BASE_DAMAGE_BONUS),
-                    Utils.asPercent(DAMAGE_BONUS_PER_LEVEL),
-                    Utils.asPercent(-MAX_DAMAGE_BONUS));
-        }
-    }
-
-    public static class Elite extends BaseSkillEffectDescription implements ShipSkillEffect {
-        @Override
-        public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
-            PersonAPI commander = CampaignUtils.getFleetCommanderForStats(stats);
-            float dpReduction = 0f;
-            boolean hasEliteSharedKnowledge = hasEliteSharedKnowledge(commander);
-            boolean isAICore = commander != null && commander.isAICore();
-
-            if (isAICore && hasEliteSharedKnowledge) {
-                dpReduction = BASE_DP_REDUCTION_AI_COMMANDER;
-            } else if (hasEliteSharedKnowledge) {
-                dpReduction = BASE_DP_REDUCTION_HUMAN_COMMANDER;
+            if (commander == null || commander.isDefault() || stats.getVariant() == null) return;
+            var lookup = VariantLookup.getVariantInfo(stats.getVariant());
+            var hullSpec = lookup == null || lookup.root == null ? stats.getVariant().getHullSpec() : lookup.root.getHullSpec();
+            int maxLevel = ShipMastery.getMaxMasteryLevel(hullSpec);
+            int curLevel;
+            if (commander.isPlayer()) {
+                curLevel = ShipMastery.getPlayerMasteryLevel(hullSpec);
+            } else {
+                var masteries = FleetHandler.getCachedNPCMasteries(commander, hullSpec);
+                if (masteries == null || masteries.isEmpty()) return;
+                curLevel =  masteries.lastKey();
             }
 
-            int enhanceCount = getEnhanceCount(stats);
-            dpReduction = Math.max(dpReduction, Math.min(DP_REDUCTION_PER_ENHANCE*enhanceCount, MAX_DP_REDUCTION_ENHANCE));
-
-            if (dpReduction <= 0f) return;
-            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, 1f-dpReduction);
+            float reduction = (float) curLevel / Math.max(maxLevel, 1) * MAX_DP_REDUCTION;
+            if (reduction <= 0f) return;
+            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, 1f - reduction);
         }
 
         @Override
@@ -126,12 +63,90 @@ public class SharedKnowledge {
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
+            init(stats, skill);
+            // Needed because codex doesn't like \n character
+            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect1, 0f, hc, hc, Utils.asPercent(MAX_DP_REDUCTION));
+            info.addPara(Strings.Skills.sharedKnowledgeStandardEffect2, 0f, tc);
+        }
+    }
+
+    public static class Elite extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
+
+        public static class SharedKnowledgeEliteScript implements AdvanceableListener {
+            IntervalUtil checkerInterval = new IntervalUtil(0.5f, 1.5f);
+            ShipAPI ship;
+            String id;
+
+            public SharedKnowledgeEliteScript(ShipAPI ship, String id) {
+                this.ship = ship;
+                this.id = id;
+            }
+
+            @Override
+            public void advance(float amount) {
+                if (!ship.isAlive() || ship.getHitpoints() < 0f) {
+                    ship.removeListener(this);
+                    return;
+                }
+                checkerInterval.advance(amount);
+                if (checkerInterval.intervalElapsed()) {
+                    float count = 1f; // Includes this ship itself, which has the skill
+                    var it = Global.getCombatEngine().getShipGrid().getCheckIterator(
+                            ship.getLocation(),
+                            2f*(FIRE_RATE_RANGE+ship.getCollisionRadius()),
+                            2f*(FIRE_RATE_RANGE+ship.getCollisionRadius()));
+                    while (it.hasNext()) {
+                        ShipAPI other = (ShipAPI) it.next();
+                        if (ship == other) continue;
+                        if (other.getOwner() != ship.getOwner()) continue;
+                        if (!hasSharedKnowledge(other.getCaptain())) continue;
+                        if (MathUtils.dist(other.getLocation(), ship.getLocation()) > FIRE_RATE_RANGE+ship.getCollisionRadius()+other.getCollisionRadius()) continue;
+                        count++;
+                    }
+
+                    count = ship.getMutableStats().getDynamic().getMod(FIRE_RATE_STACKS_MOD).computeEffective(count);
+                    float bonus = MAX_FIRE_RATE * Math.min(1f, count / MAX_FIRE_RATE_STACKS);
+                    applyEffectsToStats(ship.getMutableStats(), bonus, id);
+                }
+            }
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {}
+
+        @Override
+        public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {}
+
+        public static void applyEffectsToStats(MutableShipStatsAPI stats, float amount, String modifierId) {
+            stats.getBallisticRoFMult().modifyPercent(modifierId, 100f * amount);
+            stats.getEnergyRoFMult().modifyPercent(modifierId, 100f * amount);
+            stats.getMissileRoFMult().modifyPercent(modifierId, 100f * amount);
+            stats.getBallisticWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
+            stats.getEnergyWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
+            stats.getMissileWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
+        }
+
+        @Override
+        public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
+            ship.addListener(new SharedKnowledgeEliteScript(ship, id));
+        }
+
+        @Override
+        public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
+            ship.removeListenerOfClass(SharedKnowledgeEliteScript.class);
+        }
+
+        @Override
+        public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
             initElite(stats, skill);
             // Need custom description due to elite effect taking multiple lines
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect, 0f, hc, hc,
-                    Utils.asPercent(BASE_DP_REDUCTION_AI_COMMANDER),
-                    Utils.asPercent(BASE_DP_REDUCTION_HUMAN_COMMANDER),
-                    Utils.asPercent(DP_REDUCTION_PER_ENHANCE));
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect1, 0f, hc, hc,
+                    Utils.asPercent(MAX_FIRE_RATE),
+                    skill.getName(),
+                    Utils.asInt(FIRE_RATE_RANGE));
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect2, 0f, tc, hc, Utils.asInt(MAX_FIRE_RATE_STACKS));
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect3, 0f, tc);
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect4, 0f, tc);
         }
     }
 }

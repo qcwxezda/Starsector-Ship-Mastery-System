@@ -25,8 +25,8 @@ public class JitterEmitter2 extends BaseIEmitter {
     public JitterEmitter2(CombatEntityAPI entity, SpriteAPI sprite) {
         this.entity = entity;
         this.sprite = sprite;
-        width = sprite.getWidth();
-        height = sprite.getHeight();
+        width = sprite == null ? 0f : sprite.getWidth();
+        height = sprite == null ? 0f :sprite.getHeight();
     }
 
     @Override
@@ -51,6 +51,7 @@ public class JitterEmitter2 extends BaseIEmitter {
 
     @Override
     protected ParticleData initParticle(int i) {
+        if (sprite == null) return null;
         ParticleData data = new ParticleData();
         data.life(life);
         data.fadeTime(life*0.2f, life*0.8f);

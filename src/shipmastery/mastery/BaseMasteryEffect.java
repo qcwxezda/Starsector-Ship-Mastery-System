@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.VariantLookup;
 
 import java.util.ArrayList;
@@ -173,13 +174,7 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
 
     @Override
     public final float getStrength(PersonAPI commander) {
-        float strength = baseStrength;
-        if (commander == null) return strength;
-        // local mod can be multiplicative (if negative) or additive (if positive)
-        strength = commander.getStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + getHullSpec().getHullId()).computeEffective(strength);
-        // global mod is always additive
-        strength += commander.getStats().getDynamic().getMod(GLOBAL_MASTERY_STRENGTH_MOD).computeEffective(baseStrength) - baseStrength;
-        return strength;
+        return MasteryUtils.getModifiedMasteryEffectStrength(commander, getHullSpec(), baseStrength);
     }
 
     public final float getStrengthForPlayer() {

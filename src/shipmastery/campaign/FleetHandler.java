@@ -1,8 +1,7 @@
 package shipmastery.campaign;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListenerAndScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
@@ -46,7 +45,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener, CoreAutoresolveListener, EveryFrameScript {
+public class FleetHandler extends BaseCampaignEventListenerAndScript implements FleetInflationListener, CoreAutoresolveListener {
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
@@ -61,10 +60,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
     public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
     public static final Map<String, Map<String, NavigableMap<Integer, String>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
-
-    public FleetHandler() {
-        super(false);
-    }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, String> levels) {
         Map<String, NavigableMap<Integer, String>> subMap = NPC_MASTERY_CACHE.computeIfAbsent(commander.getId(), k -> new HashMap<>());
@@ -426,11 +421,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {
         return (commander.getId() + spec.getHullId() + "___").hashCode();
-    }
-
-    @Override
-    public boolean isDone() {
-        return false;
     }
 
     @Override

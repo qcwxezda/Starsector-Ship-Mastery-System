@@ -261,7 +261,7 @@ public class MasteryPanel {
         int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
         var selectedVariant = selectedShip.getVariant();
 
-        var integrateButton = new IntegrateButton(usingSP);
+        var integrateButton = new IntegrateButton(usingSP, member, selectedVariant);
         addButton(integrateButton, panel, null, false, -38f, 25f);
         int integrateUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL);
         integrateButton.setEnabled(level >= integrateUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, integrateUnlockLevel));

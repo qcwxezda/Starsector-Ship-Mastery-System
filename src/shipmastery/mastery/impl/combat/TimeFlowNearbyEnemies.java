@@ -74,6 +74,7 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
         public void advance(float amount) {
             if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
                 ship.removeListener(this);
+                return;
             }
 
             checkInterval.advance(amount);

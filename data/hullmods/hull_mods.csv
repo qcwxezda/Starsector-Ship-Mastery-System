@@ -38,3 +38,8 @@ KCore Uplink Handler,sms_k_core_uplink_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,
 Curator Modifier,sms_curator_npc_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorNPCHullmod,,,,graphics/hullmods/generic_mod.png
 Curator Modifier (Player),sms_curator_player_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorPlayerHullmod,,,,graphics/hullmods/generic_mod.png
 Fleet Sync Listener Handler,sms_fleet_sync_listener_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.campaign.listeners.FleetSyncListenerHandler,,,,graphics/hullmods/generic_mod.png
+Fractured Gamma Core,sms_fractured_gamma_core<integrated>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.integration.IntegratedFracturedGammaCore,,,,graphics/hullmods/generic_mod.png
+Gamma Pseudocore,sms_gamma_k_core<integrated>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.integration.IntegratedGammaKCore,,,,graphics/hullmods/generic_mod.png
+Beta Pseudocore,sms_beta_k_core<integrated>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.integration.IntegratedBetaKCore,,,,graphics/hullmods/generic_mod.png
+Alpha Pseudocore,sms_alpha_k_core<integrated>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.integration.IntegratedAlphaKCore,,,,graphics/hullmods/generic_mod.png
+Amorphous Pseudocore,sms_amorphous_core<integrated>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.integration.IntegratedAmorphousCore,,,,graphics/hullmods/generic_mod.png
