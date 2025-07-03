@@ -11,6 +11,7 @@
     - Changed ShipAPI parameter to ShipVariantAPI parameter.
     - This should make it substantially easier to actually call the methods, including outside the refit screen where a ShipAPI instance isn't readily available.
     - Has some small side effects, such as adjusted effect ranges due to ship system range stat no longer showing.
+- Pseudocore-piloted automated ships now follow captain personality rather than automated reckless ShipAIConfig override.
 - Building in hullmods no longer costs MP.
 - Made the default color for mastery stuff a little brighter.
 - Reactive-fortress-shield: Increased range.

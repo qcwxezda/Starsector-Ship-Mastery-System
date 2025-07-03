@@ -225,8 +225,12 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
 
         public void makeOutline(CustomPanelAPI panel, boolean smallText) {
             TooltipMakerAPI outline = panel.createUIElement(width + 2f, height + 2f, false);
+            var spec = member.getHullSpec();
             var box = outline.addAreaCheckbox("", null, Color.WHITE, brightMasteryColor, Color.WHITE, width + 2f, height + 2f, -1f);
-            box.setEnabled(progress >= 1f && member.getFleetCommander() != null && member.getFleetCommander().isPlayer());
+            box.setEnabled(MasteryUtils.getEnhanceCount(spec) < MasteryUtils.MAX_ENHANCES
+                    && progress >= 1f
+                    && member.getFleetCommander() != null
+                    && member.getFleetCommander().isPlayer());
             box.setButtonDisabledPressedSound(null);
             box.setMouseOverSound(null);
             box.setOpacity(0.15f);

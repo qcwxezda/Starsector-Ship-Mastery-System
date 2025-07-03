@@ -7,13 +7,21 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.achievements.FullEnhance;
+import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static shipmastery.mastery.MasteryEffect.MASTERY_STRENGTH_MOD_FOR;
 
 public class LevelUpDialog {
 
@@ -32,6 +40,7 @@ public class LevelUpDialog {
         float displayW = width-100f;
         var spec = member.getHullSpec();
         int currentLevel = ShipMastery.getPlayerMasteryLevel(spec);
+        boolean isEnhance = currentLevel >= ShipMastery.getMaxMasteryLevel(spec);
 
         // Have to create a temporary display to figure out the total height it uses
         CustomPanelAPI temp = Global.getSettings().createCustom(displayW, 100f, null);
@@ -46,39 +55,91 @@ public class LevelUpDialog {
                 0f,
                 false,
                 () -> {});
-        tempDisplay.create(tempTTM, currentLevel+1, currentLevel+1, true);
+        tempDisplay.create(tempTTM, currentLevel+1, currentLevel+1, true, false);
 
         float displayH = Math.min(500f, tempDisplay.getTotalHeight() + 5f);
-        float height =  displayH + 100f;
+        float height =  displayH + 110f + (isEnhance ? 25f : 0f);
 
         ReflectionUtils.GenericDialogData data = ReflectionUtils.showGenericDialog("", Strings.Misc.confirm, Strings.Misc.cancel, width, height, new DialogDismissedListener() {
             @Override
             public void trigger(Object... args) {
                 if ((int) args[1] == 1 || selectedLevelId == null) return;
-                var spec = member.getHullSpec();
-                ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
-                ShipMastery.advancePlayerMasteryLevel(spec);
+
                 int level = ShipMastery.getPlayerMasteryLevel(spec);
-                ShipMastery.activatePlayerMastery(member.getHullSpec(), level, selectedLevelId);
-                Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
+
+                var spec = member.getHullSpec();
+                if (!isEnhance) {
+                    ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
+                    ShipMastery.advancePlayerMasteryLevel(spec);
+                    ShipMastery.activatePlayerMastery(member.getHullSpec(), level+1, selectedLevelId);
+                    Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
+                } else {
+                    //noinspection unchecked
+                    Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(MasteryUtils.ENHANCE_MAP);
+                    if (enhanceMap == null) {
+                        enhanceMap = new HashMap<>();
+                        Global.getSector().getPersistentData().put(MasteryUtils.ENHANCE_MAP, enhanceMap);
+                    }
+                    Integer enhanceCount = enhanceMap.getOrDefault(spec.getHullId(), 0);
+
+                    ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getEnhanceMPCost(spec));
+                    int spCost = MasteryUtils.getEnhanceSPCost(spec);
+                    Global.getSector().getPlayerStats().spendStoryPoints(
+                            spCost,
+                            spCost > 0,
+                            null,
+                            spCost > 0,
+                            MasteryUtils.ENHANCE_BONUS_XP[enhanceCount],
+                            null);
+
+                    enhanceCount = enhanceCount + 1;
+                    enhanceMap.put(spec.getHullId(), enhanceCount);
+
+
+                    float enhanceAmount = 0f;
+                    for (int i = 0; i < enhanceCount; i++) {
+                        enhanceAmount += MasteryUtils.ENHANCE_MASTERY_AMOUNT[i];
+                    }
+                    Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
+                            .modifyPercent(MasteryUtils.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);
+
+                    if (spCost > 0)
+                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+                    else
+                        Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
+
+                    // Check for achievement completion
+                    if (enhanceCount == MasteryUtils.MAX_ENHANCES) {
+                        UnlockAchievementAction.unlockWhenUnpaused(FullEnhance.class);
+                    }
+                }
 
                 if (onLevelUp != null) {
                     onLevelUp.perform();
                 }
 
+                if (!isEnhance && ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) return;
+                if (isEnhance && MasteryUtils.getEnhanceCount(spec) == MasteryUtils.MAX_ENHANCES) return;
                 // Can level up again
-                if (ShipMastery.getPlayerMasteryPoints(spec) >= MasteryUtils.getUpgradeCost(spec)) {
+                if (ShipMastery.getPlayerMasteryPoints(spec) >= (isEnhance ? MasteryUtils.getEnhanceMPCost(spec) : MasteryUtils.getUpgradeCost(spec))) {
                     new LevelUpDialog(member, onLevelUp).show();
                 }
             }
         });
         if (data == null) return;
+        if (isEnhance) {
+            ReflectionUtils.setButtonTextColor(data.confirmButton, Misc.getStoryOptionColor());
+            ReflectionUtils.setButtonColor(data.confirmButton, Misc.getStoryDarkColor());
+        }
 
         CustomPanelAPI panel = Global.getSettings().createCustom(width, height, null);
 
         TooltipMakerAPI levelUpTitle = panel.createUIElement(width, height, false);
         levelUpTitle.setTitleFont(Fonts.ORBITRON_24AA);
-        levelUpTitle.addTitle(String.format(Strings.MasteryPanel.levelUpSelect, Utils.getRestoredHullSpec(spec).getHullNameWithDashClass())).setAlignment(Alignment.MID);
+        if (isEnhance) {
+            levelUpTitle.setTitleFontColor(Misc.getStoryOptionColor());
+        }
+        levelUpTitle.addTitle(String.format(isEnhance ? Strings.MasteryPanel.enhanceSelect :Strings.MasteryPanel.levelUpSelect, Utils.getRestoredHullSpec(spec).getHullNameWithDashClass())).setAlignment(Alignment.MID);
         panel.addUIElement(levelUpTitle).inTR(30f, 25f);
 
         TooltipMakerAPI outline = panel.createUIElement(displayW, displayH, false);
@@ -97,10 +158,17 @@ public class LevelUpDialog {
                 false,
                 () -> {});
 
-        displayItem.create(display, currentLevel+1, currentLevel+1, true);
+        displayItem.create(display, currentLevel+1, currentLevel+1, true, isEnhance);
         display.setHeightSoFar(displayItem.getTotalHeight());
-
         panel.addUIElement(display).inTR(39f, 60f);
+
+
+        if (isEnhance) {
+            var spInfo = panel.createUIElement(width, 20f, false);
+            Utils.addStoryPointUseInfo(spInfo, MasteryUtils.ENHANCE_BONUS_XP[MasteryUtils.getEnhanceCount(spec)]);
+            panel.addUIElement(spInfo).inBL(30f, 50f);
+        }
+
         data.panel.addComponent(panel);
         ReflectionUtils.invokeMethod(display.getExternalScroller(), "setMaxShadowHeight", 0f);
 

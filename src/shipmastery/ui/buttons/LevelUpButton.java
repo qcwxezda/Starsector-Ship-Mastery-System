@@ -1,9 +1,14 @@
 package shipmastery.ui.buttons;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.ShipMastery;
+import shipmastery.config.Settings;
 import shipmastery.ui.LevelUpDialog;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
+import shipmastery.util.Utils;
 
 public class LevelUpButton extends ButtonWithIcon {
 
@@ -14,6 +19,11 @@ public class LevelUpButton extends ButtonWithIcon {
         this.member = member;
     }
 
+    public boolean isEnhance() {
+        var spec = member.getHullSpec();
+        return ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec);
+    }
+
     @Override
     public void onClick() {
         new LevelUpDialog(member, this::finish).show();
@@ -21,11 +31,24 @@ public class LevelUpButton extends ButtonWithIcon {
 
     @Override
     public String getTooltipTitle() {
-        return Strings.MasteryPanel.levelUpMastery;
+        return isEnhance() ? String.format(
+                Strings.MasteryPanel.enhanceMastery,
+                MasteryUtils.getEnhanceCount(member.getHullSpec()),
+                MasteryUtils.MAX_ENHANCES)
+                : Strings.MasteryPanel.levelUpMastery;
     }
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.MasteryPanel.levelUpTooltip, 10f);
+        if (isEnhance()) {
+            tooltip.addPara(
+                    Strings.MasteryPanel.enhanceMasteryTooltip,
+                    10f,
+                    Settings.POSITIVE_HIGHLIGHT_COLOR,
+                    Utils.asPercent(MasteryUtils.getModifiedMasteryEffectStrength(Global.getSector().getPlayerPerson(), member.getHullSpec(), 1f)));
+        }
+        else {
+            tooltip.addPara(Strings.MasteryPanel.levelUpTooltip, 10f);
+        }
     }
 }

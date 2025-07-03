@@ -29,7 +29,7 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     public boolean isCheckbox = false;
 
     protected UIComponentAPI image;
-    protected ButtonAPI button;
+    protected ButtonAPI thisButton;
     protected String disabledReason;
     protected TooltipMakerAPI tooltip;
     protected final boolean isStoryOption;
@@ -56,13 +56,13 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     }
 
     public void setChecked(boolean isChecked) {
-        if (button != null) {
-            button.setChecked(isChecked);
+        if (thisButton != null) {
+            thisButton.setChecked(isChecked);
         }
     }
 
     public boolean isEnabled() {
-        return button != null && button.isEnabled();
+        return thisButton != null && thisButton.isEnabled();
     }
 
     public final void onFinish(Action action) {
@@ -75,7 +75,7 @@ public abstract class ButtonWithIcon implements CustomUIElement {
 
     @Override
     public void create(TooltipMakerAPI tooltip) {
-        button = tooltip.addAreaCheckbox("", null, baseColor, darkColor, brightColor, width, height, 0f);
+        thisButton = tooltip.addAreaCheckbox("", null, baseColor, darkColor, brightColor, width, height, 0f);
         String title = getTooltipTitle();
         if (title != null) {
             tooltip.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
@@ -101,16 +101,16 @@ public abstract class ButtonWithIcon implements CustomUIElement {
                 }
             }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
         }
-        ReflectionUtils.setButtonListener(button, new ActionListener() {
+        ReflectionUtils.setButtonListener(thisButton, new ActionListener() {
             @Override
             public void trigger(Object... args) {
                 onClick();
                 if (!isCheckbox) {
-                    button.setChecked(!button.isChecked());
+                    thisButton.setChecked(!thisButton.isChecked());
                 }
             }
         });
-        var panel = ReflectionUtils.invokeMethod(button, "getAreaCheckboxButtonPanel");
+        var panel = ReflectionUtils.invokeMethod(thisButton, "getAreaCheckboxButtonPanel");
         ReflectionUtils.invokeMethod(panel, "setBorderThickness", 2f);
         tooltip.addImage(spriteName, width, height, -height);
         image = tooltip.getPrev();
@@ -120,10 +120,10 @@ public abstract class ButtonWithIcon implements CustomUIElement {
 
     public void setEnabled(boolean enabled, @Nullable String disabledReason) {
         if (enabled) {
-            button.setEnabled(true);
+            thisButton.setEnabled(true);
             image.setOpacity(1f);
         } else {
-            button.setEnabled(false);
+            thisButton.setEnabled(false);
             image.setOpacity(0.3f);
             this.disabledReason = disabledReason;
         }
@@ -138,7 +138,7 @@ public abstract class ButtonWithIcon implements CustomUIElement {
     }
 
     public void showDisabledReasonIfDisabled(TooltipMakerAPI tooltip) {
-        if (disabledReason != null && !button.isEnabled()) {
+        if (disabledReason != null && !thisButton.isEnabled()) {
             tooltip.addPara(disabledReason, Misc.getNegativeHighlightColor(), 10f);
         }
     }

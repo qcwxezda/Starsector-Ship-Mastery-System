@@ -37,6 +37,14 @@ public class IntegratedBetaKCore extends PseudocoreIntegrationHullmod {
     }
 
     @Override
+    public String getCannotRemoveReason(FleetMemberAPI member) {
+        if (!member.getVariant().getSMods().isEmpty()) {
+            return Strings.Items.betaIntegrationCannotRemove;
+        }
+        return super.getCannotRemoveReason(member);
+    }
+
+    @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         var smod = stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD);
         smod.modifyFlat(id, 1);

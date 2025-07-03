@@ -9,6 +9,13 @@ public interface PseudocoreIntegrationPlugin {
     String INTEGRATED_SUFFIX = "<integrated>";
     void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip);
     float getIntegrationCost(FleetMemberAPI member);
+    default String getCannotIntegrateReason(FleetMemberAPI member) {
+        return null;
+    }
+    default String getCannotRemoveReason(FleetMemberAPI member) {
+        return null;
+    }
+
     static String getIntegratedPseudocore(ShipVariantAPI variant) {
         return variant.getHullMods()
                 .stream()

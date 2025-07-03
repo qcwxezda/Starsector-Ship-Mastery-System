@@ -19,8 +19,6 @@ public class EnhanceMasteryDisplay implements CustomUIElement {
     final ShipHullSpecAPI spec;
     final MasteryPanel panel;
 
-    public static final String ENHANCE_MAP = "$sms_EnhanceMap";
-    public static final String ENHANCE_MODIFIER_ID = "sms_enhancement";
     public ButtonAPI enhanceButton;
 
     public EnhanceMasteryDisplay(MasteryPanel panel, ShipHullSpecAPI spec) {

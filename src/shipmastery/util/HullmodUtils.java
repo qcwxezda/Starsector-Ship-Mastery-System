@@ -29,7 +29,7 @@ public abstract class HullmodUtils {
     public static final float CREDITS_COST_BXP_CAP = 200000f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MIN = 0.2f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MAX = 1f;
-    public static final float SMOD_REMOVAL_COST_MULT = 0.5f;
+    public static final float SMOD_REMOVAL_COST_MULT = 0.75f;
 
     public static final int ADDITIONAL_MP_PER_SMOD = 0;
     public static final float DP_PER_EXTRA_MP = 6f;
@@ -80,10 +80,19 @@ public abstract class HullmodUtils {
         int hullSizeOrd = Utils.hullSizeToInt(ship.getHullSize());
 
         float valueFrac = Math.max(1, ship.getHullSpec().getBaseValue() / BASE_VALUE_AMTS[hullSizeOrd]);
-        float cost = 7500f
-                * (float) Math.pow(Math.max(1f, spec.getCostFor(ship.getHullSize())), 0.4f)
-                * (float) Math.pow(valueFrac, 0.8f)
-                * (float) Math.pow((hullSizeOrd + 1), 1.1f);
+        float opCost = spec.getCostFor(ship.getHullSize());
+        if (spec.getEffect() != null && spec.getEffect().hasSModEffect()) {
+            if (spec.getEffect().isSModEffectAPenalty()) {
+                opCost *= 0.75f;
+            } else {
+                opCost = opCost * 1.25f + 10f;
+            }
+        }
+
+        float cost = 2222f
+                * (float) Math.pow(Math.max(1f, opCost), 0.5f)
+                * (float) Math.pow(valueFrac, 1.5f)
+                * (float) Math.pow((hullSizeOrd + 1), 1.3f);
         cost = (float) (Math.ceil(cost/1000f)*1000f);
 
         // If enhancing built-in, credits cost is halved

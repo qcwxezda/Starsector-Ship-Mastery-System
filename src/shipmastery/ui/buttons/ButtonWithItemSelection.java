@@ -2,15 +2,12 @@ package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ui.triggers.DialogDismissedListener;
-import shipmastery.util.HullmodUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -22,16 +19,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class ButtonForHullmodSelection extends ButtonWithCost {
+public abstract class ButtonWithItemSelection<T> extends ButtonWithCost {
 
-    protected final Set<String> selectedIds = new HashSet<>();
+    public interface Item<T> {
+        String getId();
+        String getDisplayName();
+        T getItem();
+    }
+
+    protected final Set<Item<T>> selectedItems = new HashSet<>();
     protected final List<ButtonAPI> buttons = new ArrayList<>();
+    protected SelectAllButton selectAllButton;
     protected PickerPanelPlugin plugin;
-    protected final ShipAPI selectedShip;
 
-    public ButtonForHullmodSelection(String spriteName, boolean useStoryColors, ShipAPI selectedShip) {
+    public ButtonWithItemSelection(String spriteName, boolean useStoryColors) {
         super(spriteName, useStoryColors);
-        this.selectedShip = selectedShip;
     }
 
     protected class PickerPanelPlugin extends BaseCustomUIPanelPlugin {
@@ -41,11 +43,12 @@ public abstract class ButtonForHullmodSelection extends ButtonWithCost {
         }
 
         public void update() {
-            selectedIds.clear();
-            selectedIds.addAll(
+            selectedItems.clear();
+            //noinspection unchecked
+            selectedItems.addAll(
                     buttons.stream()
                             .filter(ButtonAPI::isChecked)
-                            .map(button -> (String) button.getCustomData())
+                            .map(button -> (Item<T>) button.getCustomData())
                             .toList());
             updateLabels();
         }
@@ -53,17 +56,17 @@ public abstract class ButtonForHullmodSelection extends ButtonWithCost {
 
     @Override
     protected boolean canApplyEffects() {
-        return !selectedIds.isEmpty();
+        return !selectedItems.isEmpty();
     }
 
     @Override
     public void onClick() {
-        selectedIds.clear();
+        selectedItems.clear();
         buttons.clear();
 
-        var hullmods = getEligibleHullmodIds();
+        var items = getEligibleItems();
         float buttonListWidth = 500f;
-        int count = hullmods.size();
+        int count = items.size();
         float buttonHeight = 30f, buttonPad = 10f;
         float buttonListHeight = Math.min(500f, count * (buttonHeight + buttonPad));
 
@@ -99,37 +102,39 @@ public abstract class ButtonForHullmodSelection extends ButtonWithCost {
         panel.addUIElement(title).inTMid(-30f);
 
         TooltipMakerAPI selectAllTTM = panel.createUIElement(32f, 32f, false);
-        var selectAll = new SelectAllButton();
-        selectAll.create(selectAllTTM);
+        selectAllButton = new SelectAllButton();
+        selectAllButton.create(selectAllTTM);
         panel.addUIElement(selectAllTTM).inTR(19f, -38f);
 
         var buttonColor = getButtonTextColor();
         var darkButtonColor = Utils.mixColor(buttonColor, Color.BLACK, 0.3f);
         var veryDarkButtonColor = Utils.mixColor(buttonColor, Color.BLACK, 0.6f);
         var buttonsList = panel.createUIElement(buttonListWidth, buttonListHeight, true);
-        hullmods.stream()
-                .map(DModManager::getMod)
-                .forEach(x -> {
+        items.forEach(x -> {
                     buttons.add(buttonsList.addAreaCheckbox(
                             x.getDisplayName(),
-                            x.getId(),
+                            x,
                             darkButtonColor,
                             veryDarkButtonColor,
                             buttonColor,
                             buttonListWidth - 10f,
                             buttonHeight,
                             buttonPad));
-                    buttonsList.addTooltipToPrevious(
-                            new HullmodUtils.HullmodTooltipCreator(x, selectedShip),
-                            TooltipMakerAPI.TooltipLocation.ABOVE,
-                            false);
+                    var tooltipCreator = getPerItemTooltipCreator(x);
+                    if (tooltipCreator != null) {
+                        buttonsList.addTooltipToPrevious(
+                                tooltipCreator,
+                                TooltipMakerAPI.TooltipLocation.ABOVE,
+                                false);
+                    }
                 });
         panel.addUIElement(buttonsList).inTMid(0f).setXAlignOffset(5f);
         addCostLabels(panel, buttonListWidth, buttonListHeight + 10f);
         dialogData.panel.addComponent(panel).inTMid(45f);
     }
 
-    protected abstract Collection<String> getEligibleHullmodIds();
+    protected abstract Collection<Item<T>> getEligibleItems();
+    protected abstract TooltipMakerAPI.TooltipCreator getPerItemTooltipCreator(Item<T> item);
     protected abstract String getTitle();
     protected abstract Color getButtonTextColor();
     protected abstract void applyEffects();
@@ -141,10 +146,11 @@ public abstract class ButtonForHullmodSelection extends ButtonWithCost {
 
         @Override
         public void onClick() {
-            if (buttons.stream().allMatch(ButtonAPI::isChecked)) {
-                buttons.forEach(x -> x.setChecked(false));
+            var enabledButtons = buttons.stream().filter(ButtonAPI::isEnabled).toList();
+            if (enabledButtons.stream().allMatch(ButtonAPI::isChecked)) {
+                enabledButtons.forEach(x -> x.setChecked(false));
             } else {
-                buttons.forEach(x -> x.setChecked(true));
+                enabledButtons.forEach(x -> x.setChecked(true));
             }
             if (plugin != null) {
                 plugin.update();

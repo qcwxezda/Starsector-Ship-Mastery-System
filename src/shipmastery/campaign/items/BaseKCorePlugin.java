@@ -3,6 +3,7 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
@@ -16,6 +17,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.CampaignEngine;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -25,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
+public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface, CoreTabListener {
 
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
@@ -194,4 +196,13 @@ public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface {
         person.setPersonality(getPlayerPersonalityId());
     }
 
+    @Override
+    public void onCoreTabOpened(CoreUITabId id) {
+
+    }
+
+    @Override
+    public void onCoreUIDismissed() {
+        onFleetSync(Global.getSector().getPlayerFleet());
+    }
 }

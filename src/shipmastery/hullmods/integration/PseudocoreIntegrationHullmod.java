@@ -26,7 +26,9 @@ public abstract class PseudocoreIntegrationHullmod extends BaseHullMod implement
     public float getIntegrationCost(FleetMemberAPI member) {
         float min = getMinIntegrationCost(member);
         float max = getMaxIntegrationCost(member);
-        return MathUtils.lerp(min, max, MathUtils.clamp(member.getUnmodifiedDeploymentPointsCost() / 60f, 0f, 1f));
+        float cost = MathUtils.lerp(min, max, MathUtils.clamp(member.getUnmodifiedDeploymentPointsCost() / 60f, 0f, 1f));
+        cost = 1000f * (int) (cost/1000f);
+        return cost;
     }
 
     public String getItemId() {

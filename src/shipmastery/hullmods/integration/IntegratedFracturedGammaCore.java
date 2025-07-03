@@ -62,6 +62,14 @@ public class IntegratedFracturedGammaCore extends PseudocoreIntegrationHullmod {
     }
 
     @Override
+    public String getCannotIntegrateReason(FleetMemberAPI member) {
+        if (member.getRepairTracker() == null || member.getRepairTracker().getCR() < CR_THRESHOLD) {
+            return String.format(Strings.Items.fracturedIntegrationCannotRemove, Utils.asPercent(CR_THRESHOLD));
+        }
+        return super.getCannotIntegrateReason(member);
+    }
+
+    @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
         tooltip.addPara(
                 Strings.Items.fracturedIntegrationEffect,

@@ -1,6 +1,5 @@
 package shipmastery.ui.buttons;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -14,8 +13,9 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-public class SelectiveRestoreButton extends ButtonForHullmodSelection {
+public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
 
     public SelectiveRestoreButton(boolean useStoryColors, ShipAPI selectedShip) {
         super(useStoryColors ? "graphics/icons/ui/sms_restore_icon_green.png": "graphics/icons/ui/sms_restore_icon.png", useStoryColors, selectedShip);
@@ -35,7 +35,8 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
     protected void applyEffects() {
         var baseSpec = Utils.getRestoredHullSpec(selectedShip.getHullSpec());
         var variant = selectedShip.getVariant();
-        selectedIds.forEach(id -> {
+        selectedItems.forEach(x -> {
+            String id = x.getId();
             variant.removePermaMod(id);
             if (baseSpec.isBuiltInMod(id)) {
                 variant.addSuppressedMod(id);
@@ -50,7 +51,7 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
     protected String getUsedSPDescription() {
         return String.format(
                 Strings.MasteryPanel.selectiveRestorationUsedSPText,
-                selectedIds.size(),
+                selectedItems.size(),
                 selectedShip.getName(),
                 selectedShip.getHullSpec().getNameWithDesignationWithDashClass());
     }
@@ -61,13 +62,13 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
     }
 
     @Override
-    protected Collection<String> getEligibleHullmodIds() {
+    protected Collection<Item<HullModSpecAPI>> getEligibleItems() {
         return selectedShip.getVariant().getHullMods()
                 .stream()
                 .map(DModManager::getMod)
                 .filter(x -> x.hasTag(Tags.HULLMOD_DMOD))
-                .map(HullModSpecAPI::getId)
-                .toList();
+                .map(HullmodItem::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SelectiveRestoreButton extends ButtonForHullmodSelection {
         int count = DModManager.getNumDMods(variant);
         float minMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MIN;
         float maxMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MAX;
-        int toRestore = selectedIds.size();
+        int toRestore = selectedItems.size();
         return toRestore == 0 || count == 0 ? 0f : base * (minMult + (maxMult - minMult) * (float) toRestore / count);
     }
 

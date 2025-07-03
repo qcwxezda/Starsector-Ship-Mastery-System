@@ -29,6 +29,6 @@ public class UseSPButton extends ButtonWithIcon {
                 Utils.asPercent(1f - HullmodUtils.CREDITS_COST_MULT_SP),
                 Misc.getDGSCredits(HullmodUtils.CREDITS_COST_BXP_CAP));
         tooltip.addPara(Strings.MasteryPanel.buttonStatus, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR,
-                button.isChecked() ? Strings.MasteryPanel.active : Strings.MasteryPanel.inactive);
+                thisButton.isChecked() ? Strings.MasteryPanel.active : Strings.MasteryPanel.inactive);
     }
 }

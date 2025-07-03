@@ -89,6 +89,7 @@ public abstract class ShipMastery {
             data = new SaveData(0, 1);
             SAVE_DATA_TABLE.put(id, data);
         } else {
+            if (data.level >= getMaxMasteryLevel(spec)) return;
             data.level++;
         }
 
@@ -227,13 +228,15 @@ public abstract class ShipMastery {
     public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return levelData.getEffectsLists().get(optionId);
+        var res = levelData.getEffectsLists().get(optionId);
+        return res == null ? new ArrayList<>() : res;
     }
 
     public static List<MasteryGenerator> getGenerators(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return levelData.getGeneratorsLists().get(optionId);
+        var res = levelData.getGeneratorsLists().get(optionId);
+        return res == null ? new ArrayList<>() : res;
     }
 
 
@@ -448,9 +451,18 @@ public abstract class ShipMastery {
         }
 
         HullMasteryData masteryData = new HullMasteryData(name, ml);
+        if ("wolf".equals(name)) {
+            System.out.println("sdfs");
+        }
+        MasteryInfo defaultInfo = getMasteryInfo("EmptyMastery");
         for (int i = 1; i <= ml; i++) {
-            if (levelDataMap.get(i) == null) continue;
-            masteryData.setLevelData(i, levelDataMap.get(i).one);
+            if (levelDataMap.get(i) == null || levelDataMap.get(i).one.getGeneratorsLists().isEmpty()) {
+                MasteryLevelData data = new MasteryLevelData(name, i);
+                data.addGeneratorToList("", new MasteryGenerator(defaultInfo, null));
+                masteryData.setLevelData(i, data);
+            } else {
+                masteryData.setLevelData(i, levelDataMap.get(i).one);
+            }
         }
         masteryMap.put(name, masteryData);
         savedMaxLevel.value = maxLevel;
@@ -540,7 +552,7 @@ public abstract class ShipMastery {
                         else {
                             generator = new MasteryGenerator(randomInfo, new String[] {"1", "9999999"});
                         }
-                        levelData.addGeneratorToList("A", generator);
+                        levelData.addGeneratorToList("", generator);
                         data.setLevelData(i, levelData);
                     }
                     masteryMap.put(id, data);

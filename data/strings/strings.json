@@ -98,13 +98,18 @@
     "levelUpMastery": "Level Up",
     "levelUpSelect": "Leveling up %1$s ships",
     "levelUpTooltip": "Advance your mastery of this ship class and select a mastery effect to activate.",
+    "enhanceMastery": "Enhance (%1$s/%2$s)",
+    "enhanceSelect": "Enhancing %1$s ships",
+    "enhanceMasteryTooltip": "Improve the strength of this ship class' mastery effects.\n\nCurrent effect strength modifier: %1$s",
     "masterySharing": "Knowledge Forge",
     "active": "active",
     "inactive": "inactive",
     "masterySharingTooltip": "Reduce XP gained by this ship class by half. Whenever this ship class gains %1$s XP, generate a blank knowledge construct worth %2$s XP and send it directly to your cargo holds.\n\nBlank knowledge constructs are compatible with every class of ship.",
     "buttonStatus": "Currently %1$s. Click to toggle.",
     "rerollMasteries": "Refresh Masteries",
-    "rerollTooltip": "Generate new mastery effects for each level with randomized effects. Only levels for which you do not have an active effect are affected.\n\nThe resulting changes apply to NPC fleets as well as your own.\n\nClick for more info.",
+    "rerollTooltip": "Generate new mastery effects for levels whose effects are randomized and for which you do not have an effect active.\n\nThe resulting changes apply to NPC fleets as well as your own.\n\nClick for more info.",
+    "cantRerollNotRandomized": "The effects offered by this mastery level are fixed and cannot be refreshed.",
+    "cantRerollActive": "You have an effect active for this level; disable it to refresh.",
     "confirmChangesTooltipTitle": "Confirm Changes",
     "confirmChangesTooltipText": "Confirm the pending changes to your active mastery effects.",
     "cancelChangesTitle": "Cancel Changes",
@@ -115,6 +120,7 @@
     "noChangesPending": "No changes pending",
     "unlockAtLevel": "Unlock at mastery level %1$s",
     "notEnoughXP": "Insufficient XP",
+    "maxReached": "Max enhance reached",
     "useSPButton": "Exceptional Measures",
     "useSPTooltip": "Reduces credits expenditure by %1$s.\n\nWhile active, all actions on this screen, including building in hullmods, require a story point and may grant bonus experience depending the their original cost. No bonus experience is granted when the original cost is %2$s or greater.",
     "selectiveRestorationButton": "Selective Restoration",
@@ -135,6 +141,8 @@
     "integrationPanelRemoveText": "Currently integrated: %1$s. Reverting this will cost %2$s.",
     "integrationPanelUsedSPText": "Made exceptional efforts to integrate %1$s into %2$s (%3$s).",
     "integrationPanelRemoveUsedSPText": "Made exceptional efforts to revert integration of %1$s into %2$s (%3$s).",
+    "integrationPanelCannotIntegrate": "Cannot integrate: ",
+    "integrationPanelCannotRemove": "Cannot remove: ",
     "toggleAllButton": "Toggle All"
   },
 
@@ -164,9 +172,9 @@
     "FluxByShieldUpkeep": "Increases flux dissipation by %1$s and flux capacity by %2$s of shield upkeep cost.",
     "FluxByShieldUpkeepNeg": "Reduces flux dissipation by %1$s and flux capacity by %2$s of shield upkeep cost.",
     "FluxByShieldUpkeepPost": "No effect if the ship has no shields.",
-    "RangeIfNoBonuses": "Increases base ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
-    "RangeIfNoBonusesNeg": "Reduces base ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
-    "RangeIfNoBonusesPost": "Only counts base range bonuses. Bonuses granted by Ballistic Mastery and Gunnery Implants are exempt. Conditional bonuses such as those occurring past a threshold do not negate this effect. ",
+    "RangeIfNoBonuses": "Increases ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
+    "RangeIfNoBonusesNeg": "Reduces ballistic and energy weapon ranges by %1$s if they aren't affected by any other bonuses.",
+    "RangeIfNoBonusesPost": "Bonuses granted by Ballistic Mastery and Gunnery Implants are exempt. Conditional bonuses such as those occurring past a threshold do not negate this effect. ",
     "MaxOPForHull": "Increases ordnance points by %1$s. Each %2$s of OP used past the base limit reduces hull integrity by %3$s.",
     "MaxOPForHullPost": "Hull reduction applied by this effect has a floor of %1$s and a cap of %2$s.",
     "DPIfOnlyShip": "If this is the only %1$s-class ship in your fleet, its DP cost is increased by %2$s.",
@@ -494,7 +502,9 @@
     "VentingRepairs": "After venting at least %1$s of this ship's flux capacity uninterrupted, repair all of this ship's damaged weapons and engines.",
     "VentingRepairsPost": "This effect has a cooldown of %1$s seconds.",
     "BeamPartialHardFlux": "Beams deal a proportion of their damage as hard flux based on distance traveled.",
-    "BeamPartialHardFluxPost": "Damage is %1$s hard-flux at %2$s of max weapon range, dropping off linearly to %3$s hard-flux at %4$s of max weapon range."
+    "BeamPartialHardFluxPost": "Damage is %1$s hard-flux at %2$s of max weapon range, dropping off linearly to %3$s hard-flux at %4$s of max weapon range.",
+    "EmptyMastery": "Gain nothing but a sense of pride and accomplishment.",
+    "EnhanceMasteryDescOnly": "Increases the strength of mastery effects by %1$s."
   },
 
   "sms_messages": {
@@ -593,11 +603,13 @@
     "cargoCount": "%1$s in cargo",
     "noneInCargo": "No Pseudocores in cargo",
     "fracturedIntegrationEffect": "Whenever this ship's combat readiness falls below %1$s, it immediately restores up to %2$s combat readiness, and this item is destroyed.\n\nThis effect will not trigger in combat or if the ship's maximum combat readiness is below %3$s.",
+    "fracturedIntegrationCannotRemove": "Ship is below %1$s CR",
     "gammaIntegrationEffect": "Increases maximum combat readiness by %1$s.\nReduces maximum combat readiness by %2$s for each of this ship's non-built-in hullmods.\n\nThis effect is doubled if the ship is automated.",
     "integrationDesc": "Integrated Pseudocore",
     "betaIntegrationEffect": "Increases S-mod capacity by %1$s.\nIf this ship has more than %2$s S-mods, its combat readiness is reduced by %3$s.\n\nOnce integrated, this core can only be removed if the ship does not have any S-mods.",
+    "betaIntegrationCannotRemove": "Ship has S-mods",
     "alphaIntegrationEffect": "If the ship's captain has elite %1$s, its effect is maximized at all times during combat.\n\nOtherwise, grants a static %2$s fire rate increase and equivalent weapon flux cost reduction, and reduces maximum combat readiness by %3$s.",
-    "amorphousIntegrationEffect": "Increases maximum combat readiness by %1$s.\n\nPer combat, renders this ship immune to damage for the first %2$s seconds of venting. The damage immunity fades away over the subsequent %3$s seconds of venting."
+    "amorphousIntegrationEffect": "Increases maximum combat readiness by %1$s.\n\nPer combat, renders this ship immune to damage for %2$s seconds while the ship is venting. The damage immunity fades away over the subsequent %3$s seconds that the ship vents."
   },
 
   "sms_graveyard": {

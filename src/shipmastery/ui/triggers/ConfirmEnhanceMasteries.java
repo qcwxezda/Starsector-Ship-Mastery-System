@@ -6,7 +6,6 @@ import shipmastery.ShipMastery;
 import shipmastery.achievements.FullEnhance;
 import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.config.Settings;
-import shipmastery.ui.EnhanceMasteryDisplay;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
@@ -37,10 +36,10 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
 
         // Increment enhance count
         //noinspection unchecked
-        Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(EnhanceMasteryDisplay.ENHANCE_MAP);
+        Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(MasteryUtils.ENHANCE_MAP);
         if (enhanceMap == null) {
             enhanceMap = new HashMap<>();
-            Global.getSector().getPersistentData().put(EnhanceMasteryDisplay.ENHANCE_MAP, enhanceMap);
+            Global.getSector().getPersistentData().put(MasteryUtils.ENHANCE_MAP, enhanceMap);
         }
         Integer enhanceCount = enhanceMap.get(spec.getHullId());
         enhanceCount = enhanceCount == null ? 1 : enhanceCount + 1;
@@ -56,7 +55,7 @@ public class ConfirmEnhanceMasteries extends DialogDismissedListener{
             enhanceAmount += MasteryUtils.ENHANCE_MASTERY_AMOUNT[i];
         }
         Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
-                .modifyPercent(EnhanceMasteryDisplay.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);
+                .modifyPercent(MasteryUtils.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);
 
         if (spCost > 0)
             Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);

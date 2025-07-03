@@ -2,7 +2,7 @@ package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.impl.campaign.DModManager;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
@@ -12,8 +12,9 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-public class HullReversionButton extends ButtonForHullmodSelection {
+public class HullReversionButton extends ButtonWithHullmodSelection {
 
     public HullReversionButton(boolean useStoryColors, ShipAPI selectedShip) {
         super(useStoryColors ? "graphics/icons/ui/sms_remove_smod_icon_green.png": "graphics/icons/ui/sms_remove_smod_icon.png", useStoryColors, selectedShip);
@@ -32,14 +33,14 @@ public class HullReversionButton extends ButtonForHullmodSelection {
     @Override
     protected void applyEffects() {
         var variant = selectedShip.getVariant();
-        selectedIds.forEach(variant::removePermaMod);
+        selectedItems.forEach(x -> variant.removePermaMod(x.getId()));
     }
 
     @Override
     protected String getUsedSPDescription() {
         return String.format(
                 Strings.MasteryPanel.removeSModsPanelUsedSPText,
-                selectedIds.size(),
+                selectedItems.size(),
                 selectedShip.getName(),
                 selectedShip.getHullSpec().getNameWithDesignationWithDashClass());
     }
@@ -50,8 +51,11 @@ public class HullReversionButton extends ButtonForHullmodSelection {
     }
 
     @Override
-    protected Collection<String> getEligibleHullmodIds() {
-        return selectedShip.getVariant().getSMods();
+    protected Collection<Item<HullModSpecAPI>> getEligibleItems() {
+        return selectedShip.getVariant().getSMods().stream()
+                .map(x -> Global.getSettings().getHullModSpec(x))
+                .map(HullmodItem::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -61,7 +65,7 @@ public class HullReversionButton extends ButtonForHullmodSelection {
 
     @Override
     protected float getBaseCost() {
-        return (float) (selectedIds.stream().map(DModManager::getMod).mapToDouble(x -> HullmodUtils.getBuildInCost(x, selectedShip)).sum() * HullmodUtils.SMOD_REMOVAL_COST_MULT);
+        return (float) (selectedItems.stream().mapToDouble(x -> HullmodUtils.getBuildInCost(x.getItem(), selectedShip)).sum() * HullmodUtils.SMOD_REMOVAL_COST_MULT);
     }
 
     @Override

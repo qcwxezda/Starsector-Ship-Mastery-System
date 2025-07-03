@@ -12,15 +12,21 @@ import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import com.fs.starfarer.api.combat.ShipAIConfig;
+import com.fs.starfarer.api.combat.ShipAIPlugin;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.items.BaseKCorePlugin;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
 import shipmastery.campaign.FleetHandler;
@@ -287,6 +293,8 @@ public class ModPlugin extends BaseModPlugin {
                 var register = lookup.findVirtual(coreTabListenerHandler.getClass(), "registerListener", MethodType.methodType(void.class, CoreTabListener.class));
                 register.invoke(coreTabListenerHandler, refitHandler);
                 register.invoke(coreTabListenerHandler, fleetPanelHandler);
+                //noinspection JavaLangInvokeHandleSignature
+                register.invoke(coreTabListenerHandler, Global.getSettings().getHullModSpec("sms_k_core_handler").getFleetEffect());
                 listeners.addListener(coreTabListenerHandler, true);
             } catch (Throwable e) {
                 throw new RuntimeException("Failed to add core UI listener modifier", e);
@@ -379,6 +387,24 @@ public class ModPlugin extends BaseModPlugin {
                 };
             }
         });
+    }
+
+    @Override
+    public PluginPick<ShipAIPlugin> pickShipAI(FleetMemberAPI member, ShipAPI ship) {
+        if (ship == null || ship.getCaptain() == null) return null;
+        String id = ship.getCaptain().getAICoreId();
+        if (id == null) return null;
+        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(id);
+        if (spec == null) return null;
+        if (spec.getTags().contains(BaseKCorePlugin.IS_K_CORE_TAG)) {
+            ShipAIConfig config = new ShipAIConfig();
+            config.alwaysStrafeOffensively = true;
+            config.backingOffWhileNotVentingAllowed = true;
+            config.turnToFaceWithUndamagedArmor = false;
+            config.burnDriveIgnoreEnemies = false;
+            return new PluginPick<>(Global.getSettings().createDefaultShipAI(ship, config), CampaignPlugin.PickPriority.MOD_SET);
+        }
+        return null;
     }
 
     private static final String[] reflectionWhitelist = new String[] {

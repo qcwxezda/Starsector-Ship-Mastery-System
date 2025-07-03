@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.util.HullmodUtils;
@@ -30,7 +31,7 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
                         true,
                         null,
                         true,
-                        HullmodUtils.getBonusXPFraction(cost),
+                        getBxpFraction(),
                         getUsedSPDescription());
                 Global.getSoundPlayer().playUISound(getUsedSPSound(), 1f, 1f);
             } else {
@@ -47,28 +48,30 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         return "ui_char_spent_story_point_industry";
     }
 
-    protected final void updateLabels() {
-        float baseCost = getBaseCost();
+    protected void updateLabels() {
         float cost = getModifiedCost();
         boolean canAfford = cost <= Utils.getPlayerCredits().get();
         boolean hasEnoughSP = Global.getSector().getPlayerStats().getStoryPoints() >= 1;
-        boolean shouldShow = shouldShowCostLabels();
+        boolean shouldShowCost = shouldShowCostLabelNow();
+        boolean shouldShowSPCost = shouldShowSPCostLabelNow();
 
         if (costLabel != null) {
             String[] args = getCostDescriptionArgs();
             Color[] colors = new Color[args.length];
             Arrays.fill(colors, Settings.POSITIVE_HIGHLIGHT_COLOR);
-            colors[colors.length-1] = canAfford ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR;
+            if (colors.length > 0) {
+                colors[colors.length - 1] = canAfford ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR;
+            }
             costLabel.setText(String.format(getCostDescriptionFormat(), (Object[]) args));
             costLabel.setHighlight(args);
             costLabel.setHighlightColors(colors);
-            costLabel.setOpacity(shouldShow ? 1f : 0f);
+            costLabel.setOpacity(shouldShowCost ? 1f : 0f);
         }
         if (confirmButton != null) {
             confirmButton.setEnabled(canApplyEffects() && canAfford && (!isStoryOption || hasEnoughSP));
         }
         if (spLabel != null && isStoryOption) {
-            float bxp = HullmodUtils.getBonusXPFraction(baseCost);
+            float bxp = getBxpFraction();
             String bxpStr = Utils.asPercent(bxp);
             if (bxp <= 0f) {
                 spLabel.setText(String.format(Strings.Misc.requiresStoryPointNoBonus, Strings.Misc.storyPoint));
@@ -79,26 +82,40 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
                 spLabel.setHighlight(Strings.Misc.storyPoint, bxpStr);
                 spLabel.setHighlightColors(hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getStoryOptionColor());
             }
-            spLabel.setOpacity(shouldShow ? 1f : 0f);
+            spLabel.setOpacity(shouldShowSPCost ? 1f : 0f);
         }
     }
 
     protected abstract String getCostDescriptionFormat();
     protected abstract boolean canApplyEffects();
-    protected boolean shouldShowCostLabels() {
+    protected boolean hasCostLabel() {
         return true;
+    }
+    protected boolean shouldShowCostLabelNow() {
+        return true;
+    }
+    protected boolean shouldShowSPCostLabelNow() {
+        return true;
+    }
+    protected float getBxpFraction() {
+        return HullmodUtils.getBonusXPFraction(getModifiedCost());
     }
     protected abstract String[] getCostDescriptionArgs();
     protected abstract String getUsedSPDescription();
 
-    protected final void addCostLabels(CustomPanelAPI panel, float width, float padFromTop) {
+    protected final TooltipMakerAPI addCostLabels(CustomPanelAPI panel, float width, float padFromTop) {
         var costText = panel.createUIElement(width, 50f, false);
-        costLabel = costText.addPara(getCostDescriptionFormat(), 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, getCostDescriptionArgs());
+        if (hasCostLabel()) {
+            costLabel = costText.addPara(getCostDescriptionFormat(), 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, getCostDescriptionArgs());
+        } else {
+            costText.addSpacer(13f);
+        }
         if (isStoryOption) {
             spLabel = Utils.addStoryPointUseInfo(costText, 1f);
         }
         updateLabels();
         panel.addUIElement(costText).inTMid(padFromTop);
+        return costText;
     }
 
     protected abstract float getBaseCost();

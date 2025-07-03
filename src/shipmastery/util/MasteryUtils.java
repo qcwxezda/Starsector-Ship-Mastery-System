@@ -12,7 +12,6 @@ import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
-import shipmastery.ui.EnhanceMasteryDisplay;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public abstract class MasteryUtils {
 
     public static final int bonusLogisticSlotEnhanceNumber = 9999; // Disabled, sorry
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
-    public static final float[] ENHANCE_MASTERY_AMOUNT = {0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.02f, 0.02f, 0.02f, 0.02f, 0.02f};
+    public static final float[] ENHANCE_MASTERY_AMOUNT = {0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
     public static final float[] ENHANCE_DR_AMOUNT = {0f, 0f, 0f, 0f, 0f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
     public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
     public static final int MAX_ENHANCES = 10;
@@ -35,6 +34,8 @@ public abstract class MasteryUtils {
     public static final int UNLOCK_MASTERY_SHARING_LEVEL;
     public static final int UNLOCK_REROLL_LEVEL;
     public static final int UNLOCK_PSEUDOCORE_INTEGRATION_LEVEL;
+    public static final String ENHANCE_MAP = "$sms_EnhanceMap";
+    public static final String ENHANCE_MODIFIER_ID = "sms_enhancement";
 
     static {
         try {
@@ -87,7 +88,7 @@ public abstract class MasteryUtils {
     public static int getEnhanceCount(ShipHullSpecAPI spec) {
         String baseId = Utils.getRestoredHullSpecId(spec);
         //noinspection unchecked
-        Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(EnhanceMasteryDisplay.ENHANCE_MAP);
+        Map<String, Integer> enhanceMap = (Map<String, Integer>) Global.getSector().getPersistentData().get(ENHANCE_MAP);
         if (enhanceMap == null) {
             return 0;
         }
@@ -105,6 +106,7 @@ public abstract class MasteryUtils {
         if (ShipMastery.getPlayerMasteryLevel(spec) < ShipMastery.getMaxMasteryLevel(spec)) {
             return pts >= getUpgradeCost(spec);
         }
+        if (MasteryUtils.getEnhanceCount(spec) >= MasteryUtils.MAX_ENHANCES) return false;
         return pts >= getEnhanceMPCost(spec);
     }
 
@@ -225,6 +227,7 @@ public abstract class MasteryUtils {
     }
 
     public static float getModifiedMasteryEffectStrength(PersonAPI commander, ShipHullSpecAPI spec, float baseStrength) {
+        spec = Utils.getRestoredHullSpec(spec);
         if (commander == null) return baseStrength;
         return commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD)
                 .computeEffective(commander.getStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId())

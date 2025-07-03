@@ -19,9 +19,11 @@ import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
+import shipmastery.mastery.impl.EmptyMastery;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.mastery.impl.EnhanceMasteryDescOnly;
 import shipmastery.ui.triggers.CancelMasteryChangesPressed;
 import shipmastery.ui.triggers.ConfirmMasteryChangesPressed;
 import shipmastery.ui.triggers.MasteryEffectButtonPressed;
@@ -123,12 +125,14 @@ public class MasteryDisplay implements CustomUIElement {
                 entry.getValue().setHighlightBrightness(0.25f);
             }
         }
-        onButtonClick.perform();
+        if (onButtonClick != null)
+            onButtonClick.perform();
     }
 
     public void deselectMasteryItem(int level) {
         selectedLevels.remove(level);
-        onButtonClick.perform();
+        if (onButtonClick != null)
+            onButtonClick.perform();
     }
 
     public NavigableMap<Integer, String> getSelectedLevels() {
@@ -205,7 +209,7 @@ public class MasteryDisplay implements CustomUIElement {
         scrollToLevel(snapTo);
     }
 
-    public void create(TooltipMakerAPI tooltip, int startLevel, int endLevel, boolean alwaysEnabled) {
+    public void create(TooltipMakerAPI tooltip, int startLevel, int endLevel, boolean alwaysEnabled, boolean checkFirstButtonIfOnlyOption) {
         float spacerHeight = h/2f - MIN_DESC_HEIGHT/2f;
         if (endLevel > startLevel) {
             tooltip.addSpacer(spacerHeight);
@@ -215,11 +219,14 @@ public class MasteryDisplay implements CustomUIElement {
             List<String> optionIds = ShipMastery.getMasteryOptionIds(rootSpec, i);
             boolean singleOption = optionIds.size() == 1;
             float height = 0f;
+            if (optionIds.isEmpty()) {
+                optionIds.add("");
+            }
             for (String optionId : optionIds) {
                 CustomPanelAPI descriptionPanel = Global.getSettings().createCustom(w + 50f, MIN_DESC_HEIGHT, null);
                 TooltipMakerAPI description = descriptionPanel.createUIElement(w - 30f, MIN_DESC_HEIGHT, false);
                 tooltip.addComponent(descriptionPanel).inTL(0f, totalHeight + height);
-                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption, alwaysEnabled);
+                height += addEffectsDisplay(ShipMastery.getMasteryEffects(rootSpec, i, optionId), i, optionId, descriptionPanel, description, !singleOption, alwaysEnabled, checkFirstButtonIfOnlyOption && optionIds.size() == 1);
             }
             if (endLevel > startLevel) {
                 CustomPanelAPI titlePanel = Global.getSettings().createCustom(w + 50f, 50f, null);
@@ -242,7 +249,7 @@ public class MasteryDisplay implements CustomUIElement {
 
     @Override
     public void create(TooltipMakerAPI tooltip) {
-        create(tooltip, 1, ShipMastery.getMaxMasteryLevel(rootSpec), false);
+        create(tooltip, 1, ShipMastery.getMaxMasteryLevel(rootSpec), false, false);
     }
 
     void addMasteryDescriptions(List<MasteryEffect> effects, TooltipMakerAPI tooltip) {
@@ -267,7 +274,14 @@ public class MasteryDisplay implements CustomUIElement {
     }
 
     /** Returns the final height of the description. */
-    float addEffectsDisplay(final List<MasteryEffect> effects, int level, String optionId, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter, boolean alwaysEnabled) {
+    float addEffectsDisplay(final List<MasteryEffect> effects, int level, String optionId, CustomPanelAPI innerPanel, TooltipMakerAPI innerTooltip, boolean showOptionLetter, boolean alwaysEnabled, boolean checkFirstButton) {
+
+        int maxLevel = ShipMastery.getMaxMasteryLevel(rootSpec);
+        boolean isEnhance = level > maxLevel;
+        if (effects.isEmpty()) {
+            effects.add(level <= maxLevel ? new EmptyMastery() : new EnhanceMasteryDescOnly());
+        }
+
         int currentMastery = ShipMastery.getPlayerMasteryLevel(rootSpec);
         boolean alwaysShow = true;
         boolean enabled = level <= currentMastery || alwaysEnabled;
@@ -291,10 +305,20 @@ public class MasteryDisplay implements CustomUIElement {
         innerPanel.getPosition().setSize(w - 15f, descH);
 
         TooltipMakerAPI descriptionButton = innerPanel.createUIElement(w, descH, false);
-        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.MasteryPanel.unknownMastery : "", optionId, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                                  Misc.getGrayColor(), w - 5f, descH, 0f);
+        ButtonAPI descOutline = descriptionButton.addAreaCheckbox(hidden ? Strings.MasteryPanel.unknownMastery : "",
+                optionId,
+                isEnhance ? Misc.getStoryOptionColor() : Misc.getBasePlayerColor(),
+                isEnhance ? Misc.getStoryDarkColor() : Misc.getDarkPlayerColor(),
+                Misc.getGrayColor(),
+                w - 5f,
+                descH,
+                0f);
         descOutline.setClickable(enabled);
         descOutline.setGlowBrightness(enabled ? 0.8f : 0.15f);
+        if (checkFirstButton) {
+            descOutline.setChecked(true);
+            selectedLevels.put(level, optionId);
+        }
         if (!enabled) {
             descOutline.setButtonPressedSound(null);
         }
@@ -332,8 +356,14 @@ public class MasteryDisplay implements CustomUIElement {
         }
 
         TooltipMakerAPI levelButtonTTM = innerPanel.createUIElement(BUTTON_WIDTH, descH, false);
-        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox(level + (showOptionLetter ? optionId : ""), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                                                               Misc.getBrightPlayerColor(), BUTTON_WIDTH, descH, 0f);
+        String levelText = !isEnhance ? "" + level : "";
+        ButtonAPI levelButton = levelButtonTTM.addAreaCheckbox(levelText + (showOptionLetter ? optionId : ""), null,
+                isEnhance ? Misc.getStoryOptionColor() : Misc.getBasePlayerColor(),
+                isEnhance ? Misc.getStoryDarkColor() : Misc.getDarkPlayerColor(),
+                isEnhance ? Misc.getStoryBrightColor() : Misc.getBrightPlayerColor(),
+                BUTTON_WIDTH,
+                descH,
+                0f);
         levelButton.setClickable(false);
         levelButton.setGlowBrightness(0.3f);
         levelButton.setMouseOverSound(null);

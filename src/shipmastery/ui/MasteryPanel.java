@@ -438,7 +438,9 @@ public class MasteryPanel {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
         int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
         boolean canUpgrade = MasteryUtils.hasEnoughXPToUpgradeOrEnhance(spec);
-        upgradeButton.setEnabled(canUpgrade, Strings.MasteryPanel.notEnoughXP);
+        upgradeButton.setEnabled(canUpgrade, MasteryUtils.getEnhanceCount(spec) >= MasteryUtils.MAX_ENHANCES
+                ? Strings.MasteryPanel.maxReached
+                : Strings.MasteryPanel.notEnoughXP);
         int constructLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_MASTERY_SHARING_LEVEL);
         constructButton.setEnabled(level >= constructLevel, String.format(Strings.MasteryPanel.unlockAtLevel, constructLevel));
         int rerollLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_REROLL_LEVEL);
@@ -487,8 +489,9 @@ public class MasteryPanel {
         addButton(constructButton, panel, anchor, true, 45f, -30f);
         constructButton.onFinish(() -> forceRefresh(true, false, true, false));
         constructButton.isCheckbox = true;
-        rerollButton = new RerollButton();
+        rerollButton = new RerollButton(spec);
         addButton(rerollButton, panel, anchor, true, 90f, -30f);
+        rerollButton.onFinish(() -> forceRefresh(true, false, true, false));
         confirmButton = new ConfirmButton(spec, getSelectedMasteryButtons());
         addButton(confirmButton, panel, anchor, false, -49f, -30f);
         confirmButton.onFinish(() -> forceRefresh(true, true, true, false));

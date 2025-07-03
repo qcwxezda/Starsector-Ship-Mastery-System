@@ -26,7 +26,7 @@ public class MasterySharingButton extends ButtonWithIcon {
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        String active = button.isChecked() ? Strings.MasteryPanel.active : Strings.MasteryPanel.inactive;
+        String active = thisButton.isChecked() ? Strings.MasteryPanel.active : Strings.MasteryPanel.inactive;
         Color hc = Settings.POSITIVE_HIGHLIGHT_COLOR;
         tooltip.addPara(Strings.MasteryPanel.masterySharingTooltip, 10f, hc, "" + 200, "" + 50);
         tooltip.addPara(Strings.MasteryPanel.buttonStatus, 10f, hc, active);
