@@ -11,7 +11,7 @@ import shipmastery.achievements.MasteredMany;
 import shipmastery.achievements.MaxLevel;
 import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.campaign.PlayerMPHandler;
-import shipmastery.campaign.skills.CyberneticAugmentation;
+import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.data.HullMasteryData;
 import shipmastery.data.MasteryGenerator;
 import shipmastery.data.MasteryInfo;
@@ -111,9 +111,9 @@ public abstract class ShipMastery {
         UnlockAchievementAction.unlockWhenUnpaused(LevelUp.class);
 
         if (getPlayerMasteryLevel(spec) >= getMaxMasteryLevel(spec)) {
-            CyberneticAugmentation.refreshPlayerMasteredCount();
+            MasteredMany.refreshPlayerMasteredCount();
             UnlockAchievementAction.unlockWhenUnpaused(MaxLevel.class);
-            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(CyberneticAugmentation.MASTERED_COUNT_KEY);
+            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (count != null && count >= MasteredMany.NUM_NEEDED) {
                 UnlockAchievementAction.unlockWhenUnpaused(MasteredMany.class);
             }
@@ -127,11 +127,20 @@ public abstract class ShipMastery {
         return data == null ? 0 : data.points;
     }
 
+    public enum MasteryGainSource {
+        COMBAT,
+        NONCOMBAT,
+        ITEM,
+        TRICKLE,
+        OTHER
+    }
+
     public static void addPlayerMasteryPoints(
             ShipHullSpecAPI spec,
             float amount,
             boolean trickleToSkins,
-            boolean countsForDifficultyProgression) {
+            boolean countsForDifficultyProgression,
+            MasteryGainSource source) {
         ShipHullSpecAPI restored = Utils.getRestoredHullSpec(spec);
         String baseHullId = restored.getBaseHullId();
         Set<String> allSkins = Utils.baseHullToAllSkinsMap.getOrDefault(baseHullId, new HashSet<>());
@@ -147,6 +156,8 @@ public abstract class ShipMastery {
             }
         }
 
+        amount = PlayerGainedMPListenerHandler.modifyPlayerMPGain(spec, amount, source);
+
         if (countsForDifficultyProgression) {
             PlayerMPHandler.addTotalCombatMP(amount);
         }
@@ -161,6 +172,8 @@ public abstract class ShipMastery {
                 data.points += amount * elem.two;
             }
         }
+
+        PlayerGainedMPListenerHandler.reportPlayerMPGain(spec, amount, source);
     }
 
     public static void setPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
@@ -451,9 +464,6 @@ public abstract class ShipMastery {
         }
 
         HullMasteryData masteryData = new HullMasteryData(name, ml);
-        if ("wolf".equals(name)) {
-            System.out.println("sdfs");
-        }
         MasteryInfo defaultInfo = getMasteryInfo("EmptyMastery");
         for (int i = 1; i <= ml; i++) {
             if (levelDataMap.get(i) == null || levelDataMap.get(i).one.getGeneratorsLists().isEmpty()) {

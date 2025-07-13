@@ -21,11 +21,14 @@ import java.awt.Color;
 public class DamageTakenNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
+    public static final float[] EFFECT_RANGE = new float[] {750f, 900f, 1200f, 1500f};
+
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
-                .initDefaultHighlight(Strings.Descriptions.DamageTakenNearbyEnemies)
-                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)));
+                .init(Strings.Descriptions.DamageTakenNearbyEnemies)
+                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor());
     }
 
     @Override
@@ -40,7 +43,7 @@ public class DamageTakenNearbyEnemies extends BaseMasteryEffect {
     }
 
     public float getRange(ShipVariantAPI variant) {
-        return getStrength(variant) * 50000f;
+        return EFFECT_RANGE[Utils.hullSizeToInt(variant.getHullSize())];
     }
 
     @Override

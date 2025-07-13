@@ -8,7 +8,6 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Ranks;
@@ -18,6 +17,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.CampaignEngine;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.listeners.CoreTabListener;
+import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -27,26 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class BaseKCorePlugin implements HullModFleetEffect, KCoreInterface, CoreTabListener {
+public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface, CoreTabListener {
 
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
     public static final String SHARED_KNOWLEDGE_ID = "sms_shared_knowledge";
     public static final String IS_K_CORE_TAG = "sms_k_core";
-
-    @Override
-    public void advanceInCampaign(CampaignFleetAPI fleet) {}
-
-    @Override
-    public boolean withAdvanceInCampaign() {
-        return false;
-    }
-
-    @Override
-    public boolean withOnFleetSync() {
-        return true;
-    }
-
 
     @Override
     public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {

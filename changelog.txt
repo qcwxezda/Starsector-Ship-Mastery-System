@@ -1,7 +1,18 @@
-1.2.0
+2.0.0
 ----------
-- Reverted skill changes.
-- Reduced maximum mastery level to 7, reduced the 3rd S-mod slot (along with the +30% mastery boost other option).
+- Added mastery "unlocks," universal features that can be accessed by reaching a certain mastery level.
+    - Added "Selective Restoration" that allows removal of specific d-mods, costing between 20%-100% of a standard restoration depending on number of d-mods removed.
+    - Removed "Clear S-mods", added "Hull Reversion" feature that allows removal of specific S-mods, however this feature costs money now.
+    - Added "AI Core Integration" feature that allows integrating a AI core (including Pseudocores) into a ship to gain a small bonus depending on the type of core used.
+    - Removed "Create Construct", added "Knowledge Forge" that reduces MP gained and passively generates "blank" constructs that can be used on any ship class.
+    - Ship-specific features can have their cost reduced by 90% by spending a story point.
+- Removed skill changes.
+- Reduced maximum mastery level to 7, removed the 3rd S-mod slot (along with the +30% mastery boost other option).
+- Removed the randomness from MP gain, changed MP gain and cost scaling.
+- Renamed MP to mastery XP (in-game only), still referred to as MP internally.
+- Building in hullmods no longer costs MP.
+- Removed some settings.
+- Added a setting to display locked mastery effects.
 - Updated refit screen visual UI.
     - No longer shows MP and level text, now shows a progress bar with mastery info.
 - Added progress bar with mastery info to ships in the fleet screen.
@@ -11,11 +22,20 @@
     - Changed ShipAPI parameter to ShipVariantAPI parameter.
     - This should make it substantially easier to actually call the methods, including outside the refit screen where a ShipAPI instance isn't readily available.
     - Has some small side effects, such as adjusted effect ranges due to ship system range stat no longer showing.
+- Shared Knowledge:
+    - Elite effect moved to standard effect and modified slightly.
+    - New elite effect now gives a dynamic fire rate boost.
+- Engineering override:
+    - No longer reduces CR per S-mod installed.
+    - Cost reduction 75% -> 50%.
 - Pseudocore-piloted automated ships now follow captain personality rather than automated reckless ShipAIConfig override.
-- Building in hullmods no longer costs MP.
 - Made the default color for mastery stuff a little brighter.
 - Reactive-fortress-shield: Increased range.
 - HEF-shield-efficiency: Fixed crash issue with shieldless submodules/shield shunt.
+- Phase-cloak-cooldown: Tier 1 -> tier 2.
+- A bunch of logistics stats (cargo capacity, fuel capacity, etc.): Tier 1 -> tier 2.
+- Damage-taken-nearby-enemies effects: range is now fixed and dependent on the ship's hull size.
+- Many other changes not listed.
 
 1.1.15
 ----------

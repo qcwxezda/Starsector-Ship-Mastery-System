@@ -1,7 +1,8 @@
 package shipmastery.campaign;
 
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListenerAndScript;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
@@ -9,45 +10,40 @@ import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.plugins.LevelupPlugin;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import org.apache.log4j.Logger;
+import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.LotsOfMP;
 import shipmastery.achievements.UnlockAchievementAction;
+import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.config.Settings;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.ReflectionUtils;
-import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
+public class PlayerMPHandler extends BaseCampaignEventListener implements EveryFrameScript {
 
-    /** On average, amount of XP required for 50% chance of obtaining 1 MP
-     *  Chance is x/(XP_PER_HALF_MP + x) to gain 1 MP, x is then reduced by XP_PER_MP and the chance is rolled again */
-    public static final float XP_PER_HALF_MP = 3500f;
-    public static final float XP_PER_HALF_MP_CIV = 1250f;
     /** Minimum XP required for a single action to be eligible to give MP to civilian ships. */
-    public static final float MIN_XP_CIV = 500f;
-    public static final float MULT_PER_MP = 1.035f;
-    /** Ship hulls types at max mastery level have less probability of being picked for each MP they have over the max. */
-    public static final float WEIGHT_MULT_PER_EXTRA_MP = 0.996f;
-    public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 120f;
+    public static final float MIN_XP_CIV = 550f;
+    public static final float MAX_DEPLOYMENT_TIME_TO_SCALE_MP = 240f;
     public static final float FULL_DEPLOYMENT_TIME_MULT = 0.2f;
     private long prevXP;
     private long prevBonusXP;
@@ -62,7 +58,35 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
     public static final String CIVILIAN_MP_GAIN_STAT_MULT_KEY = "sms_MPGainMultCivilian";
 
     public PlayerMPHandler() {
+        super(false);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().addTransientScript(this);
         prevXP = Global.getSector().getPlayerPerson().getStats().getXP();
+        PlayerGainedMPListenerHandler.registerListener(new MasterySharingHandler());
+    }
+
+    @Override
+    public void reportEconomyMonthEnd() {
+        Global.getSector().getPlayerFleet().getFleetData()
+                .getMembersListCopy()
+                .stream()
+                .map(x -> Utils.getRestoredHullSpec(x.getHullSpec()))
+                .distinct()
+                .filter(ShipHullSpecAPI::isCivilianNonCarrier)
+                .forEach(x ->
+                        ShipMastery.addPlayerMasteryPoints(
+                                x,
+                                Math.min(50f, 0.025f * (ShipMastery.getPlayerMasteryLevel(x) >= ShipMastery.getMaxMasteryLevel(x)
+                                        ? MasteryUtils.getEnhanceMPCost(x)
+                                        : MasteryUtils.getUpgradeCost(x))),
+                                false,
+                                false,
+                                ShipMastery.MasteryGainSource.TRICKLE));
+    }
+
+    @Override
+    public boolean isDone() {
+        return false;
     }
 
     @Override
@@ -107,6 +131,7 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
         xpGained -= Math.max(0L, prevBonusXP - curBonusXP);
         return xpGained;
     }
+
     private WeightedRandomPicker<ShipHullSpecAPI> makePicker(
             Map<FleetMemberAPI, Float> deployedTime) {
         WeightedRandomPicker<ShipHullSpecAPI> picker = new WeightedRandomPicker<>();
@@ -125,7 +150,6 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
             time.setValue(time.getValue() / count);
             float weight = time.getValue();
             weight *= 1f + Math.min(0.5f, 0.1f * (count-1));
-            weight *= Math.max(0.5f, (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec)));
             if (weight > 0f) {
                 picker.add(spec, weight);
             }
@@ -144,13 +168,9 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
             ShipHullSpecAPI spec = Utils.getRestoredHullSpec(fm.getHullSpec());
             if (spec.isCivilianNonCarrier() && !allowCivilian) continue;
             if (!spec.isCivilianNonCarrier() && !allowCombat) continue;
-            Integer count = counts.get(spec);
-            if (count == null) count = 0;
-            float weight = (float) Math.pow(2, -count);
-            weight *= Math.max(0.5f, (float) Math.pow(WEIGHT_MULT_PER_EXTRA_MP, ShipMastery.getPlayerMasteryPoints(spec)));
-            picker.add(spec, weight);
-            counts.put(spec, count + 1);
+            counts.compute(spec, (k, v) -> v == null ? 1 : v + 1);
         }
+        counts.forEach((k, v) -> picker.add(k, 1f + Math.min(0.5f, 0.1f * (v-1))));
         return picker;
     }
 
@@ -164,7 +184,7 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
         List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         WeightedRandomPicker<ShipHullSpecAPI> picker =
                 makePicker(members, false, true);
-        gainMP(0.6f*xpGained, picker, false, true);
+        gainMP(0.5f*xpGained, picker, false, true);
     }
 
     public void gainMPFromOther(long xpGained) {
@@ -176,30 +196,8 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
 
     private void gainMP(float xp, WeightedRandomPicker<ShipHullSpecAPI> picker, boolean isCivilian, boolean isPursuit) {
         if (picker.isEmpty()) return;
-        Map<ShipHullSpecAPI, Integer> amounts = new HashMap<>();
-        float xpPer = isCivilian ? XP_PER_HALF_MP_CIV : XP_PER_HALF_MP;
-        float xpPerMult = isPursuit ? 1f/3f : isCivilian ? 0.5f : 1f/8f;
+        float totalMPGained = (float) Math.pow(xp, 2f/3f) / 10f;
         Set<ShipHullSpecAPI> uniques = new HashSet<>(picker.getItems());
-        float totalMPGained = 0f;
-        int count = 0;
-        while (xp > 0 && (random.nextFloat() < xp / (xpPer*xpPerMult + xp) || xp > 5f * xpPer*xpPerMult)) {
-            totalMPGained++;
-            count++;
-            xp -= xpPer*xpPerMult * MathUtils.randBetween(0.8f, 1.25f, random);
-            xpPer *= isCivilian && totalMPGained >= 12 ? 2f : MULT_PER_MP;
-            if (!isCivilian && !isPursuit) {
-                xpPerMult = Math.min(1f/8f * (count+1), 1f);
-            } else if (!isCivilian) {
-                xpPerMult = count == 1 ? 2f/3f : 1f;
-            } else {
-                xpPerMult = 1f;
-            }
-        }
-        var stats = Global.getSector().getPlayerStats().getDynamic();
-        float additionalCivMult = stats.getStat(CIVILIAN_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
-        float additionalCombatMult = stats.getStat(COMBAT_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
-        totalMPGained *= (isCivilian ? Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
-                : Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
         // Scale MP gains to number of ships deployed
         if (!isPursuit) {
             if (!isCivilian) {
@@ -229,53 +227,35 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
                 };
             }
         }
-        float fractionalPart = totalMPGained - (int) totalMPGained;
-        if (random.nextFloat() < fractionalPart) {
-            totalMPGained++;
-        }
-        for (int i = 0; i < totalMPGained; i++) {
-            ShipHullSpecAPI spec = picker.pick();
-            amounts.compute(spec, (k, amount) -> amount == null ? 1 : 1 + amount);
-        }
-        for (Map.Entry<ShipHullSpecAPI, Integer> entry : amounts.entrySet()) {
+
+        var stats = Global.getSector().getPlayerStats().getDynamic();
+        float additionalCivMult = stats.getStat(CIVILIAN_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
+        float additionalCombatMult = stats.getStat(COMBAT_MP_GAIN_STAT_MULT_KEY).getModifiedValue();
+        totalMPGained *= (isCivilian ? Settings.CIVILIAN_MP_GAIN_MULTIPLIER * additionalCivMult
+                : Settings.COMBAT_MP_GAIN_MULTIPLIER * additionalCombatMult);
+
+        for (var spec : uniques) {
             ShipMastery.addPlayerMasteryPoints(
-                    entry.getKey(),
-                    entry.getValue(),
+                    spec,
+                    totalMPGained * picker.getWeight(spec) / picker.getTotal(),
                     true,
-                    !isCivilian && !entry.getKey().isCivilianNonCarrier());
+                    !isCivilian && !spec.isCivilianNonCarrier(),
+                    isCivilian ? ShipMastery.MasteryGainSource.NONCOMBAT : ShipMastery.MasteryGainSource.COMBAT);
         }
-        showMasteryPointGainMessage(amounts);
 
-        // Check for achievement completion
-        if (!isCivilian && totalMPGained >= LotsOfMP.NUM_NEEDED && Settings.COMBAT_MP_GAIN_MULTIPLIER <= 1.001f) {
-            UnlockAchievementAction.unlockWhenUnpaused(LotsOfMP.class);
-        }
-    }
-
-    public void showMasteryPointGainMessage(Map<ShipHullSpecAPI, Integer> amounts) {
-        if (amounts.isEmpty()) return;
-        InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
-        String message;
-        String highlight;
-        if (amounts.size() == 1) {
-            ShipHullSpecAPI spec = amounts.keySet().iterator().next();
-            int amount = amounts.get(spec);
-            message = String.format(Strings.Messages.gainedMPSingle, amount + " MP", spec.getHullNameWithDashClass());
-            highlight = amount + " MP";
-        }
-        else {
-            int sum = 0;
-            for (int amount : amounts.values()) {
-                sum += amount;
+        if (Settings.COMBAT_MP_GAIN_MULTIPLIER <= 1.001f){
+            var achievement = MagicAchievementManager.getInstance().getAchievement("sms_LotsOfMP");
+            if (achievement != null) {
+                var progress = achievement.getProgress();
+                if (progress == null) progress = 0f;
+                if (totalMPGained > progress) {
+                    achievement.setProgress((float) (int) totalMPGained);
+                }
             }
-            message = String.format(Strings.Messages.gainedMPMultiple, sum + " MP", amounts.size());
-            highlight = sum + " MP";
-        }
-        Global.getSector().getCampaignUI().addMessage(message, Settings.MASTERY_COLOR);
-        if (dialog != null) {
-            dialog.getTextPanel().setFontSmallInsignia();
-            dialog.getTextPanel().addPara(message, Misc.getTextColor(), Settings.MASTERY_COLOR, highlight);
-            dialog.getTextPanel().setFontInsignia();
+            // Check for achievement completion
+            if (!isCivilian && totalMPGained >= LotsOfMP.NUM_NEEDED) {
+                UnlockAchievementAction.unlockWhenUnpaused(LotsOfMP.class);
+            }
         }
     }
 
@@ -342,17 +322,20 @@ public class PlayerMPHandler extends BaseCampaignEventListenerAndScript {
                 }
 
                 Set<FleetMemberAPI> playerFleetMembers = new HashSet<>(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
-                for (DeployedFleetMemberAPI dfm : playerResult.getAllEverDeployedCopy()) {
-                    FleetMemberAPI fm = dfm.getMember();
-                    if (dfm.isFighterWing() || fm == null || !playerFleetMembers.contains(fm) || dfm.getShip() == null) continue;
-                    Float existingTime = deployedTimeInLastBattle.get(fm);
-                    float newTime = dfm.getShip().getTimeDeployedForCRReduction();
-                    // In case a ship doesn't lose CR for some reason
-                    newTime += (dfm.getShip().getFullTimeDeployed() - newTime) * FULL_DEPLOYMENT_TIME_MULT;
-                    float total = existingTime == null ? newTime : existingTime + newTime;
-                    total = Math.min(total, MAX_DEPLOYMENT_TIME_TO_SCALE_MP);
-                    deployedTimeInLastBattle.put(fm, total);
-                }
+                playerResult.getAllEverDeployedCopy().stream()
+                        .filter(x -> !x.isFighterWing() && x.getShip() != null && x.getMember() != null && playerFleetMembers.contains(x.getMember()))
+                        .map(x -> {
+                            float time = x.getShip().getTimeDeployedForCRReduction();
+                            time += (x.getShip().getFullTimeDeployed() - time) * FULL_DEPLOYMENT_TIME_MULT;
+                            return Map.entry(x, time);
+                        })
+                        .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparingDouble(Map.Entry::getValue)),
+                                x -> x.map(Map.Entry::getValue).orElse(0f))))
+                        .forEach((k, v) ->
+                                deployedTimeInLastBattle.compute(k.getMember(), (k2, v2) -> v2 == null
+                                        ? Math.min(v, MAX_DEPLOYMENT_TIME_TO_SCALE_MP)
+                                        : Math.min(v + v2, MAX_DEPLOYMENT_TIME_TO_SCALE_MP)));
             }
             updateXPValues();
         }

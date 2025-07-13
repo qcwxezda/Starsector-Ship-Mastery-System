@@ -15,7 +15,7 @@ public class AmorphousCorePlugin extends BaseKCorePlugin {
     public static final float BASE_DP_MULT = 5.5f;
     public static final float MIN_DP_MULT = 1f;
     public static final float DP_MULT_PER_MP_GROUP = 0.01f;
-    public static final float MP_PER_GROUP = 5f;
+    public static final float MP_PER_GROUP = 25f;
     public static final String DIMENSIONAL_TETHER_ID = "sms_dimensional_tether";
 
 

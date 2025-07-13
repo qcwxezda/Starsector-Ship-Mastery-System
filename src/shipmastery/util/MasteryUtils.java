@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
-import shipmastery.campaign.items.KnowledgeConstructPlugin;
-import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.plugin.ModPlugin;
@@ -26,8 +24,8 @@ public abstract class MasteryUtils {
     public static final int bonusLogisticSlotEnhanceNumber = 9999; // Disabled, sorry
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
     public static final float[] ENHANCE_MASTERY_AMOUNT = {0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
-    public static final float[] ENHANCE_DR_AMOUNT = {0f, 0f, 0f, 0f, 0f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
-    public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
+    public static final float[] ENHANCE_BONUS_XP = {0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f, 0.2f, 0.1f, 0f};
+    public static final float ENHANCE_BONUS_XP_CIV = 0.9f;
     public static final int MAX_ENHANCES = 10;
     public static final int UNLOCK_SELECTIVE_RESTORATION_LEVEL;
     public static final int UNLOCK_SMOD_REMOVAL_LEVEL;
@@ -50,37 +48,26 @@ public abstract class MasteryUtils {
         }
     }
 
-
-
-    public static int getRerollMPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
-        //noinspection unchecked
-        Map<String, List<Set<Integer>>> rerollMap = (Map<String, List<Set<Integer>>>) Global.getSector().getPersistentData().get(ShipMastery.REROLL_SEQUENCE_MAP);
-        if (rerollMap == null) return 250;
-        return 250 + Settings.ADDITIONAL_MP_PER_REROLL*rerollMap.getOrDefault(Utils.getRestoredHullSpecId(spec), Collections.emptyList()).size();
-    }
-
-    public static int getRerollSPCost(@SuppressWarnings("unused") ShipHullSpecAPI spec) {
-        return 1;
-    }
-
-    public static int getConstructCost() {
-        return (int) Global.getSector().getPersistentData().getOrDefault(CONSTRUCT_MP_OVERRIDE_KEY, KnowledgeConstructPlugin.NUM_POINTS_GAINED);
+    public static float getEnhanceBonusXP(ShipHullSpecAPI spec) {
+        if (spec.isCivilianNonCarrier()) return ENHANCE_BONUS_XP_CIV;
+        int count = Math.min(getEnhanceCount(spec), ENHANCE_BONUS_XP.length-1);
+        return ENHANCE_BONUS_XP[count];
     }
 
     public static int getEnhanceMPCost(ShipHullSpecAPI spec) {
         int count = getEnhanceCount(spec);
         if (count >= MAX_ENHANCES) return Integer.MAX_VALUE;
         return switch (count) {
-            case 0 -> 500;
-            case 1 -> 700;
-            case 2 -> 1000;
-            case 3 -> 1400;
-            case 4 -> 2000;
-            case 5 -> 2750;
-            case 6 -> 4000;
-            case 7 -> 5500;
-            case 8 -> 7500;
-            case 9 -> 10000;
+            case 0 -> 300;
+            case 1 -> 450;
+            case 2 -> 650;
+            case 3 -> 900;
+            case 4 -> 1200;
+            case 5 -> 1550;
+            case 6 -> 1950;
+            case 7 -> 2400;
+            case 8 -> 3000;
+            case 9 -> 4000;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -96,8 +83,7 @@ public abstract class MasteryUtils {
         return enhanceCount == null ? 0 : enhanceCount;
     }
 
-    public static int getEnhanceSPCost(ShipHullSpecAPI spec) {
-        if (spec.isCivilianNonCarrier()) return 0;
+    public static int getEnhanceSPCost() {
         return 1;
     }
 
@@ -113,16 +99,14 @@ public abstract class MasteryUtils {
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
         int level = ShipMastery.getPlayerMasteryLevel(spec);
         return switch (level) {
-            case 0 -> 100;
-            case 1 -> 120;
-            case 2 -> 150;
-            case 3 -> 190;
-            case 4 -> 240;
+            case 0 -> 60;
+            case 1 -> 75;
+            case 2 -> 100;
+            case 3 -> 135;
+            case 4 -> 180;
             case 5 -> 300;
-            case 6 -> 370;
-            case 7 -> 450;
-            case 8 -> 540;
-            default -> 540 + (level-8)*100;
+            case 6 -> 500;
+            default -> 500 + (level-6)*100;
         };
     }
 
@@ -229,9 +213,12 @@ public abstract class MasteryUtils {
     public static float getModifiedMasteryEffectStrength(PersonAPI commander, ShipHullSpecAPI spec, float baseStrength) {
         spec = Utils.getRestoredHullSpec(spec);
         if (commander == null) return baseStrength;
-        return commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD)
-                .computeEffective(commander.getStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
-                                .computeEffective(baseStrength));
+        var stat1 = commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD);
+        var stat2 = commander.getStats().getDynamic().getMod(MasteryEffect.MASTERY_STRENGTH_MOD_FOR + spec.getHullId());
+        var flat = stat1.getFlatBonus() + stat2.getFlatBonus();
+        var percent = stat1.getPercentMod() + stat2.getPercentMod();
+        var mult = stat1.getMult() * stat2.getMult();
+        return (baseStrength + flat + baseStrength * percent / 100f) * mult;
     }
 
     public static int getPlayerUnassignedCount(ShipHullSpecAPI spec) {

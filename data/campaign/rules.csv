@@ -19,7 +19,7 @@ sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_c
 
 You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
 sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,
-sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cSuperconstruct,,,
+sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cBlankConstruct,,,
 sms_KCoreUplinkClicked,sms_tKCoreUplinkClicked,,sms_cKCoreUplink,,,
 sms_EmitterArrayFirstTime,OpenInteractionDialog,"$customType == sms_emitter_array score:100
 !$global.sms_EmitterArrayAllowed",,"As you approach the distant orbital structure, an automated burst sends a coded transmission to your fleet.

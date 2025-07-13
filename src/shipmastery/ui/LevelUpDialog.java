@@ -60,14 +60,18 @@ public class LevelUpDialog {
         float displayH = Math.min(500f, tempDisplay.getTotalHeight() + 5f);
         float height =  displayH + 110f + (isEnhance ? 25f : 0f);
 
-        ReflectionUtils.GenericDialogData data = ReflectionUtils.showGenericDialog("", Strings.Misc.confirm, Strings.Misc.cancel, width, height, new DialogDismissedListener() {
+        class DialogDismissed extends DialogDismissedListener {
+            ButtonAPI confirmButton = null;
+            void setConfirmButton(ButtonAPI confirmButton) {
+                this.confirmButton = confirmButton;
+            }
             @Override
             public void trigger(Object... args) {
-                if ((int) args[1] == 1 || selectedLevelId == null) return;
+                if ((int) args[1] == 1 || confirmButton == null || !confirmButton.isEnabled()) return;
 
                 int level = ShipMastery.getPlayerMasteryLevel(spec);
 
-                var spec = member.getHullSpec();
+                var spec = Utils.getRestoredHullSpec(member.getHullSpec());
                 if (!isEnhance) {
                     ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
                     ShipMastery.advancePlayerMasteryLevel(spec);
@@ -83,13 +87,13 @@ public class LevelUpDialog {
                     Integer enhanceCount = enhanceMap.getOrDefault(spec.getHullId(), 0);
 
                     ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getEnhanceMPCost(spec));
-                    int spCost = MasteryUtils.getEnhanceSPCost(spec);
+                    int spCost = MasteryUtils.getEnhanceSPCost();
                     Global.getSector().getPlayerStats().spendStoryPoints(
                             spCost,
                             spCost > 0,
                             null,
                             spCost > 0,
-                            MasteryUtils.ENHANCE_BONUS_XP[enhanceCount],
+                            MasteryUtils.getEnhanceBonusXP(spec),
                             null);
 
                     enhanceCount = enhanceCount + 1;
@@ -125,8 +129,13 @@ public class LevelUpDialog {
                     new LevelUpDialog(member, onLevelUp).show();
                 }
             }
-        });
+        }
+
+        DialogDismissed listener = new DialogDismissed();
+        ReflectionUtils.GenericDialogData data = ReflectionUtils.showGenericDialog("", Strings.Misc.confirm, Strings.Misc.cancel, width, height, listener);
         if (data == null) return;
+        listener.setConfirmButton(data.confirmButton);
+
         if (isEnhance) {
             ReflectionUtils.setButtonTextColor(data.confirmButton, Misc.getStoryOptionColor());
             ReflectionUtils.setButtonColor(data.confirmButton, Misc.getStoryDarkColor());
@@ -165,19 +174,19 @@ public class LevelUpDialog {
 
         if (isEnhance) {
             var spInfo = panel.createUIElement(width, 20f, false);
-            Utils.addStoryPointUseInfo(spInfo, MasteryUtils.ENHANCE_BONUS_XP[MasteryUtils.getEnhanceCount(spec)]);
+            Utils.addStoryPointUseInfo(spInfo, MasteryUtils.getEnhanceBonusXP(spec));
             panel.addUIElement(spInfo).inBL(30f, 50f);
         }
 
         data.panel.addComponent(panel);
         ReflectionUtils.invokeMethod(display.getExternalScroller(), "setMaxShadowHeight", 0f);
 
-        updateSelectedLevel(data.confirmButton, displayItem, currentLevel + 1);
-        displayItem.setOnButtonClick(() -> updateSelectedLevel(data.confirmButton, displayItem, currentLevel + 1));
+        updateSelectedLevel(data.confirmButton, displayItem, currentLevel + 1, isEnhance);
+        displayItem.setOnButtonClick(() -> updateSelectedLevel(data.confirmButton, displayItem, currentLevel + 1, isEnhance));
     }
 
-    private void updateSelectedLevel(ButtonAPI confirmButton, MasteryDisplay display, int level) {
+    private void updateSelectedLevel(ButtonAPI confirmButton, MasteryDisplay display, int level, boolean isEnhance) {
         selectedLevelId = display.selectedLevels.get(level);
-        confirmButton.setEnabled(selectedLevelId != null);
+        confirmButton.setEnabled(selectedLevelId != null && (!isEnhance || Global.getSector().getPlayerStats().getStoryPoints() >= 1));
     }
 }

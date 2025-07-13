@@ -2,15 +2,15 @@ package shipmastery.hullmods;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.campaign.items.BaseKCorePlugin;
+import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class CuratorPlayerHullmod extends CuratorNPCHullmod implements HullModFleetEffect {
+public class CuratorPlayerHullmod extends CuratorNPCHullmod implements PlayerFleetSyncListener {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         // Don't apply crew modification
@@ -19,19 +19,6 @@ public class CuratorPlayerHullmod extends CuratorNPCHullmod implements HullModFl
     @Override
     protected boolean isNPCVersion() {
         return false;
-    }
-
-    @Override
-    public void advanceInCampaign(CampaignFleetAPI fleet) {}
-
-    @Override
-    public boolean withAdvanceInCampaign() {
-        return false;
-    }
-
-    @Override
-    public boolean withOnFleetSync() {
-        return true;
     }
 
     @Override

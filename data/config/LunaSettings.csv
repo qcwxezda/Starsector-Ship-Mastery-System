@@ -2,8 +2,7 @@ fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValu
 sms_HeaderFeatures,Features,Header,Features,,,,,General
 sms_DisableMainFeatures,Disable Main Features (requires reload),Boolean,false,,"If this option is enabled, the main features of this mod will be disabled, re-enabling building in hullmods with story points and disabling all mastery effects.
 
-Note that this does not disable this mod's skill changes, nor does it remove additional content not related to the mastery system.
-You will need to manually revert this mod's skill changes by deleting the ""replace"" property in ""Ship Mastery System/mod_info.json"" and deleting or renaming ""Ship Mastery System/data/characters/skills"". This will require a full application reload to take effect.
+Note that this does not disable additional content not related to the mastery system.
 ",,,General
 sms_RandomMode,Enable Random Mode (requires new game),Boolean,false,,"If enabled, all masteries are randomized except for the guaranteed 3 S-mod capacity masteries, which may appear at any level. Disables tier requirements from mastery selection criteria and removes the option to select between two different masteries at certain levels.
 
@@ -19,30 +18,26 @@ sms_CrPenaltyPerExcessOPPercent,Excess OP Penalty,Double,0.1,,"For each percent 
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderGameplay,Gameplay,Header,Gameplay,,,,,Mastery
-sms_ClearSModsAlwaysEnabled,Always Enable S-Mod Removal,Boolean,false,,"If enabled, the option to clear S-mods from a ship is always enabled. Otherwise, it must be acquired from a mastery effect.",,,Mastery
-sms_ClearSModsRefundFraction,S-Mod Removal Refund Fraction,Double,0,,Refunds the specified fraction of MP and credits spent when clearing S-mods that were installed by the player using the mastery interface.,0,1,Mastery
-sms_CombatMPGainMultiplier,Combat MP Gain Multiplier,Double,1,,Multiplies the amount of MP gained for non-civilian ship hulls from actions that also grant XP.,0,5,Mastery
-sms_CivilianMPGainMultiplier,Civilian MP Gain Multiplier,Double,1,,Multiplies the amount of MP gained for civilian ship hulls from actions that also grant XP.,0,5,Mastery
+sms_CombatMPGainMultiplier,Combat XP Gain Multiplier,Double,1,,Multiplies the amount of mastery XP gained for non-civilian ship hulls. Doesn't apply to mastery XP gained from items or other miscellaneous sources.,0,5,Mastery
+sms_CivilianMPGainMultiplier,Civilian XP Gain Multiplier,Double,1,,Multiplies the amount of XP gained for civilian ship hulls. Doesn't apply to mastery XP gained from items or other miscellaneous sources.,0,5,Mastery
 sms_SModCreditCostMultiplier,S-Mod Credits Cost Multiplier,Double,1,,Multiplies the credits cost of building in hullmods by the specified amount.,0,5,Mastery
-sms_AdditionalMPPerReroll,Regenerate Masteries: Additional MP Cost,Int,2,,"Each time you regenerate randomly-selected masteries, the MP cost of the next regeneration (for that ship spec) increases by this amount.",0,10,Mastery
 sms_RandomMasterySeed,Mastery Generation Seed (requires new game),String,,,"Seed to use for randomly generated mastery effects, applied to all new games. If left empty or whitespace only, the sector seed will be used instead.",,,Mastery
+sms_DisplayLockedMasteries,Display Locked Mastery Effects,Boolean,false,,"If enabled, all mastery effects will be shown in the mastery interface, even if you lack the required level to unlock them.",,,Mastery
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderUI,Interface,Header,Interface,,,,,Mastery
 sms_DoubleClickInterval,Double-Click Interval,Double,0.75,,"For options that require a double-click to confirm, sets the time window for a subsequent click to register as a double-click.",0.1,5,Mastery
 sms_RefitScreenDisplay,Fleet/Refit Screen Display,Boolean,true,,"If enabled, displays mastery level info next to each ship while in the fleet and refit screens.",,,Mastery
 sms_EnableCopySeedButton,Copy Seed Button,Boolean,false,,"If enabled, the mastery panel will include a button to copy the current save's mastery generation seed, for debugging purposes.",,,Mastery
-sms_MasteryColor,Mastery Color,Color,#60e1ff,,Sets the highlight color for ship mastery currency counters in the refit screen.,,,Mastery
-sms_PositiveHighlightColor,Positive Highlight Color,Color,#ffd200,,Sets the highlight color for general highlighted text and positive effects in the mastery selection panel.,,,Mastery
-sms_NegativeHighlightColor,Negative Highlight Color,Color,#ff6400,,Sets the highlight color for negative effects in the mastery selection panel.,,,Mastery
+sms_MasteryColor,Mastery Color,Color,#60e1ff,,Sets the highlight color for mastery-related text and popup messages..,,,Mastery
 ,,,,,,,,
 ,,,,,,,,
 sms_DifficultyText,Difficulty Text,Text,All settings in this category only apply to NPC fleets that have not yet been processed by this mod.,,,,,Difficulty
 sms_HeaderProgression,Progression,Header,Progression,,,,,Difficulty
 sms_ProgressionEnabled,Enable Progression,Boolean,true,,"If [enabled], NPC fleet difficulty settings will [gradually progress] from their initial to their final values. If [disabled], difficulty settings will [remain at their initial values indefinitely].",,,Difficulty
-sms_TotalProgressionMP,Total Player MP to Cap,Int,3000,,"If progression is enabled, controls the [rate] at which NPC fleets' mastery settings progress. The final settings are reached when the player gains the selected number of [MP across all combat ship hulls]. This number only counts MP gained directly from combat, and not MP gained through constructs or passively for skins of a ship hull.",100,10000,Difficulty
+sms_TotalProgressionMP,Total Ship XP to Cap,Int,30000,,"If progression is enabled, controls the [rate] at which NPC fleets' mastery settings progress. The final settings are reached when the player gains the selected amount of [XP across all combat ship hulls]. This number only counts XP gained directly from combat, and not XP gained through constructs or passively for skins of a ship hull.",100,100000,Difficulty
 ,,,,,,,,
 ,,,,,,,,
 sms_HeaderDifficulty,Difficulty Settings,Header,Difficulty Settings,,,,,Difficulty
-sms_DifficultyLevelMod,Initial Level Modifier,Int,-1,,"The initial [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty
-sms_DifficultyLevelModCap,Final Level Modifier,Int,5,,"The final [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty
+sms_DifficultyLevelMod,Initial Level Modifier,Int,-2,,"The initial [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty
+sms_DifficultyLevelModCap,Final Level Modifier,Int,4,,"The final [flat modifier] to the [average mastery level] that ship hulls in NPC fleets will spawn with.",-10,10,Difficulty

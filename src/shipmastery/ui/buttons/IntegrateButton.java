@@ -14,8 +14,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
-import shipmastery.campaign.items.BaseKCorePlugin;
-import shipmastery.hullmods.integration.PseudocoreIntegrationPlugin;
+import shipmastery.hullmods.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.CampaignUtils;
@@ -48,18 +47,18 @@ public class IntegrateButton extends ButtonWithCost {
 
     @Override
     protected String getCostDescriptionFormat() {
-        return existingIntegrated != null ? Strings.MasteryPanel.integrationPanelRemoveText : Strings.MasteryPanel.integrationPanelText;
+        return existingIntegrated != null ? Strings.MasteryPanel.aiInterfacePanelRemoveText : Strings.MasteryPanel.aiInterfacePanelText;
     }
 
     @Override
     protected String getUsedSPDescription() {
         if (existingIntegrated == null) {
-            return String.format(Strings.MasteryPanel.integrationPanelUsedSPText,
+            return String.format(Strings.MasteryPanel.aiInterfacePanelUsedSPText,
                     selectedCoreId == null ? "?" : Global.getSettings().getCommoditySpec(selectedCoreId).getName(),
                     member.getShipName(),
                     member.getHullSpec().getNameWithDesignationWithDashClass());
         }
-        return String.format(Strings.MasteryPanel.integrationPanelRemoveUsedSPText,
+        return String.format(Strings.MasteryPanel.aiInterfacePanelRemoveUsedSPText,
                 Global.getSettings().getCommoditySpec(existingIntegrated).getName(),
                 member.getShipName(),
                 member.getHullSpec().getNameWithDesignationWithDashClass());
@@ -91,8 +90,8 @@ public class IntegrateButton extends ButtonWithCost {
     protected float getBaseCost() {
         String toShow = existingIntegrated != null ? existingIntegrated : selectedCoreId;
         if (toShow == null) return 0f;
-        var plugin = Global.getSettings().getHullModSpec(toShow + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
-        if (!(plugin instanceof PseudocoreIntegrationPlugin p)) return 0f;
+        var plugin = Global.getSettings().getHullModSpec(toShow + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
+        if (!(plugin instanceof AICoreInterfacePlugin p)) return 0f;
         return p.getIntegrationCost(member);
     }
 
@@ -142,7 +141,7 @@ public class IntegrateButton extends ButtonWithCost {
 
         NavigableMap<CommoditySpecAPI, Integer> counts;
         if (existingIntegrated == null) {
-            counts = CampaignUtils.getPlayerCommodityCounts(x -> x.hasTag(BaseKCorePlugin.IS_K_CORE_TAG));
+            counts = CampaignUtils.getPlayerCommodityCounts(x -> Global.getSettings().getHullModSpec(x.getId() + AICoreInterfacePlugin.INTEGRATED_SUFFIX) != null);
         } else {
             counts = new TreeMap<>((x, y) -> 0);
             counts.put(Global.getSettings().getCommoditySpec(existingIntegrated), 1);
@@ -161,10 +160,11 @@ public class IntegrateButton extends ButtonWithCost {
                     public void trigger(Object... args) {
                         if ((int) args[1] == 1 || !confirmButton.isEnabled()) return;
                         if (existingIntegrated != null) {
-                            selectedVariant.removePermaMod(existingIntegrated + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX);
+                            selectedVariant.removePermaMod(existingIntegrated + AICoreInterfacePlugin.INTEGRATED_SUFFIX);
                         } else if (selectedCoreId != null) {
-                            selectedVariant.addPermaMod(selectedCoreId + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX, false);
+                            selectedVariant.addPermaMod(selectedCoreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX, false);
                         }
+                        applyCosts();
                         finish();
                     }
                 });
@@ -183,7 +183,7 @@ public class IntegrateButton extends ButtonWithCost {
         var title = panel.createUIElement(width, 30f, false);
         title.setTitleFont(Fonts.ORBITRON_24AA);
         title.setTitleFontColor(isStoryOption ? Misc.getStoryBrightColor() : Misc.getBrightPlayerColor());
-        title.addTitle(Strings.MasteryPanel.integrationButton).setAlignment(Alignment.MID);
+        title.addTitle(Strings.MasteryPanel.aiInterfaceButton).setAlignment(Alignment.MID);
         panel.addUIElement(title).inTMid(15f);
 
         if (counts.isEmpty()) {
@@ -261,23 +261,24 @@ public class IntegrateButton extends ButtonWithCost {
         if (cannotPerformLabel != null) {
             String currentId = existingIntegrated != null ? existingIntegrated : selectedCoreId;
             var plugin = getIntegrationPlugin(currentId);
-            if (plugin == null) return;
-            if (existingIntegrated != null) {
-                cannotIntegrateOrRemoveReason = plugin.getCannotRemoveReason(member);
-                cannotPerformLabel.setText(cannotIntegrateOrRemoveReason == null ? "" : Strings.MasteryPanel.integrationPanelCannotRemove + plugin.getCannotRemoveReason(member));
-            } else {
-                cannotIntegrateOrRemoveReason = plugin.getCannotIntegrateReason(member);
-                cannotPerformLabel.setText(cannotIntegrateOrRemoveReason == null ? "" : Strings.MasteryPanel.integrationPanelCannotIntegrate + plugin.getCannotIntegrateReason(member));
+            if (plugin != null) {
+                if (existingIntegrated != null) {
+                    cannotIntegrateOrRemoveReason = plugin.getCannotRemoveReason(member);
+                    cannotPerformLabel.setText(cannotIntegrateOrRemoveReason == null ? "" : Strings.MasteryPanel.aiInterfacePanelCannotRemove + plugin.getCannotRemoveReason(member));
+                } else {
+                    cannotIntegrateOrRemoveReason = plugin.getCannotIntegrateReason(member);
+                    cannotPerformLabel.setText(cannotIntegrateOrRemoveReason == null ? "" : Strings.MasteryPanel.aiInterfacePanelCannotIntegrate + plugin.getCannotIntegrateReason(member));
+                }
             }
         }
         super.updateLabels();
 
     }
 
-    static PseudocoreIntegrationPlugin getIntegrationPlugin(String coreId) {
+    static AICoreInterfacePlugin getIntegrationPlugin(String coreId) {
         if (coreId == null) return null;
-        var plugin = Global.getSettings().getHullModSpec(coreId + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
-        if (!(plugin instanceof PseudocoreIntegrationPlugin integrationPlugin)) return null;
+        var plugin = Global.getSettings().getHullModSpec(coreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
+        if (!(plugin instanceof AICoreInterfacePlugin integrationPlugin)) return null;
         return integrationPlugin;
     }
 
@@ -293,24 +294,21 @@ public class IntegrateButton extends ButtonWithCost {
 
     @Override
     public void afterCreate() {
-        existingIntegrated = PseudocoreIntegrationPlugin.getIntegratedPseudocore(selectedVariant);
+        existingIntegrated = AICoreInterfacePlugin.getIntegratedPseudocore(selectedVariant);
         thisButton.setChecked(existingIntegrated != null);
     }
 
     @Override
     public String getTooltipTitle() {
-        return Strings.MasteryPanel.integrationButton;
+        return Strings.MasteryPanel.aiInterfaceButton;
     }
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
         if (existingIntegrated == null) {
-            tooltip.addPara(Strings.MasteryPanel.integrationTooltip, 10f);
+            tooltip.addPara(Strings.MasteryPanel.aiInterfaceTooltip, 10f);
         } else {
-            tooltip.addPara(Strings.MasteryPanel.integratedTooltip, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR, Global.getSettings().getCommoditySpec(existingIntegrated).getName());
-            tooltip.addSpacer(10f);
-            var plugin = (PseudocoreIntegrationPlugin) Global.getSettings().getHullModSpec(existingIntegrated + PseudocoreIntegrationPlugin.INTEGRATED_SUFFIX).getEffect();
-            plugin.addIntegrationDescriptionToTooltip(tooltip);
+            AICoreInterfacePlugin.addIntegratedDescToTooltip(tooltip, existingIntegrated, 10f);
         }
     }
 }

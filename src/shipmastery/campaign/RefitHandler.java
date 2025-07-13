@@ -2,19 +2,15 @@ package shipmastery.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CoreUITabId;
-import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.CutStyle;
-import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
-import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.fleet.FleetMember;
@@ -237,38 +233,6 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
         }
     }
 
-    public static class ButtonFlasherPlugin implements CustomUIPanelPlugin {
-        private ButtonAPI button;
-        private final float flashTime = 0.6f;
-        private final IntervalUtil flashInterval = new IntervalUtil(flashTime, flashTime);
-
-        @Override
-        public void positionChanged(PositionAPI position) {
-            flashInterval.forceIntervalElapsed();
-        }
-
-        @Override
-        public void renderBelow(float alphaMult) {}
-
-        @Override
-        public void render(float alphaMult) {}
-
-        @Override
-        public void advance(float amount) {
-            if (button == null) return;
-            flashInterval.advance(amount);
-            if (flashInterval.intervalElapsed()) {
-                button.flash(false, flashTime/2f, flashTime/2f);
-            }
-        }
-
-        @Override
-        public void processInput(List<InputEventAPI> events) {}
-
-        @Override
-        public void buttonPressed(Object buttonId) {}
-    }
-
     void updateMasteryButton(UIPanelAPI coreUI, boolean shouldHide) {
         UIPanelAPI modsPanel = getModsPanel(coreUI);
 
@@ -280,12 +244,11 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
 
         ButtonAPI permButton = (ButtonAPI) ReflectionUtils.invokeMethod(modsPanel, "getPerm");
         Pair<ButtonAPI, CustomPanelAPI> masteryButtonPair = ReflectionUtils.makeButton(
-                Strings.RefitScreen.masteryButton, new ButtonFlasherPlugin(), new MasteryButtonPressed(this),
+                Strings.RefitScreen.masteryButton, null, new MasteryButtonPressed(this),
                 Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM,
                 permButton.getPosition().getWidth(), permButton.getPosition().getHeight(), Keyboard.KEY_Q);
         ButtonAPI masteryButton = masteryButtonPair.one;
         masteryButton.setCustomData(MASTERY_BUTTON_TAG);
-        ((ButtonFlasherPlugin) (masteryButtonPair.two.getPlugin())).button =  masteryButton;
         UIPanelAPI masteryButtonPanel = masteryButtonPair.two;
 
         modsPanel.addComponent(masteryButtonPanel).belowMid(permButton, -25f).setXAlignOffset(-5f);
@@ -319,7 +282,7 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
                     plugin.extraYOffset = -10f;
                     plugin.extraXOffset = -3f;
                     CustomPanelAPI custom = Global.getSettings().createCustom(w, h, plugin);
-                    plugin.makeOutline(custom, true);
+                    plugin.makeOutline(custom, true, true);
                     scroller.addComponent(custom).setYAlignOffset(pos.getY() - container.getPosition().getY());
                 });
 
@@ -394,13 +357,13 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
         modifyBuildInButton(coreUI);
         updateMasteryButton(coreUI, hideMasteryButton);
 
-        if (Settings.SHOW_MP_AND_LEVEL_IN_REFIT) {
-            addMPDisplay(coreUI);
-        }
-
         if (shouldSync) {
             checkIfRefitShipChanged(coreUI);
             syncRefitScreenWithVariant(shouldSaveIfSyncing);
+        }
+
+        if (Settings.SHOW_MP_AND_LEVEL_IN_REFIT) {
+            addMPDisplay(coreUI);
         }
     }
 
@@ -488,9 +451,9 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
             checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
             return;
         }
+        insideRefitPanel = true;
         injectRefitScreen(false);
         checkIfRefitShipChanged(ReflectionUtils.getCoreUI());
-        insideRefitPanel = true;
     }
 
     @Override

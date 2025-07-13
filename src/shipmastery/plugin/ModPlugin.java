@@ -26,6 +26,7 @@ import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.achievements.MasteredMany;
 import shipmastery.campaign.items.BaseKCorePlugin;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
@@ -42,19 +43,22 @@ import shipmastery.campaign.items.FracturedGammaCorePlugin;
 import shipmastery.campaign.items.KCoreInterface;
 import shipmastery.campaign.items.GammaKCorePlugin;
 import shipmastery.campaign.listeners.FleetSyncListenerHandler;
+import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
-import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.hullmods.integration.IntegratedFracturedGammaCore;
+import shipmastery.hullmods.CuratorPlayerHullmod;
+import shipmastery.hullmods.KCoreUplinkHullmod;
+import shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface;
 import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
@@ -236,6 +240,7 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
+        PlayerGainedMPListenerHandler.clearListeners();
         FleetSyncListenerHandler.clearListeners();
 
         try {
@@ -248,6 +253,17 @@ public class ModPlugin extends BaseModPlugin {
         if (Global.getSettings().getModManager().isModEnabled("nexerelin") &&
                 !listeners.hasListenerOfClass(InsuranceFraudDetector.class)) {
             listeners.addListener(new InsuranceFraudDetector(), false);
+        }
+
+        Object coreTabListenerHandler;
+        MethodHandle registerCoreTabListener;
+        try {
+            coreTabListenerHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.listeners.CoreTabListenerHandler"));
+            // Can't do normal casting cause different classloaders
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            registerCoreTabListener = lookup.findVirtual(coreTabListenerHandler.getClass(), "registerListener", MethodType.methodType(void.class, CoreTabListener.class));
+        } catch (NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         if (!Settings.DISABLE_MAIN_FEATURES) {
@@ -287,14 +303,8 @@ public class ModPlugin extends BaseModPlugin {
             }
 
             try {
-                Object coreTabListenerHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.listeners.CoreTabListenerHandler"));
-                // Can't do normal casting cause different classloaders
-                MethodHandles.Lookup lookup = MethodHandles.lookup();
-                var register = lookup.findVirtual(coreTabListenerHandler.getClass(), "registerListener", MethodType.methodType(void.class, CoreTabListener.class));
-                register.invoke(coreTabListenerHandler, refitHandler);
-                register.invoke(coreTabListenerHandler, fleetPanelHandler);
-                //noinspection JavaLangInvokeHandleSignature
-                register.invoke(coreTabListenerHandler, Global.getSettings().getHullModSpec("sms_k_core_handler").getFleetEffect());
+                registerCoreTabListener.invoke(coreTabListenerHandler, refitHandler);
+                registerCoreTabListener.invoke(coreTabListenerHandler, fleetPanelHandler);
                 listeners.addListener(coreTabListenerHandler, true);
             } catch (Throwable e) {
                 throw new RuntimeException("Failed to add core UI listener modifier", e);
@@ -302,20 +312,12 @@ public class ModPlugin extends BaseModPlugin {
 
             // May need to be permanent if NPC fleets can stay inflated through game loads
             // But this doesn't seem to be the case
-            VariantLookup variantLookup = new VariantLookup();
-            Global.getSector().addTransientListener(variantLookup);
+            new VariantLookup();
+            new PlayerMPHandler();
+            new FleetHandler();
+            new PlayerFleetHandler();
 
-            PlayerMPHandler xpTracker = new PlayerMPHandler();
-            Global.getSector().addTransientScript(xpTracker);
-
-            FleetHandler fleetHandler = new FleetHandler();
-            listeners.addListener(fleetHandler, true);
-            Global.getSector().addTransientScript(fleetHandler);
-            listeners.addListener(new PlayerFleetHandler(), true);
-            FleetHandler.NPC_MASTERY_CACHE.clear();
-
-            Global.getSector().addTransientScript(new IntegratedFracturedGammaCore.IntegrationScript());
-            CyberneticAugmentation.refreshPlayerMasteredCount();
+            MasteredMany.refreshPlayerMasteredCount();
 
             // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
             // for some reason, which is too late as the UID tags aren't in the clones,
@@ -335,16 +337,21 @@ public class ModPlugin extends BaseModPlugin {
 
         listeners.addListener(new CuratorFleetHandler(), true);
 
-        ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
-        Global.getSector().addTransientScript(graveyardSpawner);
-        listeners.addListener(graveyardSpawner, true);
-
-        RecentBattlesTracker recentBattlesTracker = new RecentBattlesTracker();
-        Global.getSector().addTransientListener(recentBattlesTracker);
-        listeners.addListener(recentBattlesTracker, true);
+        new ShipGraveyardSpawner();
+        new RecentBattlesTracker();
 
         registerCommodityTooltipPlugin(listeners);
         registerAICorePlugins();
+        new FracturedGammaCoreInterface.IntegrationScript();
+        var kCorePlugin = new BaseKCorePlugin();
+        FleetSyncListenerHandler.registerListener(kCorePlugin);
+        try {
+            registerCoreTabListener.invoke(coreTabListenerHandler, kCorePlugin);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        FleetSyncListenerHandler.registerListener(new KCoreUplinkHullmod());
+        FleetSyncListenerHandler.registerListener(new CuratorPlayerHullmod());
 
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();

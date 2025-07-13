@@ -25,10 +25,10 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetPanelHandler;
+import shipmastery.campaign.MasterySharingHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
-import shipmastery.hullmods.EngineeringOverride;
 import shipmastery.ui.buttons.ButtonWithIcon;
 import shipmastery.ui.buttons.CancelButton;
 import shipmastery.ui.buttons.ConfirmButton;
@@ -150,7 +150,6 @@ public class MasteryPanel {
 
         float w = panel.getPosition().getWidth() + 20f, h = panel.getPosition().getHeight();
         UIPanelAPI tabButtons = makeTabButtons(120f, 40f);
-        UIPanelAPI currencyPanel = makeCurrencyLabels(w);
         sModPanel = makeThisShipPanel(w, h - 100f);
         masteryPanel = makeMasteryPanel(w, h - 100f, useSavedScrollerLocation, scrollToStart);
         togglePanelVisibility(!isInRestorableMarket || isShowingMasteryPanel ? masteryButton : sModButton);
@@ -158,7 +157,6 @@ public class MasteryPanel {
         panel.addComponent(tabButtons).inTMid(0f);
         panel.addComponent(sModPanel).belowMid(tabButtons, 10f);
         panel.addComponent(masteryPanel).belowMid(tabButtons, 10f);
-        panel.addComponent(currencyPanel).inBMid(0f);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -211,48 +209,29 @@ public class MasteryPanel {
         return tabsPanel;
     }
 
-    UIPanelAPI makeCurrencyLabels(float width) {
-        CustomPanelAPI labelsPanel = Global.getSettings().createCustom(width, 50f, null);
-
+    void makeCurrencyLabels(CustomPanelAPI panel) {
         int creditsAmt = (int) Utils.getPlayerCredits().get();
         String creditsAmtFmt = Misc.getFormat().format(creditsAmt);
         String creditsString = Strings.MasteryPanel.creditsDisplay + creditsAmtFmt;
-        float creditsStringWidth =
-                Global.getSettings().computeStringWidth(creditsString + 10f, "graphics/fonts/orbitron20aabold.fnt");
-
-        TooltipMakerAPI credits = labelsPanel.createUIElement(creditsStringWidth, 30f, false);
-        credits.setParaOrbitronLarge();
-        LabelAPI creditsLabel = credits.addPara(creditsString, 10f);
-        creditsLabel.setAlignment(Alignment.LMID);
-        creditsLabel.setHighlight(creditsAmtFmt);
-        creditsLabel.setHighlightColor(Misc.getHighlightColor());
-
-        int masteryPointsAmt = (int) ShipMastery.getPlayerMasteryPoints(root.getHullSpec());
-        String masteryPointsString = Strings.MasteryPanel.masteryPointsDisplay + masteryPointsAmt;
-        float masteryPointsStringWidth = 10f + Global.getSettings().computeStringWidth(masteryPointsString,
-                "graphics/fonts/orbitron20aabold.fnt");
-        TooltipMakerAPI masteryPoints = labelsPanel.createUIElement(masteryPointsStringWidth, 30f, false);
-        masteryPoints.setParaOrbitronLarge();
-        LabelAPI masteryPointsLabel = masteryPoints.addPara(masteryPointsString, 10f);
-        masteryPointsLabel.setAlignment(Alignment.LMID);
-        masteryPointsLabel.setHighlight("" + masteryPointsAmt);
-        masteryPointsLabel.setHighlightColor(Settings.MASTERY_COLOR);
 
         int storyPointsAmt = Global.getSector().getPlayerStats().getStoryPoints();
-        String storyPointsString = Strings.MasteryPanel.storyPointsDisplay + storyPointsAmt;
-        float storyPointsStringWidth = 10f + Global.getSettings().computeStringWidth(storyPointsString,
-                "graphics/fonts/orbitron20aabold.fnt");
-        TooltipMakerAPI storyPoints = labelsPanel.createUIElement(storyPointsStringWidth, 30f, false);
-        storyPoints.setParaOrbitronLarge();
-        LabelAPI storyPointsLabel = storyPoints.addPara(storyPointsString, 10f);
-        storyPointsLabel.setAlignment(Alignment.LMID);
-        storyPointsLabel.setHighlight("" + storyPointsAmt);
-        storyPointsLabel.setHighlightColor(Misc.getStoryBrightColor());
+        String storyPointsFmt = Misc.getFormat().format(storyPointsAmt);
+        String storyPointsString = Strings.MasteryPanel.storyPointsDisplay + storyPointsFmt;
 
-        labelsPanel.addUIElement(credits).inBL(20f, 10f);
-        labelsPanel.addUIElement(masteryPoints).inBL(380f, 10f);
-        labelsPanel.addUIElement(storyPoints).inBL(810f, 10f);
-        return labelsPanel;
+        String fullString = creditsString + "     "  + storyPointsString;
+
+        var font = Fonts.INSIGNIA_LARGE;
+        float fullStringWidth =
+                Global.getSettings().computeStringWidth(fullString, font) + 10f;
+
+        TooltipMakerAPI currency = panel.createUIElement(fullStringWidth, 30f, false);
+        currency.setParaFont(font);
+        LabelAPI label = currency.addPara(fullString, Misc.getGrayColor(), 10f);
+        label.setAlignment(Alignment.LMID);
+        label.setHighlight(creditsAmtFmt, storyPointsFmt);
+        label.setHighlightColors(Misc.getHighlightColor(), Misc.getStoryBrightColor());
+
+        panel.addUIElement(currency).inBMid(10f);
     }
 
     private void addShipPanelButtons(ShipAPI selectedShip, FleetMemberAPI member, CustomPanelAPI panel) {
@@ -384,19 +363,18 @@ public class MasteryPanel {
 
         addShipPanelButtons(module, root.getFleetMember(), thisShipPanel);
 
-        float modularCountW = 200f, modularCountH = 40f;
         int nSMods = moduleVariant.getSMods().size();
-
         var limit = getSModLimit(module);
         int sModLimit = limit.one;
         boolean limitEnhancedBySP = limit.two;
+        String builtInText = Strings.MasteryPanel.builtInDisplay + String.format("%s/%s", nSMods, sModLimit);
+        var font = Fonts.ORBITRON_24AABOLD;
 
+        float modularCountW = Global.getSettings().computeStringWidth(builtInText, font) + 10f, modularCountH = 40f;
         //if (hasLogisticBuiltIn && hasLogisticEnhanceBonus) sModLimit++;
         TooltipMakerAPI modularCountTTM = thisShipPanel.createUIElement(modularCountW, modularCountH, false);
-        modularCountTTM.setParaOrbitronVeryLarge();
-        LabelAPI modularCount = modularCountTTM.addPara(
-                Strings.MasteryPanel.builtInDisplay + String.format("%s/%s", nSMods, sModLimit),
-                Misc.getBrightPlayerColor(), 0f);
+        modularCountTTM.setParaFont(font);
+        LabelAPI modularCount = modularCountTTM.addPara(builtInText, Misc.getBrightPlayerColor(), 0f);
         modularCount.setAlignment(Alignment.RMID);
         modularCount.setHighlight("" + nSMods, "" + sModLimit);
         modularCount.setHighlightColors(Misc.getHighlightColor(),
@@ -404,32 +382,27 @@ public class MasteryPanel {
                         Misc.getStoryBrightColor() :
                         Misc.getHighlightColor());
 
-        float hintTextW = 200f, hintTextH = 40f;
-        TooltipMakerAPI hintTextTTM = thisShipPanel.createUIElement(hintTextW, hintTextH, false);
-        hintTextTTM.addPara(Strings.MasteryPanel.doubleClickHint, Misc.getBasePlayerColor(), 0f);
-
         thisShipPanel.addUIElement(buildInList).inTMid(37f);
         thisShipPanel.addUIElement(buildInListHeader).inTMid(20f);
-
-        thisShipPanel.addUIElement(hintTextTTM).inBL(20f, -2f);
-        thisShipPanel.addUIElement(modularCountTTM).inBR(20f, -10f);
+        thisShipPanel.addUIElement(modularCountTTM).inBR(25f, -10f);
+        makeCurrencyLabels(thisShipPanel);
         return thisShipPanel;
     }
 
     public Pair<Integer, Boolean> getSModLimit(ShipAPI ship) {
-        int sModLimit = Misc.getMaxPermanentMods(ship);
+        int sModLimit = Math.max(0, Misc.getMaxPermanentMods(ship));
         if (ship.getVariant() == null) return new Pair<>(sModLimit, false);
         boolean limitEnhancedBySP = false;
-        if (usingSP) {
-            if (sModLimit < 1) {
-                sModLimit = 1;
-                limitEnhancedBySP = true;
-            }
-            if (module.getVariant().hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && sModLimit < 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS) {
-                sModLimit = 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS;
-                limitEnhancedBySP = true;
-            }
-        }
+//        if (usingSP) {
+//            if (sModLimit < 1) {
+//                sModLimit = 1;
+//                limitEnhancedBySP = true;
+//            }
+//            if (module.getVariant().hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE) && sModLimit < 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS) {
+//                sModLimit = 1 + EngineeringOverride.NUM_ADDITIONAL_SMODS;
+//                limitEnhancedBySP = true;
+//            }
+//        }
         return new Pair<>(sModLimit, limitEnhancedBySP);
     }
 
@@ -481,12 +454,16 @@ public class MasteryPanel {
     }
 
     void addMasteryPanelButtons(CustomPanelAPI panel, FleetMemberAPI member, TooltipMakerAPI anchor) {
-        var spec = member.getHullSpec();
-        upgradeButton = new LevelUpButton(member, ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec));
+        var spec = Utils.getRestoredHullSpec(member.getHullSpec());
+        int level = ShipMastery.getPlayerMasteryLevel(spec);
+        int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
+        boolean isEnhance = level >= maxLevel;
+        upgradeButton = new LevelUpButton(member, isEnhance);
         addButton(upgradeButton, panel, anchor, true, 0f, -30f);
-        upgradeButton.onFinish(() -> forceRefresh(true, false, false, false));
+        upgradeButton.onFinish(() -> forceRefresh(true, false, isEnhance, false));
         constructButton = new MasterySharingButton(spec);
         addButton(constructButton, panel, anchor, true, 45f, -30f);
+        constructButton.setChecked(MasterySharingHandler.isMasterySharingActive(spec));
         constructButton.onFinish(() -> forceRefresh(true, false, true, false));
         constructButton.isCheckbox = true;
         rerollButton = new RerollButton(spec);
@@ -525,7 +502,7 @@ public class MasteryPanel {
         progressBarPlugin.extraXOffset = -5f;
         progressBarPlugin.extraYOffset = shipDisplaySize - 10f;
         CustomPanelAPI progressBar = Global.getSettings().createCustom(shipDisplaySize, shipDisplaySize + 25f, progressBarPlugin);
-        progressBarPlugin.makeOutline(progressBar, false);
+        progressBarPlugin.makeOutline(progressBar, false, false);
         masteryPanel.addComponent(progressBar).inTL(50f, 90f);
 
         float containerW = 800f, containerH = height - 66f;
@@ -639,7 +616,14 @@ public class MasteryPanel {
                 label(modularString, nameColor));
 
         tableTTM.addTooltipToAddedRow(
-                new HullmodUtils.HullmodTooltipCreator(spec, module),
+                new HullmodUtils.HullmodTooltipCreator(spec, module) {
+                    @Override
+                    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                        super.createTooltip(tooltip, expanded, tooltipParam);
+                        var color = cantBuildInReason != null ? Misc.getGrayColor() : usingSP ? Misc.getStoryBrightColor() : Misc.getHighlightColor();
+                        tooltip.addPara(Strings.MasteryPanel.doubleClickHint, color, 10f);
+                    }
+                },
                 TooltipMakerAPI.TooltipLocation.BELOW,
                 false);
 
@@ -758,9 +742,5 @@ public class MasteryPanel {
 
     public boolean isUsingSP() {
         return usingSP;
-    }
-
-    public void setUsingSP(boolean usingSP) {
-        this.usingSP = usingSP;
     }
 }

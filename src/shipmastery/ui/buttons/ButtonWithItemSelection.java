@@ -65,7 +65,7 @@ public abstract class ButtonWithItemSelection<T> extends ButtonWithCost {
         buttons.clear();
 
         var items = getEligibleItems();
-        float buttonListWidth = 500f;
+        float buttonListWidth = 550f;
         int count = items.size();
         float buttonHeight = 30f, buttonPad = 10f;
         float buttonListHeight = Math.min(500f, count * (buttonHeight + buttonPad));
@@ -74,11 +74,12 @@ public abstract class ButtonWithItemSelection<T> extends ButtonWithCost {
                 "",
                 Strings.Misc.confirm,
                 Strings.Misc.cancel,
-                buttonListWidth+100f, buttonListHeight+155f + (isStoryOption ? 20f : 0f),
+                buttonListWidth+100f, buttonListHeight+155f + (isStoryOption ? 30f : 0f),
                 new DialogDismissedListener() {
                     @Override
                     public void trigger(Object... args) {
                         if ((int) args[1] == 0 && confirmButton != null && confirmButton.isEnabled()) {
+                            applyCosts();
                             applyEffects();
                             finish();
                         }

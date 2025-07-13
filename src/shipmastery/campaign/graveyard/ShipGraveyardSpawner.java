@@ -1,7 +1,8 @@
 package shipmastery.campaign.graveyard;
 
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListenerAndScript;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 
-public class ShipGraveyardSpawner extends BaseCampaignEventListenerAndScript implements ShipRecoveryListener{
+public class ShipGraveyardSpawner extends BaseCampaignEventListener implements ShipRecoveryListener, EveryFrameScript {
 
     protected final Set<FleetMemberAPI> recoveredShips = new HashSet<>();
     protected boolean weaponsRecovered = false;
@@ -43,6 +44,13 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListenerAndScript imp
 
     protected final Map<FleetMemberAPI, PersonAPI> origAICaptains = new HashMap<>();
     public static final String AI_CORE_MEM_KEY = "$sms_RecoverableWreckAICoreID";
+
+    public ShipGraveyardSpawner() {
+        super(false);
+        Global.getSector().addTransientScript(this);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().getListenerManager().addListener(this, true);
+    }
 
     @Override
     public void reportPlayerEngagement(EngagementResultAPI result) {
@@ -149,6 +157,16 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListenerAndScript imp
             }
         }
         return entity;
+    }
+
+    @Override
+    public boolean isDone() {
+        return false;
+    }
+
+    @Override
+    public boolean runWhilePaused() {
+        return false;
     }
 
     @Override

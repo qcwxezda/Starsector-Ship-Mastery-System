@@ -46,6 +46,8 @@ public class RecentBattlesTracker extends BaseCampaignEventListener implements F
 
     public RecentBattlesTracker() {
         super(false);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().getListenerManager().addListener(this, true);
     }
 
     @Override

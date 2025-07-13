@@ -2,6 +2,7 @@ package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
@@ -27,7 +28,18 @@ public class RerollButton extends ButtonWithItemSelection<RerollButton.RerollIte
 
     protected ShipHullSpecAPI spec;
 
-    public record RerollItem(int level, boolean isRandomized, boolean isActive) implements Item<RerollItem> {
+    public static final class RerollItem implements Item<RerollItem> {
+        private final int level;
+        private final boolean isRandomized;
+        private final boolean isActive;
+        public String disabledReason = null;
+
+        public RerollItem(int level, boolean isRandomized, boolean isActive) {
+            this.level = level;
+            this.isRandomized = isRandomized;
+            this.isActive = isActive;
+        }
+
         @Override
         public String getId() {
             return "" + level;
@@ -57,7 +69,7 @@ public class RerollButton extends ButtonWithItemSelection<RerollButton.RerollIte
         buttons.stream()
                 .filter(x -> {
                     var item = (RerollItem) x.getCustomData();
-                    return !item.isRandomized() || item.isActive();
+                    return item.disabledReason != null;
                 })
                 .forEach(x -> x.setEnabled(false));
 
@@ -92,17 +104,27 @@ public class RerollButton extends ButtonWithItemSelection<RerollButton.RerollIte
             }
         }
 
+        var playerLevel = ShipMastery.getPlayerMasteryLevel(spec);
         return IntStream.rangeClosed(1, ShipMastery.getMaxMasteryLevel(spec))
                 .boxed()
-                .map(x -> new RerollItem(x, randomizedLevels.contains(x), !inactiveLevels.contains(x)))
+                .map(x -> {
+                    var item = new RerollItem(x, randomizedLevels.contains(x), !inactiveLevels.contains(x));
+                    if (!item.isRandomized) {
+                        item.disabledReason = Strings.MasteryPanel.cantRerollNotRandomized;
+                    }
+                    else if (item.isActive) {
+                        item.disabledReason = Strings.MasteryPanel.cantRerollActive;
+                    } else if (item.level > playerLevel) {
+                        item.disabledReason = Strings.MasteryPanel.unknownMastery;
+                    }
+                    return item;
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     protected TooltipMakerAPI.TooltipCreator getPerItemTooltipCreator(Item<RerollItem> item) {
-        boolean active = item.getItem().isActive();
-        boolean randomized = item.getItem().isRandomized();
-        if (!active && randomized) return null;
+        if (item.getItem().disabledReason == null) return null;
 
         return new TooltipMakerAPI.TooltipCreator() {
             @Override
@@ -117,12 +139,7 @@ public class RerollButton extends ButtonWithItemSelection<RerollButton.RerollIte
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                if (!item.getItem().isRandomized()) {
-                    tooltip.addPara(Strings.MasteryPanel.cantRerollNotRandomized, 10f);
-                }
-                else if (item.getItem().isActive()) {
-                    tooltip.addPara(Strings.MasteryPanel.cantRerollActive, 10f);
-                }
+                tooltip.addPara(item.getItem().disabledReason, 0f).setAlignment(Alignment.MID);
             }
         };
     }

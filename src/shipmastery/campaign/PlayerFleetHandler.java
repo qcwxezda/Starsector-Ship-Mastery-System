@@ -18,6 +18,10 @@ import java.util.List;
 public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecoveryListener, CoreUITabListener,
                                            EconomyTickListener {
 
+    public PlayerFleetHandler() {
+        Global.getSector().getListenerManager().addListener(this, true);
+    }
+
     @Override
     public void reportPlayerOpenedMarket(MarketAPI market) {}
     @Override

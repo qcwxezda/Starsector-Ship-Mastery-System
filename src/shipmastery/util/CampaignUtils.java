@@ -1,12 +1,24 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CustomDialogDelegate;
+import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.TextFieldAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -19,29 +31,6 @@ public class CampaignUtils {
         var lookup = VariantLookup.getVariantInfo(stats.getVariant());
         if (lookup == null) return null;
         return lookup.commander;
-
-//        if (stats == null) {
-//            if (BaseSkillEffectDescription.isInCampaign()) {
-//                return Global.getSector().getPlayerPerson();
-//            }
-//            return null;
-//        }
-//
-//        FleetMemberAPI member = stats.getFleetMember();
-//        if (member == null) return null;
-//        PersonAPI commander = member.getFleetCommanderForStats();
-//        if (commander == null) {
-//            boolean orig = false;
-//            if (member.getFleetData() != null) {
-//                orig = member.getFleetData().isForceNoSync();
-//                member.getFleetData().setForceNoSync(true);
-//            }
-//            commander = member.getFleetCommander();
-//            if (member.getFleetData() != null) {
-//                member.getFleetData().setForceNoSync(orig);
-//            }
-//        }
-//        return commander;
     }
 
     public static PersonAPI getCaptain(MutableShipStatsAPI stats) {
@@ -70,5 +59,98 @@ public class CampaignUtils {
                                 Comparator.comparingDouble(CommoditySpecAPI::getOrder)
                                         .thenComparing((x, y) -> CharSequence.compare(x.getId(), y.getId()))),
                         Collectors.summingInt(Map.Entry::getValue)));
+    }
+
+    public static abstract class TextFieldDelegate implements CustomDialogDelegate {
+
+        private TextFieldAPI textField = null;
+        private final String prompt;
+        private final String defaultText;
+        private boolean clearedFirstFocus = false;
+
+        protected TextFieldDelegate(String prompt, @NotNull String defaultText) {
+            this.prompt = prompt;
+            this.defaultText = defaultText;
+        }
+
+        protected TextFieldDelegate(String prompt) {
+            this.prompt = prompt;
+            defaultText = "";
+        }
+
+        public abstract void onConfirm(String text);
+
+        @Override
+        public void createCustomDialog(CustomPanelAPI panel, CustomDialogCallback callback) {
+            float w = panel.getPosition().getWidth();
+            float h = panel.getPosition().getHeight();
+            TooltipMakerAPI ttm = panel.createUIElement(w, h, false);
+            ttm.setParaFont(Fonts.ORBITRON_20AA);
+            ttm.addPara(prompt, 20f).setAlignment(Alignment.MID);
+            textField = ttm.addTextField(w-10f, 20f);
+            textField.setText(defaultText);
+            textField.setMidAlignment();
+            textField.setHandleCtrlV(false);
+            textField.setMaxChars(20);
+            if (defaultText.isEmpty()) {
+                textField.grabFocus();
+            } else {
+                textField.setColor(Misc.getGrayColor());
+            }
+            panel.addUIElement(ttm).inLMid(0f);
+        }
+
+        @Override
+        public final boolean hasCancelButton() {
+            return true;
+        }
+
+        @Override
+        public String getConfirmText() {
+            return Strings.Misc.confirm;
+        }
+
+        @Override
+        public String getCancelText() {
+            return Strings.Misc.cancel;
+        }
+
+        @Override
+        public final void customDialogConfirm() {
+            if (textField == null || textField.getText() == null) return;
+            onConfirm(textField.getText().trim());
+        }
+
+        @Override
+        public void customDialogCancel() {}
+
+        @Override
+        public final CustomUIPanelPlugin getCustomPanelPlugin() {
+            return new CustomUIPanelPlugin() {
+                @Override
+                public void positionChanged(PositionAPI position) {}
+
+                @Override
+                public void renderBelow(float alphaMult) {}
+
+                @Override
+                public void render(float alphaMult) {}
+
+                @Override
+                public void advance(float amount) {
+                    if (textField != null && textField.hasFocus() && !defaultText.isEmpty() && !clearedFirstFocus) {
+                        textField.setText("");
+                        textField.setColor(Misc.getButtonTextColor());
+                        clearedFirstFocus = true;
+                    }
+                }
+
+                @Override
+                public void processInput(List<InputEventAPI> events) {}
+
+                @Override
+                public void buttonPressed(Object buttonId) {}
+            };
+        }
     }
 }

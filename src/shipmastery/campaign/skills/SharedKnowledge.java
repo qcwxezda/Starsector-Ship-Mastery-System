@@ -16,6 +16,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.util.CampaignUtils;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -23,9 +24,9 @@ import shipmastery.util.VariantLookup;
 
 // NPCs don't have enhances, so treat every NPC fleet as having 0 enhances.
 public class SharedKnowledge {
-    public static final float MAX_DP_REDUCTION = 0.075f;
+    public static final float MAX_DP_REDUCTION = 0.08f;
     public static final int MAX_FIRE_RATE_STACKS = 5;
-    public static final float MAX_FIRE_RATE = 0.075f;
+    public static final float MAX_FIRE_RATE = 0.08f;
     public static final float FIRE_RATE_RANGE = 2500f;
     public static final String FIRE_RATE_STACKS_MOD = "$sms_SharedKnowledgeStacksModifier";
 
@@ -52,6 +53,7 @@ public class SharedKnowledge {
             }
 
             float reduction = (float) curLevel / Math.max(maxLevel, 1) * MAX_DP_REDUCTION;
+            reduction = MasteryUtils.getModifiedMasteryEffectStrength(commander, hullSpec, reduction);
             if (reduction <= 0f) return;
             stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, 1f - reduction);
         }
@@ -106,6 +108,8 @@ public class SharedKnowledge {
 
                     count = ship.getMutableStats().getDynamic().getMod(FIRE_RATE_STACKS_MOD).computeEffective(count);
                     float bonus = MAX_FIRE_RATE * Math.min(1f, count / MAX_FIRE_RATE_STACKS);
+                    var commander = CampaignUtils.getFleetCommanderForStats(ship.getMutableStats());
+                    bonus = MasteryUtils.getModifiedMasteryEffectStrength(commander, ship.getHullSpec(), bonus);
                     applyEffectsToStats(ship.getMutableStats(), bonus, id);
                 }
             }
@@ -145,8 +149,8 @@ public class SharedKnowledge {
                     skill.getName(),
                     Utils.asInt(FIRE_RATE_RANGE));
             info.addPara(Strings.Skills.sharedKnowledgeEliteEffect2, 0f, tc, hc, Utils.asInt(MAX_FIRE_RATE_STACKS));
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect3, 0f, tc);
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect4, 0f, tc);
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect3, tc, 0f);
+            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect4, tc, 0f);
         }
     }
 }

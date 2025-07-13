@@ -1,4 +1,4 @@
-package shipmastery.hullmods.integration;
+package shipmastery.hullmods.aicoreinterface;
 
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -14,7 +14,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class IntegratedAmorphousCore extends PseudocoreIntegrationHullmod {
+public class AmorphousCoreInterface extends AICoreInterfaceHullmod {
 
     public static final float IMMUNITY_SECONDS = 10f;
     public static final float IMMUNITY_FADE_TIME = 10f;
@@ -22,7 +22,7 @@ public class IntegratedAmorphousCore extends PseudocoreIntegrationHullmod {
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.Items.amorphousIntegrationEffect,
+        tooltip.addPara(Strings.Items.amorphousCoreIntegrationEffect,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(CR_INCREASE),
@@ -32,7 +32,7 @@ public class IntegratedAmorphousCore extends PseudocoreIntegrationHullmod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        stats.getMaxCombatReadiness().modifyFlat(id, CR_INCREASE, Strings.Items.integrationDesc);
+        stats.getMaxCombatReadiness().modifyFlat(id, CR_INCREASE, Strings.Items.integratedDesc);
     }
 
     @Override
@@ -40,13 +40,9 @@ public class IntegratedAmorphousCore extends PseudocoreIntegrationHullmod {
         ship.addListener(new IntegrationScript(ship, id));
     }
 
-    @Override
-    public float getMinIntegrationCost(FleetMemberAPI member) {
-        return 5000000f;
-    }
 
     @Override
-    public float getMaxIntegrationCost(FleetMemberAPI member) {
+    public float getIntegrationCost(FleetMemberAPI member) {
         return 5000000f;
     }
 

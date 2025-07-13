@@ -1,5 +1,6 @@
 package shipmastery.util;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -18,6 +19,7 @@ public class VariantLookup extends BaseCampaignEventListener {
 
     public VariantLookup() {
         super(false);
+        Global.getSector().addTransientListener(this);
         instance = this;
     }
 

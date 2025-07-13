@@ -1,12 +1,12 @@
 id,description,tier,default_amount,tags,location
 ### Note: default amount should be a buff, as whether it's negative or positive determines highlight color ####
 #### LOGISTICS ####
-MaxBurnLevel,maximum burn level,,0.5,modify_flat require_integer,shipmastery.stats.logistics.MaxBurnLevel
-CargoCapacity,cargo capacity,,0.2,,shipmastery.stats.logistics.CargoCapacity
-FuelCapacity,fuel capacity,,0.2,,shipmastery.stats.logistics.FuelCapacity
-CrewCapacity,crew capacity,,0.2,,shipmastery.stats.logistics.CrewCapacity
-FuelUsage,fuel usage,,-0.2,,shipmastery.stats.logistics.FuelUsage
-SupplyUsage,supplies maintenance,,-0.2,,shipmastery.stats.logistics.SupplyUsage
+MaxBurnLevel,maximum burn level,2,0.5,modify_flat require_integer,shipmastery.stats.logistics.MaxBurnLevel
+CargoCapacity,cargo capacity,2,0.15,,shipmastery.stats.logistics.CargoCapacity
+FuelCapacity,fuel capacity,2,0.15,,shipmastery.stats.logistics.FuelCapacity
+CrewCapacity,crew capacity,2,0.15,,shipmastery.stats.logistics.CrewCapacity
+FuelUsage,fuel usage,2,-0.2,,shipmastery.stats.logistics.FuelUsage
+SupplyUsage,supplies maintenance,2,-0.2,,shipmastery.stats.logistics.SupplyUsage
 CRPerDeployment,combat readiness lost per deployment,,-0.2,,shipmastery.stats.logistics.CRPerDeployment
 CRRecoveryRate,combat readiness recovery rate,,0.3,,shipmastery.stats.logistics.CRRecoveryRate
 CRMax,maximum combat readiness,2,0.08,modify_flat display_as_percent,shipmastery.stats.logistics.CRMax
@@ -48,7 +48,7 @@ ReplacementRateRegen,the rate at which fighter replacement rate replenishes,,0.1
 NumFighterBays,fighter bay count,4,0.25,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.NumFighterBays
 FighterCost,the OP cost of all fighters,3,-1.7,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.FighterCost
 BomberCost,the OP cost of all bombers,3,-2.5,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BomberCost
-PhaseCloakCooldown,phase cloak cooldown time,,-0.15,,shipmastery.stats.combat.PhaseCloakCooldown
+PhaseCloakCooldown,phase cloak cooldown time,2,-0.15,,shipmastery.stats.combat.PhaseCloakCooldown
 PhaseSpeedAcceleration,top speed and acceleration when phased,2,0.15,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
 PhaseCloakCost,phase cloak activation and upkeep costs,2,-0.15,,shipmastery.stats.combat.PhaseCloakCost
 PhaseTimeMult,local timeflow when phased,3,0.25,,shipmastery.stats.combat.PhaseTimeMult

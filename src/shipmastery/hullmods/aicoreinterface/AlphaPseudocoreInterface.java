@@ -1,4 +1,4 @@
-package shipmastery.hullmods.integration;
+package shipmastery.hullmods.aicoreinterface;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -13,14 +13,14 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class IntegratedAlphaKCore extends PseudocoreIntegrationHullmod {
+public class AlphaPseudocoreInterface extends AICoreInterfaceHullmod {
 
-    public static final float FIRE_RATE_INCREASE = 0.075f;
+    public static final float FIRE_RATE_INCREASE = SharedKnowledge.MAX_FIRE_RATE;
     public static final float CR_REDUCTION = 0.1f;
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.Items.alphaIntegrationEffect,
+        tooltip.addPara(Strings.Items.alphaPseudocoreIntegrationEffect,
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Global.getSettings().getSkillSpec("sms_shared_knowledge").getName(),
@@ -35,17 +35,12 @@ public class IntegratedAlphaKCore extends PseudocoreIntegrationHullmod {
         boolean hasEliteSharedKnowledge = captain != null && captain.getStats() != null && captain.getStats().getSkillLevel("sms_shared_knowledge") >= 2f;
         if (!hasEliteSharedKnowledge) {
             SharedKnowledge.Elite.applyEffectsToStats(stats, FIRE_RATE_INCREASE, id);
-            stats.getMaxCombatReadiness().modifyFlat(id, -CR_REDUCTION, Strings.Items.integrationDesc);
+            stats.getMaxCombatReadiness().modifyFlat(id, -CR_REDUCTION, Strings.Items.integratedDesc);
         }
     }
 
     @Override
-    public float getMinIntegrationCost(FleetMemberAPI member) {
-        return 150000f;
-    }
-
-    @Override
-    public float getMaxIntegrationCost(FleetMemberAPI member) {
-        return 500000f;
+    public float getIntegrationCost(FleetMemberAPI member) {
+        return getDefaultIntegrationCost(member, 150000f, 500000f);
     }
 }

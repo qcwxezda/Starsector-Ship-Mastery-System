@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DModManager;
@@ -24,51 +23,11 @@ public abstract class HullmodUtils {
 
     public static final int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
     public static final float CREDITS_HARD_CAP = 9999999f;
-    public static final int MP_HARD_CAP = 99;
     public static final float CREDITS_COST_MULT_SP = 0.1f;
     public static final float CREDITS_COST_BXP_CAP = 200000f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MIN = 0.2f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MAX = 1f;
     public static final float SMOD_REMOVAL_COST_MULT = 0.75f;
-
-    public static final int ADDITIONAL_MP_PER_SMOD = 0;
-    public static final float DP_PER_EXTRA_MP = 6f;
-
-
-    public static int getMPCost(HullModSpecAPI spec, ShipAPI ship) {
-        return getMPCost(spec, ship, false);
-    }
-
-    public static int getMPCost(HullModSpecAPI spec, ShipAPI ship, boolean usingSP) {
-        ShipVariantAPI variant = ship.getVariant();
-        if (variant == null) return 0;
-        // Engineering override reduces cost to 0
-        if (variant.hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE)) return 0;
-        // If using SP, cost is also 0
-        if (usingSP) return 0;
-        // Built-in mods always have static cost
-        if (isHullmodBuiltIn(spec, variant)) {
-            return 1;
-        }
-
-        int nSMods = variant.getSMods().size();
-        ShipHullSpecAPI hullSpec = ship.getHullSpec();
-        float dp = hullSpec == null ? 0f : hullSpec.getSuppliesToRecover();
-        float cost = 1 + (int) (dp / DP_PER_EXTRA_MP);
-
-        cost += ADDITIONAL_MP_PER_SMOD * nSMods;
-        // Exponentially increasing MP cost for each S-mod over the limit
-        if (TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() >= 1) {
-            for (int i = Misc.getMaxPermanentMods(ship); i <= nSMods; i++) {
-                cost *= 1.25f;
-                // Hard cap here to avoid overflow
-                cost = Math.min(cost, MP_HARD_CAP);
-            }
-        }
-        cost -= TransientSettings.SMOD_MP_COST_FLAT_REDUCTION.getModifiedInt();
-        cost = Math.max(1, cost);
-        return (int) Math.min(cost, MP_HARD_CAP);
-    }
 
     public static int getBuildInCost(HullModSpecAPI spec, ShipAPI ship) {
         return getBuildInCost(spec, ship, false);
@@ -89,9 +48,9 @@ public abstract class HullmodUtils {
             }
         }
 
-        float cost = 2222f
-                * (float) Math.pow(Math.max(1f, opCost), 0.5f)
-                * (float) Math.pow(valueFrac, 1.5f)
+        float cost = 3333f
+                * (float) Math.pow(Math.max(2.5f*(hullSizeOrd + 1), opCost), 0.5f)
+                * (float) Math.pow(valueFrac, 1.33f)
                 * (float) Math.pow((hullSizeOrd + 1), 1.3f);
         cost = (float) (Math.ceil(cost/1000f)*1000f);
 
@@ -148,7 +107,14 @@ public abstract class HullmodUtils {
                 && MasteryUtils.getEnhanceCount(rootVariant.getHullSpec()) >= MasteryUtils.bonusLogisticSlotEnhanceNumber;
     }
 
-    public record HullmodTooltipCreator(HullModSpecAPI hullmod, ShipAPI ship) implements TooltipMakerAPI.TooltipCreator {
+    public static class HullmodTooltipCreator implements TooltipMakerAPI.TooltipCreator {
+        private final HullModSpecAPI hullmod;
+        private final ShipAPI ship;
+
+        public HullmodTooltipCreator(HullModSpecAPI hullmod, ShipAPI ship) {
+            this.hullmod = hullmod;
+            this.ship = ship;
+        }
 
         @Override
         public boolean isTooltipExpandable(Object tooltipParam) {

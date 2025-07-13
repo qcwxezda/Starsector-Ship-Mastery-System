@@ -13,6 +13,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
@@ -67,6 +68,7 @@ public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
                 .stream()
                 .map(DModManager::getMod)
                 .filter(x -> x.hasTag(Tags.HULLMOD_DMOD))
+                .sorted(Comparator.comparing(HullModSpecAPI::getDisplayName))
                 .map(HullmodItem::new)
                 .collect(Collectors.toList());
     }

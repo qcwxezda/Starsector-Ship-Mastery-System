@@ -3,21 +3,18 @@ package shipmastery.hullmods;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
-import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.campaign.items.BaseKCorePlugin;
 import shipmastery.campaign.items.KCoreUplinkPlugin;
+import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class KCoreUplinkHullmod extends BaseHullMod implements HullModFleetEffect {
+public class KCoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncListener {
 
     public static KCoreUplinkPlugin.KCoreUplinkData savedPenaltyData = null;
-
-    @Override
-    public void advanceInCampaign(CampaignFleetAPI fleet) {}
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
@@ -35,16 +32,6 @@ public class KCoreUplinkHullmod extends BaseHullMod implements HullModFleetEffec
         if (penalty > 0f) {
             stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Items.uplinkPenaltyDesc);
         }
-    }
-
-    @Override
-    public boolean withAdvanceInCampaign() {
-        return false;
-    }
-
-    @Override
-    public boolean withOnFleetSync() {
-        return true;
     }
 
     @Override

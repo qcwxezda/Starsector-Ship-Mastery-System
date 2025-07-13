@@ -1,4 +1,4 @@
-package shipmastery.hullmods.integration;
+package shipmastery.hullmods.aicoreinterface;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -11,14 +11,14 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class IntegratedBetaKCore extends PseudocoreIntegrationHullmod {
+public class BetaPseudocoreInterface extends AICoreInterfaceHullmod {
 
     public static final int S_LIMIT = 3;
-    public static final float CR_REDUCTION = 0.5f;
+    public static final float CR_REDUCTION = 0.4f;
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.Items.betaIntegrationEffect,
+        tooltip.addPara(Strings.Items.betaPseudocoreIntegrationEffect,
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asInt(1),
@@ -27,19 +27,14 @@ public class IntegratedBetaKCore extends PseudocoreIntegrationHullmod {
     }
 
     @Override
-    public float getMinIntegrationCost(FleetMemberAPI member) {
-        return 75000f;
-    }
-
-    @Override
-    public float getMaxIntegrationCost(FleetMemberAPI member) {
-        return 250000f;
+    public float getIntegrationCost(FleetMemberAPI member) {
+        return getDefaultIntegrationCost(member, 75000f, 250000f);
     }
 
     @Override
     public String getCannotRemoveReason(FleetMemberAPI member) {
         if (!member.getVariant().getSMods().isEmpty()) {
-            return Strings.Items.betaIntegrationCannotRemove;
+            return Strings.Items.betaPseudocoreIntegrationCannotRemove;
         }
         return super.getCannotRemoveReason(member);
     }
@@ -51,7 +46,7 @@ public class IntegratedBetaKCore extends PseudocoreIntegrationHullmod {
         var variant = stats.getVariant();
         if (variant == null) return;
         if (variant.getSMods().size() > S_LIMIT) {
-            stats.getMaxCombatReadiness().modifyFlat(id, -CR_REDUCTION, Strings.Items.integrationDesc);
+            stats.getMaxCombatReadiness().modifyFlat(id, -CR_REDUCTION, Strings.Items.integratedDesc);
         }
     }
 }

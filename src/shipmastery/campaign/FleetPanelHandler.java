@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.ScrollPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
@@ -25,6 +26,7 @@ import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.hullmods.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.ui.LevelUpDialog;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
@@ -106,8 +108,10 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
         public float extraAlphaMult = 0.75f;
         private final PositionAPI position;
         public static final Color grayColor = new Color(0.2f, 0.2f, 0.2f);
-        public Color brightMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.6f);
+        public Color brightMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.3f);
+        public Color brighterMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.7f);
         public Color brightHighlightColor = Utils.mixColor(Settings.POSITIVE_HIGHLIGHT_COLOR, Color.WHITE, 0.4f);
+        public Color brightEnhanceColor = Utils.mixColor(Misc.getStoryOptionColor(), Color.WHITE, 0.3f);
 
         public record MasteryData(ShipHullSpecAPI spec, int level, int maxLevel, int enhances, float curPts, float reqPts) {}
         public MasteryData data;
@@ -206,10 +210,10 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             Color darkEnhance = Misc.getStoryDarkColor();
             if (enhanceFrac > 0f)
                 drawRect(x, y, width, height, 0f, Math.min(1f, enhanceFrac), darkEnhance, alphaMult * extraAlphaMult);
-            Color enhance = Misc.getStoryOptionColor();
+            Color enhance = progress >= 1f ? brightEnhanceColor : Misc.getStoryOptionColor();
             if (greenFilled > 0f)
                 drawRect(x, y, width, height, 0f, greenFilled, enhance, alphaMult * extraAlphaMult * (fullProgress ? 1f - 0.75f*flashFader.getBrightness() : 1f));
-            Color mastery = Settings.MASTERY_COLOR;
+            Color mastery = progress >= 1f ? brightMasteryColor : Settings.MASTERY_COLOR;
             if (clampedProgress > greenFilled)
                 drawRect(x, y, width, height, greenFilled, clampedProgress, mastery, alphaMult * extraAlphaMult * (fullProgress ? 1f - 0.75f*flashFader.getBrightness() : 1f));
 
@@ -223,10 +227,10 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             new LevelUpDialog(member, onLevelUp).show();
         }
 
-        public void makeOutline(CustomPanelAPI panel, boolean smallText) {
+        public void makeOutline(CustomPanelAPI panel, boolean smallText, boolean showIcons) {
             TooltipMakerAPI outline = panel.createUIElement(width + 2f, height + 2f, false);
             var spec = member.getHullSpec();
-            var box = outline.addAreaCheckbox("", null, Color.WHITE, brightMasteryColor, Color.WHITE, width + 2f, height + 2f, -1f);
+            var box = outline.addAreaCheckbox("", null, Color.WHITE, brighterMasteryColor, Color.WHITE, width + 2f, height + 2f, -1f);
             box.setEnabled(MasteryUtils.getEnhanceCount(spec) < MasteryUtils.MAX_ENHANCES
                     && progress >= 1f
                     && member.getFleetCommander() != null
@@ -262,7 +266,7 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             LabelAPI temp = Global.getSettings().createLabel("" + data.level, font);
             var textWidth = temp.computeTextWidth(temp.getText());
             outline.setTextWidthOverride(textWidth);
-            var levelLabel = outline.addPara("" + data.level, MasteryUtils.getPlayerUnassignedCount(data.spec) > 0 ? brightHighlightColor : brightMasteryColor, -height/2f-(smallText ? 8f : 11f));
+            var levelLabel = outline.addPara("" + data.level, MasteryUtils.getPlayerUnassignedCount(data.spec) > 0 ? brightHighlightColor : brighterMasteryColor, -height/2f-(smallText ? 8f : 11f));
             levelLabel.getPosition().setXAlignOffset(-textWidth/2f + 1f + width/2f);
 //            if (MasteryUtils.getPlayerUnassignedCount(data.spec) > 0) {
 //                var asterisk = outline.addPara("*", FleetPanelItemUIPlugin.brightMasteryColor, -2f);
@@ -270,6 +274,56 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
 //            }
 
             panel.addUIElement(outline).inTR(xPad + 4f + extraXOffset, yPad  + extraYOffset);
+
+            if (MasterySharingHandler.isMasterySharingActive(spec) && showIcons) {
+                float size = smallText ? 20f : 32f;
+                TooltipMakerAPI icon = panel.createUIElement(size, size, false);
+                icon.addImage("graphics/icons/ui/sms_construct_icon.png", size, size, 0f);
+                icon.getPrev().setOpacity(0.5f);
+                icon.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+                    @Override
+                    public boolean isTooltipExpandable(Object tooltipParam) {
+                        return false;
+                    }
+
+                    @Override
+                    public float getTooltipWidth(Object tooltipParam) {
+                        return 200f;
+                    }
+
+                    @Override
+                    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                        tooltip.addPara(Utils.asInt(MasterySharingHandler.getCurrentMasterySharingMP(spec)) + " / " + Utils.asInt(MasterySharingHandler.SHARED_MASTERY_MP_REQ)
+                                + " %s", 0f, Misc.getGrayColor(), Strings.Misc.stored + " " + Strings.Misc.XP).setAlignment(Alignment.MID);
+                    }
+                }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
+                panel.addUIElement(icon).leftOfMid(outline, smallText ? 0f : 2f).setYAlignOffset(size/2f);
+            }
+
+            String integrated = AICoreInterfacePlugin.getIntegratedPseudocore(member.getVariant());
+            if (integrated != null && showIcons) {
+                float size = smallText ? 20f : 32f;
+                TooltipMakerAPI icon = panel.createUIElement(size, size, false);
+                icon.addImage("graphics/icons/ui/sms_integrate_icon.png", size, size, 0f);
+                icon.getPrev().setOpacity(0.5f);
+                icon.addTooltipToPrevious(new TooltipMakerAPI.TooltipCreator() {
+                    @Override
+                    public boolean isTooltipExpandable(Object tooltipParam) {
+                        return false;
+                    }
+
+                    @Override
+                    public float getTooltipWidth(Object tooltipParam) {
+                        return 500f;
+                    }
+
+                    @Override
+                    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                        AICoreInterfacePlugin.addIntegratedDescToTooltip(tooltip, integrated, 0f);
+                    }
+                }, TooltipMakerAPI.TooltipLocation.ABOVE, false);
+                panel.addUIElement(icon).leftOfMid(outline, smallText ? 0f : 2f).setYAlignOffset(-size/2f);
+            }
         }
     }
 
@@ -297,13 +351,20 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
                             var member = (FleetMemberAPI) ReflectionUtils.invokeMethod(item, "getMember");
 
                             var pos = ((UIComponentAPI) item).getPosition();
-                            var plugin = new FleetPanelItemUIPlugin(member, pos, () -> ReflectionUtils.invokeMethod(fleetPanel, "recreateUI", false));
+                            var plugin = new FleetPanelItemUIPlugin(member, pos, () -> {
+                                var scroller = (ScrollPanelAPI) fleetPanelListScroller;
+                                float yOffset = scroller.getYOffset();
+                                ReflectionUtils.invokeMethod(fleetPanel, "recreateUI", false);
+                                UIPanelAPI fleetPanelList = (UIPanelAPI) ReflectionUtils.invokeMethod(fleetPanel, "getList");
+                                ScrollPanelAPI fleetPanelListScroller = (ScrollPanelAPI) ReflectionUtils.invokeMethod(fleetPanelList, "getScroller");
+                                fleetPanelListScroller.setYOffset(yOffset);
+                            });
 
                             CustomPanelAPI custom = Global.getSettings().createCustom(pos.getWidth(), pos.getHeight(), plugin);
-                            plugin.makeOutline(custom, false);
+                            plugin.makeOutline(custom, false, true);
                             ((UIPanelAPI) item).addComponent(custom).inMid();
                         }
-                    }, 0.01f);
+                    }, 0.03f);
                 }
             });
             fleetPanelListScroller.addComponent(custom);

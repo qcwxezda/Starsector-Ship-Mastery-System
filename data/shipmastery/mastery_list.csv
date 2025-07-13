@@ -6,7 +6,7 @@ RandomMastery,,,,1,shipmastery.mastery.impl.random.RandomMastery
 ### LOGISTICS ###
 EmptyMastery,,logistic,,,shipmastery.mastery.impl.EmptyMastery
 EnhanceMasteryDescOnly,,logistic,,,shipmastery.mastery.impl.EnhanceMasteryDescOnly
-SModCapacity,,no_disable logistic,,0.5,shipmastery.mastery.impl.logistics.SModCapacity
+SModCapacity,,no_disable logistic,,0.1,shipmastery.mastery.impl.logistics.SModCapacity
 SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.SModCreditsCost
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
 RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost

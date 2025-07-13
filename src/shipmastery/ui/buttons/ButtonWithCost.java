@@ -22,22 +22,23 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
 
     public ButtonWithCost(String spriteName, boolean isStoryOption) {
         super(spriteName, isStoryOption);
-        onFinish(() -> {
-            float cost = getModifiedCost();
-            Utils.getPlayerCredits().subtract(cost);
-            if (isStoryOption) {
-                Global.getSector().getPlayerStats().spendStoryPoints(
-                        1,
-                        true,
-                        null,
-                        true,
-                        getBxpFraction(),
-                        getUsedSPDescription());
-                Global.getSoundPlayer().playUISound(getUsedSPSound(), 1f, 1f);
-            } else {
-                Global.getSoundPlayer().playUISound(getNormalSound(), 1f, 1f);
-            }
-        });
+    }
+
+    protected final void applyCosts() {
+        float cost = getModifiedCost();
+        Utils.getPlayerCredits().subtract(cost);
+        if (isStoryOption) {
+            Global.getSector().getPlayerStats().spendStoryPoints(
+                    1,
+                    true,
+                    null,
+                    true,
+                    getBxpFraction(),
+                    getUsedSPDescription());
+            Global.getSoundPlayer().playUISound(getUsedSPSound(), 1f, 1f);
+        } else {
+            Global.getSoundPlayer().playUISound(getNormalSound(), 1f, 1f);
+        }
     }
 
     protected String getNormalSound() {
@@ -73,14 +74,26 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         if (spLabel != null && isStoryOption) {
             float bxp = getBxpFraction();
             String bxpStr = Utils.asPercent(bxp);
+            int sp = Global.getSector().getPlayerStats().getStoryPoints();
+            String pointOrPoints = sp == 1 ? Strings.Misc.storyPoint : Strings.Misc.storyPoints;
             if (bxp <= 0f) {
-                spLabel.setText(String.format(Strings.Misc.requiresStoryPointNoBonus, Strings.Misc.storyPoint));
-                spLabel.setHighlight(Strings.Misc.storyPoint);
+                spLabel.setText(String.format(
+                        Strings.Misc.requiresStoryPointNoBonus,
+                        Strings.Misc.storyPoint,
+                        "" + sp,
+                        pointOrPoints));
+                spLabel.setHighlight(Strings.Misc.storyPoint, "" + sp, pointOrPoints);
                 spLabel.setHighlightColor(hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR);
             } else {
-                spLabel.setText(String.format(Strings.Misc.requiresStoryPointWithBonus, Strings.Misc.storyPoint, bxpStr));
-                spLabel.setHighlight(Strings.Misc.storyPoint, bxpStr);
-                spLabel.setHighlightColors(hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getStoryOptionColor());
+                spLabel.setText(String.format(
+                        Strings.Misc.requiresStoryPointWithBonus,
+                        Strings.Misc.storyPoint,
+                        bxpStr,
+                        "" + sp,
+                        pointOrPoints));
+                spLabel.setHighlight(Strings.Misc.storyPoint, bxpStr, "" + sp, pointOrPoints);
+                Color hc = hasEnoughSP ? Misc.getStoryOptionColor() : Settings.NEGATIVE_HIGHLIGHT_COLOR;
+                spLabel.setHighlightColors(hc, Misc.getStoryOptionColor(), hc, hc);
             }
             spLabel.setOpacity(shouldShowSPCost ? 1f : 0f);
         }
@@ -98,7 +111,7 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         return true;
     }
     protected float getBxpFraction() {
-        return HullmodUtils.getBonusXPFraction(getModifiedCost());
+        return HullmodUtils.getBonusXPFraction(getBaseCost());
     }
     protected abstract String[] getCostDescriptionArgs();
     protected abstract String getUsedSPDescription();

@@ -855,9 +855,12 @@ public abstract class Utils {
     }
 
     public static LabelAPI addStoryPointUseInfo(TooltipMakerAPI tooltip, float bonusXPFrac) {
+        int sp = Global.getSector().getPlayerStats().getStoryPoints();
+        String pointOrPoints = sp == 1 ? Strings.Misc.storyPoint : Strings.Misc.storyPoints;
+        Color hc = sp == 0 ? Misc.getNegativeHighlightColor() : Misc.getStoryOptionColor();
         if (bonusXPFrac <= 0f) {
-            return tooltip.addPara(Strings.Misc.requiresStoryPointNoBonus, 10f, Misc.getStoryOptionColor(), Strings.Misc.storyPoint);
+            return tooltip.addPara(Strings.Misc.requiresStoryPointNoBonus, 10f, new Color[] {hc, hc, hc}, Strings.Misc.storyPoint, "" + sp, pointOrPoints);
         }
-        return tooltip.addPara(Strings.Misc.requiresStoryPointWithBonus, 10f, Misc.getStoryOptionColor(), Strings.Misc.storyPoint, asPercent(bonusXPFrac));
+        return tooltip.addPara(Strings.Misc.requiresStoryPointWithBonus, 10f, new Color[] {hc, Misc.getStoryOptionColor(), hc, hc}, Strings.Misc.storyPoint, asPercent(bonusXPFrac), "" + sp, pointOrPoints);
     }
 }

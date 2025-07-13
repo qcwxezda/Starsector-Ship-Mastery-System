@@ -12,6 +12,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class HullReversionButton extends ButtonWithHullmodSelection {
@@ -54,6 +55,7 @@ public class HullReversionButton extends ButtonWithHullmodSelection {
     protected Collection<Item<HullModSpecAPI>> getEligibleItems() {
         return selectedShip.getVariant().getSMods().stream()
                 .map(x -> Global.getSettings().getHullModSpec(x))
+                .sorted(Comparator.comparing(HullModSpecAPI::getDisplayName))
                 .map(HullmodItem::new)
                 .collect(Collectors.toList());
     }

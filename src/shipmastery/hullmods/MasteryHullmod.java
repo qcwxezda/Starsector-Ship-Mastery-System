@@ -38,21 +38,6 @@ public class MasteryHullmod extends BaseHullMod {
             }
         }
 
-        // Enhances 6-10 decrease damage taken by 1% each
-        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
-        ShipHullSpecAPI rootSpec = info == null ? variant.getHullSpec() : info.root.getHullSpec();
-        int enhanceCount = MasteryUtils.getEnhanceCount(rootSpec);
-        float dr = 0f;
-        for (int i = 0; i < enhanceCount; i++) {
-            dr += MasteryUtils.ENHANCE_DR_AMOUNT[i];
-        }
-        if (dr > 0f) {
-            stats.getShieldDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getArmorDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getHullDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getEmpDamageTakenMult().modifyMult(id, 1f-dr);
-        }
-
         applyEffects(variant, (effect, commander, isModule) -> {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                 effect.applyEffectsBeforeShipCreation(hullSize, stats);
@@ -68,6 +53,7 @@ public class MasteryHullmod extends BaseHullMod {
             }
         });
 
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
         // Penalize CR if the ship's OP is above the limit, for player ships only
         if (info != null && info.commander != null && info.commander.isPlayer()) {
             int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());

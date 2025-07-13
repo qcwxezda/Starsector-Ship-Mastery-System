@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
 import org.json.JSONException;
 import org.json.JSONObject;
-import shipmastery.util.MathUtils;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -13,16 +12,16 @@ public class Settings {
     public static Color MASTERY_COLOR = new Color(96, 225, 255);
     public static Color POSITIVE_HIGHLIGHT_COLOR = Misc.getHighlightColor();
     public static Color NEGATIVE_HIGHLIGHT_COLOR = Misc.getNegativeHighlightColor();
-    public static Boolean CLEAR_SMODS_ALWAYS_ENABLED;
-    public static Float CLEAR_SMODS_REFUND_FRACTION;
+    public static Float CLEAR_SMODS_REFUND_FRACTION = 0f;
     public static String RANDOM_GENERATION_SEED;
+    public static Boolean DISPLAY_LOCKED_MASTERIES;
     public static Float COMBAT_MP_GAIN_MULTIPLIER;
     public static Float CIVILIAN_MP_GAIN_MULTIPLIER;
     public static Float BUILD_IN_CREDITS_COST_MULTIPLIER;
     public static Float DOUBLE_CLICK_INTERVAL;
-    public static Float CYBER_AUG_MAX_BONUS;
-    public static Float CYBER_AUG_BONUS_PER_GROUP;
-    public static Float CYBER_AUG_BASE_BONUS;
+    public static Float CYBER_AUG_MAX_BONUS = 0.1f;
+    public static Float CYBER_AUG_BONUS_PER_GROUP = 0.02f;
+    public static Float CYBER_AUG_BASE_BONUS = 0.02f;
     public static Boolean ENABLE_COPY_SEED_BUTTON;
     /** By default, the average mastery level any ship hull will have for an NPC fleet is (1/3 commander level + modifier in difficulty csv) */
     public static Integer NPC_MASTERY_LEVEL_MODIFIER;
@@ -39,7 +38,6 @@ public class Settings {
     public static Boolean ENABLE_RECENT_BATTLES;
     public static Boolean RECENT_BATTLES_PRECISE_MODE;
     public static Boolean ADD_SMOD_AUTOFIT_OPTION;
-    public static Integer ADDITIONAL_MP_PER_REROLL;
     public static Float CR_PENALTY_PER_EXCESS_OP_PERCENT;
 
 
@@ -59,19 +57,13 @@ public class Settings {
         RECENT_BATTLES_PRECISE_MODE = json.getBoolean("recentBattlesPreciseMode");
         ADD_SMOD_AUTOFIT_OPTION = json.getBoolean("addSModAutofitOption");
         DISABLE_MAIN_FEATURES = json.getBoolean("disableMainFeatures");
-        CLEAR_SMODS_ALWAYS_ENABLED = json.getBoolean("clearSModsAlwaysEnabled");
-        CLEAR_SMODS_REFUND_FRACTION = MathUtils.clamp((float) json.getDouble("clearSModsRefundFraction"), 0f, 1f);
         COMBAT_MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("combatMPGainMultiplier"));
         CIVILIAN_MP_GAIN_MULTIPLIER = Math.max(0f, (float) json.getDouble("civilianMPGainMultiplier"));
         BUILD_IN_CREDITS_COST_MULTIPLIER = Math.max(0f, (float) json.getDouble("buildInCreditsCostMultiplier"));
         RANDOM_GENERATION_SEED = json.getString("randomMasterySeed");
         ENABLE_COPY_SEED_BUTTON = json.getBoolean("enableCopySeedButton");
+        DISPLAY_LOCKED_MASTERIES = json.getBoolean("displayLockedMasteries");
 
-        CYBER_AUG_BASE_BONUS = Math.max(0f, (float) json.getDouble("cyberAugBaseBonus"));
-        CYBER_AUG_MAX_BONUS = Math.max(0f, (float) json.getDouble("cyberAugMaxBonus"));
-        CYBER_AUG_BONUS_PER_GROUP = Math.max(0f, (float) json.getDouble("cyberAugBonusPerGroup"));
-
-        ADDITIONAL_MP_PER_REROLL = Math.max(0, json.getInt("additionalMPPerReroll"));
         CR_PENALTY_PER_EXCESS_OP_PERCENT = Math.max(0f, (float) json.getDouble("crPenaltyPerExcessOPPercent"));
     }
 }

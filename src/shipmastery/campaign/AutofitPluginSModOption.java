@@ -13,7 +13,6 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.MutableValue;
-import shipmastery.ShipMastery;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.HullmodUtils;
@@ -71,7 +70,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
 
     private boolean addSModIfPossible(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         return useSP ? addSModIfPossibleUseSP(hullmod, variant, delegate, sModLimit)
-                : addSModIfPossibleUseMP(hullmod, variant, delegate, sModLimit);
+                : addSModIfPossibleUseCredits(hullmod, variant, delegate, sModLimit);
     }
 
     private boolean canAddSMod(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
@@ -99,18 +98,14 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
         return false;
     }
 
-    private boolean addSModIfPossibleUseMP(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
+    private boolean addSModIfPossibleUseCredits(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         ShipAPI ship = delegate.getShip();
         HullModSpecAPI modSpec = Global.getSettings().getHullModSpec(hullmod);
-        float mpCost = HullmodUtils.getMPCost(modSpec, ship);
         float creditsCost = HullmodUtils.getBuildInCost(modSpec, ship);
-        float playerMP = ShipMastery.getPlayerMasteryPoints(rootSpec);
         MutableValue playerCredits = Utils.getPlayerCredits();
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
-        if (((playerMP >= mpCost &&
-                playerCredits.get() >= creditsCost) || Global.getSettings().isDevMode()) &&
+        if (((playerCredits.get() >= creditsCost) || Global.getSettings().isDevMode()) &&
                 canAddSMod(hullmod, variant, delegate, sModLimit)) {
-            ShipMastery.spendPlayerMasteryPoints(rootSpec, mpCost);
             playerCredits.subtract(creditsCost);
             if (isBuiltIn) {
                 variant.getSModdedBuiltIns().add(hullmod);
@@ -147,7 +142,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                     HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(sMod);
                     sModCreditsCostMap.put(
                             sMod, HullmodUtils.getBuildInCost(hullModSpec, ship));
-                    sModMPCostMap.put(sMod, HullmodUtils.getMPCost(hullModSpec, ship));
+                    sModMPCostMap.put(sMod, 0);
                     modified = true;
                 } else break;
             }
@@ -164,7 +159,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 if (addSModIfPossible(sMod, current, delegate, limit + (isFirstLogistic ? 1 : 0))) {
                     sModCreditsCostMap.put(
                             sMod, HullmodUtils.getBuildInCost(hullModSpec, ship));
-                    sModMPCostMap.put(sMod, HullmodUtils.getMPCost(hullModSpec, ship));
+                    sModMPCostMap.put(sMod, 0);
                     modified = true;
                     if (isFirstLogistic) limit++;
                     if (hullModSpec.hasUITag(HullMods.TAG_UI_LOGISTICS)) {
@@ -201,14 +196,12 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
                 sModCreditsCostMap.clear();
                 sModMPCostMap.clear();
                 float savedCredits = Utils.getPlayerCredits().get();
-                float savedMP = ShipMastery.getPlayerMasteryPoints(rootSpec);
                 int savedSP = Global.getSector().getPlayerStats().getStoryPoints();
 
                 boolean modified = tryAddSMods(current, target, delegate);
 
                 if (!isConfirm) {
                     Utils.getPlayerCredits().set(savedCredits);
-                    ShipMastery.setPlayerMasteryPoints(rootSpec, savedMP);
                 }
                 Global.getSector().getPlayerStats().setStoryPoints(savedSP);
 

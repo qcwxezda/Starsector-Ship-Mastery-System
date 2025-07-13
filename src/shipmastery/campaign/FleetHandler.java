@@ -1,7 +1,8 @@
 package shipmastery.campaign;
 
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListenerAndScript;
+import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
@@ -45,7 +46,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class FleetHandler extends BaseCampaignEventListenerAndScript implements FleetInflationListener, CoreAutoresolveListener {
+public class FleetHandler extends BaseCampaignEventListener implements FleetInflationListener, CoreAutoresolveListener, EveryFrameScript {
 
     /** Commander id -> hull spec id -> levels. Don't use commander's memory as that gets put into the save file */
     public static final int MAX_CACHED_COMMANDERS = 100;
@@ -60,6 +61,14 @@ public class FleetHandler extends BaseCampaignEventListenerAndScript implements 
      *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
     public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
     public static final Map<String, Map<String, NavigableMap<Integer, String>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
+
+    public FleetHandler() {
+        super(false);
+        Global.getSector().addTransientScript(this);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().getListenerManager().addListener(this, true);
+        NPC_MASTERY_CACHE.clear();
+    }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, String> levels) {
         Map<String, NavigableMap<Integer, String>> subMap = NPC_MASTERY_CACHE.computeIfAbsent(commander.getId(), k -> new HashMap<>());
@@ -346,7 +355,7 @@ public class FleetHandler extends BaseCampaignEventListenerAndScript implements 
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
 
         float bonus = data.averageModifier();
-        float averageLevel = commander.getStats().getLevel()/3f + bonus + getNPCLevelModifier(progression);
+        float averageLevel = commander.getStats().getLevel()/4f + bonus + getNPCLevelModifier(progression);
         float masteryStrength = data.masteryStrengthBonus();
         commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(FleetHandler.class.getName(), 100f*masteryStrength);
 
@@ -421,6 +430,11 @@ public class FleetHandler extends BaseCampaignEventListenerAndScript implements 
 
     public static int getCommanderAndHullSeed(PersonAPI commander, ShipHullSpecAPI spec) {
         return (commander.getId() + spec.getHullId() + "___").hashCode();
+    }
+
+    @Override
+    public boolean isDone() {
+        return false;
     }
 
     @Override
