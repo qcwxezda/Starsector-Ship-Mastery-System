@@ -23,6 +23,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -179,7 +180,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     }
                 }
 
-                int sModsToAdd = HullmodUtils.getMaxSMods(fm) - variant.getSMods().size();
+                int sModsToAdd = HullmodUtils.getMaxSMods(fm) - Misc.getCurrSpecialMods(variant);
                 float prob = difficultyData.baseSModProb() * (float) Math.pow(difficultyData.sModProbMultPerDMod(), DModManager.getNumDMods(variant));
                 addAdditionalSModsToVariant(variant, sModsToAdd, fleet, random, prob);
 

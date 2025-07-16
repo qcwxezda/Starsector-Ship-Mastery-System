@@ -37,10 +37,10 @@ import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import shipmastery.achievements.AmorphousCoreUsed;
+import shipmastery.achievements.AmorphousPseudocoreUsed;
 import shipmastery.achievements.PseudocoreCrewedShip;
 import shipmastery.achievements.UnlockAchievementAction;
-import shipmastery.campaign.items.BaseKCorePlugin;
+import shipmastery.campaign.items.BasePseudocorePlugin;
 import shipmastery.util.FleetMemberTooltipCreator;
 import shipmastery.util.IntRef;
 import shipmastery.util.OnShipButtonClicked;
@@ -61,7 +61,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @SuppressWarnings("unused")
-public class sms_cKCoreUplink extends BaseCommandPlugin {
+public class sms_cPseudocoreUplink extends BaseCommandPlugin {
 
     public static final String CORE_BUTTON_PREFIX = "sms_core_button";
     public static final String SKILL_BUTTON_PREFIX = "sms_skill_button";
@@ -69,7 +69,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
     private static MethodHandle setMaxShadowHeight = null;
     private static final MethodHandle addTooltipAbove;
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
-    public static Logger logger = Logger.getLogger(sms_cKCoreUplink.class);
+    public static Logger logger = Logger.getLogger(sms_cPseudocoreUplink.class);
 
     static {
         try {
@@ -204,7 +204,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
 
             // AI Core selection buttons
             float corePanelWidth = 306f, corePanelHeight = 188f, itemPad = 10f;
-            createOutlineAndTitle(panel, Strings.Items.uplinkKCoreSelect, corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
+            createOutlineAndTitle(panel, Strings.Items.uplinkPseudocoreSelect, corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
             float itemSize = 64f;
             var corePicker = panel.createUIElement(corePanelWidth, corePanelHeight-20f-2f*itemPad, true);
             //corePicker.getPosition().setXAlignOffset(-itemPad);
@@ -216,7 +216,7 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
                         var id = stack.getCommodityId();
                         if (id == null) return;
                         var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
-                        if (spec == null || !spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) return;
+                        if (spec == null || !spec.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) return;
                         consumer.accept(Map.entry(spec, stack));
                     })
                     .<TreeMap<CommoditySpecAPI, CargoStackAPI>>collect(() -> new TreeMap<>(
@@ -426,8 +426,8 @@ public class sms_cKCoreUplink extends BaseCommandPlugin {
 
             // Update achievements
             UnlockAchievementAction.unlockWhenUnpaused(PseudocoreCrewedShip.class);
-            if (AmorphousCoreUsed.canCompleteAchievement(plugin.selectedFleetMember)) {
-                UnlockAchievementAction.unlockWhenUnpaused(AmorphousCoreUsed.class);
+            if (AmorphousPseudocoreUsed.canCompleteAchievement(plugin.selectedFleetMember)) {
+                UnlockAchievementAction.unlockWhenUnpaused(AmorphousPseudocoreUsed.class);
             }
         }
 

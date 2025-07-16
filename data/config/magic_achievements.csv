@@ -30,4 +30,4 @@ sms_SalvagedStation,"Knowledge Seeker","Salvaged a concealed station.",,shipmast
 sms_SalvagedAllStations,"Knowledge Overflow","Salvaged every concealed station.",,shipmastery.achievements.SalvagedAllStations,,VISIBLE,EPIC
 sms_PseudocoreCrewedShip,"The Pseudocore Connection, Part 1","Placed a Pseudocore in command of a crewed ship.",,shipmastery.achievements.PseudocoreCrewedShip,,VISIBLE,EPIC
 sms_PseudocoreAmplifierIntegrated,"The Pseudocore Connection, Part 2","Unlocked the full potential of Pseudocores.",,shipmastery.achievements.PseudocoreAmplifierIntegrated,,VISIBLE,EPIC
-sms_AmorphousCoreUsed,"The Pseudocore Connection, Part 3","Placed the Amorphous Pseudocore in command of a crewed ship.",,shipmastery.achievements.AmorphousCoreUsed,,SPOILER,LEGENDARY
+sms_AmorphousCoreUsed,"The Pseudocore Connection, Part 3","Placed the Amorphous Pseudocore in command of a crewed ship.",,shipmastery.achievements.AmorphousPseudocoreUsed,,SPOILER,LEGENDARY

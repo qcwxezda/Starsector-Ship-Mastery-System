@@ -2,7 +2,6 @@ package shipmastery.campaign.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
@@ -27,12 +26,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface, CoreTabListener {
+public class BasePseudocorePlugin implements PlayerFleetSyncListener, PseudocoreInterface, CoreTabListener {
 
     public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
     public static final String DEFAULT_PERSONALITY_ID = "aggressive";
     public static final String SHARED_KNOWLEDGE_ID = "sms_shared_knowledge";
-    public static final String IS_K_CORE_TAG = "sms_k_core";
+    public static final String CRYSTALLINE_KNOWLEDGE_ID = "sms_crystalline_knowledge";
+    public static final String WARPED_KNOWLEDGE_ID = "sms_warped_knowledge";
+    public static final String AMORPHOUS_KNOWLEDGE_ID = "sms_amorphous_knowledge";
+    public static final String IS_PSEUDOCORE_TAG = "sms_pseudocore";
 
     @Override
     public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {
@@ -40,9 +42,8 @@ public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface,
     }
 
     @Override
-    public void onFleetSync(CampaignFleetAPI fleet) {
-        if (!fleet.isPlayerFleet()) return;
-
+    public void onPlayerFleetSync() {
+        var fleet = Global.getSector().getPlayerFleet();
         Map<String, AICoreOfficerPlugin> plugins = new HashMap<>();
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             PersonAPI captain = fm.getCaptain();
@@ -53,17 +54,17 @@ public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface,
                 if (spec.hasTag(COPY_PERSONALITY_TAG)) {
                     setPersonalityToPlayerDoctrine(captain);
                 }
-                if (spec.hasTag(IS_K_CORE_TAG)) {
+                if (spec.hasTag(IS_PSEUDOCORE_TAG)) {
                     float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
                     var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
                     var memory = captain.getMemoryWithoutUpdate();
-                    if (memory != null && plugin instanceof BaseKCorePlugin kPlugin) {
+                    if (memory != null && plugin instanceof BasePseudocorePlugin kPlugin) {
                         float baseMult = kPlugin.getBaseAIPointsMult();
                         // Special behavior for amorphous cores
-                        if ("sms_amorphous_core".equals(id)) {
+                        if ("sms_amorphous_pseudocore".equals(id)) {
                             int points = (int) ShipMastery.getPlayerMasteryPoints(fm.getHullSpec());
-                            int groups = (int) (points / AmorphousCorePlugin.MP_PER_GROUP);
-                            baseMult = Math.max(1f, baseMult - groups*AmorphousCorePlugin.DP_MULT_PER_MP_GROUP);
+                            int groups = (int) (points / AmorphousPseudocorePlugin.MP_PER_GROUP);
+                            baseMult = Math.max(1f, baseMult - groups*AmorphousPseudocorePlugin.DP_MULT_PER_MP_GROUP);
                         }
                         memory.set("$autoPointsMult", baseMult * ratio);
                     }
@@ -158,14 +159,14 @@ public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface,
         Color bg = Global.getSector().getPlayerFaction().getDarkUIColor();
         float w = (tooltip.getTextWidthOverride() <= 10f ? tooltip.getWidthSoFar() : tooltip.getTextWidthOverride()) - 5f;
 
-        tooltip.addSectionHeading(Strings.Items.kCoreAdditionalInfo, text, bg, Alignment.MID, w+5f,20f);
-        tooltip.addPara(Strings.Items.kCorePersonalityText, opad, highlightColor, params);
-        tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.kCorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.kCorePersonalityTableTitle2, w / 3f);
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName1, levelColor, Utils.asInt(level));
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName2, autoMultColor, "×" + Utils.asFloatTwoDecimals(autoMult));
-        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.kCorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
+        tooltip.addSectionHeading(Strings.Items.pseudocoreAdditionalInfo, text, bg, Alignment.MID, w+5f,20f);
+        tooltip.addPara(Strings.Items.pseudocorePersonalityText, opad, highlightColor, params);
+        tooltip.beginTable(Global.getSector().getPlayerFaction(), 30f, Strings.Items.pseudocorePersonalityTableTitle1, w * 2f / 3f, Strings.Items.pseudocorePersonalityTableTitle2, w / 3f);
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.pseudocorePersonalityTableName1, levelColor, Utils.asInt(level));
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.pseudocorePersonalityTableName2, autoMultColor, "×" + Utils.asFloatTwoDecimals(autoMult));
+        tooltip.addRowWithGlow(Misc.getTextColor(), Strings.Items.pseudocorePersonalityTableName3, Misc.getHighlightColor(), Misc.getPersonalityName(person));
         tooltip.addTable("", 0, opad);
-        tooltip.addPara(Strings.Items.kCorePersonalityText2, opad);
+        tooltip.addPara(Strings.Items.pseudocorePersonalityText2, opad);
     }
 
     @Override
@@ -183,12 +184,10 @@ public class BaseKCorePlugin implements PlayerFleetSyncListener, KCoreInterface,
     }
 
     @Override
-    public void onCoreTabOpened(CoreUITabId id) {
-
-    }
+    public void onCoreTabOpened(CoreUITabId id) {}
 
     @Override
     public void onCoreUIDismissed() {
-        onFleetSync(Global.getSector().getPlayerFleet());
+        onPlayerFleetSync();
     }
 }

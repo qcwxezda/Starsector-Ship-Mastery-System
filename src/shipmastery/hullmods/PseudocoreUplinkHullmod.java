@@ -1,20 +1,19 @@
 package shipmastery.hullmods;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.campaign.items.BaseKCorePlugin;
-import shipmastery.campaign.items.KCoreUplinkPlugin;
+import shipmastery.campaign.items.BasePseudocorePlugin;
+import shipmastery.campaign.items.PseudocoreUplinkPlugin;
 import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class KCoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncListener {
+public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncListener {
 
-    public static KCoreUplinkPlugin.KCoreUplinkData savedPenaltyData = null;
+    public static PseudocoreUplinkPlugin.PseudocoreUplinkData savedPenaltyData = null;
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
@@ -26,7 +25,7 @@ public class KCoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncLi
         var captain = fm.getCaptain();
         if (!captain.isAICore()) return;
         var core = Global.getSettings().getCommoditySpec(captain.getAICoreId());
-        if (core == null || !core.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) return;
+        if (core == null || !core.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) return;
 
         float penalty = savedPenaltyData == null ? 0f : savedPenaltyData.crPenalty();
         if (penalty > 0f) {
@@ -35,22 +34,22 @@ public class KCoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncLi
     }
 
     @Override
-    public void onFleetSync(CampaignFleetAPI fleet) {
-        if (!fleet.isPlayerFleet()) return;
-        savedPenaltyData = KCoreUplinkPlugin.getKCoreCRPointsAndPenalty();
+    public void onPlayerFleetSync() {
+        var fleet = Global.getSector().getPlayerFleet();
+        savedPenaltyData = PseudocoreUplinkPlugin.getPseudocoreCRPointsAndPenalty();
         for (var fm : fleet.getFleetData().getMembersListCopy()) {
             boolean handle = false;
             var id = fm.getCaptain().getAICoreId();
             if (id != null) {
                 var spec = Global.getSettings().getCommoditySpec(id);
-                if (spec != null && spec.hasTag(BaseKCorePlugin.IS_K_CORE_TAG)) {
+                if (spec != null && spec.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) {
                     handle = true;
                 }
             }
             if (handle) {
-                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_k_core_uplink_handler", false);
+                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_pseudocore_uplink_handler", false);
             } else {
-                fm.getVariant().removePermaMod("sms_k_core_uplink_handler");
+                fm.getVariant().removePermaMod("sms_pseudocore_uplink_handler");
             }
         }
     }

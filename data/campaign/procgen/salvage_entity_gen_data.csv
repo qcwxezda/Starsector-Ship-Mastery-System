@@ -4,10 +4,10 @@ rare_tech_low:2,
 sms_construct_pref_in_fleet:14,
 sms_construct_random:8,
 extended:5x5000,
-sms_k_cores2:10
+sms_pseudocores2:10
 ",,,,,,,,,
 sms_concealed_probe,0,50,DISCOVERABLE,1000,500,2000,,basic:4000,"weapons1:15,
-sms_k_cores1:5,
+sms_pseudocores1:5,
 sms_construct_pref_in_fleet:4,
 extended:1x3000
 ",,,,,,,,,

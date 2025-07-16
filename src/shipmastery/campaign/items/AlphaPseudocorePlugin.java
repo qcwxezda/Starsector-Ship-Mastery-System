@@ -1,12 +1,14 @@
 package shipmastery.campaign.items;
 
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import shipmastery.campaign.skills.SharedKnowledge;
 
-public class AlphaKCorePlugin extends BaseKCorePlugin {
+public class AlphaPseudocorePlugin extends BasePseudocorePlugin implements SharedKnowledge.HiddenAICoreEffect {
 
     public static final int LEVEL = 7;
-    public static final float BASE_DP_MULT = 4.5f;
+    public static final float BASE_DP_MULT = 4f;
 
 
     @Override
@@ -33,11 +35,16 @@ public class AlphaKCorePlugin extends BaseKCorePlugin {
 
     @Override
     public String getCommodityId() {
-        return "sms_alpha_k_core";
+        return "sms_alpha_pseudocore";
     }
 
     @Override
     public String getPortraitSpritePath() {
-        return "graphics/portraits/sms_portrait_alpha_k_core.png";
+        return "graphics/portraits/sms_portrait_alpha_pseudocore.png";
+    }
+
+    @Override
+    public float getCooldownSeconds(ShipAPI ship) {
+        return 30f;
     }
 }

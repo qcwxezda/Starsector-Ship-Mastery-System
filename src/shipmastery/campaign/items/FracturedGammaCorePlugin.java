@@ -3,7 +3,7 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 
-public class FracturedGammaCorePlugin extends BaseKCorePlugin {
+public class FracturedGammaCorePlugin extends BasePseudocorePlugin {
 
     public static final int LEVEL = 1;
     public static final float DP_MULT = 1.33f;

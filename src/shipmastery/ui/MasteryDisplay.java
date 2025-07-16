@@ -231,8 +231,9 @@ public class MasteryDisplay implements CustomUIElement {
             if (endLevel > startLevel) {
                 CustomPanelAPI titlePanel = Global.getSettings().createCustom(w + 50f, 50f, null);
                 TooltipMakerAPI titleMaker = titlePanel.createUIElement(w - 8f, 50f, false);
-                titleMaker.setTitleFont(Fonts.ORBITRON_24AABOLD);
-                titleMaker.addTitle(Strings.MasteryPanel.levelText + " " + i, i > ShipMastery.getPlayerMasteryLevel(rootSpec) ? Misc.getGrayColor() : Misc.getBasePlayerColor()).setAlignment(Alignment.MID);
+                titleMaker.setTitleFont(Fonts.ORBITRON_20AABOLD);
+                String text = Strings.MasteryPanel.levelText + " " + i;
+                titleMaker.addTitle(text, i > ShipMastery.getPlayerMasteryLevel(rootSpec) ? Misc.getGrayColor() : Misc.getBasePlayerColor()).setAlignment(Alignment.MID);
                 titlePanel.addUIElement(titleMaker).inTR(0f, 0f);
                 tooltip.addComponent(titlePanel).inTR(-3f, totalHeight - 30f);
             }

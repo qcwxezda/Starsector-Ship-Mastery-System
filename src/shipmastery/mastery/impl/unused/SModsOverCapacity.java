@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.AdditiveMasteryEffect;
@@ -48,7 +49,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         if (stats == null || stats.getVariant() == null || stats.getFleetMember() == null) return;
 
-        int overMax = stats.getVariant().getSMods().size() - HullmodUtils.getMaxSMods(stats);
+        int overMax = Misc.getCurrSpecialMods(stats.getVariant()) - HullmodUtils.getMaxSMods(stats);
         if (overMax > 0) {
             Set<Integer> ids = overCapacityMap.get(stats.getFleetMember().getId());
             overMax = Math.min(overMax, ids == null ? 0 : ids.size());

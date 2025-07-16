@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
@@ -25,7 +26,7 @@ public class ExtradimensionalRearrangement2 extends BaseHullMod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, ADDITIONAL_SMODS);
         if (stats.getVariant() == null) return;
-        int num = stats.getVariant().getSMods().size();
+        int num = Misc.getCurrSpecialMods(stats.getVariant());
         stats.getArmorDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
         stats.getHullDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
         stats.getShieldDamageTakenMult().modifyPercent(id, 100f * num * DAMAGE_TAKEN_PER_SMOD);
@@ -46,7 +47,7 @@ public class ExtradimensionalRearrangement2 extends BaseHullMod {
         private String modifyDamage(CombatEntityAPI target, DamageAPI damage) {
             if (!(target instanceof ShipAPI ship)) return null;
             if (ship.getVariant() == null) return null;
-            int sMods = ship.getVariant().getSMods().size();
+            int sMods = Misc.getCurrSpecialMods(ship.getVariant());
             if (sMods == 0) return null;
             damage.getModifier().modifyPercent(id, 100f * ExtradimensionalRearrangement2.DAMAGE_DEALT_PER_SMOD * sMods);
             return id;

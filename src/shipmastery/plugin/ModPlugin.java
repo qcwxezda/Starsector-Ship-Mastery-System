@@ -27,7 +27,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.MasteredMany;
-import shipmastery.campaign.items.BaseKCorePlugin;
+import shipmastery.campaign.items.BasePseudocorePlugin;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
 import shipmastery.campaign.FleetHandler;
@@ -36,12 +36,7 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
-import shipmastery.campaign.items.AlphaKCorePlugin;
-import shipmastery.campaign.items.AmorphousCorePlugin;
-import shipmastery.campaign.items.BetaKCorePlugin;
-import shipmastery.campaign.items.FracturedGammaCorePlugin;
-import shipmastery.campaign.items.KCoreInterface;
-import shipmastery.campaign.items.GammaKCorePlugin;
+import shipmastery.campaign.items.PseudocoreInterface;
 import shipmastery.campaign.listeners.FleetSyncListenerHandler;
 import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
@@ -50,8 +45,7 @@ import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.hullmods.CuratorPlayerHullmod;
-import shipmastery.hullmods.KCoreUplinkHullmod;
+import shipmastery.hullmods.PseudocoreUplinkHullmod;
 import shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface;
 import shipmastery.procgen.Generator;
 import shipmastery.util.Strings;
@@ -97,9 +91,16 @@ public class ModPlugin extends BaseModPlugin {
             Settings.loadSettingsFromJson();
         }
 
-        // Load this particular portrait sprite manually as we do not want these to be
+        var miscAptitudeSpec = Global.getSettings().getSkillSpec("sms_aptitude_misc");
+        miscAptitudeSpec.addTag("npc_only");
+        miscAptitudeSpec.addTag("ai_core_only");
+        miscAptitudeSpec.addTag("hide_in_codex");
+
+        // Load these particular portrait sprites manually as we do not want these to be
         // random officers
-        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_amorphous_core.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_warped_pseudocore.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_crystalline_pseudocore.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_amorphous_pseudocore.png");
     }
 
     @Override
@@ -107,9 +108,15 @@ public class ModPlugin extends BaseModPlugin {
         CodexDataV2.makeRelated(
                 CodexDataV2.getSkillEntryId("sms_shared_knowledge"),
                 CodexDataV2.getItemEntryId("sms_construct"),
-                CodexDataV2.getCommodityEntryId("sms_gamma_k_core"),
-                CodexDataV2.getCommodityEntryId("sms_beta_k_core"),
-                CodexDataV2.getCommodityEntryId("sms_alpha_k_core"));
+                CodexDataV2.getCommodityEntryId("sms_gamma_pseudocore"),
+                CodexDataV2.getCommodityEntryId("sms_beta_pseudocore"),
+                CodexDataV2.getCommodityEntryId("sms_alpha_pseudocore"));
+        CodexDataV2.makeRelated(
+                CodexDataV2.getSkillEntryId("sms_warped_knowledge"),
+                CodexDataV2.getCommodityEntryId("sms_warped_pseudocore"));
+        CodexDataV2.makeRelated(
+                CodexDataV2.getSkillEntryId("sms_crystalline_knowledge"),
+                CodexDataV2.getCommodityEntryId("sms_crystalline_pseudocore"));
     }
 
     private void initializeCuratorFaction() {
@@ -219,6 +226,9 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+
+        // Start with the modspec, rather than the mod just unlocked, to highlight that the option exists
+        Global.getSector().getPlayerFleet().getCargo().addHullmods(Strings.Hullmods.ENGINEERING_OVERRIDE, 1);
     }
 
     @Override
@@ -343,15 +353,14 @@ public class ModPlugin extends BaseModPlugin {
         registerCommodityTooltipPlugin(listeners);
         registerAICorePlugins();
         new FracturedGammaCoreInterface.IntegrationScript();
-        var kCorePlugin = new BaseKCorePlugin();
-        FleetSyncListenerHandler.registerListener(kCorePlugin);
+        var pseudocorePlugin = new BasePseudocorePlugin();
+        FleetSyncListenerHandler.registerListener(pseudocorePlugin);
         try {
-            registerCoreTabListener.invoke(coreTabListenerHandler, kCorePlugin);
+            registerCoreTabListener.invoke(coreTabListenerHandler, pseudocorePlugin);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-        FleetSyncListenerHandler.registerListener(new KCoreUplinkHullmod());
-        FleetSyncListenerHandler.registerListener(new CuratorPlayerHullmod());
+        FleetSyncListenerHandler.registerListener(new PseudocoreUplinkHullmod());
 
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();
@@ -375,7 +384,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
             var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
-            if (!(plugin instanceof KCoreInterface)) return;
+            if (!(plugin instanceof PseudocoreInterface)) return;
             plugin.createPersonalitySection(null, info);
         }, true);
     }
@@ -384,14 +393,9 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().registerPlugin(new BaseCampaignPlugin() {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
-                return switch (commodityId) {
-                    case "sms_alpha_k_core" -> new PluginPick<>(new AlphaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_beta_k_core" -> new PluginPick<>(new BetaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_gamma_k_core" -> new PluginPick<>(new GammaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_fractured_gamma_core" -> new PluginPick<>(new FracturedGammaCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_amorphous_core" -> new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    default -> null;
-                };
+                var plugin = PseudocoreInterface.getPluginForPseudocore(commodityId);
+                if (plugin == null) return null;
+                return new PluginPick<>(plugin, PickPriority.MOD_SPECIFIC);
             }
         });
     }
@@ -403,7 +407,7 @@ public class ModPlugin extends BaseModPlugin {
         if (id == null) return null;
         CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(id);
         if (spec == null) return null;
-        if (spec.getTags().contains(BaseKCorePlugin.IS_K_CORE_TAG)) {
+        if (spec.getTags().contains(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) {
             ShipAIConfig config = new ShipAIConfig();
             config.alwaysStrafeOffensively = true;
             config.backingOffWhileNotVentingAllowed = true;

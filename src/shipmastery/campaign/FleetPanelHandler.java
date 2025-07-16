@@ -21,6 +21,7 @@ import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.util.vector.Vector2f;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.config.Settings;
@@ -29,6 +30,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.hullmods.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.ui.LevelUpDialog;
 import shipmastery.util.MasteryUtils;
+import shipmastery.util.MathUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
 
@@ -112,6 +114,8 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
         public Color brighterMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.7f);
         public Color brightHighlightColor = Utils.mixColor(Settings.POSITIVE_HIGHLIGHT_COLOR, Color.WHITE, 0.4f);
         public Color brightEnhanceColor = Utils.mixColor(Misc.getStoryOptionColor(), Color.WHITE, 0.3f);
+        private boolean hasEngineeringOverride = false;
+        public boolean showIcons = true;
 
         public record MasteryData(ShipHullSpecAPI spec, int level, int maxLevel, int enhances, float curPts, float reqPts) {}
         public MasteryData data;
@@ -129,6 +133,8 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             enhanceFrac = (float) MasteryUtils.getEnhanceCount(spec) / MasteryUtils.MAX_ENHANCES;
             brightMasteryColor = Utils.mixColor(Settings.MASTERY_COLOR, Color.WHITE, 0.6f);
             brightHighlightColor = Utils.mixColor(Settings.POSITIVE_HIGHLIGHT_COLOR, Color.WHITE, 0.4f);
+
+            hasEngineeringOverride = member.getVariant().hasHullMod(Strings.Hullmods.ENGINEERING_OVERRIDE);
 
             if (level >= maxLevel || member.getFleetCommander() == null || !member.getFleetCommander().isPlayer()) {
                 forceNoFlash = true;
@@ -193,6 +199,28 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             }
         }
 
+        @SuppressWarnings("SameParameterValue")
+        private void drawLineWithWidth(Vector2f start, Vector2f end, float width, Color color, float alphaMult) {
+            Vector2f diff = Vector2f.sub(end, start, null);
+            //noinspection SuspiciousNameCombination
+            Vector2f perp = MathUtils.safeNormalize(new Vector2f(-diff.y, diff.x));
+            perp.scale(width);
+            Vector2f negPerp = new Vector2f(-perp.x, -perp.y);
+            Vector2f p1 = Vector2f.add(start, perp, null);
+            Vector2f p2 = Vector2f.add(start, negPerp, null);
+            Vector2f p3 = Vector2f.add(end, negPerp, null);
+            Vector2f p4 = Vector2f.add(end, perp, null);
+
+            GL11.glBegin(GL11.GL_QUADS);
+            float[] colors = color.getRGBComponents(null);
+            GL11.glColor4f(colors[0], colors[1], colors[2], colors[3]*alphaMult);
+            GL11.glVertex2f(p4.x, p4.y);
+            GL11.glVertex2f(p3.x, p3.y);
+            GL11.glVertex2f(p2.x, p2.y);
+            GL11.glVertex2f(p1.x, p1.y);
+            GL11.glEnd();
+        }
+
         @Override
         public void renderBelow(float alphaMult) {
             GL11.glEnable(GL11.GL_BLEND);
@@ -216,9 +244,15 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             Color mastery = progress >= 1f ? brightMasteryColor : Settings.MASTERY_COLOR;
             if (clampedProgress > greenFilled)
                 drawRect(x, y, width, height, greenFilled, clampedProgress, mastery, alphaMult * extraAlphaMult * (fullProgress ? 1f - 0.75f*flashFader.getBrightness() : 1f));
-
             GL11.glEnd();
             GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+            if (hasEngineeringOverride && showIcons) {
+                drawLineWithWidth(new Vector2f(x, y), new Vector2f(x+width, y+height), 2.5f, Color.RED, alphaMult*extraAlphaMult*0.75f);
+                drawLineWithWidth(new Vector2f(x+width, y), new Vector2f(x, y+height), 2.5f, Color.RED, alphaMult*extraAlphaMult*0.75f);
+                GL11.glEnd();
+            }
+
             GL11.glDisable(GL11.GL_BLEND);
         }
 

@@ -75,7 +75,7 @@ public class AutofitPluginSModOption extends CoreAutofitPlugin {
 
     private boolean canAddSMod(String hullmod, ShipVariantAPI variant, AutofitPluginDelegate delegate, int sModLimit) {
         boolean isBuiltIn = variant.getHullSpec().isBuiltInMod(hullmod);
-        if (!isBuiltIn && variant.getSMods().size() >= sModLimit) return false;
+        if (!isBuiltIn && Misc.getCurrSpecialMods(variant) >= sModLimit) return false;
         if (variant.hasHullMod(hullmod)) return true;
         if (!delegate.canAddRemoveHullmodInPlayerCampaignRefit(hullmod)) return false;
         return HullModItemManager.getInstance().isRequiredItemAvailable(hullmod, delegate.getFleetMember(), variant, delegate.getMarket());

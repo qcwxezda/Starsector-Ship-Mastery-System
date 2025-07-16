@@ -136,12 +136,12 @@ public class CuratorNPCHullmod extends BaseHullMod {
 
             String coreId;
             if (ship.getCaptain() != null && (coreId = ship.getCaptain().getAICoreId()) != null) {
-                isOmegaAndNPC = isNPCVersion() && "sms_amorphous_core".equals(coreId);
+                isOmegaAndNPC = isNPCVersion() && "sms_amorphous_pseudocore".equals(coreId);
                 baseCooldownTime = switch (coreId) {
-                    case "sms_gamma_k_core" -> getBaseCooldownGamma();
-                    case "sms_beta_k_core" -> getBaseCooldownBeta();
-                    case "sms_alpha_k_core" -> getBaseCooldownAlpha();
-                    case "sms_amorphous_core" -> getBaseCooldownOmega();
+                    case "sms_gamma_pseudocore" -> getBaseCooldownGamma();
+                    case "sms_beta_pseudocore" -> getBaseCooldownBeta();
+                    case "sms_alpha_pseudocore" -> getBaseCooldownAlpha();
+                    case "sms_amorphous_pseudocore" -> getBaseCooldownOmega();
                     default -> 999999999f;
                 };
             } else {

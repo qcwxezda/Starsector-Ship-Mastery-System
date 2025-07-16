@@ -214,7 +214,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
                 loot.addWeapons("riftbeam", 1);
                 loot.addWeapons("minipulser", 2);
                 loot.sort();
-                loot.addCommodity("sms_amorphous_core", 1);
+                loot.addCommodity("sms_amorphous_pseudocore", 1);
                 Global.getSector().getMemoryWithoutUpdate().unset(Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET);
                 DeferredActionPlugin.performLater(() -> Global.getSector().removeListener(this), 0f);
             }

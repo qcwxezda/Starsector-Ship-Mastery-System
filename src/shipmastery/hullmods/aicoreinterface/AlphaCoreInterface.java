@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -13,7 +14,7 @@ import java.awt.Color;
 
 public class AlphaCoreInterface extends AICoreInterfaceHullmod {
 
-    public static final float TIME_FLOW_INCREASE = 0.1f;
+    public static final float TIME_FLOW_INCREASE = 0.12f;
     public static final int S_REDUCTION = 1;
 
     @Override
@@ -23,7 +24,7 @@ public class AlphaCoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public String getCannotIntegrateReason(FleetMemberAPI member) {
-        if (!member.getVariant().getSMods().isEmpty()) {
+        if (Misc.getCurrSpecialMods(member.getVariant()) > 0)  {
             return Strings.Items.alphaCoreIntegrationCannotAdd;
         }
         return super.getCannotRemoveReason(member);

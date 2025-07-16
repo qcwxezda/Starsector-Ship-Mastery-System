@@ -14,7 +14,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class AmorphousCoreInterface extends AICoreInterfaceHullmod {
+public class AmorphousPseudocoreInterface extends AICoreInterfaceHullmod {
 
     public static final float IMMUNITY_SECONDS = 10f;
     public static final float IMMUNITY_FADE_TIME = 10f;

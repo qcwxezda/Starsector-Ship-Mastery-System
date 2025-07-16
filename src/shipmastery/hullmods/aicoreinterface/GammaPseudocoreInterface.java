@@ -1,5 +1,6 @@
 package shipmastery.hullmods.aicoreinterface;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -34,7 +35,10 @@ public class GammaPseudocoreInterface extends AICoreInterfaceHullmod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         var variant = stats.getVariant();
         if (variant == null) return;
-        int count = variant.getNonBuiltInHullmods().size();
+        long count = variant.getNonBuiltInHullmods().stream()
+                .map(x -> Global.getSettings().getHullModSpec(x))
+                .filter(x -> !x.isHiddenEverywhere() && x.getCostFor(hullSize) > 0)
+                .count();
         float bonus = CR_INITIAL - CR_PER_HULLMOD * count;
         if (Misc.isAutomated(variant)) bonus *= 2f;
         stats.getMaxCombatReadiness().modifyFlat(id, bonus, Strings.Items.integratedDesc);

@@ -253,7 +253,7 @@ public class MasteryPanel {
         addButton(removeSModsButton, panel, null, false, -83f, 25f);
         int removalUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_SMOD_REMOVAL_LEVEL);
         removeSModsButton.setEnabled(level >= removalUnlockLevel, String.format(Strings.MasteryPanel.unlockAtLevel, removalUnlockLevel));
-        if (removeSModsButton.isEnabled() && selectedVariant.getSMods().isEmpty()) {
+        if (removeSModsButton.isEnabled() && Misc.getCurrSpecialMods(selectedVariant) == 0) {
             removeSModsButton.setEnabled(false, Strings.MasteryPanel.noSMods);
         }
         removeSModsButton.onFinish(() -> forceRefresh(true, true, true, false));
@@ -363,7 +363,7 @@ public class MasteryPanel {
 
         addShipPanelButtons(module, root.getFleetMember(), thisShipPanel);
 
-        int nSMods = moduleVariant.getSMods().size();
+        int nSMods = Misc.getCurrSpecialMods(moduleVariant);
         var limit = getSModLimit(module);
         int sModLimit = limit.one;
         boolean limitEnhancedBySP = limit.two;
@@ -501,6 +501,7 @@ public class MasteryPanel {
         progressBarPlugin.widthOverride = shipDisplaySize - 5f;
         progressBarPlugin.extraXOffset = -5f;
         progressBarPlugin.extraYOffset = shipDisplaySize - 10f;
+        progressBarPlugin.showIcons = false;
         CustomPanelAPI progressBar = Global.getSettings().createCustom(shipDisplaySize, shipDisplaySize + 25f, progressBarPlugin);
         progressBarPlugin.makeOutline(progressBar, false, false);
         masteryPanel.addComponent(progressBar).inTL(50f, 90f);
@@ -644,7 +645,7 @@ public class MasteryPanel {
         if (Global.getSettings().isDevMode()) return null;
 
         int logisticsEnhanceBonus = hasLogisticEnhanceBonus && !hasLogisticBuiltIn && spec.hasUITag(HullMods.TAG_UI_LOGISTICS) ? 1 : 0;
-        if (module.getVariant().getSMods().size() >= getSModLimit(module).one
+        if (Misc.getCurrSpecialMods(module.getVariant()) >= getSModLimit(module).one
                 + TransientSettings.OVER_LIMIT_SMOD_COUNT.getModifiedInt() + logisticsEnhanceBonus && modular) {
             return Strings.MasteryPanel.limitReached;
         }

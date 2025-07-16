@@ -10,10 +10,10 @@ Extradimensional Rearrangement,sms_extradimensional_rearrangement_d2,,,,"dmod, h
 Extradimensional Rearrangement,sms_extradimensional_rearrangement_d3,,,,"dmod, hide_in_codex",,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.ExtradimensionalRearrangementD3,This ship has been altered by an unknown mechanism.,Ship altered by unknown mechanism,,graphics/hullmods/sms_extradimensional_rearrangement_bad.png
 Extradimensional Rearrangement,sms_extradimensional_rearrangement_d4,,,,"dmod, hide_in_codex",,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.ExtradimensionalRearrangementD4,This ship has been altered by an unknown mechanism.,Ship altered by unknown mechanism,,graphics/hullmods/sms_extradimensional_rearrangement_bad.png
 Knowledge Superconstruct,sms_superconstruct_hullmod,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,shipmastery.hullmods.SuperconstructHullmod,S-mod capacity increased by %s.,S-mod capacity increased,,graphics/hullmods/sms_superconstruct_hullmod.png
-Engineering Override,sms_engineering_override,0,,,"req_spaceport, no_build_in","Logistics, Requires Dock",2500,TRUE,FALSE,FALSE,0,0,0,0,shipmastery.hullmods.EngineeringOverride,"Increases the number of hullmods that can be built in by %s and reduces the credits cost of building in hullmods by %2s.
+Engineering Override,sms_engineering_override,1,,,"req_spaceport, no_build_in","Logistics, Requires Dock",5000,,FALSE,FALSE,0,0,0,0,shipmastery.hullmods.EngineeringOverride,"Increases the number of hullmods that can be built in by %s and reduces the credits cost of building in hullmods by %2s.
 
 Renders this ship unable to benefit from any mastery effect.",Allows crude S-mod integration without mastery,,graphics/hullmods/sms_engineering_override.png
-Analysis Package,sms_analysis_package,,,,"codex_unlockable, no_drop, special, req_spaceport","Support, Logistics, Requires Dock",15000,,,,5,10,15,20,shipmastery.hullmods.AnalysisPackage,"If installed on a ship with a civilian hull spec, increases the fleet's civilian mastery XP gain from most sources by up to %s/%s/%s/%s, depending on hull size, with diminishing returns, and capped to %s.
+Analysis Package,sms_analysis_package,,,,"codex_unlockable, no_drop, no_drop_salvage, special, req_spaceport","Support, Logistics, Requires Dock",15000,,,,5,10,15,20,shipmastery.hullmods.AnalysisPackage,"If installed on a ship with a civilian hull spec, increases the fleet's civilian mastery XP gain from most sources by up to %s/%s/%s/%s, depending on hull size, with diminishing returns, and capped to %s.
 
 If installed on a ship with a combat hull spec, increases the fleet's combat mastery XP gain from most sources by up to %s/%s/%s/%s, depending on hull size, with diminishing returns, and capped to %s.
 
@@ -33,16 +33,15 @@ Mastery - Level 12,sms_npc_indicator12,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,c
 Mastery - Level 13,sms_npc_indicator13,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 14,sms_npc_indicator14,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
 Mastery - Level 15+,sms_npc_indicator15,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,com.fs.starfarer.api.combat.BaseHullMod,,,,graphics/hullmods/generic_mod.png
-KCore Uplink Handler,sms_k_core_uplink_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.KCoreUplinkHullmod,,,,graphics/hullmods/generic_mod.png
-Curator Modifier,sms_curator_npc_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorNPCHullmod,,,,graphics/hullmods/generic_mod.png
-Curator Modifier (Player),sms_curator_player_hullmod,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.CuratorPlayerHullmod,,,,graphics/hullmods/generic_mod.png
+Pseudocore Uplink Handler,sms_pseudocore_uplink_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.PseudocoreUplinkHullmod,,,,graphics/hullmods/generic_mod.png
+No Crew (Curator),sms_curator_no_crew,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.NoCrew,,,,graphics/hullmods/generic_mod.png
 Fleet Sync Listener Handler,sms_fleet_sync_listener_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.campaign.listeners.FleetSyncListenerHandler,,,,graphics/hullmods/generic_mod.png
 Gamma Core,gamma_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.GammaCoreInterface,,,,graphics/hullmods/generic_mod.png
 Beta Core,beta_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaCoreInterface,,,,graphics/hullmods/generic_mod.png
 Alpha Core,alpha_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaCoreInterface,,,,graphics/hullmods/generic_mod.png
 Omega Core,omega_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.OmegaCoreInterface,,,,graphics/hullmods/generic_mod.png
 Fractured Gamma Core,sms_fractured_gamma_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Gamma Pseudocore,sms_gamma_k_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.GammaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Beta Pseudocore,sms_beta_k_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Alpha Pseudocore,sms_alpha_k_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Amorphous Pseudocore,sms_amorphous_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AmorphousCoreInterface,,,,graphics/hullmods/generic_mod.png
+Gamma Pseudocore,sms_gamma_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.GammaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
+Beta Pseudocore,sms_beta_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
+Alpha Pseudocore,sms_alpha_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
+Amorphous Pseudocore,sms_amorphous_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AmorphousPseudocoreInterface,,,,graphics/hullmods/generic_mod.png

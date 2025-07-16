@@ -1,0 +1,2 @@
+id,name,color,description,order,effect_skill_id,sound1,sound2,sound3,sound4,sound5,sound_story,elite_overlay,elite_overlay_medium,elite_overlay_small
+sms_misc,Miscellaneous,"240,200,240,255","Miscellaneous skills, or those that fall under multiple categories.",5,sms_aptitude_misc,combat1,combat2,combat3,combat4,combat5,ui_char_spent_story_point_combat,graphics/icons/skills/sms_elite_misc.png,graphics/icons/skills/sms_elite_misc48.png,graphics/icons/skills/sms_elite_misc32.png

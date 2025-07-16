@@ -1,17 +1,12 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import shipmastery.config.Settings;
-import shipmastery.util.Strings;
-import shipmastery.util.Utils;
+import shipmastery.campaign.skills.SharedKnowledge;
 
-public class GammaKCorePlugin extends BaseKCorePlugin {
+public class GammaPseudocorePlugin extends BasePseudocorePlugin implements SharedKnowledge.HiddenAICoreEffect {
     public static final int LEVEL = 3;
-    public static final float DP_MULT = 2.5f;
+    public static final float DP_MULT = 2f;
 
     @Override
     public float getBaseAIPointsMult() {
@@ -25,12 +20,12 @@ public class GammaKCorePlugin extends BaseKCorePlugin {
 
     @Override
     public String getCommodityId() {
-        return "sms_gamma_k_core";
+        return "sms_gamma_pseudocore";
     }
 
     @Override
     public String getPortraitSpritePath() {
-        return "graphics/portraits/sms_portrait_gamma_k_core.png";
+        return "graphics/portraits/sms_portrait_gamma_pseudocore.png";
     }
 
     @Override

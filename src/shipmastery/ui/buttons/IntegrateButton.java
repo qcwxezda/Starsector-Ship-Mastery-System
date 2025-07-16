@@ -92,7 +92,8 @@ public class IntegrateButton extends ButtonWithCost {
         if (toShow == null) return 0f;
         var plugin = Global.getSettings().getHullModSpec(toShow + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
         if (!(plugin instanceof AICoreInterfacePlugin p)) return 0f;
-        return p.getIntegrationCost(member);
+        var cost = p.getIntegrationCost(member);
+        return existingIntegrated != null ? cost / 2f : cost;
     }
 
     public class IntegratePanelPlugin extends BaseCustomUIPanelPlugin {

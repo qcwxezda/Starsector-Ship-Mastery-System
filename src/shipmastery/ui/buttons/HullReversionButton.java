@@ -2,6 +2,7 @@ package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -55,6 +56,7 @@ public class HullReversionButton extends ButtonWithHullmodSelection {
     protected Collection<Item<HullModSpecAPI>> getEligibleItems() {
         return selectedShip.getVariant().getSMods().stream()
                 .map(x -> Global.getSettings().getHullModSpec(x))
+                .filter(x -> !x.isHiddenEverywhere() && !x.isHidden() && !x.hasTag(Tags.HULLMOD_DMOD))
                 .sorted(Comparator.comparing(HullModSpecAPI::getDisplayName))
                 .map(HullmodItem::new)
                 .collect(Collectors.toList());

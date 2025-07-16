@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -14,8 +15,8 @@ import java.awt.Color;
 
 public class BetaCoreInterface extends AICoreInterfaceHullmod {
 
-    public static final float CAPACITY_PER = 0.04f;
-    public static final float DISSIPATION_PER = 0.04f;
+    public static final float[] CAPACITY_PER = new float[] {200f, 400f, 600f, 800f};
+    public static final float[] DISSIPATION_PER = new float[] {10f, 20f, 30f, 40f};
     public static final float INCREASED_DMOD_PROB = 9f;
 
     @Override
@@ -26,10 +27,11 @@ public class BetaCoreInterface extends AICoreInterfaceHullmod {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         if (stats.getVariant() == null) return;
-        int sCount = stats.getVariant().getSMods().size();
+        int sCount = Misc.getCurrSpecialMods(stats.getVariant());
         int dCount = DModManager.getNumDMods(stats.getVariant());
-        stats.getFluxCapacity().modifyPercent(id, 100f * CAPACITY_PER * dCount);
-        stats.getFluxDissipation().modifyPercent(id, 100f * DISSIPATION_PER * sCount);
+        int size = Utils.hullSizeToInt(hullSize);
+        stats.getFluxCapacity().modifyFlat(id, CAPACITY_PER[size] * dCount);
+        stats.getFluxDissipation().modifyFlat(id, DISSIPATION_PER[size] * sCount);
         stats.getDynamic().getMod(Stats.DMOD_ACQUIRE_PROB_MOD).modifyPercent(id, 100f * INCREASED_DMOD_PROB);
     }
 
@@ -37,9 +39,24 @@ public class BetaCoreInterface extends AICoreInterfaceHullmod {
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
         tooltip.addPara(Strings.Items.betaCoreIntegrationEffect,
                 0f,
-                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asPercent(CAPACITY_PER),
-                Utils.asPercent(DISSIPATION_PER),
+                new Color[] {
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.NEGATIVE_HIGHLIGHT_COLOR},
+                Utils.asInt(CAPACITY_PER[0]),
+                Utils.asInt(CAPACITY_PER[1]),
+                Utils.asInt(CAPACITY_PER[2]),
+                Utils.asInt(CAPACITY_PER[3]),
+                Utils.asInt(DISSIPATION_PER[0]),
+                Utils.asInt(DISSIPATION_PER[1]),
+                Utils.asInt(DISSIPATION_PER[2]),
+                Utils.asInt(DISSIPATION_PER[3]),
                 Utils.asPercent(INCREASED_DMOD_PROB));
     }
 }

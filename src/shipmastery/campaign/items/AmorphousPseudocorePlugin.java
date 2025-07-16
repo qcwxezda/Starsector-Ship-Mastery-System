@@ -4,15 +4,17 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.campaign.skills.SharedKnowledge;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class AmorphousCorePlugin extends BaseKCorePlugin {
+public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements SharedKnowledge.HiddenAICoreEffect {
     public static final int LEVEL = 9;
-    public static final float BASE_DP_MULT = 5.5f;
+    public static final float BASE_DP_MULT = 5f;
     public static final float MIN_DP_MULT = 1f;
     public static final float DP_MULT_PER_MP_GROUP = 0.01f;
     public static final float MP_PER_GROUP = 25f;
@@ -29,7 +31,7 @@ public class AmorphousCorePlugin extends BaseKCorePlugin {
         stats.setSkillLevel(Skills.GUNNERY_IMPLANTS, 2f);
         stats.setSkillLevel(Skills.COMBAT_ENDURANCE, 2f);
         stats.setSkillLevel(Skills.DAMAGE_CONTROL, 2f);
-        stats.setSkillLevel(SHARED_KNOWLEDGE_ID, 2f);
+        stats.setSkillLevel(AMORPHOUS_KNOWLEDGE_ID, 2f);
         stats.setSkillLevel(DIMENSIONAL_TETHER_ID, 2f);
     }
 
@@ -62,11 +64,16 @@ public class AmorphousCorePlugin extends BaseKCorePlugin {
 
     @Override
     public String getCommodityId() {
-        return "sms_amorphous_core";
+        return "sms_amorphous_pseudocore";
     }
 
     @Override
     public String getPortraitSpritePath() {
-        return "graphics/portraits/sms_portrait_amorphous_core.png";
+        return "graphics/portraits/sms_portrait_amorphous_pseudocore.png";
+    }
+
+    @Override
+    public float getCooldownSeconds(ShipAPI ship) {
+        return 24f;
     }
 }

@@ -24,7 +24,7 @@ public class FleetSyncListenerHandler extends BaseHullMod implements HullModFlee
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (!fleet.isPlayerFleet()) return;
         for (var listener : listeners) {
-            listener.onFleetSync(fleet);
+            listener.onPlayerFleetSync();
         }
     }
 

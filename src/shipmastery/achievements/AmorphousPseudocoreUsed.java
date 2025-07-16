@@ -7,7 +7,7 @@ import com.fs.starfarer.api.util.Misc;
 import org.magiclib.achievements.MagicAchievement;
 import shipmastery.util.Utils;
 
-public class AmorphousCoreUsed extends MagicAchievement {
+public class AmorphousPseudocoreUsed extends MagicAchievement {
     @Override
     public void advanceAfterInterval(float amount) {
         if (Global.getSector() == null || Global.getCurrentState() != GameState.CAMPAIGN || Global.getSector().isPaused()) return;
@@ -26,7 +26,7 @@ public class AmorphousCoreUsed extends MagicAchievement {
         if (fm.getCaptain() == null || !fm.getCaptain().isAICore()) return false;
         if (Misc.isAutomated(fm)) return false;
         String id = fm.getCaptain().getAICoreId();
-        return "sms_amorphous_core".equals(id);
+        return "sms_amorphous_pseudocore".equals(id);
     }
 
 }

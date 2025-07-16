@@ -3,14 +3,14 @@ package shipmastery.mastery.impl.combat.shipsystems;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.combat.listeners.BaseShipSystemListener;
+import shipmastery.combat.listeners.ProjectileCreatedListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.mastery.MasteryDescription;
@@ -31,6 +31,7 @@ public class NovaBurstDamage extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.NovaBurstDamage).params(getSystemName());
     }
+
     @Override
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         ship.addListener(new NovaBurstDamageScript(ship, getStrength(ship)));
@@ -42,7 +43,7 @@ public class NovaBurstDamage extends ShipSystemEffect {
         tooltip.addPara(
                 Strings.Descriptions.NovaBurstDamagePost,
                 0f,
-                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Misc.getTextColor()},
+                new Color[]{Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Misc.getTextColor()},
                 Utils.asInt(getStrengthForPlayer()),
                 DamageType.ENERGY.getDisplayName(),
                 Utils.asInt(ARC_DEGREES),
@@ -54,39 +55,25 @@ public class NovaBurstDamage extends ShipSystemEffect {
         return "nova_burst";
     }
 
-    static class NovaBurstDamageScript extends BaseShipSystemListener {
-        final ShipAPI ship;
-        final float damage;
-        WeaponAPI bombLauncher;
-
-        NovaBurstDamageScript(ShipAPI ship, float damage) {
-            this.ship = ship;
-            this.damage = damage;
-
-            for (WeaponAPI weapon : ship.getAllWeapons()) {
-                if ("pusherplate_nova".equals(weapon.getId())) {
-                    bombLauncher = weapon;
-                    return;
-                }
-            }
-        }
-
+    record NovaBurstDamageScript(ShipAPI ship, float damage) implements ProjectileCreatedListener {
         @Override
-        public void onActivate() {
+        public void reportProjectileCreated(DamagingProjectileAPI proj) {
+            if (!"nova_burst_bomb".equals(proj.getProjectileSpecId())) return;
             CombatDeferredActionPlugin.performLater(() -> {
-                Vector2f location = bombLauncher.getLocation();
-                float angle = bombLauncher.getCurrAngle();
-                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f*RANGE, 2f*RANGE);
+                Vector2f location = proj.getLocation();
+                float angle = proj.getFacing();
+                Iterator<Object> itr = Global.getCombatEngine().getAllObjectGrid().getCheckIterator(location, 2f * RANGE, 2f * RANGE);
                 while (itr.hasNext()) {
                     Object o = itr.next();
                     if (!(o instanceof CombatEntityAPI entity)) continue;
                     if (MathUtils.dist(entity.getLocation(), location) > RANGE + entity.getCollisionRadius()) continue;
-                    if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f) continue;
+                    if (Math.abs(MathUtils.angleDiff(angle, Misc.getAngleInDegrees(location, entity.getLocation()))) > ARC_DEGREES / 2f)
+                        continue;
                     if (!CollisionUtils.canCollide(entity, null, ship, false)) continue;
                     Global.getCombatEngine().spawnEmpArc(
                             ship,
                             location,
-                            ship,
+                            null,
                             entity,
                             DamageType.ENERGY,
                             damage,
@@ -94,10 +81,10 @@ public class NovaBurstDamage extends ShipSystemEffect {
                             1000000f,
                             "tachyon_lance_emp_impact",
                             80f,
-                            new Color(100,165,255,255),
+                            new Color(100, 165, 255, 255),
                             Color.WHITE).setCoreWidthOverride(40f);
                 }
-            }, 0.5f);
+            }, 0.25f);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -21,7 +22,7 @@ public class OmegaCoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public String getCannotRemoveReason(FleetMemberAPI member) {
-        if (!member.getVariant().getSMods().isEmpty()) {
+        if (Misc.getCurrSpecialMods(member.getVariant()) > 0) {
             return Strings.Items.betaPseudocoreIntegrationCannotRemove;
         }
         return super.getCannotRemoveReason(member);

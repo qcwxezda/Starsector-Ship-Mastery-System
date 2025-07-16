@@ -9,7 +9,7 @@ import shipmastery.achievements.PseudocoreAmplifierIntegrated;
 import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.util.Strings;
 
-public class KCoreAmplifierPlugin extends BaseSpecialItemPlugin {
+public class PseudocoreAmplifierPlugin extends BaseSpecialItemPlugin {
     @Override
     public boolean hasRightClickAction() {
         return true;
@@ -24,7 +24,7 @@ public class KCoreAmplifierPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void performRightClickAction() {
-        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.K_CORE_AMP_INTEGRATED, true);
+        Global.getSector().getMemoryWithoutUpdate().set(Strings.Campaign.PSEUDOCORE_AMP_INTEGRATED, true);
         Global.getSoundPlayer().playUISound(getSpec().getSoundId(), 1f, 1f);
         Global.getSector().getCampaignUI().getMessageDisplay().addMessage(String.format(Strings.Items.ampIntegrated, getName()));
         UnlockAchievementAction.unlockWhenUnpaused(PseudocoreAmplifierIntegrated.class);
