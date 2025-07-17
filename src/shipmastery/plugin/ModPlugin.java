@@ -12,7 +12,6 @@ import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipAIConfig;
@@ -48,6 +47,7 @@ import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.hullmods.PseudocoreUplinkHullmod;
 import shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface;
 import shipmastery.procgen.Generator;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -250,6 +250,7 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
+        new EngineUtils.ClearCacheOnCombatEnd().onCombatEnd();
         PlayerGainedMPListenerHandler.clearListeners();
         FleetSyncListenerHandler.clearListeners();
 
@@ -405,9 +406,8 @@ public class ModPlugin extends BaseModPlugin {
         if (ship == null || ship.getCaptain() == null) return null;
         String id = ship.getCaptain().getAICoreId();
         if (id == null) return null;
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(id);
-        if (spec == null) return null;
-        if (spec.getTags().contains(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) {
+        var plugin = PseudocoreInterface.getPluginForPseudocore(id);
+        if (plugin != null) {
             ShipAIConfig config = new ShipAIConfig();
             config.alwaysStrafeOffensively = true;
             config.backingOffWhileNotVentingAllowed = true;

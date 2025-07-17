@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import shipmastery.util.Utils;
+import shipmastery.util.CampaignUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CuratorFleetHandler implements FleetInflationListener, ShipRecovery
         // Curator fleets should not have crew or built-in d-mods
         if (fleet.getFaction() != null && "sms_curator".equals(fleet.getFaction().getId())) {
             for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_curator_no_crew", false);
+                CampaignUtils.addPermaModCloneVariantIfNeeded(fm, "sms_curator_no_crew", false);
 
                 var toRemove = new ArrayList<String>();
                 for (var hullmod : fm.getVariant().getHullMods()) {

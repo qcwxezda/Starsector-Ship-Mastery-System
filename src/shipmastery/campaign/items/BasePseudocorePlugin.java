@@ -34,7 +34,7 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
     public static final String CRYSTALLINE_KNOWLEDGE_ID = "sms_crystalline_knowledge";
     public static final String WARPED_KNOWLEDGE_ID = "sms_warped_knowledge";
     public static final String AMORPHOUS_KNOWLEDGE_ID = "sms_amorphous_knowledge";
-    public static final String IS_PSEUDOCORE_TAG = "sms_pseudocore";
+    public static final String SCALE_AUTOMATED_POINTS_TAG = "sms_scale_auto_pts";
 
     @Override
     public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {
@@ -50,24 +50,22 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
             String id = captain == null ? null : captain.getAICoreId();
             if (id == null) continue;
             var spec = Global.getSettings().getCommoditySpec(id);
-            if (spec != null) {
-                if (spec.hasTag(COPY_PERSONALITY_TAG)) {
-                    setPersonalityToPlayerDoctrine(captain);
-                }
-                if (spec.hasTag(IS_PSEUDOCORE_TAG)) {
-                    float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
-                    var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
-                    var memory = captain.getMemoryWithoutUpdate();
-                    if (memory != null && plugin instanceof BasePseudocorePlugin kPlugin) {
-                        float baseMult = kPlugin.getBaseAIPointsMult();
-                        // Special behavior for amorphous cores
-                        if ("sms_amorphous_pseudocore".equals(id)) {
-                            int points = (int) ShipMastery.getPlayerMasteryPoints(fm.getHullSpec());
-                            int groups = (int) (points / AmorphousPseudocorePlugin.MP_PER_GROUP);
-                            baseMult = Math.max(1f, baseMult - groups*AmorphousPseudocorePlugin.DP_MULT_PER_MP_GROUP);
-                        }
-                        memory.set("$autoPointsMult", baseMult * ratio);
+            if (spec.hasTag(COPY_PERSONALITY_TAG)) {
+                setPersonalityToPlayerDoctrine(captain);
+            }
+            if (spec.hasTag(SCALE_AUTOMATED_POINTS_TAG)) {
+                float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
+                var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
+                var memory = captain.getMemoryWithoutUpdate();
+                if (memory != null && plugin instanceof PseudocoreInterface kPlugin) {
+                    float baseMult = kPlugin.getBaseAIPointsMult();
+                    // Special behavior for amorphous cores
+                    if ("sms_amorphous_pseudocore".equals(id)) {
+                        int points = (int) ShipMastery.getPlayerMasteryPoints(fm.getHullSpec());
+                        int groups = (int) (points / AmorphousPseudocorePlugin.MP_PER_GROUP);
+                        baseMult = Math.max(1f, baseMult - groups*AmorphousPseudocorePlugin.DP_MULT_PER_MP_GROUP);
                     }
+                    memory.set("$autoPointsMult", baseMult * ratio);
                 }
             }
         }

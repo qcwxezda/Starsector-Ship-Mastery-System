@@ -7,6 +7,7 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -124,7 +125,7 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
             costText.addSpacer(13f);
         }
         if (isStoryOption) {
-            spLabel = Utils.addStoryPointUseInfo(costText, 1f);
+            spLabel = CampaignUtils.addStoryPointUseInfo(costText, 1f);
         }
         updateLabels();
         panel.addUIElement(costText).inTMid(padFromTop);

@@ -8,11 +8,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.campaign.skills.SharedKnowledge;
+import shipmastery.campaign.skills.HiddenEffectScript;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements SharedKnowledge.HiddenAICoreEffect {
+public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
     public static final int LEVEL = 9;
     public static final float BASE_DP_MULT = 5f;
     public static final float MIN_DP_MULT = 1f;

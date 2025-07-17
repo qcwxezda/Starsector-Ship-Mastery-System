@@ -262,9 +262,11 @@ public interface Strings {
         String pseudocorePersonalityText = Utils.getString("sms_items", "pseudocorePersonalityText");
         String pseudocorePersonalityText2 = Utils.getString("sms_items", "pseudocorePersonalityText2");
         String uplinkPseudocoreSelect = Utils.getString("sms_items", "uplinkPseudocoreSelect");
+        String uplinkMk2CoreSelect = Utils.getString("sms_items", "uplinkMk2CoreSelect");
         String uplinkSkillSelect = Utils.getString("sms_items", "uplinkSkillSelect");
         String uplinkDesc = Utils.getString("sms_items", "uplinkDesc");
         String uplinkRightClick = Utils.getString("sms_items", "uplinkRightClick");
+        String uplinkMk2RightClick = Utils.getString("sms_items", "uplinkMk2RightClick");
         String uplinkStatus = Utils.getString("sms_items", "uplinkStatus");
         String uplinkStatus2 = Utils.getString("sms_items", "uplinkStatus2");
         String uplinkPenaltyDesc = Utils.getString("sms_items", "uplinkPenaltyDesc");
@@ -283,6 +285,8 @@ public interface Strings {
         String alphaCoreIntegrationEffect = Utils.getString("sms_items", "alphaCoreIntegrationEffect");
         String alphaCoreIntegrationCannotAdd = Utils.getString("sms_items", "alphaCoreIntegrationCannotAdd");
         String omegaCoreIntegrationEffect = Utils.getString("sms_items", "omegaCoreIntegrationEffect");
+        String warpedPseudocoreIntegrationEffect = Utils.getString("sms_items", "warpedPseudocoreIntegrationEffect");
+        String crystallinePseudocoreIntegrationEffect = Utils.getString("sms_items", "crystallinePseudocoreIntegrationEffect");
         String noneInCargo = Utils.getString("sms_items", "noneInCargo");
         String integratedDesc = Utils.getString("sms_items", "integratedDesc");
         String selectQuantity = Utils.getString("sms_items", "selectQuantity");
@@ -756,5 +760,14 @@ public interface Strings {
         String BeamPartialHardFluxPost = Utils.getString( "sms_descriptions", "BeamPartialHardFluxPost");
         String EmptyMastery = Utils.getString( "sms_descriptions", "EmptyMastery");
         String EnhanceMasteryDescOnly = Utils.getString( "sms_descriptions", "EnhanceMasteryDescOnly");
+    }
+
+    interface Backgrounds {
+        String rejectHumanityCannotSelect = Utils.getString( "sms_backgrounds", "rejectHumanityCannotSelect");
+        String rejectHumanityDesc1 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc1");
+        String rejectHumanityDesc2 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc2");
+        String rejectHumanityDesc3 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc3");
+        String rejectHumanityDesc4 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc4");
+        String rejectHumanityDesc5 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc5");
     }
 }

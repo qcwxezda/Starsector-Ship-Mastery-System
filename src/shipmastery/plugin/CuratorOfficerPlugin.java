@@ -24,6 +24,10 @@ import shipmastery.util.Utils;
 import java.util.Random;
 
 public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
+
+    public static final float REPLACE_WARPED_PROB = 0.03f;
+    public static final float REPLACE_CRYSTALLINE_PROB = 0.03f;
+
     @Override
     public void addCommanderAndOfficers(CampaignFleetAPI fleet, FleetParamsV3 params, Random random) {
         // In case a random fleet patrol is generated, etc.
@@ -68,9 +72,28 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         FleetMemberAPI flagship = null;
         var mem = fleet.getMemoryWithoutUpdate();
         String fleetType = mem == null ? null : mem.getString("$fleetType");
+        boolean isNucleusDefender = Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE.equals(fleetType);
+        boolean isRemoteDefender = Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType);
+        float replaceCrystallineProb = REPLACE_CRYSTALLINE_PROB;
+        float replaceWarpedProb = REPLACE_WARPED_PROB;
+        if (isNucleusDefender) {
+            replaceCrystallineProb = 0.25f;
+            replaceWarpedProb = 0.25f;
+        } else if (isRemoteDefender) {
+            replaceCrystallineProb = 0.4f;
+            replaceWarpedProb = 0.4f;
+        }
+
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             String coreId = officerPicker.pick();
-            if (Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType) && "tesseract".equals(fm.getHullId())) {
+            if (coreId != null && !"sms_fractured_gamma_core".equals(coreId)) {
+                if (random.nextFloat() <= replaceCrystallineProb) {
+                    coreId = "sms_crystalline_pseudocore";
+                } else if (random.nextFloat() <= replaceWarpedProb) {
+                    coreId = "sms_warped_pseudocore";
+                }
+            }
+            if (isRemoteDefender && "tesseract".equals(fm.getHullId())) {
                 coreId = "sms_amorphous_pseudocore";
             }
             if (coreId == null) continue;
@@ -86,6 +109,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 case "sms_fractured_gamma_core" -> 1000f;
                 case "sms_gamma_pseudocore" -> 10000f;
                 case "sms_beta_pseudocore" -> 100000f;
+                case "sms_warped_pseudocore", "sms_crystalline_pseudocore" -> 250000f;
                 case "sms_alpha_pseudocore" -> 1000000f;
                 case "sms_amorphous_pseudocore" -> 10000000f;
                 default -> 0f;
@@ -126,15 +150,19 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             }
             case "sms_gamma_pseudocore" -> {
                 numCommanderSkills = 2;
-                memory.set(key, 3.5f);
+                memory.set(key, 3f);
             }
             case "sms_beta_pseudocore" -> {
                 numCommanderSkills = 3;
+                memory.set(key, 5f);
+            }
+            case "sms_warped =_pseudocore", "sms_crystalline_pseudocore" -> {
+                numCommanderSkills = 4;
                 memory.set(key, 6f);
             }
             case "sms_alpha_pseudocore" -> {
                 numCommanderSkills = 5;
-                memory.set(key, 8.5f);
+                memory.set(key, 6.5f);
             }
             case "sms_amorphous_pseudocore" -> {
                 numCommanderSkills = 5;

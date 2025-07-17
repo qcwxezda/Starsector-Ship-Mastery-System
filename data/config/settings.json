@@ -2,6 +2,8 @@
   "drop_prob_officer_sms_fractured_gamma_core": 0.3,
   "drop_prob_officer_sms_gamma_pseudocore": 0.2,
   "drop_prob_officer_sms_beta_pseudocore": 0.1,
+  "drop_prob_officer_sms_warped_pseudocore": 0.1,
+  "drop_prob_officer_sms_crystalline_pseudocore": 0.1,
   "drop_prob_officer_sms_alpha_pseudocore": 0.03,
 
   "ruleCommandPackages":[
@@ -30,7 +32,8 @@
       "sms_integrate_icon": "graphics/icons/ui/sms_integrate_icon.png",
       "sms_integrate_icon_green": "graphics/icons/ui/sms_integrate_icon_green.png",
       "sms_lightbulb_icon": "graphics/icons/ui/sms_lightbulb_icon.png",
-      "sms_all_icon": "graphics/icons/ui/sms_all_icon.png"
+      "sms_all_icon": "graphics/icons/ui/sms_all_icon.png",
+      "sms_icon_broken": "graphics/icons/tactical/broken.png"
     }
   }
 }

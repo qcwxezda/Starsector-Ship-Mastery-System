@@ -13,6 +13,7 @@ import shipmastery.achievements.FullEnhance;
 import shipmastery.achievements.UnlockAchievementAction;
 import shipmastery.deferred.Action;
 import shipmastery.ui.triggers.DialogDismissedListener;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.ReflectionUtils;
 import shipmastery.util.Strings;
@@ -174,7 +175,7 @@ public class LevelUpDialog {
 
         if (isEnhance) {
             var spInfo = panel.createUIElement(width, 20f, false);
-            Utils.addStoryPointUseInfo(spInfo, MasteryUtils.getEnhanceBonusXP(spec));
+            CampaignUtils.addStoryPointUseInfo(spInfo, MasteryUtils.getEnhanceBonusXP(spec));
             panel.addUIElement(spInfo).inBL(30f, 50f);
         }
 

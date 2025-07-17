@@ -1,23 +1,20 @@
 package shipmastery.campaign.skills;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.characters.AfterShipCreationSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.ShipSkillEffect;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.combat.listeners.AdvanceIfAliveListener;
-import shipmastery.fx.OverlayEmitter;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.MathUtils;
@@ -26,11 +23,6 @@ import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class SharedKnowledge {
 
@@ -38,6 +30,12 @@ public class SharedKnowledge {
         if (person == null || person.getStats() == null) return false;
         return person.getStats().getSkillLevel("sms_shared_knowledge") >= 1f
                 || person.getStats().getSkillLevel("sms_amorphous_knowledge") >= 1f;
+    }
+
+    public static boolean hasEliteSharedKnowledge(PersonAPI person) {
+        if (person == null || person.getStats() == null) return false;
+        return person.getStats().getSkillLevel("sms_shared_knowledge") >= 2f
+                || person.getStats().getSkillLevel("sms_amorphous_knowledge") >= 2f;
     }
 
     public static class Standard extends SkillEffectDescriptionWIthNegativeHighlight implements ShipSkillEffect {
@@ -166,150 +164,34 @@ public class SharedKnowledge {
         }
     }
 
-    public interface HiddenAICoreEffect {
-        default float getCooldownSeconds(ShipAPI ship) {
-            return 60f;
-        }
-        default float getDurationSeconds(ShipAPI ship) {
-            return 6f;
-        }
-        default float getTimeMultBonus(ShipAPI ship) {
-            return 0.75f;
-        }
-    }
-
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
-
-        public static class HiddenEffectScript extends AdvanceIfAliveListener implements PseudocoreHiddenSkillScript {
-            public static final Color color = new Color(100, 200, 150);
-            private final String id;
-            private final HiddenAICoreEffect plugin;
-            private final Map<ShipAPI, OverlayEmitter> emitterMap = new HashMap<>();
-            private float cooldownRemaining = 0f;
-            private boolean active = false;
-            private float activeTime = 0f;
-            private final FaderUtil effectFader = new FaderUtil(0f, 0.5f);
-            private final IntervalUtil repopulateWingsAndModulesInterval = new IntervalUtil(0.5f, 0.5f);
-            private List<ShipAPI> allModules = new ArrayList<>();
-            private List<ShipAPI> allWings = new ArrayList<>();
-
-            private OverlayEmitter getEmitterForShip(ShipAPI ship) {
-                var existing = emitterMap.get(ship);
-                if (existing != null) {
-                    return existing;
-                }
-                var emitter = new OverlayEmitter(ship, ship.getSpriteAPI(), 0.8f);
-                emitter.randomOffset = Math.min(ship.getSpriteAPI().getHeight(), ship.getSpriteAPI().getWidth()) / 7f;
-                emitter.randomAngle = 20f;
-                emitter.color = color;
-                emitter.alphaMult = 0.2f;
-                emitter.fadeInFrac = 0.2f;
-                emitter.fadeOutFrac = 0.2f;
-                emitter.enableDynamicAnchoring();
-                emitterMap.put(ship, emitter);
-                return emitter;
-            }
-
-            public HiddenEffectScript(ShipAPI ship, String id, HiddenAICoreEffect plugin) {
-                super(ship);
-                this.id = id;
-                this.plugin = plugin;
-                ship.setExplosionFlashColorOverride(new Color(150, 250, 200));
-                resetCooldownTime();
+        public static class EffectScript extends HiddenEffectScript {
+            public EffectScript(ShipAPI ship, String id, Provider plugin) {
+                super(ship, id, new Color(100, 200, 150), plugin);
             }
 
             @Override
-            public void activate() {
-                effectFader.fadeIn();
-                active = true;
-                activeTime = 0f;
-                resetCooldownTime();
-            }
-
-            private void resetCooldownTime() {
-                float cooldown = plugin.getCooldownSeconds(ship);
-                cooldownRemaining = MathUtils.randBetween(0.8f*cooldown, 1.25f*cooldown);
-            }
-
-            private void applyEffects(float effectLevel, boolean shouldBurst) {
-                allWings.forEach(wing -> {
-                    if (!Global.getCombatEngine().isShipAlive(wing)) return;
-                    if (effectLevel > 0f) {
-                        wing.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
-                        wing.setCircularJitter(true);
-                        wing.setJitterShields(true);
-                        wing.setJitter(wing, color, effectFader.getBrightness(), 12, 10f);
-                    } else {
-                        wing.getMutableStats().getTimeMult().unmodify(id);
-                    }
-                });
-
-                allModules.forEach(module -> {
-                    if (!Global.getCombatEngine().isShipAlive(module)) return;
-                    if (effectLevel > 0f) {
-                        module.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
-                        if (shouldBurst && module.getSpriteAPI() != null) {
-                            getEmitterForShip(module).burst(1);
-                        }
-                    } else {
-                        module.getMutableStats().getTimeMult().unmodify(id);
-                    }
-                });
-            }
-
-            private void repopulateWingsAndModules() {
-                allModules = Utils.getAllModules(ship);
-                var wings = ship.getAllWings();
-                allModules.forEach(module -> wings.addAll(module.getAllWings()));
-                allWings = wings.stream()
-                        .map(FighterWingAPI::getWingMembers)
-                        .filter(Objects::nonNull)
-                        .flatMap(List::stream)
-                        .toList();
+            protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
+                ship.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
             }
 
             @Override
-            public void advanceIfAlive(float amount) {
-                float effectLevel = effectFader.getBrightness() * plugin.getTimeMultBonus(ship);
-                applyEffects(effectLevel, Misc.random.nextFloat() < amount*9f);
-                effectFader.advance(amount);
-
-                repopulateWingsAndModulesInterval.advance(amount);
-                if (repopulateWingsAndModulesInterval.intervalElapsed()) {
-                    repopulateWingsAndModules();
-                }
-
-                if (!active) {
-                    cooldownRemaining -= amount;
-                    if (cooldownRemaining <= 0f) {
-                        activate();
-                    }
-                } else {
-                    activeTime += amount;
-                    if (activeTime >= plugin.getDurationSeconds(ship)) {
-                        active = false;
-                        effectFader.fadeOut();
-                    }
-                }
+            protected void unapplyEffectsToShip(ShipAPI ship) {
+                ship.getMutableStats().getTimeMult().unmodify(id);
             }
         }
 
         @Override
         public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            PersonAPI commander = ship.getFleetCommander();
-            if (commander == null || (commander.isPlayer() && !Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.PSEUDOCORE_AMP_INTEGRATED))) return;
-            PersonAPI captain = ship.getCaptain();
-            if (captain == null || !captain.isAICore()) return;
-            var plugin = Misc.getAICoreOfficerPlugin(captain.getAICoreId());
-            if (!(plugin instanceof HiddenAICoreEffect p)) return;
-            VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(ship.getVariant());
-            if (info == null || info.root != info.variant) return;
-            ship.addListener(new HiddenEffectScript(ship, id, p));
+            var p = getHiddenEffectPlugin(ship);
+            if (p != null) {
+                ship.addListener(new EffectScript(ship, id, p));
+            }
         }
 
         @Override
         public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
-            ship.removeListenerOfClass(HiddenEffectScript.class);
+            ship.removeListenerOfClass(EffectScript.class);
         }
 
         @Override
@@ -317,5 +199,16 @@ public class SharedKnowledge {
 
         @Override
         public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {}
+    }
+
+    public static HiddenEffectScript.Provider getHiddenEffectPlugin(ShipAPI ship) {
+        PersonAPI commander = ship.getFleetCommander();
+        if (commander == null || (commander.isPlayer() && !Global.getSector().getMemoryWithoutUpdate().getBoolean(Strings.Campaign.PSEUDOCORE_AMP_INTEGRATED))) return null;
+        PersonAPI captain = ship.getCaptain();
+        if (captain == null || !captain.isAICore()) return null;
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(ship.getVariant());
+        if (info == null || info.root != info.variant) return null;
+        var plugin = Misc.getAICoreOfficerPlugin(ship.getCaptain().getAICoreId());
+        return plugin instanceof HiddenEffectScript.Provider p ? p : null;
     }
 }

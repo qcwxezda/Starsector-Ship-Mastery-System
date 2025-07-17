@@ -1,0 +1,2 @@
+id,name,shortDescription,longDescription,order,iconPath,plugin
+sms_reject_humanity,Reject Humanity,Begin without the ability to field officers and an arcane device of unknown origin.,,100,graphics/icons/skills/sms_shared_knowledge.png,shipmastery.backgrounds.RejectHumanity

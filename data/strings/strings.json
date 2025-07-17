@@ -580,12 +580,14 @@
     "pseudocorePersonalityText": "In combat, the %1$s will behave as cautiously or aggressively as the situation demands, according to its fleet's doctrine.",
     "pseudocorePersonalityText2": "Automated points multiplier scales to match the piloted ship's base deployment points.",
     "uplinkPseudocoreSelect": "Select a Pseudocore",
+    "uplinkMk2CoreSelect": "Select an AI Core",
     "uplinkSkillSelect": "Select skills (%1$s/%2$s)",
-    "uplinkDesc": "Assigning a Pseudocore to a crewed ship accrues Pseudocore points equal to the ship's deployment points multiplied by the Pseudocore's AI points multiplier. Having greater than %1$s Pseudocore points in your fleet will incur a CR penalty to all crewed ships under Pseudocore command, the severity of which scales with the amount of excess Pseudocore points in your fleet. Automated ships under Pseudocore command are not affected. \n\nShips in the player's fleet under Pseudocore command do not contribute to the deployment point distribution.",
-    "uplinkStatus": "Your fleet currently fields %1$s Pseudocore points' worth of ships, which is within the limit.",
-    "uplinkStatus2":  "Your fleet currently fields %1$s Pseudocore points' worth of ships, which is over the limit. Consequently, all crewed ships under Pseudocore command have their maximum combat readiness reduced by %2$s.",
-    "uplinkPenaltyDesc": "Pseudocore penalty",
+    "uplinkDesc": "Assigning an AI core to a crewed ship using this interface accrues uplink points equal to the ship's deployment points multiplied by the core's AI points multiplier. Having greater than %1$s uplink points in your fleet will incur a CR penalty to all crewed ships under AI core command, the severity of which scales with the amount of excess uplink points in your fleet. Automated ships under AI core command are not affected. \n\nCrewed ships in the player's fleet under AI core command do not contribute to the deployment point distribution.",
+    "uplinkStatus": "Your fleet currently fields %1$s uplink points' worth of ships, which is within the limit.",
+    "uplinkStatus2":  "Your fleet currently fields %1$s uplink points' worth of ships, which is over the limit. Consequently, all crewed ships under AI core command assigned via uplink have their maximum combat readiness reduced by %2$s.",
+    "uplinkPenaltyDesc": "Uplink penalty",
     "uplinkRightClick": "Right-click to assign a Pseudocore to a crewed ship not under your direct command.",
+    "uplinkMk2RightClick": "Right-click to assign an AI core to a crewed ship not under your direct command.",
     "ampRightClick": "Right-click to integrate the %1$s with your fleet",
     "ampIntegrated": "%1$s integrated - ???",
     "cargoCount": "%1$s in cargo",
@@ -597,12 +599,14 @@
     "betaPseudocoreIntegrationEffect": "Increases S-mod capacity by %1$s.\nReduces the chance that this ship receives d-mods when destroyed in combat by %2$s.\n\nIf this ship has more than %3$s S-mods or %4$s d-mods, its maximum combat readiness is reduced by %5$s.\n\nOnce installed, this core can only be removed if the ship does not have any S-mods.",
     "betaPseudocoreIntegrationCannotRemove": "Ship has S-mods",
     "alphaPseudocoreIntegrationEffect": "If the ship's captain has elite %1$s, its effect is permanently maximized regardless of the number of nearby ships.\n\nOtherwise, grants a static %2$s fire rate increase and equivalent weapon flux cost reduction, and reduces maximum combat readiness by %3$s.",
-    "amorphousCoreIntegrationEffect": "Increases maximum combat readiness by %1$s.\n\nPer combat, renders this ship immune to damage for %2$s seconds while the ship is venting. The damage immunity fades away over the subsequent %3$s seconds that the ship vents.",
+    "amorphousCoreIntegrationEffect": "Increases maximum combat readiness by %1$s.\n\nPer combat, renders this ship immune to damage for %2$s seconds while the ship is venting. The damage immunity fades away over the next %3$s seconds that the ship vents.",
     "gammaCoreIntegrationEffect": "Decreases the combat readiness reduction from solar coronae, hyperspace storms, and other stellar hazards by %1$s.",
     "betaCoreIntegrationEffect": "Increases flux capacity by %1$s/%2$s/%3$s/%4$s, depending on hull size, for each of this ship's d-mods.\nIncreases flux dissipation by %5$s/%6$s/%7$s/%8$s, depending on hull size, for each of this ship's S-mods.\n\nIncreases the chance that this ship receives d-mods when destroyed in combat by %9$s.",
-    "alphaCoreIntegrationEffect": "Increases time flow by %1$s.\nReduces S-mod capacity by %2$s.\n\nThis core can only be installed if the ship does not have any S-mods.",
+    "alphaCoreIntegrationEffect": "Increases flux dissipation, flux capacity, hull, and armor by %1$s.\nReduces S-mod capacity by %2$s.\n\nThis core can only be installed if the ship does not have any S-mods.",
     "alphaCoreIntegrationCannotAdd": "Ship has S-mods",
     "omegaCoreIntegrationEffect": "Increases maximum combat readiness by %1$s.\nIncreases S-mod capacity by %2$s.\n\nOnce installed, this core can only be removed if the ship does not have any S-mods.",
+    "warpedPseudocoreIntegrationEffect": "If the ship's captain has elite %1$s, increases its debuff strength by %2$s, debuff cap by %3$s, and debuff duration by %4$s.\n\nOtherwise, increases kinetic damage dealt to shields, high-explosive damage dealt to armor, and all energy damage by %5$s, and reduces maximum combat readiness by %6$s.",
+    "crystallinePseudocoreIntegrationEffect": "If the ship's captain has elite %1$s, increases its debuff strength by %2$s, debuff cap by %3$s, and debuff duration by %4$s.\n\nOtherwise, reduces kinetic damage taken by shields, high-explosive damage taken by armor, and all fragmentation damage taken by %5$s, and reduces maximum combat readiness by %6$s.",
     "selectQuantity": "Select quantity to use",
     "invalidQuantity": "Invalid quantity entered"
   },
@@ -683,6 +687,15 @@
     "emitterNotEnoughPower": "Current setting exceeds maximum number of available power units.",
     "emitterPromptText": "Adjust emitter output (max %1$s units): ",
     "adminPromptText": "Please enter admin passcode"
+  },
+
+  "sms_backgrounds": {
+    "rejectHumanityCannotSelect": "Requires achievement \"The Pseudocore Connection, Part 1\"",
+    "rejectHumanityDesc1": "Your notoriety and lack of charisma have earned you a spot among every prospective captain's blacklist. No officer wants to work directly under you, and the few who believe otherwise will quickly learn why.",
+    "rejectHumanityDesc2": "Fortunately, your unique expertise in automation grants you the ability to assign AI cores to ships normally demanding a human officer.",
+    "rejectHumanityDesc3": "- Maximum number of officers under your command reduced by %1$s",
+    "rejectHumanityDesc4": "- Maximum CR of non-flagship, human-captained ships reduced by %1$s",
+    "rejectHumanityDesc5": "- Start with a %1$s"
   },
 
   "sms_misc": {

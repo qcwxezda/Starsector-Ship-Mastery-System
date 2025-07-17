@@ -3,25 +3,26 @@ package shipmastery.campaign.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.AfterShipCreationSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import com.fs.starfarer.api.combat.BaseCombatLayeredRenderingPlugin;
 import com.fs.starfarer.api.combat.CollisionClass;
-import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.impl.combat.NegativeExplosionVisual;
 import com.fs.starfarer.api.impl.combat.RiftCascadeMineExplosion;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.AdvanceIfAliveListener;
+import shipmastery.fx.OverlayRenderer;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.MathUtils;
+import shipmastery.util.StackableBuffWithExpiry;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
@@ -29,6 +30,13 @@ import shipmastery.util.VariantLookup;
 import java.awt.Color;
 
 public class WarpedKnowledge {
+
+    public static boolean hasEliteWarpedKnowledge(PersonAPI person) {
+        if (person == null || person.getStats() == null) return false;
+        return person.getStats().getSkillLevel("sms_warped_knowledge") >= 2f
+                || person.getStats().getSkillLevel("sms_amorphous_knowledge") >= 2f;
+    }
+
     public static class Standard extends SkillEffectDescriptionWIthNegativeHighlight implements AfterShipCreationSkillEffect {
 
         public static final float MAX_DAMAGE_SHIELDS = 0.25f;
@@ -55,7 +63,6 @@ public class WarpedKnowledge {
                     float bonus = MathUtils.lerp(0f, MAX_DAMAGE_SHIELDS, t);
                     if (bonus <= 0f) return null;
                     damage.getModifier().modifyPercent(id,  100f*bonus);
-                    return id;
                 } else {
                     int[] xy = ship.getArmorGrid().getCellAtLocation(point);
                     if (xy == null) return null;
@@ -67,8 +74,8 @@ public class WarpedKnowledge {
                     float bonus = MathUtils.lerp(0f, MAX_DAMAGE_HULL_ARMOR, t);
                     if (bonus <= 0f) return null;
                     damage.getModifier().modifyPercent(id, 100f*bonus);
-                    return id;
                 }
+                return id;
             }
         }
 
@@ -114,83 +121,54 @@ public class WarpedKnowledge {
         public static final float EXPLOSION_DAMAGE = 500f;
         public static final float DAMAGE_TAKEN_PER_STACK = 0.02f;
         public static final float MAX_DAMAGE_TAKEN = 0.2f;
-        public static final float[] MIN_DELAY_BETWEEN_SHOTS_SECONDS = new float[] {8f, 6f, 4f, 2f};
+        public static final float[] MIN_DELAY_BETWEEN_SHOTS_SECONDS = new float[] {9f, 7f, 5f, 3f};
         public static final float DURATION_SECONDS = 10f;
         public static final String EXPLOSION_ID_KEY = "sms_IsWarpedExplosion";
+        public static final String STACK_STRENGTH_MOD = "sms_WarpedPerStackMod";
+        public static final String DURATION_MOD = "sms_WarpedDurationMod";
+        public static final String DEBUFF_CAP_MOD = "sms_WarpedCapMod";
 
-        public static class DebuffScript extends AdvanceIfAliveListener {
-
-            public class DebuffRenderer extends BaseCombatLayeredRenderingPlugin {
-                public DebuffRenderer() {
-                    super();
-                    layer = CombatEngineLayers.ABOVE_SHIPS_LAYER;
-                    entity = ship;
-                }
-
-                @Override
-                public float getRenderRadius() {
-                    return 600f;
-                }
-
-                @Override
-                public void render(CombatEngineLayers layer, ViewportAPI viewport) {
-                    var origColor = ship.getSpriteAPI().getColor();
-                    var origBlendSrc = ship.getSpriteAPI().getBlendSrc();
-                    var origBlendDst = ship.getSpriteAPI().getBlendDest();
-                    var opacity = 0.5f*strength/MAX_DAMAGE_TAKEN;
-                    if (durationRemaining <= 0f) {
-                        opacity *= 1f + durationRemaining/FADE_OUT_TIME;
-                    }
-                    opacity = MathUtils.clamp(opacity, 0f, 0.5f);
-                    ship.getSpriteAPI().setColor(new Color(1f, 0.3f, 0.3f, opacity));
-                    ship.getSpriteAPI().setAdditiveBlend();
-                    ship.getSpriteAPI().renderAtCenter(ship.getLocation().x , ship.getLocation().y);
-                    ship.getSpriteAPI().setBlendFunc(origBlendSrc, origBlendDst);
-                    ship.getSpriteAPI().setColor(origColor);
-                }
-
-                @Override
-                public boolean isExpired() {
-                    return !ship.hasListener(DebuffScript.this);
-                }
-            }
-
+        public static class DebuffScript extends StackableBuffWithExpiry {
             private final String id;
-            private float strength = 0f;
-            private float durationRemaining = 0f;
             private static final float FADE_OUT_TIME = 3f;
 
             public DebuffScript(ShipAPI ship, String id) {
-                super(ship);
+                super(ship, FADE_OUT_TIME);
                 this.id = id;
                 if (ship.getSpriteAPI() != null) {
-                    Global.getCombatEngine()
-                            .addLayeredRenderingPlugin(new DebuffRenderer())
-                            .getLocation()
-                            .set(ship.getLocation());
+                    var renderer = new OverlayRenderer(ship, new Color(1f, 0.3f, 0.3f)) {
+                        @Override
+                        public boolean isExpired() {
+                            return !ship.hasListener(DebuffScript.this);
+                        }
+
+                        @Override
+                        public float getOpacity() {
+                            var opacity = 0.5f*strength/MAX_DAMAGE_TAKEN;
+                            if (durationRemaining <= 0f) {
+                                opacity *= 1f + durationRemaining/fadeOutTime;
+                            }
+                            opacity = MathUtils.clamp(opacity, 0f, 0.5f);
+                            return opacity;
+                        }
+                    };
+                    renderer.init(Global.getCombatEngine().addLayeredRenderingPlugin(renderer));
                 }
             }
 
             @Override
-            public void advanceIfAlive(float amount) {
-                durationRemaining -= amount;
-                if (durationRemaining <= -FADE_OUT_TIME) {
-                    var stats = ship.getMutableStats();
-                    stats.getShieldDamageTakenMult().unmodify(id);
-                    stats.getArmorDamageTakenMult().unmodify(id);
-                    stats.getHullDamageTakenMult().unmodify(id);
-                    stats.getEmpDamageTakenMult().unmodify(id);
-                    ship.removeListener(this);
-                    return;
-                }
-
-                float effectStrength = 1f;
-                if (durationRemaining < 0f) {
-                    effectStrength += durationRemaining / FADE_OUT_TIME;
-                }
-
+            public void unapplyEffects() {
                 var stats = ship.getMutableStats();
-                var mod = 100f * strength * effectStrength;
+                stats.getShieldDamageTakenMult().unmodify(id);
+                stats.getArmorDamageTakenMult().unmodify(id);
+                stats.getHullDamageTakenMult().unmodify(id);
+                stats.getEmpDamageTakenMult().unmodify(id);
+            }
+
+            @Override
+            public void applyEffects(float fadeOutFrac) {
+                var stats = ship.getMutableStats();
+                var mod = 100f * strength * (1f - fadeOutFrac);
                 stats.getShieldDamageTakenMult().modifyPercent(id, mod);
                 stats.getArmorDamageTakenMult().modifyPercent(id, mod);
                 stats.getHullDamageTakenMult().modifyPercent(id, mod);
@@ -202,12 +180,6 @@ public class WarpedKnowledge {
                         Strings.Skills.warpedKnowledgeEliteEffectDebuffTitle,
                         String.format(Strings.Skills.warpedKnowledgeEliteEffectDebuffDesc, Utils.asPercentNoDecimal(mod/100f)),
                         true);
-            }
-
-            public void addStack(float stackStrength, float maxStrength, float durationToKeep) {
-                if (strength > maxStrength) return;
-                strength = Math.min(maxStrength, strength + stackStrength);
-                durationRemaining = Math.max(durationToKeep, durationRemaining);
             }
         }
 
@@ -222,6 +194,11 @@ public class WarpedKnowledge {
             public EliteEffectScript(ShipAPI ship, String id) {
                 super(ship);
                 this.id = id;
+                VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(ship.getVariant());
+                masteryStrength = MasteryUtils.getModifiedMasteryEffectStrength(
+                        ship.getFleetCommander(),
+                        info.root == null ? ship.getHullSpec() : info.root.getHullSpec(),
+                        1f);
                 explosionSpec = new DamagingExplosionSpec(
                         0.1f,
                         80f,
@@ -232,51 +209,53 @@ public class WarpedKnowledge {
                         CollisionClass.PROJECTILE_FIGHTER,
                         3f, 3f, 1f, 0, Color.BLACK, Color.BLACK);
                 explosionSpec.setUseDetailedExplosion(false);
-                params = RiftCascadeMineExplosion.createStandardRiftParams(new Color(255, 50, 0), 25f);
+                explosionSpec.setShowGraphic(false);
+                params = RiftCascadeMineExplosion.createStandardRiftParams(new Color(255, 100, 100), 25f);
                 params.noiseMag = 3f;
                 params.withNegativeParticles = false;
                 params.fadeOut = 0.5f;
                 params.fadeIn = 0.5f;
                 params.hitGlowSizeMult = 0.4f;
-                params.invertForDarkening = new Color(100, 25, 0);
+                params.invertForDarkening = new Color(100, 50, 50);
                 params.numRiftsToSpawn = 1;
                 params.blackColor = Color.BLACK;
-                params.underglow = new Color(100, 25, 0);
+                params.underglow = new Color(100, 50, 50);
                 params.noiseMult = 2f;
                 params.noisePeriod = 0.2f;
                 params.additiveBlend = true;
-                VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(ship.getVariant());
-                if (ship.getFleetCommander() != null) {
-                    masteryStrength = MasteryUtils.getModifiedMasteryEffectStrength(
-                            ship.getFleetCommander(),
-                            info.root == null ? ship.getHullSpec() : info.root.getHullSpec(),
-                            1f);
-                } else {
-                    masteryStrength = 1f;
-                }
             }
 
             @Override
             public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
                 if (param instanceof CombatEntityAPI entity && entity.getCustomData() != null && (Boolean) entity.getCustomData().getOrDefault(EXPLOSION_ID_KEY, Boolean.FALSE)) {
                     if (!(target instanceof ShipAPI targetShip)) return null;
-                    var listeners = targetShip.getListeners(DebuffScript.class);
-                    if (listeners.isEmpty()) {
-                        var script = new DebuffScript(targetShip, id);
-                        script.addStack(DAMAGE_TAKEN_PER_STACK, MAX_DAMAGE_TAKEN, DURATION_SECONDS);
-                        targetShip.addListener(script);
-                    } else {
-                        listeners.forEach(x -> x.addStack(DAMAGE_TAKEN_PER_STACK, MAX_DAMAGE_TAKEN, DURATION_SECONDS));
-                    }
+                    StackableBuffWithExpiry.addStackToShip(
+                            new DebuffScript(targetShip, id),
+                            targetShip,
+                            ship.getMutableStats().getDynamic().getMod(STACK_STRENGTH_MOD).computeEffective(DAMAGE_TAKEN_PER_STACK),
+                            ship.getMutableStats().getDynamic().getMod(DEBUFF_CAP_MOD).computeEffective(MAX_DAMAGE_TAKEN),
+                            ship.getMutableStats().getDynamic().getMod(DURATION_MOD).computeEffective(DURATION_SECONDS));
                     return null;
                 }
 
                 if (cooldown <= 0f) {
+                    if (!(target instanceof ShipAPI)) return null;
+
+                    var amount = damage.getDamage();
+                    if (damage.isDps()) amount *= 0.1f;
+                    var chance = 1f - Math.pow(1.5f, -amount/100f);
+                    if (Misc.random.nextFloat() > chance) return null;
+
+                    Boolean active = (Boolean) ship.getCustomData().get(HiddenEffectScript.IS_ACTIVE_KEY);
+                    if (active == null) active = false;
                     cooldown = MIN_DELAY_BETWEEN_SHOTS_SECONDS[Utils.hullSizeToInt(ship.getHullSize())] / masteryStrength;
+                    if (active) cooldown /= 4f;
+                    cooldown *= MathUtils.randBetween(0.75f, 1.25f);
+
                     var explosion = Global.getCombatEngine().spawnDamagingExplosion(explosionSpec, ship, point, false);
                     explosion.setCustomData(EXPLOSION_ID_KEY, true);
                     RiftCascadeMineExplosion.spawnStandardRift(explosion, params);
-                    Global.getSoundPlayer().playSound("riftcascade_rift", 0.6f, 1f, point, new Vector2f());
+                    Global.getSoundPlayer().playSound("riftcascade_rift", 0.6f, 0.8f, point, new Vector2f());
                 }
                 return null;
             }
@@ -320,12 +299,37 @@ public class WarpedKnowledge {
     }
 
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
+        public static class EffectScript extends HiddenEffectScript {
+            public EffectScript(ShipAPI ship, String id, Provider plugin) {
+                super(ship, id, new Color(200, 100, 100), plugin);
+            }
+
+            @Override
+            protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
+                ship.getMutableStats().getBallisticWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
+                ship.getMutableStats().getEnergyWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
+                ship.getMutableStats().getMissileWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
+            }
+
+            @Override
+            protected void unapplyEffectsToShip(ShipAPI ship) {
+                ship.getMutableStats().getBallisticWeaponDamageMult().unmodify(id);
+                ship.getMutableStats().getEnergyWeaponDamageMult().unmodify(id);
+                ship.getMutableStats().getMissileWeaponDamageMult().unmodify(id);
+            }
+        }
+
         @Override
         public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
+            var p = SharedKnowledge.getHiddenEffectPlugin(ship);
+            if (p != null) {
+                ship.addListener(new EffectScript(ship, id, p));
+            }
         }
 
         @Override
         public void unapplyEffectsAfterShipCreation(ShipAPI ship, String id) {
+            ship.removeListenerOfClass(EffectScript.class);
         }
 
         @Override

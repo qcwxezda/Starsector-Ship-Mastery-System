@@ -45,3 +45,5 @@ Gamma Pseudocore,sms_gamma_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,T
 Beta Pseudocore,sms_beta_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
 Alpha Pseudocore,sms_alpha_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
 Amorphous Pseudocore,sms_amorphous_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AmorphousPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
+Warped Pseudocore,sms_warped_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.WarpedPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
+Crystalline Pseudocore,sms_crystalline_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.CrystallinePseudocoreInterface,,,,graphics/hullmods/generic_mod.png

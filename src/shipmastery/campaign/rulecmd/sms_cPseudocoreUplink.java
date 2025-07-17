@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SpecialItemPlugin;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
+import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -40,7 +41,9 @@ import org.lwjgl.opengl.GL11;
 import shipmastery.achievements.AmorphousPseudocoreUsed;
 import shipmastery.achievements.PseudocoreCrewedShip;
 import shipmastery.achievements.UnlockAchievementAction;
-import shipmastery.campaign.items.BasePseudocorePlugin;
+import shipmastery.campaign.items.PseudocoreInterface;
+import shipmastery.campaign.items.PseudocoreUplinkPlugin;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.FleetMemberTooltipCreator;
 import shipmastery.util.IntRef;
 import shipmastery.util.OnShipButtonClicked;
@@ -98,17 +101,21 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
             playerFlagship.setFlagship(true);
         }
         Global.getSoundPlayer().playUISound("ui_noise_static_message_quiet", 1f, 1f);
-        dialog.showCustomDialog(880f, 600f, new CorePickerDialog(helper, dialog));
+
+        boolean isMk2 = memoryMap.get(MemKeys.LOCAL).getBoolean(PseudocoreUplinkPlugin.IS_MK2_MEM_KEY);
+        dialog.showCustomDialog(880f, 600f, new CorePickerDialog(helper, dialog, isMk2));
         return true;
     }
 
     private static class CorePickerDialog extends BaseCustomDialogDelegate {
 
+        private final boolean allowAnyCore;
         private CorePickerPlugin plugin = null;
         private final SpecialItemPlugin.RightClickActionHelper helper;
         private final InteractionDialogAPI dialog;
 
-        public CorePickerDialog(SpecialItemPlugin.RightClickActionHelper helper, InteractionDialogAPI dialog) {
+        public CorePickerDialog(SpecialItemPlugin.RightClickActionHelper helper, InteractionDialogAPI dialog, boolean allowAnyCore) {
+            this.allowAnyCore = allowAnyCore;
             this.helper = helper;
             this.dialog = dialog;
         }
@@ -204,7 +211,7 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
 
             // AI Core selection buttons
             float corePanelWidth = 306f, corePanelHeight = 188f, itemPad = 10f;
-            createOutlineAndTitle(panel, Strings.Items.uplinkPseudocoreSelect, corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
+            createOutlineAndTitle(panel, allowAnyCore ? Strings.Items.uplinkMk2CoreSelect : Strings.Items.uplinkPseudocoreSelect, corePanelWidth, corePanelHeight, itemPad).one.inTL(itemPad, itemPad);
             float itemSize = 64f;
             var corePicker = panel.createUIElement(corePanelWidth, corePanelHeight-20f-2f*itemPad, true);
             //corePicker.getPosition().setXAlignOffset(-itemPad);
@@ -216,7 +223,10 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
                         var id = stack.getCommodityId();
                         if (id == null) return;
                         var spec = Global.getSettings().getCommoditySpec(stack.getCommodityId());
-                        if (spec == null || !spec.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) return;
+                        if (spec == null) return;
+                        var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
+                        if (plugin == null) return;
+                        if (!allowAnyCore && !(plugin instanceof PseudocoreInterface)) return;
                         consumer.accept(Map.entry(spec, stack));
                     })
                     .<TreeMap<CommoditySpecAPI, CargoStackAPI>>collect(() -> new TreeMap<>(
@@ -420,6 +430,7 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
             }
 
             plugin.selectedFleetMember.setCaptain(plugin.person);
+            CampaignUtils.addPermaModCloneVariantIfNeeded(plugin.selectedFleetMember, "sms_pseudocore_uplink_handler", false);
             helper.removeFromAnyStack(CargoAPI.CargoItemType.RESOURCES, plugin.coreIds.get(plugin.checkedCoreButtonIndex), 1);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             dialog.dismiss();

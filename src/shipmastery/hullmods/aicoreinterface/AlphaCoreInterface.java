@@ -14,7 +14,7 @@ import java.awt.Color;
 
 public class AlphaCoreInterface extends AICoreInterfaceHullmod {
 
-    public static final float TIME_FLOW_INCREASE = 0.12f;
+    public static final float STAT_BOOST = 0.1f;
     public static final int S_REDUCTION = 1;
 
     @Override
@@ -35,13 +35,16 @@ public class AlphaCoreInterface extends AICoreInterfaceHullmod {
         tooltip.addPara(Strings.Items.alphaCoreIntegrationEffect,
                 0f,
                 new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asPercent(TIME_FLOW_INCREASE),
+                Utils.asPercent(STAT_BOOST),
                 Utils.asInt(S_REDUCTION));
     }
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        stats.getTimeMult().modifyPercent(id, 100f * TIME_FLOW_INCREASE);
+        stats.getHullBonus().modifyPercent(id, 100f * STAT_BOOST);
+        stats.getArmorBonus().modifyPercent(id, 100f * STAT_BOOST);
+        stats.getFluxDissipation().modifyPercent(id, 100f * STAT_BOOST);
+        stats.getFluxCapacity().modifyPercent(id, 100f * STAT_BOOST);
         stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, -1f);
     }
 }

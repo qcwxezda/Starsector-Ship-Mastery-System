@@ -3,9 +3,9 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
-import shipmastery.campaign.skills.SharedKnowledge;
+import shipmastery.campaign.skills.HiddenEffectScript;
 
-public class BetaPseudocorePlugin extends BasePseudocorePlugin implements SharedKnowledge.HiddenAICoreEffect {
+public class BetaPseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
 
     public static final int LEVEL = 5;
     public static final float BASE_DP_MULT = 3f;

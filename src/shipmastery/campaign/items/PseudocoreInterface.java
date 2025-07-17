@@ -11,6 +11,7 @@ public interface PseudocoreInterface extends AICoreOfficerPlugin {
     String getPortraitSpritePath();
 
     static PseudocoreInterface getPluginForPseudocore(String commodityId) {
+        if (commodityId == null) return null;
         return switch (commodityId) {
             case "sms_alpha_pseudocore" -> new AlphaPseudocorePlugin();
             case "sms_warped_pseudocore" -> new WarpedPseudocorePlugin();

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.state.AppDriver;
 import shipmastery.campaign.StateTracker;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
         this.engine = engine;
         engine.getListenerManager().addListener(flagshipTracker);
         engine.getListenerManager().addListener(projectileTracker);
+        engine.getListenerManager().addListener(new EngineUtils.ClearCacheOnCombatEnd());
         projectileTracker.init(engine);
         lastBattleCreationContext = engine.getContext();
 

@@ -20,7 +20,6 @@ import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.Misc;
@@ -32,6 +31,7 @@ import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.HullmodUtils;
 import shipmastery.util.SizeLimitedMap;
@@ -87,11 +87,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  Otherwise, returns a modified copy of that variant. */
     public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, FleetMemberAPI member) {
         boolean variantIsRoot = Objects.equals(variant, root);
-        if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
-            variant = variant.clone();
-            variant.setGoalVariant(false);
-            variant.setSource(VariantSource.REFIT);
-        }
+        variant = CampaignUtils.cloneAndSetVariantIfNeeded(null, variant);
         if (variantIsRoot) root = variant;
         VariantLookup.addVariantInfo(variant, root, member);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway

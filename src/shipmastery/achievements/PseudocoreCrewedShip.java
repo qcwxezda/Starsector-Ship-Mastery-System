@@ -5,7 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.magiclib.achievements.MagicAchievement;
-import shipmastery.campaign.items.BasePseudocorePlugin;
+import shipmastery.campaign.items.PseudocoreInterface;
 import shipmastery.util.Utils;
 
 public class PseudocoreCrewedShip extends MagicAchievement {
@@ -20,8 +20,8 @@ public class PseudocoreCrewedShip extends MagicAchievement {
             if (fm.getCaptain() != null && fm.getCaptain().isAICore()) {
                 String id = fm.getCaptain().getAICoreId();
                 if (id != null) {
-                    var spec = Global.getSettings().getCommoditySpec(id);
-                    if (spec != null && spec.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) {
+                    var plugin = PseudocoreInterface.getPluginForPseudocore(id);
+                    if (plugin != null) {
                         completeAchievement();
                         return;
                     }

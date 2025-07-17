@@ -141,28 +141,9 @@ public abstract class CollisionUtils {
             allShields.add(thisShield);
         }
         if (entity instanceof ShipAPI ship) {
-            // [entity] is itself a parent module
-            for (ShipAPI child : ship.getChildModulesCopy()) {
-                if (child.getShield() != null) {
-                    allShields.add(child.getShield());
-                }
-            }
-            // [entity] is a child module
-            if (ship.getParentStation() != null) {
-                ShipAPI parent = ship.getParentStation();
-                // Check if parent has covering shields
-                if (parent.getShield() != null) {
-                    allShields.add(parent.getShield());
-                }
-                else {
-                    // Check if any of parent's children have covering shields
-                    for (ShipAPI child : parent.getChildModulesCopy()) {
-                        if (child.getShield() != null) {
-                            allShields.add(child.getShield());
-                        }
-                    }
-                }
-            }
+            var base = EngineUtils.getBaseShip(ship);
+            var allModules = EngineUtils.getAllModules(base);
+            allShields.addAll(allModules.stream().map(ShipAPI::getShield).filter(Objects::nonNull).toList());
         }
 
         for (ShieldAPI shield : allShields) {

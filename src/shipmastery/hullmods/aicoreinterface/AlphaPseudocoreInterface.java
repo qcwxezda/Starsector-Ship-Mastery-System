@@ -16,7 +16,7 @@ import java.awt.Color;
 public class AlphaPseudocoreInterface extends AICoreInterfaceHullmod {
 
     public static final float FIRE_RATE_INCREASE = SharedKnowledge.Elite.MAX_FIRE_RATE;
-    public static final float CR_REDUCTION = 0.1f;
+    public static final float CR_REDUCTION = 0.08f;
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
@@ -32,7 +32,7 @@ public class AlphaPseudocoreInterface extends AICoreInterfaceHullmod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         stats.getDynamic().getMod(SharedKnowledge.Elite.FIRE_RATE_STACKS_MOD).modifyMult(id, 9999f);
         var captain = CampaignUtils.getCaptain(stats);
-        boolean hasEliteSharedKnowledge = captain != null && captain.getStats() != null && captain.getStats().getSkillLevel("sms_shared_knowledge") >= 2f;
+        boolean hasEliteSharedKnowledge = SharedKnowledge.hasEliteSharedKnowledge(captain);
         if (!hasEliteSharedKnowledge) {
             SharedKnowledge.Elite.applyEffectsToStats(stats, FIRE_RATE_INCREASE, id);
             stats.getMaxCombatReadiness().modifyFlat(id, -CR_REDUCTION, Strings.Items.integratedDesc);

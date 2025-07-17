@@ -1,9 +1,11 @@
 package shipmastery.campaign.items;
 
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+import shipmastery.campaign.skills.HiddenEffectScript;
 
-public class CrystallinePseudocorePlugin extends BasePseudocorePlugin {
+public class CrystallinePseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
 
     public static final int LEVEL = 6;
     public static final float BASE_DP_MULT = 3.5f;
@@ -33,5 +35,15 @@ public class CrystallinePseudocorePlugin extends BasePseudocorePlugin {
 
     public String getPortraitSpritePath() {
         return "graphics/portraits/sms_portrait_crystalline_pseudocore.png";
+    }
+
+    @Override
+    public float getDurationSeconds(ShipAPI ship) {
+        return 4f;
+    }
+
+    @Override
+    public float getCooldownSeconds(ShipAPI ship) {
+        return 36f;
     }
 }

@@ -1,6 +1,7 @@
 package shipmastery.util;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
@@ -9,12 +10,15 @@ import com.fs.starfarer.api.combat.ShipwideAIFlags;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.combat.listeners.EndOfCombatListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class EngineUtils {
@@ -158,6 +162,15 @@ public abstract class EngineUtils {
         return false;
     }
 
+    private static final Map<ShipAPI, ShipAPI> BASE_SHIP_CACHE = new HashMap<>();
+
+    public static class ClearCacheOnCombatEnd implements EndOfCombatListener {
+        @Override
+        public void onCombatEnd() {
+            BASE_SHIP_CACHE.clear();
+        }
+    }
+
     /** If the argument is a ship, returns that ship.
      *  If the argument is a wing, returns the wing's source ship.
      *  If the argument is a module, returns the module's base ship/station. */
@@ -165,11 +178,18 @@ public abstract class EngineUtils {
         return getBaseShip(shipWingOrModule, new HashSet<>());
     }
 
-    public static ShipAPI getBaseShip(ShipAPI shipWingOrModule, Set<ShipAPI> seen) {
+    private static ShipAPI getBaseShip(ShipAPI shipWingOrModule, Set<ShipAPI> seen) {
         if (shipWingOrModule == null) {
             return null;
         }
+
+        var cached = BASE_SHIP_CACHE.get(shipWingOrModule);
+        if (cached != null) {
+            return cached;
+        }
+
         if (seen.contains(shipWingOrModule)) {
+            BASE_SHIP_CACHE.put(shipWingOrModule, shipWingOrModule);
             // Early exit to prevent infinite loop, this should never happen though
             // as ships shouldn't be parent modules of themselves or their own parent modules, etc.
             return shipWingOrModule;
@@ -177,7 +197,9 @@ public abstract class EngineUtils {
         seen.add(shipWingOrModule);
         // The "ship" in question is a drone
         if (shipWingOrModule.getAIFlags().hasFlag(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP)) {
-            return getBaseShip((ShipAPI) shipWingOrModule.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP), seen);
+            var base = getBaseShip((ShipAPI) shipWingOrModule.getAIFlags().getCustom(ShipwideAIFlags.AIFlags.DRONE_MOTHERSHIP), seen);
+            BASE_SHIP_CACHE.put(shipWingOrModule, base);
+            return base;
         }
         if (shipWingOrModule.isFighter()) {
             ShipAPI base = null;
@@ -192,6 +214,7 @@ public abstract class EngineUtils {
             else {
                 base = getBaseShip(shipWingOrModule.getWing().getSourceShip(), seen);
             }
+            BASE_SHIP_CACHE.put(shipWingOrModule, base);
             return base;
         }
         if (shipWingOrModule.isStationModule()) {
@@ -206,12 +229,27 @@ public abstract class EngineUtils {
             else {
                 base = getBaseShip(shipWingOrModule.getParentStation(), seen);
             }
+            BASE_SHIP_CACHE.put(shipWingOrModule, base);
             return base;
         }
+        BASE_SHIP_CACHE.put(shipWingOrModule, shipWingOrModule);
         return shipWingOrModule;
     }
 
     public static boolean isFighter(CombatEntityAPI entity) {
         return entity instanceof ShipAPI && ((ShipAPI) entity).isFighter();
+    }
+
+    /** Includes the ship itself */
+    public static List<ShipAPI> getAllModules(ShipAPI ship) {
+        List<ShipAPI> list = new ArrayList<>();
+        if (ship == null) return list;
+        getAllModulesHelper(ship, list);
+        return list;
+    }
+
+    private static void getAllModulesHelper(ShipAPI ship, List<ShipAPI> list) {
+        list.add(ship);
+        ship.getChildModulesCopy().forEach(child -> getAllModulesHelper(child, list));
     }
 }

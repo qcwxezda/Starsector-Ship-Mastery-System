@@ -5,11 +5,10 @@ import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.campaign.items.BasePseudocorePlugin;
+import shipmastery.campaign.items.PseudocoreInterface;
 import shipmastery.campaign.items.PseudocoreUplinkPlugin;
 import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
-import shipmastery.util.Utils;
 
 public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetSyncListener {
 
@@ -24,8 +23,9 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
 
         var captain = fm.getCaptain();
         if (!captain.isAICore()) return;
-        var core = Global.getSettings().getCommoditySpec(captain.getAICoreId());
-        if (core == null || !core.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) return;
+        var coreId = captain.getAICoreId();
+        var plugin = PseudocoreInterface.getPluginForPseudocore(coreId);
+        if (plugin == null) return;
 
         float penalty = savedPenaltyData == null ? 0f : savedPenaltyData.crPenalty();
         if (penalty > 0f) {
@@ -37,20 +37,11 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
     public void onPlayerFleetSync() {
         var fleet = Global.getSector().getPlayerFleet();
         savedPenaltyData = PseudocoreUplinkPlugin.getPseudocoreCRPointsAndPenalty();
-        for (var fm : fleet.getFleetData().getMembersListCopy()) {
-            boolean handle = false;
-            var id = fm.getCaptain().getAICoreId();
-            if (id != null) {
-                var spec = Global.getSettings().getCommoditySpec(id);
-                if (spec != null && spec.hasTag(BasePseudocorePlugin.IS_PSEUDOCORE_TAG)) {
-                    handle = true;
-                }
-            }
-            if (handle) {
-                Utils.addPermaModCloneVariantIfNeeded(fm, "sms_pseudocore_uplink_handler", false);
-            } else {
+        fleet.getFleetData().getMembersListCopy().forEach(fm -> {
+            var captain = fm.getCaptain();
+            if (captain == null || !captain.isAICore()) {
                 fm.getVariant().removePermaMod("sms_pseudocore_uplink_handler");
             }
-        }
+        });
     }
 }

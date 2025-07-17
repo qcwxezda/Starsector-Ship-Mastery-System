@@ -33,6 +33,7 @@ import particleengine.Particles;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.JitterEmitter;
 import shipmastery.fx.RingBurstEmitter;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -110,7 +111,7 @@ public class DimensionalTether {
         @Override
         public void advance(float amount) {
             if (isRetreating) {
-                for (ShipAPI module : Utils.getAllModules(ship)) {
+                for (ShipAPI module : EngineUtils.getAllModules(ship)) {
                     module.setExtraAlphaMult2(Math.max(0f, (RETREAT_DELAY - retreatTime) / RETREAT_DELAY));
                 }
                 retreatTime += amount;
@@ -126,7 +127,7 @@ public class DimensionalTether {
             if (damageAmount >= ship.getHitpoints() && !isRetreating && ship.getCurrentCR() >= crCost) {
                 ship.setCustomData(IS_RETREATING_KEY, true);
                 isRetreating = true;
-                for (ShipAPI module : Utils.getAllModules(ship)) {
+                for (ShipAPI module : EngineUtils.getAllModules(ship)) {
                     JitterEmitter emitter = new JitterEmitter(module, module.getSpriteAPI(), new Color(150, 250, 200), 0f, module.getShieldRadiusEvenIfNoShield() / 2f, 0.25f, false, 0.3f, 100);
                     emitter.setBaseIntensity(0.8f);
                     emitter.enableDynamicAnchoring();
