@@ -469,7 +469,7 @@
     "VentingRepairsPost": "This effect has a cooldown of %1$s seconds.",
     "BeamPartialHardFlux": "Beams deal a proportion of their damage as hard flux based on distance traveled.",
     "BeamPartialHardFluxPost": "Damage is %1$s hard-flux at %2$s of max weapon range, dropping off linearly to %3$s hard-flux at %4$s of max weapon range.",
-    "EmptyMastery": "Gain nothing but a sense of pride and accomplishment.",
+    "EmptyMastery": "Gain a sense of pride and accomplishment.",
     "EnhanceMasteryDescOnly": "Increases the strength of mastery effects by %1$s."
   },
 
@@ -505,6 +505,7 @@
     "rearrangementD4Effect": "Taking damage causes CR degradation.",
     "engineeringOverrideWarning": "If a hullmod is built in or enhanced while this hullmod is installed, this hullmod will become permanent.",
     "engineeringOverridePermanent": "A hullmod has been built in or enhanced while this hullmod was installed. This hullmod is now permanent.",
+    "engineeringOverrideTinkererWarning": "Incompatible with Hull Tinkerer background",
     "moduleCantInstall": "Can not be installed on modules",
     "analysisPackageCivilian": "civilian",
     "analysisPackageCombat": "combat",
@@ -690,12 +691,22 @@
   },
 
   "sms_backgrounds": {
-    "rejectHumanityCannotSelect": "Requires achievement \"The Pseudocore Connection, Part 1\"",
-    "rejectHumanityDesc1": "Your notoriety and lack of charisma have earned you a spot among every prospective captain's blacklist. No officer wants to work directly under you, and the few who believe otherwise will quickly learn why.",
+    "cannotSelectBackground": "Requires achievement %1$s",
+    "tinkererDesc1": "Your previous experience with ship repairs and modifications allows you to build S-mods into ships from the start, no specialized training and no compromises required.",
+    "tinkererDesc2": "- Restore vanilla's baseline %1$s S-mod limit",
+    "tinkererDesc3": "- Reduces S-mod build-in cost by %1$s",
+    "tinkererDesc4": "- Disables mastery effects that increase S-mod capacity",
+    "tinkererDesc5": "- The %1$s hullmod cannot be used",
+    "enlightenedDesc1": "You are a prodigy among fleet commanders, able to make the most even of ships you've barely touched. Your technical ability is rumored to be so vast that it readily rubs off on anyone you encounter, by comms link or otherwise.",
+    "enlightenedDesc2": "- Start with enough mastery XP in every ship class to unlock its maximum mastery level",
+    "enlightenedDesc3": "- All NPC fleets gain %1$s to mastery effect strength",
+    "enlightenedDesc4": "- All Pseudocores gain %1$s max level and have their automated points multipliers increased to match",
+    "rejectHumanityDesc1": "Your notoriety and lack of charisma have earned you a spot among every prospective captain's blacklist. No officer wants to work directly under you, and the few who think otherwise will quickly learn why.",
     "rejectHumanityDesc2": "Fortunately, your unique expertise in automation grants you the ability to assign AI cores to ships normally demanding a human officer.",
     "rejectHumanityDesc3": "- Maximum number of officers under your command reduced by %1$s",
     "rejectHumanityDesc4": "- Maximum CR of non-flagship, human-captained ships reduced by %1$s",
-    "rejectHumanityDesc5": "- Start with a %1$s"
+    "rejectHumanityDesc5": "- Start with a %1$s",
+    "rejectHumanityCRPenaltyDesc": "Reject Humanity background"
   },
 
   "sms_misc": {

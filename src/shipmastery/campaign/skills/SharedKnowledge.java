@@ -1,7 +1,6 @@
 package shipmastery.campaign.skills;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.characters.AfterShipCreationSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -41,7 +40,7 @@ public class SharedKnowledge {
     public static class Standard extends SkillEffectDescriptionWIthNegativeHighlight implements ShipSkillEffect {
 
         public static final float DP_REDUCTION = 0.08f;
-        public static final float DAMAGE_REDUCTION = 0.08f;
+        public static final float DAMAGE_REDUCTION = 0.05f;
 
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {

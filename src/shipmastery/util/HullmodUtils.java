@@ -12,6 +12,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.backgrounds.HullTinkerer;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.hullmods.EngineeringOverride;
@@ -57,6 +58,11 @@ public abstract class HullmodUtils {
         // If enhancing built-in, credits cost is halved
         if (isHullmodBuiltIn(spec, variant)) {
             cost /= 2f;
+        }
+
+        // Tinkerer background
+        if ((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false)) {
+            cost *= 1f - HullTinkerer.COST_REDUCTION;
         }
 
         // Engineering override reduces by additional factor

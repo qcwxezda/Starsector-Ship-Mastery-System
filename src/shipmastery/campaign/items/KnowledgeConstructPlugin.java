@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
-import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -192,8 +191,9 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         } else if (isBlank) {
             RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tBlankConstructClicked");
             plugin.setCustom1(helper);
-            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, Global.getSector().getPlayerFleet(), () -> {});
-            plugin.getMemoryMap().get(MemKeys.LOCAL).set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.MASTERY_SHARING_CONSTRUCT);
+            var target = Global.getSector().getPlayerFleet();
+            target.getMemoryWithoutUpdate().set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.MASTERY_SHARING_CONSTRUCT, 0f);
+            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, target, () -> {});
         }
     }
 

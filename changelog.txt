@@ -9,6 +9,10 @@
 - Removed skill changes.
 - Reduced maximum mastery level to 7, removed the 3rd S-mod slot (along with the +30% mastery boost other option).
 - Removed the randomness from MP gain, changed MP gain and cost scaling.
+- Added Nexerelin backgrounds:
+    - Hull Tinkerer: detaches S-mods from the mastery system, allowing you to build in S-mods without mastery
+    - Enlightened: Unlock by completing the achievement "Full House"
+    - Reject Humanity: Unlock by completing the achievement "The Pseudocore Connection, Part 1"
 - Renamed MP to mastery XP (in-game only), still referred to as MP internally.
 - Building in hullmods no longer costs MP.
 - Removed some settings.

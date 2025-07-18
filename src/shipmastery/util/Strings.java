@@ -395,6 +395,7 @@ public interface Strings {
         String rearrangementD4Effect = Utils.getString("sms_hullmods", "rearrangementD4Effect");
         String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
         String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
+        String engineeringOverrideTinkererWarning = Utils.getString("sms_hullmods", "engineeringOverrideTinkererWarning");
         String moduleCantInstall = Utils.getString("sms_hullmods", "moduleCantInstall");
         String analysisPackageCivilian = Utils.getString("sms_hullmods", "analysisPackageCivilian");
         String analysisPackageCombat = Utils.getString("sms_hullmods", "analysisPackageCombat");
@@ -763,11 +764,21 @@ public interface Strings {
     }
 
     interface Backgrounds {
-        String rejectHumanityCannotSelect = Utils.getString( "sms_backgrounds", "rejectHumanityCannotSelect");
+        String cannotSelectBackground = Utils.getString( "sms_backgrounds", "cannotSelectBackground");
+        String tinkererDesc1 = Utils.getString( "sms_backgrounds", "tinkererDesc1");
+        String tinkererDesc2 = Utils.getString( "sms_backgrounds", "tinkererDesc2");
+        String tinkererDesc3 = Utils.getString( "sms_backgrounds", "tinkererDesc3");
+        String tinkererDesc4 = Utils.getString( "sms_backgrounds", "tinkererDesc4");
+        String tinkererDesc5 = Utils.getString( "sms_backgrounds", "tinkererDesc5");
+        String enlightenedDesc1 = Utils.getString( "sms_backgrounds", "enlightenedDesc1");
+        String enlightenedDesc2 = Utils.getString( "sms_backgrounds", "enlightenedDesc2");
+        String enlightenedDesc3 = Utils.getString( "sms_backgrounds", "enlightenedDesc3");
+        String enlightenedDesc4 = Utils.getString( "sms_backgrounds", "enlightenedDesc4");
         String rejectHumanityDesc1 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc1");
         String rejectHumanityDesc2 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc2");
         String rejectHumanityDesc3 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc3");
         String rejectHumanityDesc4 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc4");
         String rejectHumanityDesc5 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc5");
+        String rejectHumanityCRPenaltyDesc = Utils.getString( "sms_backgrounds", "rejectHumanityCRPenaltyDesc");
     }
 }

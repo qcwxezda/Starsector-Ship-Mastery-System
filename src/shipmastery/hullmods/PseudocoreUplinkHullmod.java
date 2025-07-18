@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.campaign.items.PseudocoreInterface;
+import shipmastery.campaign.items.PseudocorePlugin;
 import shipmastery.campaign.items.PseudocoreUplinkPlugin;
 import shipmastery.campaign.listeners.PlayerFleetSyncListener;
 import shipmastery.util.Strings;
@@ -24,7 +24,7 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
         var captain = fm.getCaptain();
         if (!captain.isAICore()) return;
         var coreId = captain.getAICoreId();
-        var plugin = PseudocoreInterface.getPluginForPseudocore(coreId);
+        var plugin = PseudocorePlugin.getPluginForPseudocore(coreId);
         if (plugin == null) return;
 
         float penalty = savedPenaltyData == null ? 0f : savedPenaltyData.crPenalty();

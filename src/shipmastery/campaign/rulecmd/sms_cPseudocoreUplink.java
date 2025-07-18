@@ -41,7 +41,7 @@ import org.lwjgl.opengl.GL11;
 import shipmastery.achievements.AmorphousPseudocoreUsed;
 import shipmastery.achievements.PseudocoreCrewedShip;
 import shipmastery.achievements.UnlockAchievementAction;
-import shipmastery.campaign.items.PseudocoreInterface;
+import shipmastery.campaign.items.PseudocorePlugin;
 import shipmastery.campaign.items.PseudocoreUplinkPlugin;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.FleetMemberTooltipCreator;
@@ -226,7 +226,7 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
                         if (spec == null) return;
                         var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
                         if (plugin == null) return;
-                        if (!allowAnyCore && !(plugin instanceof PseudocoreInterface)) return;
+                        if (!allowAnyCore && !(plugin instanceof PseudocorePlugin)) return;
                         consumer.accept(Map.entry(spec, stack));
                     })
                     .<TreeMap<CommoditySpecAPI, CargoStackAPI>>collect(() -> new TreeMap<>(
@@ -261,7 +261,16 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
                     @Override
                     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                         tooltip.addTitle(spec.getName());
-                        tooltip.addPara(Global.getSettings().getDescription(spec.getId(), Description.Type.RESOURCE).getText1(), 10f);
+                        var strings = Global.getSettings().getDescription(spec.getId(), Description.Type.RESOURCE).getText1Paras();
+                        String str = "";
+                        if (!strings.isEmpty()) {
+                            str += strings.get(0);
+                        }
+                        if (strings.size() > 1) {
+                            str += "\n\n";
+                            str += strings.get(1);
+                        }
+                        tooltip.addPara(str, 10f);
                         ListenerUtil.addCommodityTooltipSectionAfterPrice(tooltip, 600f, false, stack);
                         tooltip.addPara(Strings.Items.cargoCount, 10f, Misc.getGrayColor(), Misc.getHighlightColor(), "" + (int) helper.getNumItems(CargoAPI.CargoItemType.RESOURCES, spec.getId()));
                     }

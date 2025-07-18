@@ -1,7 +1,9 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FracturedGammaCorePlugin extends BasePseudocorePlugin {
 
@@ -29,8 +31,14 @@ public class FracturedGammaCorePlugin extends BasePseudocorePlugin {
     }
 
     @Override
-    public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
-        stats.setLevel(LEVEL);
-        stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
+    public List<String> getPrioritySkills() {
+        List<String> ids = new ArrayList<>();
+        ids.add(Skills.HELMSMANSHIP);
+        return ids;
+    }
+
+    @Override
+    public float getEnlightenedAIMultIncrease() {
+        return 0.33f;
     }
 }

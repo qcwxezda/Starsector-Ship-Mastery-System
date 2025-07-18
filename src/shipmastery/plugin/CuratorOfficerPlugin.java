@@ -15,7 +15,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGenerator
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
 import shipmastery.campaign.FleetHandler;
-import shipmastery.campaign.items.PseudocoreInterface;
+import shipmastery.campaign.items.PseudocorePlugin;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.IntRef;
 import shipmastery.util.Strings;
@@ -77,11 +77,11 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         float replaceCrystallineProb = REPLACE_CRYSTALLINE_PROB;
         float replaceWarpedProb = REPLACE_WARPED_PROB;
         if (isNucleusDefender) {
-            replaceCrystallineProb = 0.25f;
-            replaceWarpedProb = 0.25f;
+            replaceCrystallineProb = 0.2f;
+            replaceWarpedProb = 0.2f;
         } else if (isRemoteDefender) {
-            replaceCrystallineProb = 0.4f;
-            replaceWarpedProb = 0.4f;
+            replaceCrystallineProb = 0.33f;
+            replaceWarpedProb = 0.33f;
         }
 
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
@@ -99,7 +99,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             if (coreId == null) continue;
             // Don't use Misc.getAICoreOfficerPlugin because we only register the plugin on game load, but we
             // need the plugin on game enable (to set AI core for custom station)
-            var plugin = PseudocoreInterface.getPluginForPseudocore(coreId);
+            var plugin = PseudocorePlugin.getPluginForPseudocore(coreId);
             if (plugin == null) continue;
             var person = plugin.createPerson(coreId, "sms_curator", random);
             assignOfficerSkillsAndIntegrate(person, fm, random);

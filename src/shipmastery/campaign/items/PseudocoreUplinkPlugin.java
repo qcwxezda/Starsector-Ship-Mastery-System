@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
-import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -58,8 +57,9 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
     public void performRightClickAction(RightClickActionHelper helper) {
         RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tPseudocoreUplinkClicked");
         plugin.setCustom1(helper);
-        Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, Global.getSector().getPlayerFleet(), () -> {});
-        plugin.getMemoryMap().get(MemKeys.LOCAL).set(IS_MK2_MEM_KEY, isMk2(getSpec()));
+        var target = Global.getSector().getPlayerFleet();
+        target.getMemoryWithoutUpdate().set(IS_MK2_MEM_KEY, isMk2(getSpec()), 0f);
+        Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, target, () -> {});
     }
 
     @Override

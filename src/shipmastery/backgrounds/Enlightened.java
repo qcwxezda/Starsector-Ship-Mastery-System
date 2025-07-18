@@ -2,21 +2,23 @@ package shipmastery.backgrounds;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exerelin.campaign.backgrounds.BaseCharacterBackground;
 import exerelin.utilities.NexFactionConfig;
 import org.magiclib.achievements.MagicAchievementManager;
+import shipmastery.ShipMastery;
+import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class RejectHumanity extends BaseCharacterBackground {
+public class Enlightened extends BaseCharacterBackground {
 
-    public static final float OFFICER_REDUCTION = 1f;
-    public static final float CREWED_CR_REDUCTION = 0.5f;
-    public static final String MODIFIER_ID = "sms_RejectHumanityBackground";
-    public static final String IS_REJECT_HUMANITY_START = "$sms_IsRejectHumanityBackground";
+    public static final float NPC_MASTERY_BOOST = 0.5f;
+    public static final int PSEUDOCORE_EXTRA_LEVELS = 1;
+    public static final String MODIFIER_ID = "sms_EnlightenedBackground";
+    public static final String IS_ENLIGHTENED_START = "$sms_IsEnlightenedBackground";
 
     @Override
     public boolean canBeSelected(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
@@ -32,13 +34,13 @@ public class RejectHumanity extends BaseCharacterBackground {
     }
 
     public boolean isUnlocked() {
-        var achievement = MagicAchievementManager.getInstance().getAchievement("sms_PseudocoreCrewedShip");
+        var achievement = MagicAchievementManager.getInstance().getAchievement("sms_MasteredMany");
         return achievement != null && achievement.isComplete();
     }
 
     @Override
     public void canNotBeSelectedReason(TooltipMakerAPI tooltip, FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        var achievement = MagicAchievementManager.getInstance().getAchievement("sms_PseudocoreCrewedShip");
+        var achievement = MagicAchievementManager.getInstance().getAchievement("sms_MasteredMany");
         String name = achievement == null ? Strings.Campaign.unknown : achievement.getName();
         tooltip.addPara(Strings.Backgrounds.cannotSelectBackground, -20f, Misc.getNegativeHighlightColor(), Misc.getHighlightColor(), name);
     }
@@ -57,31 +59,35 @@ public class RejectHumanity extends BaseCharacterBackground {
 
     public void addToTooltip(TooltipMakerAPI tooltip, boolean forIntel) {
         if (forIntel || isUnlocked()) {
-            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc1, -15f);
-            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc2, 10f);
-            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc3, 10f, Misc.getNegativeHighlightColor(), Utils.asPercent(OFFICER_REDUCTION));
-            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc4, 0f, Misc.getNegativeHighlightColor(), Utils.asPercent(CREWED_CR_REDUCTION));
-            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc5, 0f, Misc.getHighlightColor(), Global.getSettings().getSpecialItemSpec("sms_pseudocore_uplink_mk2").getName());
+            tooltip.addPara(Strings.Backgrounds.enlightenedDesc1, -15f);
+            tooltip.addPara(Strings.Backgrounds.enlightenedDesc2, 10f);
+            tooltip.addPara(Strings.Backgrounds.enlightenedDesc3, 0f, Misc.getHighlightColor(), Utils.asPercent(NPC_MASTERY_BOOST));
+            tooltip.addPara(Strings.Backgrounds.enlightenedDesc4, 0f, Misc.getHighlightColor(), Utils.asInt(PSEUDOCORE_EXTRA_LEVELS));
         }
     }
 
     @Override
     public void onNewGame(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        Global.getSector().getPersistentData().put(IS_REJECT_HUMANITY_START, true);
+        Global.getSector().getPersistentData().put(IS_ENLIGHTENED_START, true);
     }
 
     @Override
     public void onNewGameAfterTimePass(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        Global.getSector().getPlayerStats().getOfficerNumber().modifyMult(MODIFIER_ID, 0f);
-        var cargo = Global.getSector().getPlayerFleet().getCargo();
-        cargo.addSpecial(new SpecialItemData("sms_pseudocore_uplink_mk2", null), 1f);
-        cargo.addCommodity("sms_beta_pseudocore", 1f);
-        Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy().forEach(
-                member -> {
-                    if (member.getCaptain() != null && !member.getCaptain().isPlayer() && !member.getCaptain().isDefault() && !member.getCaptain().isAICore()) {
-                        member.setCaptain(null);
+        DeferredActionPlugin.performLater(() -> Global.getSettings().getAllShipHullSpecs()
+                .stream()
+                .map(Utils::getRestoredHullSpec)
+                .distinct()
+                .forEach(x -> {
+                    int maxLevel = ShipMastery.getMaxMasteryLevel(x);
+                    float req = 0f;
+                    for (int i = 0; i < maxLevel; i++) {
+                        req += MasteryUtils.getUpgradeCost(i);
                     }
-                }
-        );
+                    ShipMastery.addPlayerMasteryPoints(x,
+                            req,
+                            false,
+                            false,
+                            ShipMastery.MasteryGainSource.OTHER);
+                }), 0f);
     }
 }

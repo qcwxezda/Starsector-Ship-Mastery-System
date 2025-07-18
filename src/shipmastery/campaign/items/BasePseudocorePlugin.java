@@ -1,92 +1,91 @@
 package shipmastery.campaign.items;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
-import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.FullName;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Ranks;
+import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.campaign.CampaignEngine;
-import shipmastery.ShipMastery;
-import shipmastery.campaign.listeners.CoreTabListener;
-import shipmastery.campaign.listeners.PlayerFleetSyncListener;
+import shipmastery.backgrounds.Enlightened;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-public class BasePseudocorePlugin implements PlayerFleetSyncListener, PseudocoreInterface, CoreTabListener {
-
-    public static final String COPY_PERSONALITY_TAG = "sms_copy_player_personality";
-    public static final String DEFAULT_PERSONALITY_ID = "aggressive";
-    public static final String SHARED_KNOWLEDGE_ID = "sms_shared_knowledge";
-    public static final String CRYSTALLINE_KNOWLEDGE_ID = "sms_crystalline_knowledge";
-    public static final String WARPED_KNOWLEDGE_ID = "sms_warped_knowledge";
-    public static final String AMORPHOUS_KNOWLEDGE_ID = "sms_amorphous_knowledge";
-    public static final String SCALE_AUTOMATED_POINTS_TAG = "sms_scale_auto_pts";
+public abstract class BasePseudocorePlugin implements PseudocorePlugin {
 
     @Override
-    public PersonAPI createPerson(String aiCoreId, String factionId, Random random) {
-        return initPerson(aiCoreId, factionId, getPortraitSpritePath(), getBaseAIPointsMult());
+    public abstract String getCommodityId();
+    public abstract int getBaseLevel();
+    public abstract float getBaseAIPointsMult();
+
+    @Override
+    public final PersonAPI createPerson(String aiCoreId, String factionId, Random random) {
+        return initPerson(aiCoreId, factionId);
+    }
+
+    public final int getLevel() {
+        int base = getBaseLevel();
+        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+            base++;
+        }
+        return base;
     }
 
     @Override
-    public void onPlayerFleetSync() {
-        var fleet = Global.getSector().getPlayerFleet();
-        Map<String, AICoreOfficerPlugin> plugins = new HashMap<>();
-        for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
-            PersonAPI captain = fm.getCaptain();
-            String id = captain == null ? null : captain.getAICoreId();
-            if (id == null) continue;
-            var spec = Global.getSettings().getCommoditySpec(id);
-            if (spec.hasTag(COPY_PERSONALITY_TAG)) {
-                setPersonalityToPlayerDoctrine(captain);
-            }
-            if (spec.hasTag(SCALE_AUTOMATED_POINTS_TAG)) {
-                float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
-                var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
-                var memory = captain.getMemoryWithoutUpdate();
-                if (memory != null && plugin instanceof PseudocoreInterface kPlugin) {
-                    float baseMult = kPlugin.getBaseAIPointsMult();
-                    // Special behavior for amorphous cores
-                    if ("sms_amorphous_pseudocore".equals(id)) {
-                        int points = (int) ShipMastery.getPlayerMasteryPoints(fm.getHullSpec());
-                        int groups = (int) (points / AmorphousPseudocorePlugin.MP_PER_GROUP);
-                        baseMult = Math.max(1f, baseMult - groups*AmorphousPseudocorePlugin.DP_MULT_PER_MP_GROUP);
-                    }
-                    memory.set("$autoPointsMult", baseMult * ratio);
-                }
+    public List<String> getPrioritySkills() {
+        List<String> ids = new ArrayList<>();
+        ids.add(SHARED_KNOWLEDGE_ID);
+        ids.add(Skills.HELMSMANSHIP);
+        ids.add(Skills.TARGET_ANALYSIS);
+        ids.add(Skills.IMPACT_MITIGATION);
+        ids.add(Skills.FIELD_MODULATION);
+        ids.add(Skills.GUNNERY_IMPLANTS);
+        ids.add(Skills.COMBAT_ENDURANCE);
+        ids.add(Skills.DAMAGE_CONTROL);
+        return ids;
+    }
+
+    public final void setPersonSkills(MutableCharacterStatsAPI stats) {
+        List<String> ids = getPrioritySkills();
+        int level = getLevel();
+        Set<String> assigned = new HashSet<>();
+        for (int i = 0; i < Math.min(ids.size(), level); i++) {
+            var id = ids.get(i);
+            stats.setSkillLevel(id, 2f);
+            assigned.add(id);
+        }
+        if (ids.size() < level) {
+            int i = 0;
+            for (String id : Utils.combatSkillIds) {
+                if (assigned.contains(id) || i >= level-ids.size()) continue;
+                stats.setSkillLevel(id, 2f);
+                i++;
             }
         }
     }
 
-    @Override
-    public String getCommodityId() {
-        throw new RuntimeException("commodity id not set");
+    public float getEnlightenedAIMultIncrease() {
+        return 0.5f;
     }
 
-    @Override
-    public int getBaseLevel() {
-        return 0;
-    }
-
-    @Override
-    public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {}
-
-    @Override
-    public float getBaseAIPointsMult() {
-        return 0f;
+    public final float getAIPointsMult() {
+        float base = getBaseAIPointsMult();
+        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+            base += getEnlightenedAIMultIncrease();
+        }
+        return base;
     }
 
     @Override
@@ -94,13 +93,14 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
         throw new RuntimeException("portrait sprite path not set");
     }
 
-    public PersonAPI initPerson(String aiCoreId, String factionId, String spritePath, float aiPointsMult) {
+    public final PersonAPI initPerson(String aiCoreId, String factionId) {
         PersonAPI person = Global.getFactory().createPerson();
         person.setFaction(factionId);
         person.setAICoreId(aiCoreId);
         CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(aiCoreId);
         person.getStats().setSkipRefresh(true);
         person.setName(new FullName(spec.getName(), "", FullName.Gender.ANY));
+        var spritePath = getPortraitSpritePath();
         SpriteAPI sprite = Global.getSettings().getSprite(spritePath);
         if (sprite.getTextureId() <= 0) {
             try {
@@ -111,22 +111,15 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
         }
         person.setPortraitSprite(spritePath);
 
-        setPersonSkills(person.getStats(), factionId);
+        person.getStats().setLevel(getLevel());
+        setPersonSkills(person.getStats());
 
+        var aiPointsMult = getAIPointsMult();
         person.getMemoryWithoutUpdate().set("$autoPointsMult", aiPointsMult);
         person.setPersonality(DEFAULT_PERSONALITY_ID);
         person.setRankId(Ranks.SPACE_CAPTAIN);
         person.setPostId(null);
         return person;
-    }
-
-    public String getPlayerPersonalityId() {
-        var personalityPicker = Global.getSector().getPlayerFaction().getPersonalityPicker();
-        if (personalityPicker != null && !personalityPicker.isEmpty()) {
-            return personalityPicker.getItems().get(0);
-        } else {
-            return DEFAULT_PERSONALITY_ID;
-        }
     }
 
     protected final void createPersonalitySection(PersonAPI person, TooltipMakerAPI tooltip, Color highlightColor, String... params) {
@@ -135,22 +128,22 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
 
         int level;
         float autoMult;
-        int baseLevel = getBaseLevel();
-        float baseAutoMult = getBaseAIPointsMult();
+        int defaultLevel = getLevel();
+        float defaultAutoMult = getAIPointsMult();
         if (person == null) {
-            String defaultPersonality = getPlayerPersonalityId();
+            String defaultPersonality = PseudocorePlugin.getPlayerPersonalityId();
             person = Global.getFactory().createPerson();
             person.setAICoreId(getCommodityId());
             person.setPersonality(defaultPersonality);
-            level = baseLevel;
-            autoMult = baseAutoMult;
+            level = defaultLevel;
+            autoMult = defaultAutoMult;
         } else {
             level = person.getStats().getLevel();
             autoMult = person.getMemoryWithoutUpdate().getFloat("$autoPointsMult");
         }
 
-        Color levelColor = level < baseLevel ? Misc.getNegativeHighlightColor() : level > baseLevel ? Misc.getPositiveHighlightColor() : Misc.getHighlightColor();
-        Color autoMultColor = autoMult < baseAutoMult ? Misc.getPositiveHighlightColor() : autoMult > baseAutoMult ? Misc.getNegativeHighlightColor() : Misc.getHighlightColor();
+        Color levelColor = level < defaultLevel ? Misc.getNegativeHighlightColor() : level > defaultLevel ? Misc.getPositiveHighlightColor() : Misc.getHighlightColor();
+        Color autoMultColor = autoMult < defaultAutoMult ? Misc.getPositiveHighlightColor() : autoMult > defaultAutoMult ? Misc.getNegativeHighlightColor() : Misc.getHighlightColor();
 
         float opad = 10f;
         Color text = Global.getSector().getPlayerFaction().getBaseUIColor();
@@ -177,15 +170,4 @@ public class BasePseudocorePlugin implements PlayerFleetSyncListener, Pseudocore
                 spec.getName());
     }
 
-    public void setPersonalityToPlayerDoctrine(PersonAPI person) {
-        person.setPersonality(getPlayerPersonalityId());
-    }
-
-    @Override
-    public void onCoreTabOpened(CoreUITabId id) {}
-
-    @Override
-    public void onCoreUIDismissed() {
-        onPlayerFleetSync();
-    }
 }

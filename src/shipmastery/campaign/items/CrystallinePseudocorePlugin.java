@@ -1,9 +1,9 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import shipmastery.campaign.skills.HiddenEffectScript;
+
+import java.util.List;
 
 public class CrystallinePseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
 
@@ -19,14 +19,12 @@ public class CrystallinePseudocorePlugin extends BasePseudocorePlugin implements
         return LEVEL;
     }
 
-    public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
-        stats.setLevel(LEVEL);
-        stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
-        stats.setSkillLevel(Skills.COMBAT_ENDURANCE, 2f);
-        stats.setSkillLevel(Skills.FIELD_MODULATION, 2f);
-        stats.setSkillLevel(Skills.IMPACT_MITIGATION, 2f);
-        stats.setSkillLevel(Skills.DAMAGE_CONTROL, 2f);
-        stats.setSkillLevel(CRYSTALLINE_KNOWLEDGE_ID, 2f);
+    @Override
+    public List<String> getPrioritySkills() {
+        var ids = super.getPrioritySkills();
+        ids.remove(SHARED_KNOWLEDGE_ID);
+        ids.add(0, CRYSTALLINE_KNOWLEDGE_ID);
+        return ids;
     }
 
     public float getBaseAIPointsMult() {

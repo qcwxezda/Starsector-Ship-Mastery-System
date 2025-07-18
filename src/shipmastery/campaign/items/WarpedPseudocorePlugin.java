@@ -1,9 +1,9 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import shipmastery.campaign.skills.HiddenEffectScript;
+
+import java.util.List;
 
 public class WarpedPseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
 
@@ -19,14 +19,12 @@ public class WarpedPseudocorePlugin extends BasePseudocorePlugin implements Hidd
         return LEVEL;
     }
 
-    public void setPersonSkills(MutableCharacterStatsAPI stats, String factionId) {
-        stats.setLevel(LEVEL);
-        stats.setSkillLevel(Skills.HELMSMANSHIP, 2f);
-        stats.setSkillLevel(Skills.COMBAT_ENDURANCE, 2f);
-        stats.setSkillLevel(Skills.TARGET_ANALYSIS, 2f);
-        stats.setSkillLevel(Skills.BALLISTIC_MASTERY, 2f);
-        stats.setSkillLevel(Skills.MISSILE_SPECIALIZATION, 2f);
-        stats.setSkillLevel(WARPED_KNOWLEDGE_ID, 2f);
+    @Override
+    public List<String> getPrioritySkills() {
+        var ids = super.getPrioritySkills();
+        ids.remove(SHARED_KNOWLEDGE_ID);
+        ids.add(0, WARPED_KNOWLEDGE_ID);
+        return ids;
     }
 
     public float getBaseAIPointsMult() {

@@ -1,5 +1,6 @@
 package shipmastery.hullmods;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
@@ -10,9 +11,11 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
@@ -54,8 +57,8 @@ public class MasteryHullmod extends BaseHullMod {
         });
 
         VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
-        // Penalize CR if the ship's OP is above the limit, for player ships only
         if (info != null && info.commander != null && info.commander.isPlayer()) {
+            // Penalize CR if the ship's OP is above the limit, for player ships only
             int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
             int op = variant.computeOPCost(info.commander.getStats());
             if (op > maxOp) {
@@ -63,6 +66,17 @@ public class MasteryHullmod extends BaseHullMod {
                 float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
                 if (penalty > 0f) {
                     stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
+                }
+            }
+            // Penalize CR for reject humanity background if officered by human
+            boolean isRejectHumanity = (boolean) Global.getSector().getPersistentData().getOrDefault(RejectHumanity.IS_REJECT_HUMANITY_START, false);
+            if (isRejectHumanity) {
+                var captain = CampaignUtils.getCaptain(stats);
+                if (captain != null && !captain.isPlayer() && !captain.isDefault() && !captain.isAICore()) {
+                    stats.getMaxCombatReadiness().modifyFlat(
+                            RejectHumanity.MODIFIER_ID,
+                            -RejectHumanity.CREWED_CR_REDUCTION,
+                            Strings.Backgrounds.rejectHumanityCRPenaltyDesc);
                 }
             }
         }

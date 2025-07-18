@@ -27,6 +27,7 @@ import com.fs.starfarer.api.util.WeightedRandomPicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
+import shipmastery.backgrounds.Enlightened;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.mastery.MasteryEffect;
@@ -62,6 +63,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
     public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
     public static final Map<String, Map<String, NavigableMap<Integer, String>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
+    public static final String MODIFIER_ID = "sms_NPCMasteryStrengthMod";
 
     public FleetHandler() {
         super(false);
@@ -354,7 +356,11 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         float bonus = data.averageModifier();
         float averageLevel = commander.getStats().getLevel()/4f + bonus + getNPCLevelModifier(progression);
         float masteryStrength = data.masteryStrengthBonus();
-        commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(FleetHandler.class.getName(), 100f*masteryStrength);
+        var mod = commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD);
+        mod.modifyPercent(MODIFIER_ID, 100f*masteryStrength);
+        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+            mod.modifyPercent(Enlightened.MODIFIER_ID, 100f*Enlightened.NPC_MASTERY_BOOST);
+        }
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {

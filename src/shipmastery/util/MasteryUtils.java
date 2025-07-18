@@ -97,8 +97,11 @@ public abstract class MasteryUtils {
     }
 
     public static int getUpgradeCost(ShipHullSpecAPI spec) {
-        int level = ShipMastery.getPlayerMasteryLevel(spec);
-        return switch (level) {
+        return getUpgradeCost(ShipMastery.getPlayerMasteryLevel(spec));
+    }
+
+    public static int getUpgradeCost(int curLevel) {
+        return switch (curLevel) {
             case 0 -> 60;
             case 1 -> 75;
             case 2 -> 100;
@@ -106,7 +109,7 @@ public abstract class MasteryUtils {
             case 4 -> 180;
             case 5 -> 300;
             case 6 -> 500;
-            default -> 500 + (level-6)*100;
+            default -> 500 + (curLevel-6)*100;
         };
     }
 

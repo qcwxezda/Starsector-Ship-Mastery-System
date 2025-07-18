@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -98,8 +97,9 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
         if (type == Type.TYPE_1) {
             RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tBlankConstructClicked");
             plugin.setCustom1(helper);
-            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, Global.getSector().getPlayerFleet(), () -> {});
-            plugin.getMemoryMap().get(MemKeys.LOCAL).set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.SUPERCONSTRUCT_1);
+            var target = Global.getSector().getPlayerFleet();
+            target.getMemoryWithoutUpdate().set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.SUPERCONSTRUCT_1, 0f);
+            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, target, () -> {});
         } else if (type == Type.TYPE_2) {
             Global.getSector().getPlayerStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(SUPERCONSTRUCT2_MODIFIERID, 100f*SUPERCONSTRUCT2_STRENGTH);
             Global.getSector().getPersistentData().put(MasteryUtils.CONSTRUCT_MP_OVERRIDE_KEY, SUPERCONSTRUCT2_NEWMPCOST);

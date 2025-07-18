@@ -26,6 +26,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.MasteredMany;
+import shipmastery.backgrounds.HullTinkerer;
 import shipmastery.campaign.items.BasePseudocorePlugin;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
@@ -35,7 +36,7 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
-import shipmastery.campaign.items.PseudocoreInterface;
+import shipmastery.campaign.items.PseudocorePlugin;
 import shipmastery.campaign.listeners.FleetSyncListenerHandler;
 import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
@@ -68,7 +69,7 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     private static String lastSaveId = null;
-    private static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
+    public static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     public static final String GENERATION_SEED_KEY = "$sms_MasteryGenerationSeed";
     public static final ReflectionEnabledClassLoader classLoader;
@@ -278,8 +279,13 @@ public class ModPlugin extends BaseModPlugin {
         }
 
         if (!Settings.DISABLE_MAIN_FEATURES) {
-            Misc.MAX_PERMA_MODS = 0;
-            Global.getSettings().setFloat("maxPermanentHullmods", 0f);
+            if (!((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false))) {
+                Misc.MAX_PERMA_MODS = 0;
+                Global.getSettings().setFloat("maxPermanentHullmods", 0f);
+            } else {
+                Misc.MAX_PERMA_MODS = originalMaxPermaMods;
+                Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
+            }
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(false);
             // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
             // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
@@ -354,10 +360,10 @@ public class ModPlugin extends BaseModPlugin {
         registerCommodityTooltipPlugin(listeners);
         registerAICorePlugins();
         new FracturedGammaCoreInterface.IntegrationScript();
-        var pseudocorePlugin = new BasePseudocorePlugin();
-        FleetSyncListenerHandler.registerListener(pseudocorePlugin);
+        var pseudocorePluginHandler = new BasePseudocorePlugin.Handler();
+        FleetSyncListenerHandler.registerListener(pseudocorePluginHandler);
         try {
-            registerCoreTabListener.invoke(coreTabListenerHandler, pseudocorePlugin);
+            registerCoreTabListener.invoke(coreTabListenerHandler, pseudocorePluginHandler);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -385,7 +391,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
             var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
-            if (!(plugin instanceof PseudocoreInterface)) return;
+            if (!(plugin instanceof PseudocorePlugin)) return;
             plugin.createPersonalitySection(null, info);
         }, true);
     }
@@ -394,7 +400,7 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().registerPlugin(new BaseCampaignPlugin() {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
-                var plugin = PseudocoreInterface.getPluginForPseudocore(commodityId);
+                var plugin = PseudocorePlugin.getPluginForPseudocore(commodityId);
                 if (plugin == null) return null;
                 return new PluginPick<>(plugin, PickPriority.MOD_SPECIFIC);
             }
@@ -406,7 +412,7 @@ public class ModPlugin extends BaseModPlugin {
         if (ship == null || ship.getCaptain() == null) return null;
         String id = ship.getCaptain().getAICoreId();
         if (id == null) return null;
-        var plugin = PseudocoreInterface.getPluginForPseudocore(id);
+        var plugin = PseudocorePlugin.getPluginForPseudocore(id);
         if (plugin != null) {
             ShipAIConfig config = new ShipAIConfig();
             config.alwaysStrafeOffensively = true;
