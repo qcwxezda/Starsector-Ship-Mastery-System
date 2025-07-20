@@ -59,6 +59,7 @@ public abstract class ShipMastery {
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
     private static JSONObject masteryAssignments;
     private static final Map<String, MasteryInfo> masteryInfoMap = new HashMap<>();
+    private static final Map<String, String> masteryAliasMap = new HashMap<>();
 
     public static void addRerolledSpecThisSave(ShipHullSpecAPI spec) {
         rerolledSpecs.add(spec.getHullId());
@@ -550,7 +551,7 @@ public abstract class ShipMastery {
                     HullMasteryData data = new HullMasteryData(id, maxLevel);
                     Collections.shuffle(allLevels, new Random(seed));
                     Set<Integer> sModLevels = new HashSet<>();
-                    for (int i = 0; i < Math.min(3, maxLevel); i++) {
+                    for (int i = 0; i < Math.min(2, maxLevel); i++) {
                         sModLevels.add(allLevels.get(i));
                     }
                     for (int i = 1; i <= maxLevel; i++) {
@@ -569,6 +570,22 @@ public abstract class ShipMastery {
                 }
             }
         }
+    }
+
+    public static void loadAliases() throws JSONException, IOException {
+        JSONObject aliases = Global.getSettings().getMergedJSON("data/shipmastery/mastery_aliases.json");
+        for (Iterator<String> it = aliases.keys(); it.hasNext(); ) {
+            String parent = it.next();
+            JSONArray array = aliases.getJSONArray(parent);
+            for (int i = 0; i < array.length(); i++) {
+                String child = array.getString(i);
+                masteryAliasMap.put(child, parent);
+            }
+        }
+    }
+
+    public static String getParentHullId(String child) {
+        return masteryAliasMap.get(child);
     }
 
     public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException, IllegalAccessException, NoSuchMethodException {

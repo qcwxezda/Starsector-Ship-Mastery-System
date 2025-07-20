@@ -1,6 +1,7 @@
 package shipmastery.ui.buttons;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.ShipMastery;
@@ -13,10 +14,12 @@ import shipmastery.util.Utils;
 public class LevelUpButton extends ButtonWithIcon {
 
     private final FleetMemberAPI member;
+    private final ShipHullSpecAPI restoredSpec;
 
-    public LevelUpButton(FleetMemberAPI member, boolean isAtMax) {
+    public LevelUpButton(FleetMemberAPI member, ShipHullSpecAPI restoredSpec, boolean isAtMax) {
         super(isAtMax ? "graphics/icons/ui/sms_upgrade_icon_green.png" : "graphics/icons/ui/sms_upgrade_icon.png", isAtMax);
         this.member = member;
+        this.restoredSpec = restoredSpec;
     }
 
     public boolean isEnhance() {
@@ -26,7 +29,7 @@ public class LevelUpButton extends ButtonWithIcon {
 
     @Override
     public void onClick() {
-        new LevelUpDialog(member, this::finish).show();
+        new LevelUpDialog(member, restoredSpec, this::finish).show();
     }
 
     @Override

@@ -4,7 +4,7 @@ sms_DisableMainFeatures,Disable Main Features (requires reload),Boolean,false,,"
 
 Note that this does not disable additional content not related to the mastery system.
 ",,,General
-sms_RandomMode,Enable Random Mode (requires new game),Boolean,false,,"If enabled, all masteries are randomized except for the guaranteed 3 S-mod capacity masteries, which may appear at any level. Disables tier requirements from mastery selection criteria and removes the option to select between two different masteries at certain levels.
+sms_RandomMode,Enable Random Mode (requires new game),Boolean,false,,"If enabled, all masteries are randomized except for the guaranteed 2 S-mod capacity masteries, which may appear at any level. Disables tier requirements from mastery selection criteria and removes the option to select between two different masteries at certain levels.
 
 Requires main mod features to be enabled.
 ",,,General

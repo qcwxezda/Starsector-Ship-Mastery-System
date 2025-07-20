@@ -358,7 +358,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         float masteryStrength = data.masteryStrengthBonus();
         var mod = commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD);
         mod.modifyPercent(MODIFIER_ID, 100f*masteryStrength);
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+        if (Enlightened.isEnlightenedStart()) {
             mod.modifyPercent(Enlightened.MODIFIER_ID, 100f*Enlightened.NPC_MASTERY_BOOST);
         }
 

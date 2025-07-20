@@ -1,5 +1,8 @@
 2.0.0
 ----------
+
+*** NOT SAVE COMPATIBLE WITH PREVIOUS VERSIONS ***
+
 - Added mastery "unlocks," universal features that can be accessed by reaching a certain mastery level.
     - Added "Selective Restoration" that allows removal of specific d-mods, costing between 20%-100% of a standard restoration depending on number of d-mods removed.
     - Removed "Clear S-mods", added "Hull Reversion" feature that allows removal of specific S-mods, however this feature costs money now.
@@ -13,6 +16,9 @@
     - Hull Tinkerer: detaches S-mods from the mastery system, allowing you to build in S-mods without mastery
     - Enlightened: Unlock by completing the achievement "Full House"
     - Reject Humanity: Unlock by completing the achievement "The Pseudocore Connection, Part 1"
+- Added "Mastery Aliases" (mastery_aliases.json):
+    - Use this to make different hulls (such as skins) have the same mastery pool.
+    - This is empty, and it is up to the user (or modder, if they wish) to fill.
 - Renamed MP to mastery XP (in-game only), still referred to as MP internally.
 - Building in hullmods no longer costs MP.
 - Removed some settings.

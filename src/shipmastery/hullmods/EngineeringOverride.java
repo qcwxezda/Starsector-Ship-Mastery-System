@@ -1,6 +1,5 @@
 package shipmastery.hullmods;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -48,14 +47,14 @@ public class EngineeringOverride extends BaseLogisticsHullMod {
 
     @Override
     public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false)) return false;
+        if (HullTinkerer.isTinkererStart()) return false;
         if (ship.getVariant() == null || ship.getVariant().getPermaMods().contains(spec.getId())) return false;
         return super.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
     }
 
     @Override
     public String getCanNotBeInstalledNowReason(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false)) return Strings.Hullmods.engineeringOverrideTinkererWarning;
+        if (HullTinkerer.isTinkererStart()) return Strings.Hullmods.engineeringOverrideTinkererWarning;
         // Don't show the "can't be removed without spaceport" text if it's permanent
         if (ship.getVariant() != null && ship.getVariant().getPermaMods().contains(spec.getId())) return null;
         return super.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);

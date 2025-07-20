@@ -15,8 +15,13 @@ public class RejectHumanity extends BaseCharacterBackground {
 
     public static final float OFFICER_REDUCTION = 1f;
     public static final float CREWED_CR_REDUCTION = 0.5f;
+    public static final float MAX_DP_BONUS = 0.1f;
     public static final String MODIFIER_ID = "sms_RejectHumanityBackground";
     public static final String IS_REJECT_HUMANITY_START = "$sms_IsRejectHumanityBackground";
+
+    public static boolean isRejectHumanityStart() {
+        return (boolean) Global.getSector().getPersistentData().getOrDefault(RejectHumanity.IS_REJECT_HUMANITY_START, false);
+    }
 
     @Override
     public boolean canBeSelected(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
@@ -62,6 +67,7 @@ public class RejectHumanity extends BaseCharacterBackground {
             tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc3, 10f, Misc.getNegativeHighlightColor(), Utils.asPercent(OFFICER_REDUCTION));
             tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc4, 0f, Misc.getNegativeHighlightColor(), Utils.asPercent(CREWED_CR_REDUCTION));
             tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc5, 0f, Misc.getHighlightColor(), Global.getSettings().getSpecialItemSpec("sms_pseudocore_uplink_mk2").getName());
+            tooltip.addPara(Strings.Backgrounds.rejectHumanityDesc6, 10f, Misc.getHighlightColor(), Utils.asPercent(MAX_DP_BONUS), Global.getSettings().getSkillSpec("best_of_the_best").getName());
         }
     }
 
@@ -72,7 +78,7 @@ public class RejectHumanity extends BaseCharacterBackground {
 
     @Override
     public void onNewGameAfterTimePass(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        Global.getSector().getPlayerStats().getOfficerNumber().modifyMult(MODIFIER_ID, 0f);
+        setOfficerNumberToZero();
         var cargo = Global.getSector().getPlayerFleet().getCargo();
         cargo.addSpecial(new SpecialItemData("sms_pseudocore_uplink_mk2", null), 1f);
         cargo.addCommodity("sms_beta_pseudocore", 1f);
@@ -83,5 +89,10 @@ public class RejectHumanity extends BaseCharacterBackground {
                     }
                 }
         );
+    }
+
+    /** For some reason even though officer number is serialized, the serialized values aren't ever read*/
+    public static void setOfficerNumberToZero() {
+        Global.getSector().getPlayerStats().getOfficerNumber().modifyMult(MODIFIER_ID, 0f);
     }
 }

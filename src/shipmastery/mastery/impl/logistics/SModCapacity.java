@@ -1,6 +1,5 @@
 package shipmastery.mastery.impl.logistics;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -22,8 +21,7 @@ public class SModCapacity extends AdditiveMasteryEffect {
 
     @Override
     public MasteryEffect postInit(String... args) {
-        boolean isTinkerer = (boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false);
-        if (isTinkerer) {
+        if (HullTinkerer.isTinkererStart()) {
             MasteryGenerator generator = new MasteryGenerator(ShipMastery.getMasteryInfo("EmptyMastery"), new String[] {"1"});
             try {
                 return generator.generate(getHullSpec(), getLevel(), getIndex(), getOptionId(), 0, new HashSet<>(), new HashSet<>());

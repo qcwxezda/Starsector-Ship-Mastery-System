@@ -1,6 +1,5 @@
 package shipmastery.hullmods;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillsChangeRemoveExcessOPEffect;
@@ -69,8 +68,7 @@ public class MasteryHullmod extends BaseHullMod {
                 }
             }
             // Penalize CR for reject humanity background if officered by human
-            boolean isRejectHumanity = (boolean) Global.getSector().getPersistentData().getOrDefault(RejectHumanity.IS_REJECT_HUMANITY_START, false);
-            if (isRejectHumanity) {
+            if (RejectHumanity.isRejectHumanityStart()) {
                 var captain = CampaignUtils.getCaptain(stats);
                 if (captain != null && !captain.isPlayer() && !captain.isDefault() && !captain.isAICore()) {
                     stats.getMaxCombatReadiness().modifyFlat(

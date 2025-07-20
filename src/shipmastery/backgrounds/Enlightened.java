@@ -20,6 +20,10 @@ public class Enlightened extends BaseCharacterBackground {
     public static final String MODIFIER_ID = "sms_EnlightenedBackground";
     public static final String IS_ENLIGHTENED_START = "$sms_IsEnlightenedBackground";
 
+    public static boolean isEnlightenedStart() {
+        return (boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false);
+    }
+
     @Override
     public boolean canBeSelected(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
         return isUnlocked();

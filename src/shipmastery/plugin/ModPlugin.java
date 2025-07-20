@@ -81,6 +81,7 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        ShipMastery.loadAliases();
         Utils.init();
         initializeCuratorFaction();
         ShipMastery.loadMasteries();
@@ -279,7 +280,7 @@ public class ModPlugin extends BaseModPlugin {
         }
 
         if (!Settings.DISABLE_MAIN_FEATURES) {
-            if (!((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false))) {
+            if (!HullTinkerer.isTinkererStart()) {
                 Misc.MAX_PERMA_MODS = 0;
                 Global.getSettings().setFloat("maxPermanentHullmods", 0f);
             } else {

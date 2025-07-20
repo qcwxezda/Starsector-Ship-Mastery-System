@@ -453,23 +453,22 @@ public class MasteryPanel {
         pos.setYAlignOffset(extraYOffset);
     }
 
-    void addMasteryPanelButtons(CustomPanelAPI panel, FleetMemberAPI member, TooltipMakerAPI anchor) {
-        var spec = Utils.getRestoredHullSpec(member.getHullSpec());
-        int level = ShipMastery.getPlayerMasteryLevel(spec);
-        int maxLevel = ShipMastery.getMaxMasteryLevel(spec);
+    void addMasteryPanelButtons(CustomPanelAPI panel, FleetMemberAPI member, ShipHullSpecAPI restoredSpec, TooltipMakerAPI anchor) {
+        int level = ShipMastery.getPlayerMasteryLevel(restoredSpec);
+        int maxLevel = ShipMastery.getMaxMasteryLevel(restoredSpec);
         boolean isEnhance = level >= maxLevel;
-        upgradeButton = new LevelUpButton(member, isEnhance);
+        upgradeButton = new LevelUpButton(member, restoredSpec, isEnhance);
         addButton(upgradeButton, panel, anchor, true, 0f, -30f);
         upgradeButton.onFinish(() -> forceRefresh(true, false, isEnhance, false));
-        constructButton = new MasterySharingButton(spec);
+        constructButton = new MasterySharingButton(restoredSpec);
         addButton(constructButton, panel, anchor, true, 45f, -30f);
-        constructButton.setChecked(MasterySharingHandler.isMasterySharingActive(spec));
+        constructButton.setChecked(MasterySharingHandler.isMasterySharingActive(restoredSpec));
         constructButton.onFinish(() -> forceRefresh(true, false, true, false));
         constructButton.isCheckbox = true;
-        rerollButton = new RerollButton(spec);
+        rerollButton = new RerollButton(restoredSpec);
         addButton(rerollButton, panel, anchor, true, 90f, -30f);
         rerollButton.onFinish(() -> forceRefresh(true, false, true, false));
-        confirmButton = new ConfirmButton(spec, getSelectedMasteryButtons());
+        confirmButton = new ConfirmButton(restoredSpec, getSelectedMasteryButtons());
         addButton(confirmButton, panel, anchor, false, -49f, -30f);
         confirmButton.onFinish(() -> forceRefresh(true, true, true, false));
         cancelButton = new CancelButton();
@@ -495,7 +494,11 @@ public class MasteryPanel {
         new ShipDisplay(restoredHullSpec, shipDisplaySize).create(shipDisplay);
         masteryPanel.addUIElement(shipDisplay).inTL(50f, 90f);
 
-        var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(root.getFleetMember(), shipDisplay.getPosition(), () -> forceRefresh(true, false, false, false));
+        var progressBarPlugin = new FleetPanelHandler.FleetPanelItemUIPlugin(
+                root.getVariant(),
+                root.getFleetMember(),
+                restoredHullSpec,
+                shipDisplay.getPosition(), () -> forceRefresh(true, false, false, false));
         progressBarPlugin.heightOverride = 16f;
         progressBarPlugin.numBars = 80;
         progressBarPlugin.widthOverride = shipDisplaySize - 5f;
@@ -519,6 +522,7 @@ public class MasteryPanel {
                 this,
                 module.getVariant(),
                 root.getFleetMember(),
+                restoredHullSpec,
                 module.getFleetMember() != root.getFleetMember(),
                 containerW,
                 containerH,
@@ -582,7 +586,7 @@ public class MasteryPanel {
             masteryPanel.addUIElement(unassignedWarning).inTR(-240f + warningLabel.computeTextWidth(warningTextFmt), -10f);
         }
 
-        addMasteryPanelButtons(masteryPanel, root.getFleetMember(), shipDisplay);
+        addMasteryPanelButtons(masteryPanel, root.getFleetMember(), restoredHullSpec, shipDisplay);
         updateMasteryPanelButtons(restoredHullSpec);
 
         return masteryPanel;

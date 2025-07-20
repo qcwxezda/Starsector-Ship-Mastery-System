@@ -276,7 +276,12 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
                     var pos = button.getPosition();
                     var w = pos.getWidth();
                     var h = pos.getHeight();
-                    var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(member, pos);
+                    boolean isSelected = button.isHighlighted() && currentShipInfo.moduleVariant != null && currentShipInfo.rootSpec != null;
+                    var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(
+                            isSelected ? getSelectedShip(coreUI).two.getVariant() : member.getVariant(),
+                            member,
+                            isSelected ? currentShipInfo.rootSpec : member.getHullSpec(),
+                            pos);
                     plugin.heightOverride = 40f;
                     plugin.numBars = 20;
                     plugin.extraYOffset = -10f;
@@ -408,7 +413,13 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
 //                            (currentShipInfo.rootSpec == null ? "null" : currentShipInfo.rootSpec.getHullId()) + ", " + (currentShipInfo.moduleVariant == null ? "null" :currentShipInfo.moduleVariant.getHullVariantId())) + " -> " +
 //                            (newShipInfo.rootSpec == null ? "null" : newShipInfo.rootSpec.getHullId()) + ", " + (newShipInfo.moduleVariant == null ? "null" :newShipInfo.moduleVariant.getHullVariantId()));
             onRefitScreenShipChanged(newShipInfo);
+            var currentVariant = currentShipInfo.moduleVariant;
+            var currentRootSpec = currentShipInfo.rootSpec;
             currentShipInfo = newShipInfo;
+            // Special behavior for ships where cycling a hull mod (or some other action) can change the ship's hull spec
+            if (newShipInfo.moduleVariant != null && newShipInfo.moduleVariant == currentVariant && currentRootSpec != newShipInfo.rootSpec) {
+                DeferredActionPlugin.performLater(() -> injectRefitScreen(false, false), 0f);
+            }
         }
     }
 

@@ -68,6 +68,7 @@ public class MasteryDisplay implements CustomUIElement {
     public MasteryDisplay(@Nullable MasteryPanel parentPanel,
                           ShipVariantAPI selectedVariant,
                           FleetMemberAPI member,
+                          ShipHullSpecAPI rootSpec,
                           boolean isModule,
                           float width,
                           float height,
@@ -79,7 +80,7 @@ public class MasteryDisplay implements CustomUIElement {
         this.parentPanel = parentPanel;
         this.selectedVariant = selectedVariant;
         this.isModule = isModule;
-        rootSpec = Utils.getRestoredHullSpec(member.getHullSpec());
+        this.rootSpec = Utils.getRestoredHullSpec(rootSpec);
         rootFleetMember = member;
         this.onButtonClick = onButtonClick;
         activeLevels = ShipMastery.getPlayerActiveMasteriesCopy(rootSpec);

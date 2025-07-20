@@ -8,6 +8,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.hullmods.PseudocoreUplinkHullmod;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -15,8 +16,8 @@ import java.awt.Color;
 
 public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
 
-    public static final float MAX_AUTOCONSTRUCT_PTS_PER_UPLINK = 180f;
-    public static final float PTS_MULT_MK2 = 2f;
+    public static final float PTS_PER_UPLINK = 180f;
+    public static final float PTS_PER_UPLINK_MK2 = 480f;
     public static final String IS_UPLINK_TAG = "sms_uplink";
     public static final String IS_MK2_MEM_KEY = "$sms_SelectedUplinkIsMk2";
 
@@ -35,14 +36,12 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
                 .filter(stack ->
                         stack.isSpecialStack() && stack.getSpecialItemSpecIfSpecial().hasTag(IS_UPLINK_TAG))
                 .mapToDouble(stack ->
-                        stack.getSize() * MAX_AUTOCONSTRUCT_PTS_PER_UPLINK * (isMk2(stack.getSpecialItemSpecIfSpecial()) ? PTS_MULT_MK2 : 1f))
+                        stack.getSize() * (isMk2(stack.getSpecialItemSpecIfSpecial()) ? PTS_PER_UPLINK_MK2 : PTS_PER_UPLINK))
                 .sum();
 
         float autoconstuctPoints = 0f;
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleetData)) {
-            if (fm.getCaptain() == null || !fm.getCaptain().isAICore()) continue;
-            if (Misc.isAutomated(fm)) continue;
-            if (!fm.getVariant().hasHullMod("sms_pseudocore_uplink_handler")) continue;
+            if (fm.getCaptain() == null || !fm.getCaptain().getMemoryWithoutUpdate().getBoolean(PseudocoreUplinkHullmod.USED_UPLINK_MEM_KEY)) continue;
             autoconstuctPoints += fm.getCaptain().getMemoryWithoutUpdate().getFloat("$autoPointsMult") * fm.getDeploymentPointsCost();
         }
 
@@ -75,12 +74,27 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         super.createTooltip(tooltip, expanded, transferHandler, stackSource, false);
-        var data = getPseudocoreCRPointsAndPenalty();
+
+        PseudocoreUplinkPlugin.PseudocoreUplinkData data;
+        var playerFleet = Global.getSector().getPlayerFleet();
+
+        if (playerFleet == null || playerFleet.getFleetData() == null) {
+            data = getPseudocoreCRPointsAndPenalty();
+        } else {
+            data = (PseudocoreUplinkPlugin.PseudocoreUplinkData) Global.getSector().getPlayerFleet().getFleetData()
+                    .getCacheClearedOnSync()
+                    .computeIfAbsent(PseudocoreUplinkHullmod.CACHE_KEY, k -> getPseudocoreCRPointsAndPenalty());
+
+        }
         tooltip.addPara(Strings.Items.uplinkDesc, 10f, Misc.getHighlightColor(), Utils.asInt(data.maxPoints));
+
         if (data.crPenalty <= 0f) {
             tooltip.addPara(Strings.Items.uplinkStatus, 10f, Misc.getHighlightColor(), Utils.asInt(data.numPoints));
         } else {
-            tooltip.addPara(Strings.Items.uplinkStatus2, 10f, new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor()}, Utils.asInt(data.numPoints), Utils.asPercent(data.crPenalty));
+            tooltip.addPara(Strings.Items.uplinkStatus2, 10f,
+                    new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor()},
+                    Utils.asInt(data.numPoints),
+                    Utils.asPercentOneDecimal(data.crPenalty));
         }
         addCostLabel(tooltip, 10f, transferHandler, stackSource);
         if (isMk2(getSpec())) {

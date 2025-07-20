@@ -70,6 +70,7 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
         Global.getSector().getPlayerFleet().getFleetData()
                 .getMembersListCopy()
                 .stream()
+                .filter(x -> !x.isMothballed())
                 .map(x -> Utils.getRestoredHullSpec(x.getHullSpec()))
                 .distinct()
                 .filter(ShipHullSpecAPI::isCivilianNonCarrier)

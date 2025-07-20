@@ -1,6 +1,7 @@
 package shipmastery.ui;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
@@ -27,19 +28,22 @@ import static shipmastery.mastery.MasteryEffect.MASTERY_STRENGTH_MOD_FOR;
 public class LevelUpDialog {
 
     private final FleetMemberAPI member;
+    private final ShipHullSpecAPI spec;
     private final Action onLevelUp;
     private String selectedLevelId;
 
-    public LevelUpDialog(FleetMemberAPI member, Action onLevelUp) {
+    // hullSpec != member.getHullSpec() when the selected ship in the refit screen has a different hull spec
+    // than the saved variant, which occurs only if the selected ship's hull spec can be changed in the refit panel
+    public LevelUpDialog(FleetMemberAPI member, ShipHullSpecAPI hullSpec, Action onLevelUp) {
         this.member = member;
         this.onLevelUp = onLevelUp;
+        this.spec = Utils.getRestoredHullSpec(hullSpec);
     }
 
     public void show() {
 
         float width = 800f;
         float displayW = width-100f;
-        var spec = member.getHullSpec();
         int currentLevel = ShipMastery.getPlayerMasteryLevel(spec);
         boolean isEnhance = currentLevel >= ShipMastery.getMaxMasteryLevel(spec);
 
@@ -50,6 +54,7 @@ public class LevelUpDialog {
                 null,
                 member.getVariant(),
                 member,
+                spec,
                 false,
                 displayW,
                 100f,
@@ -72,11 +77,10 @@ public class LevelUpDialog {
 
                 int level = ShipMastery.getPlayerMasteryLevel(spec);
 
-                var spec = Utils.getRestoredHullSpec(member.getHullSpec());
                 if (!isEnhance) {
                     ShipMastery.spendPlayerMasteryPoints(spec, MasteryUtils.getUpgradeCost(spec));
                     ShipMastery.advancePlayerMasteryLevel(spec);
-                    ShipMastery.activatePlayerMastery(member.getHullSpec(), level+1, selectedLevelId);
+                    ShipMastery.activatePlayerMastery(spec, level+1, selectedLevelId);
                     Global.getSoundPlayer().playUISound("sms_increase_mastery", 1f, 1f);
                 } else {
                     //noinspection unchecked
@@ -127,7 +131,7 @@ public class LevelUpDialog {
                 if (isEnhance && MasteryUtils.getEnhanceCount(spec) == MasteryUtils.MAX_ENHANCES) return;
                 // Can level up again
                 if (ShipMastery.getPlayerMasteryPoints(spec) >= (isEnhance ? MasteryUtils.getEnhanceMPCost(spec) : MasteryUtils.getUpgradeCost(spec))) {
-                    new LevelUpDialog(member, onLevelUp).show();
+                    new LevelUpDialog(member, spec, onLevelUp).show();
                 }
             }
         }
@@ -161,6 +165,7 @@ public class LevelUpDialog {
                 null,
                 member.getVariant(),
                 member,
+                spec,
                 false,
                 displayW,
                 displayH,

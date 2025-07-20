@@ -126,7 +126,6 @@ sms_ConcealedStationBeginSalvageDef,DialogOptionSelected,"$option == sms_oConcea
 !$defenderFleetDefeated
 !HostileFleetNearbyAndAware","$salvageLeaveText = Leave
 SalvageGenFromSeed
-sms_cConcealedStationIncreaseDP
 SalvageDefenderInteraction","As you pull in closer for a salvage assessment, several unidentified energy signatures appear on your radar to be closing in on your location.
 
 ""$PlayerSirOrMadam, looks like automated defenses. They're protecting the site; you'll have to -- hold on --""

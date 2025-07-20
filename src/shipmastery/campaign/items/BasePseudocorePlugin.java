@@ -37,7 +37,7 @@ public abstract class BasePseudocorePlugin implements PseudocorePlugin {
 
     public final int getLevel() {
         int base = getBaseLevel();
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+        if (Enlightened.isEnlightenedStart()) {
             base++;
         }
         return base;
@@ -82,7 +82,7 @@ public abstract class BasePseudocorePlugin implements PseudocorePlugin {
 
     public final float getAIPointsMult() {
         float base = getBaseAIPointsMult();
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false)) {
+        if (Enlightened.isEnlightenedStart()) {
             base += getEnlightenedAIMultIncrease();
         }
         return base;

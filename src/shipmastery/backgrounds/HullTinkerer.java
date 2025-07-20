@@ -14,6 +14,10 @@ public class HullTinkerer extends BaseCharacterBackground {
     public static final float COST_REDUCTION = 0.5f;
     public static final String IS_TINKERER_START = "$sms_IsTinkererBackground";
 
+    public static boolean isTinkererStart() {
+        return (boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false);
+    }
+
     @Override
     public void addTooltipForIntel(TooltipMakerAPI tooltip, FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
         super.addTooltipForIntel(tooltip, factionSpec, factionConfig);

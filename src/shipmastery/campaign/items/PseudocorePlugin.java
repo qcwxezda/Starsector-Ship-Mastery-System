@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.campaign.CampaignEngine;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.listeners.PlayerFleetSyncListener;
@@ -66,7 +66,7 @@ public interface PseudocorePlugin extends AICoreOfficerPlugin {
                 }
                 if (spec.hasTag(SCALE_AUTOMATED_POINTS_TAG)) {
                     float ratio = fm.getUnmodifiedDeploymentPointsCost() / fm.getDeploymentPointsCost();
-                    var plugin = plugins.computeIfAbsent(id, k -> CampaignEngine.getInstance().getModAndPluginData().pickAICoreOfficerPlugin(k));
+                    var plugin = plugins.computeIfAbsent(id, Misc::getAICoreOfficerPlugin);
                     var memory = captain.getMemoryWithoutUpdate();
                     if (memory != null && plugin instanceof PseudocorePlugin kPlugin) {
                         float baseMult = kPlugin.getAIPointsMult();

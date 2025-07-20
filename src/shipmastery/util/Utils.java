@@ -174,7 +174,10 @@ public abstract class Utils {
         return hullmodIdToNameMap.get(hullmodId);
     }
 
-    public static ShipHullSpecAPI getRestoredHullSpecOneStep(ShipHullSpecAPI spec) {
+    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
+        ShipHullSpecAPI memo = hullIdToRestored.get(spec.getHullId());
+        if (memo != null) return memo;
+
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
             dParentHull = spec;
@@ -183,21 +186,20 @@ public abstract class Utils {
             dParentHull = spec.getBaseHull();
         }
 
-        return dParentHull == null ? spec : dParentHull;
-    }
-
-    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
-        ShipHullSpecAPI memo = hullIdToRestored.get(spec.getHullId());
-        if (memo != null) return memo;
-
-        ShipHullSpecAPI prevSpec = null;
-        while (spec != prevSpec) {
-            prevSpec = spec;
-            spec = getRestoredHullSpecOneStep(spec);
+        ShipHullSpecAPI restoredSpec = dParentHull == null ? spec : dParentHull;
+        String aliasedId = ShipMastery.getParentHullId(restoredSpec.getHullId());
+        if (aliasedId != null) {
+            restoredSpec = Global.getSettings().getHullSpec(aliasedId);
         }
 
-        hullIdToRestored.put(spec.getHullId(), spec);
-        return spec;
+        if (restoredSpec == spec) {
+            hullIdToRestored.put(spec.getHullId(), spec);
+            return spec;
+        } else {
+            var fullyRestored = getRestoredHullSpec(restoredSpec);
+            hullIdToRestored.put(spec.getHullId(), fullyRestored);
+            return fullyRestored;
+        }
     }
 
     public static String getRestoredHullSpecId(ShipHullSpecAPI spec) {

@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.util.VariantLookup;
 
 import java.util.List;
@@ -41,6 +42,9 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object o) {
         if (id == CoreUITabId.FLEET || id == CoreUITabId.REFIT) {
             addMasteryHandlerToPlayerFleet();
+            if (RejectHumanity.isRejectHumanityStart()) {
+                RejectHumanity.setOfficerNumberToZero();
+            }
         }
     }
 

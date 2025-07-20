@@ -61,7 +61,7 @@ public abstract class HullmodUtils {
         }
 
         // Tinkerer background
-        if ((boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false)) {
+        if (HullTinkerer.isTinkererStart()) {
             cost *= 1f - HullTinkerer.COST_REDUCTION;
         }
 

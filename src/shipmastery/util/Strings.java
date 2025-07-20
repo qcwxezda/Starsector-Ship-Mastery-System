@@ -31,6 +31,7 @@ public interface Strings {
         String TRIGGERED_REMOTE_BEACON_DEFENDERS = "$sms_TriggeredRemoteBeaconDefenders"; // global
         String REMOTE_BEACON_DEFENDER_FLEET_TYPE = "sms_RemoteBeaconDefender"; // local
         String REMOTE_BEACON_DEFENDER_FLEET = "$sms_RemoteBeaconDefenderFleet"; // global
+        String CONCEALED_STATION_DEFENDER_FLEET_TYPE = "sms_ConcealedStationDefender";
         String ACQUIRED_STATION_LEADS = "$sms_AcquiredStationLeads"; // global
         String PROBE_PARENT_STATION = "$sms_ProbeParentStation"; // local
 
@@ -779,6 +780,7 @@ public interface Strings {
         String rejectHumanityDesc3 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc3");
         String rejectHumanityDesc4 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc4");
         String rejectHumanityDesc5 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc5");
+        String rejectHumanityDesc6 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc6");
         String rejectHumanityCRPenaltyDesc = Utils.getString( "sms_backgrounds", "rejectHumanityCRPenaltyDesc");
     }
 }
