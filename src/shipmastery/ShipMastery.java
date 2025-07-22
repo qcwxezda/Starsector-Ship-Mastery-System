@@ -225,7 +225,7 @@ public abstract class ShipMastery {
     public static List<String> getMasteryOptionIds(ShipHullSpecAPI spec, int level) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return new ArrayList<>(levelData.getEffectsLists().keySet());
+        return new ArrayList<>(levelData.getGeneratorsLists().keySet());
     }
 
     /**
@@ -244,7 +244,6 @@ public abstract class ShipMastery {
         var res = levelData.getGeneratorsLists().get(optionId);
         return res == null ? new ArrayList<>() : res;
     }
-
 
     private static MasteryLevelData getLevelData(ShipHullSpecAPI spec, int level) {
         String id = Utils.getRestoredHullSpecId(spec);

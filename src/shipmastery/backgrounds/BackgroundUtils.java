@@ -17,4 +17,9 @@ public abstract class BackgroundUtils {
     public static boolean isRejectHumanityStart() {
         return (boolean) Global.getSector().getPersistentData().getOrDefault(RejectHumanity.IS_REJECT_HUMANITY_START, false);
     }
+
+    /** For some reason, even though officer number is serialized, the serialized values aren't ever read*/
+    public static void setOfficerNumberToZero() {
+        Global.getSector().getPlayerStats().getOfficerNumber().modifyMult(RejectHumanity.MODIFIER_ID, 0f);
+    }
 }

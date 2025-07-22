@@ -41,10 +41,10 @@ public class AlphaCoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        stats.getHullBonus().modifyPercent(id, 100f * STAT_BOOST);
-        stats.getArmorBonus().modifyPercent(id, 100f * STAT_BOOST);
-        stats.getFluxDissipation().modifyPercent(id, 100f * STAT_BOOST);
-        stats.getFluxCapacity().modifyPercent(id, 100f * STAT_BOOST);
+        stats.getHullBonus().modifyMult(id, 1f + STAT_BOOST);
+        stats.getArmorBonus().modifyMult(id, 1f + STAT_BOOST);
+        stats.getFluxDissipation().modifyMult(id, 1f + STAT_BOOST);
+        stats.getFluxCapacity().modifyMult(id, 1f + STAT_BOOST);
         stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, -1f);
     }
 }

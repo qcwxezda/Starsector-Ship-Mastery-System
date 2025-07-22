@@ -72,6 +72,6 @@ public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements H
 
     @Override
     public float getBaseCooldownSeconds() {
-        return 24f;
+        return 27f;
     }
 }

@@ -183,7 +183,7 @@ public class MasteryPanel {
 
                 @Override
                 public float getTooltipWidth(Object o) {
-                    return 300f;
+                    return 230f;
                 }
 
                 @Override

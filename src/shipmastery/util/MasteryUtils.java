@@ -24,7 +24,7 @@ public abstract class MasteryUtils {
     public static final int bonusLogisticSlotEnhanceNumber = 9999; // Disabled, sorry
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
     public static final float[] ENHANCE_MASTERY_AMOUNT = {0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
-    public static final float[] ENHANCE_BONUS_XP = {0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f, 0.2f, 0.1f, 0f};
+    public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
     public static final float ENHANCE_BONUS_XP_CIV = 0.9f;
     public static final int MAX_ENHANCES = 10;
     public static final int UNLOCK_SELECTIVE_RESTORATION_LEVEL;

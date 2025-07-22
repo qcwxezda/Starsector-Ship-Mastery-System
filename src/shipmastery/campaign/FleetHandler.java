@@ -151,7 +151,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     membersOfSpecMap.get(Utils.getRestoredHullSpecId(spec)),
                     fleet.getFlagship());
             fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
-            new MasteryHullmod().applyPostEffectsBeforeShipCreation(fm.getVariant().getHullSize(), fm.getStats(), Strings.Hullmods.MASTERY_HANDLER);
+            new MasteryHullmod().applyPostEffectsBeforeShipCreation(fm.getStats(), Strings.Hullmods.MASTERY_HANDLER);
 
             final ShipVariantAPI variant = fm.getVariant();
             boolean repeatAutofit = false;

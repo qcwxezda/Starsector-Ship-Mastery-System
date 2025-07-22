@@ -29,7 +29,7 @@ public abstract class HullmodUtils {
     public static final float CREDITS_COST_BXP_CAP = 200000f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MIN = 0.2f;
     public static final float SELECTIVE_RESTORE_COST_MULT_MAX = 1f;
-    public static final float SMOD_REMOVAL_COST_MULT = 0.75f;
+    public static final float SMOD_REMOVAL_COST_MULT = 0.5f;
 
     public static int getBuildInCost(HullModSpecAPI spec, ShipAPI ship) {
         return getBuildInCost(spec, ship, false);

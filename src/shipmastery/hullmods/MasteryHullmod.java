@@ -35,13 +35,13 @@ public class MasteryHullmod extends BaseHullMod {
     private void applyAICoreInterfaceEffect(ShipVariantAPI variant, BiConsumer<String, AICoreInterfacePlugin> effect) {
         var id = AICoreInterfacePlugin.getIntegratedPseudocore(variant);
         var aiInterface = ShipMastery.getAICoreInterfacePlugin(id);
-        var modifyId = id + AICoreInterfacePlugin.INTEGRATED_SUFFIX;
         if (aiInterface != null) {
+            var modifyId = id + AICoreInterfacePlugin.INTEGRATED_SUFFIX;
             effect.accept(modifyId, aiInterface);
         }
     }
 
-    public void applyPostEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+    public void applyPostEffectsBeforeShipCreation(MutableShipStatsAPI stats, String id) {
         ShipVariantAPI variant = stats.getVariant();
         // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
         // Deprecated
@@ -63,8 +63,8 @@ public class MasteryHullmod extends BaseHullMod {
             int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
             int op = variant.computeOPCost(info.commander.getStats());
             if (op > maxOp) {
-                float frac = (float) (op-maxOp)/maxOp;
-                float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
+                float frac = (float) (op - maxOp) / maxOp;
+                float penalty = Math.min(1f, frac * 100f * Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
                 if (penalty > 0f) {
                     stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
                 }
@@ -80,9 +80,6 @@ public class MasteryHullmod extends BaseHullMod {
                 }
             }
         }
-
-        applyAICoreInterfaceEffect(variant,
-                (modifyId, plugin) -> plugin.applyEffectsBeforeShipCreation(hullSize, stats, modifyId));
     }
 
     @Override
@@ -102,9 +99,14 @@ public class MasteryHullmod extends BaseHullMod {
                     effect.onFlagshipStatusGained(commander, stats, null);
                 }
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(variant,
+                        (modifyId, plugin) -> plugin.applyEffectsBeforeShipCreation(hullSize, stats, modifyId));
+            }
         });
 
-        applyPostEffectsBeforeShipCreation(hullSize, stats, id);
+        applyPostEffectsBeforeShipCreation(stats, id);
     }
 
     @Override
@@ -118,10 +120,13 @@ public class MasteryHullmod extends BaseHullMod {
                     effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
                 }
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(ship.getVariant(),
+                        (modifyId, plugin) -> plugin.applyEffectsAfterShipCreation(ship, modifyId));
+            }
         });
 
-        applyAICoreInterfaceEffect(ship.getVariant(),
-                (modifyId, plugin) -> plugin.applyEffectsAfterShipCreation(ship, modifyId));
     }
 
     @Override
@@ -130,16 +135,21 @@ public class MasteryHullmod extends BaseHullMod {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                 effect.applyEffectsToFighterSpawnedByShip(fighter, ship);
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(ship.getVariant(),
+                        (modifyId, plugin) -> plugin.applyEffectsToFighterSpawnedByShip(fighter, ship, modifyId));
+            }
         });
-
-        applyAICoreInterfaceEffect(ship.getVariant(),
-                (modifyId, plugin) -> plugin.applyEffectsToFighterSpawnedByShip(fighter, ship, modifyId));
     }
 
-    // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.
+    // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant
+    // .updateStatsForOpCosts, etc.
     boolean noRecurse = false;
-    private void applyEffects(ShipVariantAPI variant, HullmodAction action) {
-        if (variant == null || noRecurse || !shouldApplyEffects(variant)) {
+
+    private void applyEffects(ShipVariantAPI variant, HullmodAction perEffectAction,
+                              BiConsumer<PersonAPI, Boolean> afterEffectsAction) {
+        if (variant == null || noRecurse) {
             return;
         }
 
@@ -149,14 +159,18 @@ public class MasteryHullmod extends BaseHullMod {
         PersonAPI commander = info == null ? null : info.commander;
         CampaignFleetAPI fleet = info == null ? null : info.fleet;
         noRecurse = true;
-        // Needed because getting masteries calls getFlagship, which updates stats, which calls applyEffectsBeforeShipCreation, etc.
+        // Needed because getting masteries calls getFlagship, which updates stats, which calls
+        // applyEffectsBeforeShipCreation, etc.
         boolean wasNoSync = false;
         if (fleet != null) {
             wasNoSync = fleet.getFleetData().isForceNoSync();
             fleet.getFleetData().setForceNoSync(true);
         }
-        MasteryUtils.applyAllActiveMasteryEffects(
-                commander, rootSpec, effect -> action.perform(effect, commander, isModule));
+        if (shouldApplyEffects(variant)) {
+            MasteryUtils.applyAllActiveMasteryEffects(
+                    commander, rootSpec, effect -> perEffectAction.perform(effect, commander, isModule));
+        }
+        afterEffectsAction.accept(commander, isModule);
         if (fleet != null) {
             fleet.getFleetData().setForceNoSync(wasNoSync);
         }

@@ -118,6 +118,8 @@ public class RemoteBeaconDefenderHandler extends BaseEveryFrameCombatPlugin impl
         stats.getDynamic().getMod(HiddenEffectScript.Provider.COOLDOWN_MOD).modifyMult(MODIFY_KEY_CR, ship.getCurrentCR());
         // Reset strength multiplier whenever the ship "dies"
         strengthDurationMult = 1f;
+        // Tesseract has base 0.05 CR per deployment, let's make this more sane (0.125 per deployment + 0.125 per retreat = max 4 deployments)
+        enemyFlagship.getStats().getCRPerDeploymentPercent().modifyMult(MODIFY_KEY_CR, 2.5f);
     }
 }
 

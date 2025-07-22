@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.campaign.items.PseudocoreUplinkPlugin;
 import shipmastery.campaign.listeners.PlayerFleetSyncListener;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.Strings;
 
@@ -42,30 +41,14 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
 
         var captain = fm.getCaptain();
         if (captain == null || !captain.getMemoryWithoutUpdate().contains(USED_UPLINK_MEM_KEY)) {
-            String origId = prevOfficerData.get(fm.getId());
-            // Removing a hullmod inside applyEffects is undefined behavior as it's concurrent modification
-            // Need to do this in another call stack
-            DeferredActionPlugin.performLater(() -> {
-                if (fm.getVariant().hasHullMod("sms_pseudocore_uplink_handler")) {
-                    if (origId != null) {
-                        // Make sure that the AI core wasn't added already, such as by
-                        // right-click remove or by another mod
-                        int diff = cargoDiffs.getOrDefault(origId, 0);
-                        if (diff <= 0) {
-                            Global.getSector().getPlayerFleet().getCargo().addCommodity(origId, 1f);
-                            cargoDiffs.put(origId, diff + 1);
-                        }
-                    }
-                    fm.getVariant().removePermaMod("sms_pseudocore_uplink_handler");
-                }
-            }, 0f);
             return;
         }
 
-        //penaltyData = PseudocoreUplinkPlugin.getPseudocoreCRPointsAndPenalty();
         float penalty = penaltyData.crPenalty();
         if (penalty > 0f) {
             stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Items.uplinkPenaltyDesc);
+        } else {
+            stats.getMaxCombatReadiness().unmodify(id);
         }
     }
 
@@ -79,15 +62,41 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
                 .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
         prevCargoCounts = cargoCounts;
 
+        membersList.forEach(fm -> {
+            var captain = fm.getCaptain();
+            if (captain == null || !captain.getMemoryWithoutUpdate().contains(USED_UPLINK_MEM_KEY)) {
+                String origId = prevOfficerData.get(fm.getId());
+                if (origId != null && fm.getVariant().hasHullMod(Strings.Hullmods.UPLINK_HANDLER)) {
+                    // Make sure that the AI core wasn't added already, such as by
+                    // right-click remove or by another mod
+                    int diff = cargoDiffs.getOrDefault(origId, 0);
+                    if (diff <= 0) {
+                        Global.getSector().getPlayerFleet().getCargo().addCommodity(origId, 1f);
+                        cargoDiffs.put(origId, diff + 1);
+                        prevCargoCounts.compute(origId, (k, v) -> v == null ? 1 : v + 1);
+                    }
+                    fm.getVariant().removePermaMod(Strings.Hullmods.UPLINK_HANDLER);
+                }
+            }
+        });
         prevOfficerData.clear();
         membersList.forEach(fm -> {
             var captain = fm.getCaptain();
             if (captain != null && captain.getMemoryWithoutUpdate().contains(USED_UPLINK_MEM_KEY)) {
-                // Need to add back because it gets removed when the ship is recovered (and the captain is very
-                // temporarily displaced)
-                CampaignUtils.addPermaModCloneVariantIfNeeded(fm, "sms_pseudocore_uplink_handler", false);
-                if (!Misc.isUnremovable(captain) && captain.getAICoreId() != null) {
-                    prevOfficerData.put(fm.getId(), captain.getAICoreId());
+                String coreId = captain.getAICoreId();
+                if (!Misc.isUnremovable(captain) && coreId != null) {
+                    prevOfficerData.put(fm.getId(), coreId);
+                }
+                if (!fm.getVariant().hasHullMod(Strings.Hullmods.UPLINK_HANDLER)) {
+                    CampaignUtils.addPermaModCloneVariantIfNeeded(fm, Strings.Hullmods.UPLINK_HANDLER, false);
+                    // Consume the AI core if it's used as an officer
+                    // But first check that it wasn't already consumed by the function that assigned it
+                    int diff = cargoDiffs.getOrDefault(coreId, 0);
+                    if (diff >= 0) {
+                        Global.getSector().getPlayerFleet().getCargo().removeCommodity(coreId, 1f);
+                        cargoDiffs.put(coreId, diff - 1);
+                        prevCargoCounts.compute(coreId, (k, v) -> v == null ? -1 : v - 1);
+                    }
                 }
             }
         });
@@ -100,9 +109,9 @@ public class PseudocoreUplinkHullmod extends BaseHullMod implements PlayerFleetS
         // such as when clicking to pick up the uplink, which reduces the available points to 0
         for (var fm : membersList) {
             var variant = fm.getVariant();
-            if (variant.hasHullMod("sms_pseudocore_uplink_handler")) {
+            if (variant.hasHullMod(Strings.Hullmods.UPLINK_HANDLER)) {
                 new PseudocoreUplinkHullmod().applyEffectsBeforeShipCreation(variant.getHullSize(), fm.getStats(),
-                        "sms_pseudocore_uplink_handler");
+                        Strings.Hullmods.UPLINK_HANDLER);
             }
         }
     }

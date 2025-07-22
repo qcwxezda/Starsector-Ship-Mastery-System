@@ -118,7 +118,7 @@ public class WarpedKnowledge {
 
     public static class Elite extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
 
-        public static final float EXPLOSION_DAMAGE = 500f;
+        public static final float EXPLOSION_DAMAGE = 400f;
         public static final float DAMAGE_TAKEN_PER_STACK = 0.02f;
         public static final float MAX_DAMAGE_TAKEN = 0.2f;
         public static final float[] MIN_DELAY_BETWEEN_SHOTS_SECONDS = new float[] {9f, 7f, 5f, 3f};
@@ -254,7 +254,7 @@ public class WarpedKnowledge {
                     var explosion = Global.getCombatEngine().spawnDamagingExplosion(explosionSpec, ship, point, false);
                     explosion.setCustomData(EXPLOSION_ID_KEY, true);
                     RiftCascadeMineExplosion.spawnStandardRift(explosion, params);
-                    Global.getSoundPlayer().playSound("riftcascade_rift", 0.6f, 0.8f, point, new Vector2f());
+                    Global.getSoundPlayer().playSound("riftcascade_rift", 0.6f, 0.6f, point, new Vector2f());
                 }
                 return null;
             }
@@ -300,7 +300,7 @@ public class WarpedKnowledge {
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
         public static class EffectScript extends HiddenEffectScript {
             public EffectScript(ShipAPI ship, String id, Provider plugin) {
-                super(ship, id, new Color(200, 100, 100), plugin);
+                super(ship, id, new Color(225, 150, 100), plugin);
             }
 
             @Override

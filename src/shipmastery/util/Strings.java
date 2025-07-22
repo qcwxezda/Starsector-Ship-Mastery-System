@@ -364,6 +364,7 @@ public interface Strings {
         String MASTERY_HANDLER = "sms_mastery_handler";
         String ENGINEERING_OVERRIDE = "sms_engineering_override";
         String ANALYSIS_PACKAGE = "sms_analysis_package";
+        String UPLINK_HANDLER = "sms_pseudocore_uplink_handler";
         String REARRANGEMENT1 = "sms_extradimensional_rearrangement1";
         String REARRANGEMENT2 = "sms_extradimensional_rearrangement2";
         String REARRANGEMENT3 = "sms_extradimensional_rearrangement3";

@@ -57,7 +57,7 @@ public class DimensionalTether {
     // No CombatEngine.getPlugins or similar, so we need to track the existing repair scripts ourselves
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
     public static final float MIN_CR_COST = 0.1f;
-    public static final float FLUX_BOOST_AMOUNT = 0.2f;
+    public static final float FLUX_REDUCTION_AMOUNT = 0.1f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
     public static final String REMOVED_PHASE_ANCHOR_KEY = "sms_RemovedPhaseAnchor";
     public static final String IS_RETREATING_KEY = "sms_DimensionalTetherIsRetreating";
@@ -294,18 +294,21 @@ public class DimensionalTether {
     public static class Elite extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
-            stats.getFluxDissipation().modifyPercent(id, 100f * FLUX_BOOST_AMOUNT);
+            stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
+            stats.getEnergyWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
+            stats.getMissileWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
         }
 
         @Override
         public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
-            stats.getFluxDissipation().unmodify(id);
-            stats.getFluxCapacity().unmodify(id);
+            stats.getBallisticWeaponFluxCostMod().unmodify(id);
+            stats.getEnergyWeaponFluxCostMod().unmodify(id);
+            stats.getMissileWeaponFluxCostMod().unmodify(id);
         }
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
-            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(FLUX_BOOST_AMOUNT));
+            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(FLUX_REDUCTION_AMOUNT));
         }
     }
 }

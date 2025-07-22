@@ -119,7 +119,7 @@ public class CrystallineKnowledge {
 
     public static class Elite extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
 
-        public static final float EMP_DAMAGE = 500f;
+        public static final float EMP_DAMAGE = 400f;
         public static final float FIRE_RATE_REDUCTION_PER_STACK = 0.02f;
         public static final float MAX_FIRE_RATE_REDUCTION = 0.2f;
         public static final float[] MIN_DELAY_BETWEEN_SHOTS_SECONDS = new float[] {9f, 7f, 5f, 3f};
@@ -285,7 +285,7 @@ public class CrystallineKnowledge {
                         var explosion = Global.getCombatEngine().spawnDamagingExplosion(explosionSpec, ship, data.one, false);
                         explosion.setCustomData(EXPLOSION_ID_KEY, true);
                         RiftCascadeMineExplosion.spawnStandardRift(explosion, this.params);
-                        Global.getSoundPlayer().playSound("riftcascade_rift", 1.5f, 0.5f, point, new Vector2f());
+                        Global.getSoundPlayer().playSound("riftcascade_rift", 1.5f, 0.45f, point, new Vector2f());
                     }, 0.1f);
                 }
                 return null;
@@ -327,7 +327,7 @@ public class CrystallineKnowledge {
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
         public static class EffectScript extends HiddenEffectScript {
             public EffectScript(ShipAPI ship, String id, Provider plugin) {
-                super(ship, id, new Color(100, 100, 200), plugin);
+                super(ship, id, new Color(100, 150, 225), plugin);
             }
 
             @Override

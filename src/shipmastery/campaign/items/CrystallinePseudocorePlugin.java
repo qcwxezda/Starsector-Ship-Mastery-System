@@ -41,6 +41,6 @@ public class CrystallinePseudocorePlugin extends BasePseudocorePlugin implements
 
     @Override
     public float getBaseCooldownSeconds() {
-        return 36f;
+        return 30f;
     }
 }

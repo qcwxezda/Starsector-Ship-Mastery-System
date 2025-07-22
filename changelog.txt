@@ -42,6 +42,9 @@
     - No longer reduces CR per S-mod installed.
     - Cost reduction 75% -> 50%.
     - Start with the hullmod spec in your cargo rather than unlocked, to better indicate that it exists as an option.
+- Overall mastery balancing:
+    - Increased the effectiveness of many mastery effects to compensate for the reduced default count, and losing 3rd S-mod slot + building in Phase Anchor/etc.
+- Fixed issue where random mastery selection could duplicate fixed mastery effects even if they were labeled as unique.
 - Pseudocore-piloted automated ships now follow captain personality rather than automated reckless ShipAIConfig override.
 - Made the default color for mastery stuff a little brighter.
 - Reactive-fortress-shield: Increased range.

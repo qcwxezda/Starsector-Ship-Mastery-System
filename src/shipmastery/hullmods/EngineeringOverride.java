@@ -46,17 +46,27 @@ public class EngineeringOverride extends BaseLogisticsHullMod {
     }
 
     @Override
-    public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
+    public String getUnapplicableReason(ShipAPI ship) {
+        if (BackgroundUtils.isTinkererStart()) return Strings.Hullmods.engineeringOverrideTinkererWarning;
+        if (ship.getVariant() == null || !ship.getVariant().hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return Strings.Hullmods.engineeringOverrideNoMasteryWarning;
+        return super.getUnapplicableReason(ship);
+    }
+
+    @Override
+    public boolean isApplicableToShip(ShipAPI ship) {
         if (BackgroundUtils.isTinkererStart()) return false;
         if (ship.getVariant() == null || !ship.getVariant().hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return false;
+        return super.isApplicableToShip(ship);
+    }
+
+    @Override
+    public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
         if (ship.getVariant().getPermaMods().contains(spec.getId())) return false;
         return super.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
     }
 
     @Override
     public String getCanNotBeInstalledNowReason(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
-        if (BackgroundUtils.isTinkererStart()) return Strings.Hullmods.engineeringOverrideTinkererWarning;
-        if (ship.getVariant() == null || !ship.getVariant().hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return Strings.Hullmods.engineeringOverrideNoMasteryWarning;
         // Don't show the "can't be removed without spaceport" text if it's permanent
         if (ship.getVariant().getPermaMods().contains(spec.getId())) return null;
         return super.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);

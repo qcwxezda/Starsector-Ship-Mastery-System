@@ -23,11 +23,14 @@ import java.awt.Color;
 public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
+    public static final float[] RANGE = new float[] {800f, 1000f, 1250f, 1500f};
+
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
-                .initDefaultHighlight(Strings.Descriptions.TimeFlowNearbyEnemies)
-                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)));
+                .init(Strings.Descriptions.TimeFlowNearbyEnemies)
+                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor());
     }
 
     @Override
@@ -42,7 +45,7 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
     }
 
     public float getRange(ShipVariantAPI variant) {
-        return getStrength(variant) * 40000f;
+        return RANGE[Utils.hullSizeToInt(variant.getHullSize())];
     }
 
     @Override

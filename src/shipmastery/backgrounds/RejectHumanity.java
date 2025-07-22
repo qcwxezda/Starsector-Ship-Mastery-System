@@ -74,7 +74,7 @@ public class RejectHumanity extends BaseCharacterBackground {
 
     @Override
     public void onNewGameAfterTimePass(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        setOfficerNumberToZero();
+        BackgroundUtils.setOfficerNumberToZero();
         var cargo = Global.getSector().getPlayerFleet().getCargo();
         cargo.addSpecial(new SpecialItemData("sms_pseudocore_uplink_mk2", null), 1f);
         cargo.addCommodity("sms_beta_pseudocore", 1f);
@@ -85,10 +85,5 @@ public class RejectHumanity extends BaseCharacterBackground {
                     }
                 }
         );
-    }
-
-    /** For some reason even though officer number is serialized, the serialized values aren't ever read*/
-    public static void setOfficerNumberToZero() {
-        Global.getSector().getPlayerStats().getOfficerNumber().modifyMult(MODIFIER_ID, 0f);
     }
 }

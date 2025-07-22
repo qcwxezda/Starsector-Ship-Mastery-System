@@ -18,6 +18,7 @@ import java.awt.Color;
 
 /** Note: will just give a flat 5% OP bonus for characters that aren't the player, if for some reason
  *  an NPC manages to have this skill. */
+@Deprecated
 public class CyberneticAugmentation {
 
     public static final float NPC_OP_BONUS = 0.05f;

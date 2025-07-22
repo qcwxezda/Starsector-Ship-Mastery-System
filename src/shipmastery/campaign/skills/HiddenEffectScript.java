@@ -29,7 +29,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
             return 60f;
         }
         default float getBaseDurationSeconds() {
-            return 6f;
+            return 5f;
         }
         default float getBaseEffectStrength() {
             return 0.75f;
@@ -139,7 +139,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
         float strength = dynamicStats.getMod(Provider.STRENGTH_MOD)
                 .computeEffective(plugin.getBaseEffectStrength());
         float effectLevel = effectFader.getBrightness() * strength;
-        applyEffects(effectLevel, Misc.random.nextFloat() < amount*25f);
+        applyEffects(effectLevel, Misc.random.nextFloat() < amount*15f);
         effectFader.advance(amount);
 
         repopulateWingsAndModulesInterval.advance(amount);

@@ -54,6 +54,7 @@ public class RandomMastery extends BaseMasteryEffect {
         Set<Class<?>> uniqueDontRepeat = new HashSet<>();
         Set<Class<?>> seenNotUnique = new HashSet<>();
         int maxTier = args.length >= 2 ? Integer.parseInt(args[1]) : 1;
+
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
             List<MasteryEffect> effects = new ArrayList<>();
             for (String id : ShipMastery.getMasteryOptionIds(spec, i)) {

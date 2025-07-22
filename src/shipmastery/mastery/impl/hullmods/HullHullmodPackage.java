@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 
 public class HullHullmodPackage extends HullmodPackage {
 
-    public static final float REQ_NOT_MET_MULT = 1f/3f;
+    public static final float REQ_NOT_MET_MULT = 0.4f;
 
     @Override
     protected String getDescriptionString() {

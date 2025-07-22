@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 
 public class ArmorHullmodPackage extends HullmodPackage {
 
-    public static float REQ_NOT_MET_MULT = 0.8f;
+    public static float REQ_NOT_MET_MULT = 10f/12f;
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,

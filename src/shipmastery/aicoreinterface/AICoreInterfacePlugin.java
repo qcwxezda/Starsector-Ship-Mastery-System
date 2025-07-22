@@ -13,18 +13,28 @@ import shipmastery.util.Strings;
 
 public interface AICoreInterfacePlugin {
     String INTEGRATED_SUFFIX = "<sms_interface>";
-    float getIntegrationCost(FleetMemberAPI member);
-    default void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
-        tooltip.addPara(Strings.Misc.noEffect, 10f);
+
+    default float getIntegrationCost(FleetMemberAPI member) {
+        return 0f;
     }
+
+    default void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
+        tooltip.addPara(Strings.Misc.noEffect, 0f);
+    }
+
     default String getCannotIntegrateReason(FleetMemberAPI member) {
         return null;
     }
+
     default String getCannotRemoveReason(FleetMemberAPI member) {
         return null;
     }
+
     default void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {}
+
     default void applyEffectsAfterShipCreation(ShipAPI ship, String id) {}
+
+    @SuppressWarnings("unused")
     default void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
 
     static String getIntegratedPseudocore(ShipVariantAPI variant) {

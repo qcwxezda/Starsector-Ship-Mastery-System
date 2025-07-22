@@ -10,22 +10,22 @@ SupplyUsage,supplies maintenance,2,-0.2,,shipmastery.stats.logistics.SupplyUsage
 CRPerDeployment,combat readiness lost per deployment,,-0.2,,shipmastery.stats.logistics.CRPerDeployment
 CRRecoveryRate,combat readiness recovery rate,,0.3,,shipmastery.stats.logistics.CRRecoveryRate
 CRMax,maximum combat readiness,2,0.08,modify_flat display_as_percent,shipmastery.stats.logistics.CRMax
-CrewLoss,crew loss,,-0.25,,shipmastery.stats.logistics.CrewLoss
+CrewLoss,crew loss,,-0.3,,shipmastery.stats.logistics.CrewLoss
 SensorProfile,sensor profile,,-0.2,,shipmastery.stats.logistics.SensorProfile
-SensorStrength,sensor strength,,0.25,,shipmastery.stats.logistics.SensorStrength
+SensorStrength,sensor strength,,0.3,,shipmastery.stats.logistics.SensorStrength
 DModAcquireProbability,the probability of gaining d-mods when destroyed,,-0.3,,shipmastery.stats.logistics.DModAcquireProbability
 #### COMBAT ####
-MaxSpeed,maximum speed in combat,2,0.075,,shipmastery.stats.combat.MaxSpeed
-Maneuverability,maneuverability in combat,,0.2,,shipmastery.stats.combat.Maneuverability
+MaxSpeed,maximum speed in combat,2,0.1,,shipmastery.stats.combat.MaxSpeed
+Maneuverability,maneuverability in combat,,0.25,,shipmastery.stats.combat.Maneuverability
 FluxCapacity,flux capacity,2,0.075,,shipmastery.stats.combat.FluxCapacity
 FluxDissipation,flux dissipation,2,0.075,,shipmastery.stats.combat.FluxDissipation
 MalfunctionChance,malfunction chance at low combat readiness,,-0.3,,shipmastery.stats.combat.MalfunctionChance
-CRPeakDuration,peak combat readiness duration,,0.2,,shipmastery.stats.combat.CRPeakDuration
+CRPeakDuration,peak combat readiness duration,,0.25,,shipmastery.stats.combat.CRPeakDuration
 CRDecayRate,combat readiness decay after peak readiness expires,,-0.25,,shipmastery.stats.combat.CRDecayRate
-HullArmorDamageTaken,hull and armor damage taken,,-0.05,,shipmastery.stats.combat.HullArmorDamageTaken
-ShieldDamage,shield damage taken,2,-0.05,,shipmastery.stats.combat.ShieldDamage
-EMPDamageTaken,"weapons, engine, and EMP damage taken",,-0.2,,shipmastery.stats.combat.EMPDamageTaken
-WeaponFluxCost,all weapons' flux cost,3,-0.05,,shipmastery.stats.combat.WeaponFluxCost
+HullArmorDamageTaken,hull and armor damage taken,,-0.075,,shipmastery.stats.combat.HullArmorDamageTaken
+ShieldDamage,shield damage taken,2,-0.075,,shipmastery.stats.combat.ShieldDamage
+EMPDamageTaken,"weapons, engine, and EMP damage taken",,-0.25,,shipmastery.stats.combat.EMPDamageTaken
+WeaponFluxCost,all weapons' flux cost,3,-0.075,,shipmastery.stats.combat.WeaponFluxCost
 ShieldSpeed,shield turn rate and unfold speed,,0.3,,shipmastery.stats.combat.ShieldSpeed
 ShieldUpkeep,shield upkeep,2,-0.2,,shipmastery.stats.combat.ShieldUpkeep
 ShieldArc,shield arc degrees,2,45,modify_flat require_integer,shipmastery.stats.combat.ShieldArc
@@ -34,7 +34,7 @@ RepairTime,weapon and engine repair time,,-0.2,,shipmastery.stats.combat.RepairT
 HullPoints,hull durability,2,0.1,,shipmastery.stats.combat.HullPoints
 ArmorPoints,armor durability,2,0.1,,shipmastery.stats.combat.ArmorPoints
 BallisticEnergyAmmo,ballistic and energy weapons' ammo count,,0.25,,shipmastery.stats.combat.BallisticEnergyAmmo
-MissileSpeed,"missile speed, acceleration, and maneuverability",2,0.125,,shipmastery.stats.combat.MissileSpeed
+MissileSpeed,"missile speed, acceleration, and maneuverability",2,0.15,,shipmastery.stats.combat.MissileSpeed
 HitStrength,hit strength against armor,2,0.15,,shipmastery.stats.combat.HitStrength
 OverloadTime,overload duration,,-0.2,,shipmastery.stats.combat.OverloadTime
 ProjectileSpeed,projectile speed of all projectile weapons,2,0.2,,shipmastery.stats.combat.ProjectileSpeed
@@ -44,20 +44,20 @@ DamageToFightersMissiles,damage to fighters and missiles,,0.25,,shipmastery.stat
 FighterRefitTime,fighter replacement time,2,-0.1,,shipmastery.stats.combat.FighterRefitTime
 FighterCrewLoss,crew loss due to fighters,,-0.3,,shipmastery.stats.combat.FighterCrewLoss
 ReplacementRateDecay,the rate at which fighter replacement rate decays,,-0.15,,shipmastery.stats.combat.ReplacementRateDecay
-ReplacementRateRegen,the rate at which fighter replacement rate replenishes,,0.15,,shipmastery.stats.combat.ReplacementRateRegen
+ReplacementRateRegen,the rate at which fighter replacement rate replenishes,,0.2,,shipmastery.stats.combat.ReplacementRateRegen
 NumFighterBays,fighter bay count,4,0.25,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.NumFighterBays
-FighterCost,the OP cost of all fighters,3,-1.7,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.FighterCost
-BomberCost,the OP cost of all bombers,3,-2.5,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BomberCost
+FighterCost,the OP cost of all fighters,3,-2,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.FighterCost
+BomberCost,the OP cost of all bombers,3,-3,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BomberCost
 PhaseCloakCooldown,phase cloak cooldown time,2,-0.15,,shipmastery.stats.combat.PhaseCloakCooldown
 PhaseSpeedAcceleration,top speed and acceleration when phased,2,0.15,modify_flat is_percent,shipmastery.stats.combat.PhaseSpeedAcceleration
 PhaseCloakCost,phase cloak activation and upkeep costs,2,-0.15,,shipmastery.stats.combat.PhaseCloakCost
 PhaseTimeMult,local timeflow when phased,3,0.25,,shipmastery.stats.combat.PhaseTimeMult
 ZeroFluxSpeedBoost,the zero-flux speed boost,2,0.15,,shipmastery.stats.combat.ZeroFluxSpeedBoost
-AllWeaponOPCost,the OP cost of all weapons,4,-0.8,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.AllWeaponOPCost
+AllWeaponOPCost,the OP cost of all weapons,4,-0.9,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.AllWeaponOPCost
 ExplosionRadiusDamage,explosion radius and damage when destroyed,,1,,shipmastery.stats.combat.ExplosionRadiusDamage
-BallisticWeaponsOPCost,the OP cost of all ballistic weapons,3,-1.4,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BallisticWeaponsOPCost
-EnergyWeaponsOPCost,the OP cost of all energy weapons,3,-1.4,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
-MissileWeaponsOPCost,the OP cost of all missile weapons,3,-1.4,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.MissileWeaponsOPCost
+BallisticWeaponsOPCost,the OP cost of all ballistic weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BallisticWeaponsOPCost
+EnergyWeaponsOPCost,the OP cost of all energy weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
+MissileWeaponsOPCost,the OP cost of all missile weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.MissileWeaponsOPCost
 ShipSystemCooldown,"ship system recharge and regeneration rate, where applicable,",2,0.1,,shipmastery.stats.combat.ShipSystemCooldown
 EffectiveArmorBonus,"effective armor, applied for hit strength calculation only,",2,25,modify_flat require_integer,shipmastery.stats.combat.EffectiveArmorBonus
 DeploymentPoints,"deployment points cost",3,-0.05,,shipmastery.stats.combat.DeploymentPoints

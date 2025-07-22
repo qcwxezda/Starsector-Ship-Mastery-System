@@ -12,7 +12,7 @@ import shipmastery.util.Utils;
 
 public class FluxHullmodPackage extends HullmodPackage {
 
-    public static final float REQ_NOT_MET_MULT = 0.4f;
+    public static final float REQ_NOT_MET_MULT = 1f/3f;
 
     @Override
     protected String getDescriptionString() {

@@ -12,7 +12,6 @@ import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.backgrounds.BackgroundUtils;
-import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
@@ -45,7 +44,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
         if (id == CoreUITabId.FLEET || id == CoreUITabId.REFIT) {
             addMasteryHandlerToPlayerFleet();
             if (BackgroundUtils.isRejectHumanityStart()) {
-                RejectHumanity.setOfficerNumberToZero();
+                BackgroundUtils.setOfficerNumberToZero();
             }
         }
     }
