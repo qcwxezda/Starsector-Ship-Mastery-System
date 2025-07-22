@@ -12,8 +12,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - Mastery XP can also be acquired by consuming knowledge constructs, which appear as rare loot under certain circumstances.
 - Mastery XP can be used to level up a ship class's mastery, upon which you may select a perk to unlock.
     - Each ship class has its own mastery XP pool and level-up choices that are shared between all ships of that type.
-- Advancing your mastery of a ship type improves its performance in a variety of ways. Some mastery levels have randomized
-  bonuses, while others' are fixed.
+- Advancing your mastery of a ship type improves its performance in a variety of ways. Some mastery levels have randomized bonuses, while others' are fixed.
 
 ## Revamped S-mod System
 
@@ -22,7 +21,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - All ships start with 0 S-mod capacity. Level up ship mastery to gain S-mod capacity.
 - Each ship class has exactly 2 available S-mod capacity upgrades, available at levels 2 and 5.
 - Building in hullmods costs credits instead of story points.
-  - You may still use story points to reduce the credits cost of building in hullmods.
+  - You may still use story points to reduce the credit cost of building in hullmods.
 
 ## Mastery Unlocks
 
@@ -48,7 +47,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - Adds a system for reclaiming ships lost in battle:
 ![Derelict Losses](https://raw.githubusercontent.com/qcwxezda/Starsector-Ship-Mastery-System/refs/heads/master/screenshots/derelict_losses.png)
   - Player ships that are lost but not recovered, either by choice or due to disengaging early from or losing a battle, spawn as derelicts near the battle site.
-  - In order to spawn as a derelict, the ship must have been recoverable should the player have won (affected by reinforced bulkheads / hull restoration / etc.).
+  - To spawn as a derelict, the ship must have been recoverable should the player have won (affected by reinforced bulkheads / hull restoration / etc.).
   - If the player is given a post-battle salvage option, weapons and wings from the wrecks are stripped.
   - The wrecks disappear permanently after 365 days, or if the player dismisses the fleet log entry.
   - Greatly facilitates insurance fraud if using Nexerelin's ship insurance feature.
@@ -63,9 +62,9 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
   - Pin notable battles to keep them in the intel log permanently, allowing you to replay limited boss battles at any time.
 - Adds some exploration content.
 
-### Mod Integration and Advanced Config
+## Mod Integration and Advanced Config
 
-#### Modifying and Adding Mastery Effects
+### Modifying and Adding Mastery Effects
 
 - All possible mastery effects are read from data/shipmastery/mastery_list.csv.
   - The ModifyStatsMult and ModifyStatsFlat effects take an additional parameter read from data/shipmastery/stats_list.csv.
@@ -78,12 +77,12 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
   - All mastery effects should extend shipmastery.mastery.BaseMasteryEffect.
   - The interface shipmastery.mastery.MasteryEffect contains additional information in its documentation.
 
-#### Mastery Aliasing
+### Mastery Aliasing
 
 - By default, all hull specs have their own mastery pool, including skins of other hull specs.
 - It's possible to force a hull spec to share a mastery pool with another by modifying mastery_aliases.json.
 
-#### Custom AI Core Interfaces
+### Custom AI Core Interfaces
 
 - By default, only vanilla AI cores (4 in total) and all Pseudocores (7 in total) can be installed into ships to grant additional bonuses.
 - You can add interfaces for custom AI cores by adding an entry in data/shipmastery/ai_core_interface_list.csv. 
