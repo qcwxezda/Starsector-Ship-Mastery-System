@@ -17,5 +17,6 @@
     <orderEntry type="library" name="realityforge.jetbrains.annotations" level="project" />
     <orderEntry type="library" name="starsector-core" level="project" />
     <orderEntry type="library" name="MagicLib" level="project" />
+    <orderEntry type="library" name="SecondInCommand" level="project" />
   </component>
 </module>

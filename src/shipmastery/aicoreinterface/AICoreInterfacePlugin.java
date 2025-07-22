@@ -1,10 +1,14 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
+import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 
 public interface AICoreInterfacePlugin {
@@ -19,24 +23,30 @@ public interface AICoreInterfacePlugin {
     default String getCannotRemoveReason(FleetMemberAPI member) {
         return null;
     }
+    default void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {}
+    default void applyEffectsAfterShipCreation(ShipAPI ship, String id) {}
+    default void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {}
 
     static String getIntegratedPseudocore(ShipVariantAPI variant) {
-        return variant.getHullMods()
-                .stream()
-                .<String>mapMulti((id, consumer) -> {
-                    var spec = Global.getSettings().getHullModSpec(id);
-                    if (spec.getEffect() instanceof AICoreInterfaceHullmod p) {
-                        consumer.accept(p.getItemId());
-                    }
-                })
-                .findFirst()
-                .orElse(null);
+        for (String id : ShipMastery.getAICoreInterfaceSingletonMap().keySet()) {
+            if (variant.hasTag(id + INTEGRATED_SUFFIX)) {
+                return id;
+            }
+        }
+        return null;
+    }
+
+    static float getDefaultIntegrationCost(FleetMemberAPI member, float minCost, float maxCost) {
+        float cost = MathUtils.lerp(minCost, maxCost, MathUtils.clamp(member.getUnmodifiedDeploymentPointsCost() / 60f, 0f, 1f));
+        cost = 1000f * (int) (cost/1000f);
+        return cost;
     }
 
     static void addIntegratedDescToTooltip(TooltipMakerAPI tooltip, String coreId, float pad) {
         tooltip.addPara(Strings.MasteryPanel.aiIntegratedTooltip, pad, Settings.POSITIVE_HIGHLIGHT_COLOR, Global.getSettings().getCommoditySpec(coreId).getName());
         tooltip.addSpacer(10f);
-        var plugin = (AICoreInterfacePlugin) Global.getSettings().getHullModSpec(coreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
+        var plugin = ShipMastery.getAICoreInterfacePlugin(coreId);
+        if (plugin == null) return;
         plugin.addIntegrationDescriptionToTooltip(tooltip);
     }
 }

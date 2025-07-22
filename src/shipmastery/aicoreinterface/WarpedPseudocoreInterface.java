@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -14,7 +14,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class WarpedPseudocoreInterface extends AICoreInterfaceHullmod {
+public class WarpedPseudocoreInterface implements AICoreInterfacePlugin {
 
     public static final float DURATION_INCREASE = 1f;
     public static final float PER_STACK_INCREASE = 0.5f;
@@ -24,7 +24,7 @@ public class WarpedPseudocoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 100000f, 300000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 100000f, 300000f);
     }
 
     @Override

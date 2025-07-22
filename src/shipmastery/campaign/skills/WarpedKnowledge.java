@@ -239,18 +239,17 @@ public class WarpedKnowledge {
                 }
 
                 if (cooldown <= 0f) {
-                    if (!(target instanceof ShipAPI)) return null;
+                    if (!(target instanceof ShipAPI) || target.getOwner() == ship.getOwner()) return null;
 
                     var amount = damage.getDamage();
                     if (damage.isDps()) amount *= 0.1f;
                     var chance = 1f - Math.pow(1.5f, -amount/100f);
                     if (Misc.random.nextFloat() > chance) return null;
 
-                    Boolean active = (Boolean) ship.getCustomData().get(HiddenEffectScript.IS_ACTIVE_KEY);
-                    if (active == null) active = false;
                     cooldown = MIN_DELAY_BETWEEN_SHOTS_SECONDS[Utils.hullSizeToInt(ship.getHullSize())] / masteryStrength;
-                    if (active) cooldown /= 4f;
-                    cooldown *= MathUtils.randBetween(0.75f, 1.25f);
+                    float fadeIn = (float) ship.getCustomData().getOrDefault(HiddenEffectScript.EFFECT_FADE_IN_KEY, 0f);
+                    cooldown *= MathUtils.lerp(1f, 0.333f, fadeIn);
+                    cooldown *= MathUtils.randBetween(0.8f, 1.2f);
 
                     var explosion = Global.getCombatEngine().spawnDamagingExplosion(explosionSpec, ship, point, false);
                     explosion.setCustomData(EXPLOSION_ID_KEY, true);

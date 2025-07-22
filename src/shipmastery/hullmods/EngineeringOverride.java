@@ -8,7 +8,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.BaseLogisticsHullMod;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.backgrounds.HullTinkerer;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -47,16 +47,18 @@ public class EngineeringOverride extends BaseLogisticsHullMod {
 
     @Override
     public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
-        if (HullTinkerer.isTinkererStart()) return false;
-        if (ship.getVariant() == null || ship.getVariant().getPermaMods().contains(spec.getId())) return false;
+        if (BackgroundUtils.isTinkererStart()) return false;
+        if (ship.getVariant() == null || !ship.getVariant().hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return false;
+        if (ship.getVariant().getPermaMods().contains(spec.getId())) return false;
         return super.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
     }
 
     @Override
     public String getCanNotBeInstalledNowReason(ShipAPI ship, MarketAPI marketOrNull, CampaignUIAPI.CoreUITradeMode mode) {
-        if (HullTinkerer.isTinkererStart()) return Strings.Hullmods.engineeringOverrideTinkererWarning;
+        if (BackgroundUtils.isTinkererStart()) return Strings.Hullmods.engineeringOverrideTinkererWarning;
+        if (ship.getVariant() == null || !ship.getVariant().hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return Strings.Hullmods.engineeringOverrideNoMasteryWarning;
         // Don't show the "can't be removed without spaceport" text if it's permanent
-        if (ship.getVariant() != null && ship.getVariant().getPermaMods().contains(spec.getId())) return null;
+        if (ship.getVariant().getPermaMods().contains(spec.getId())) return null;
         return super.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);
     }
 

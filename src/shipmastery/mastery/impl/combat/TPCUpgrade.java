@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -10,6 +11,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,10 +103,17 @@ public class TPCUpgrade extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return getTPCMasterySelectionWeight(spec);
+    }
+
+    public static Float getTPCMasterySelectionWeight(ShipHullSpecAPI spec) {
         if (spec.getBuiltInWeapons() == null) return null;
         for (String id : spec.getBuiltInWeapons().values()) {
-            if ("tpc".equals(id)) {
-                return 1f;
+            var weaponSpec = Global.getSettings().getWeaponSpec(id);
+            if (weaponSpec != null && weaponSpec.getProjectileSpec() instanceof ProjectileSpecAPI pSpec) {
+                if ("tpc_shot".equals(pSpec.getId())) {
+                    return 1f;
+                }
             }
         }
         return null;

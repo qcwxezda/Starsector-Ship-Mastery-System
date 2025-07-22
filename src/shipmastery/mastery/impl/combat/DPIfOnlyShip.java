@@ -53,7 +53,7 @@ public class DPIfOnlyShip extends MultiplicativeMasteryEffect {
     }
 
     public float getAdjustedStrength(float strength) {
-        float baseStrength = getStrength((PersonAPI) null);
+        float baseStrength = getBaseStrength();
         return (strength + baseStrength)/2f;
     }
 

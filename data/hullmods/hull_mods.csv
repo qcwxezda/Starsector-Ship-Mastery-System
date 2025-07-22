@@ -36,14 +36,3 @@ Mastery - Level 15+,sms_npc_indicator15,,,,hide_in_codex,,0,,TRUE,FALSE,0,0,0,0,
 Pseudocore Uplink Handler,sms_pseudocore_uplink_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.PseudocoreUplinkHullmod,,,,graphics/hullmods/generic_mod.png
 No Crew (Curator),sms_curator_no_crew,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.NoCrew,,,,graphics/hullmods/generic_mod.png
 Fleet Sync Listener Handler,sms_fleet_sync_listener_handler,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.campaign.listeners.FleetSyncListenerHandler,,,,graphics/hullmods/generic_mod.png
-Gamma Core,gamma_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.GammaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Beta Core,beta_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Alpha Core,alpha_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Omega Core,omega_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.OmegaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Fractured Gamma Core,sms_fractured_gamma_core<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface,,,,graphics/hullmods/generic_mod.png
-Gamma Pseudocore,sms_gamma_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.GammaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Beta Pseudocore,sms_beta_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.BetaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Alpha Pseudocore,sms_alpha_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AlphaPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Amorphous Pseudocore,sms_amorphous_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.AmorphousPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Warped Pseudocore,sms_warped_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.WarpedPseudocoreInterface,,,,graphics/hullmods/generic_mod.png
-Crystalline Pseudocore,sms_crystalline_pseudocore<sms_interface>,,,,hide_in_codex,,0,,TRUE,TRUE,0,0,0,0,shipmastery.hullmods.aicoreinterface.CrystallinePseudocoreInterface,,,,graphics/hullmods/generic_mod.png

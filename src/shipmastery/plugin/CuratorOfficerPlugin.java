@@ -156,7 +156,7 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 numCommanderSkills = 3;
                 memory.set(key, 5f);
             }
-            case "sms_warped =_pseudocore", "sms_crystalline_pseudocore" -> {
+            case "sms_warped_pseudocore", "sms_crystalline_pseudocore" -> {
                 numCommanderSkills = 4;
                 memory.set(key, 6f);
             }

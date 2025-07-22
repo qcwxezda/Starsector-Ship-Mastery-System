@@ -8,9 +8,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
-import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.state.AppDriver;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.campaign.StateTracker;
 import shipmastery.util.EngineUtils;
@@ -70,12 +70,17 @@ public class CombatListenerManager extends BaseEveryFrameCombatPlugin {
                 }
                 // Modify admiral AI for remote beacon fight
                 if (Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType)) {
-                    RemoteBeaconDefenderHandler.modifyAdmiralAI(engine.getFleetManager(FleetSide.ENEMY), otherFleet.getFlagship());
+                    var enemyFlagship = otherFleet.getFlagship();
+                    if (enemyFlagship != null) {
+                        var plugin = new RemoteBeaconDefenderHandler(enemyFlagship);
+                        engine.addPlugin(plugin);
+                        engine.getListenerManager().addListener(plugin);
+                    }
                 }
             }
         }
 
-        if (RejectHumanity.isRejectHumanityStart()) {
+        if (BackgroundUtils.isRejectHumanityStart()) {
             int level = stats.getLevel();
             int maxLevel = Global.getSettings().getInt("playerMaxLevel");
             float ratio = maxLevel <= 0 ? 1f : (float) level / maxLevel;

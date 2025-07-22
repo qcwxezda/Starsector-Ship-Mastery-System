@@ -21,13 +21,17 @@ import java.util.Objects;
 public abstract class HiddenEffectScript extends AdvanceIfAliveListener implements PseudocoreHiddenSkillScript {
 
     public interface Provider {
-        default float getCooldownSeconds(ShipAPI ship) {
+        String COOLDOWN_MOD = "sms_PseudocoreHiddenEffectCooldownMod";
+        String DURATION_MOD = "sms_PseudocoreHiddenEffectDurationMod";
+        String STRENGTH_MOD = "sms_PseudocoreHiddenEffectStrengthMod";
+
+        default float getBaseCooldownSeconds() {
             return 60f;
         }
-        default float getDurationSeconds(ShipAPI ship) {
+        default float getBaseDurationSeconds() {
             return 6f;
         }
-        default float getEffectStrength(ShipAPI ship) {
+        default float getBaseEffectStrength() {
             return 0.75f;
         }
     }
@@ -43,7 +47,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
     private final IntervalUtil repopulateWingsAndModulesInterval = new IntervalUtil(0.5f, 0.5f);
     private List<ShipAPI> allModules = new ArrayList<>();
     private List<ShipAPI> allWings = new ArrayList<>();
-    public static final String IS_ACTIVE_KEY = "sms_HiddenEffectActive";
+    public static final String EFFECT_FADE_IN_KEY = "sms_HiddenEffectFadeInLevel";
 
     private OverlayEmitter getEmitterForShip(ShipAPI ship) {
         var existing = emitterMap.get(ship);
@@ -54,7 +58,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
         emitter.randomOffset = Math.min(ship.getSpriteAPI().getHeight(), ship.getSpriteAPI().getWidth()) / 7f;
         emitter.randomAngle = 20f;
         emitter.color = color;
-        emitter.alphaMult = 0.2f;
+        emitter.alphaMult = 0.16f;
         emitter.fadeInFrac = 0.2f;
         emitter.fadeOutFrac = 0.2f;
         emitter.enableDynamicAnchoring();
@@ -78,17 +82,16 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
         active = true;
         activeTime = 0f;
         resetCooldownTime();
-        allModules.forEach(module -> module.setCustomData(IS_ACTIVE_KEY, true));
     }
 
     public final void deactivate() {
         active = false;
         effectFader.fadeOut();
-        allModules.forEach(module -> module.setCustomData(IS_ACTIVE_KEY, false));
     }
 
     protected final void resetCooldownTime() {
-        float cooldown = plugin.getCooldownSeconds(ship);
+        float cooldown = ship.getMutableStats().getDynamic().getMod(Provider.COOLDOWN_MOD)
+                .computeEffective(plugin.getBaseCooldownSeconds());
         cooldownRemaining = MathUtils.randBetween(0.8f*cooldown, 1.25f*cooldown);
     }
 
@@ -115,6 +118,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
             } else {
                 unapplyEffectsToShip(module);
             }
+            module.setCustomData(EFFECT_FADE_IN_KEY, effectFader.getBrightness());
         });
     }
 
@@ -131,8 +135,11 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
 
     @Override
     public final void advanceIfAlive(float amount) {
-        float effectLevel = effectFader.getBrightness() * plugin.getEffectStrength(ship);
-        applyEffects(effectLevel, Misc.random.nextFloat() < amount*9f);
+        var dynamicStats = ship.getMutableStats().getDynamic();
+        float strength = dynamicStats.getMod(Provider.STRENGTH_MOD)
+                .computeEffective(plugin.getBaseEffectStrength());
+        float effectLevel = effectFader.getBrightness() * strength;
+        applyEffects(effectLevel, Misc.random.nextFloat() < amount*25f);
         effectFader.advance(amount);
 
         repopulateWingsAndModulesInterval.advance(amount);
@@ -147,7 +154,9 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
             }
         } else {
             activeTime += amount;
-            if (activeTime >= plugin.getDurationSeconds(ship)) {
+            float duration = dynamicStats.getMod(Provider.DURATION_MOD)
+                    .computeEffective(plugin.getBaseDurationSeconds());
+            if (activeTime >= duration) {
                 deactivate();
             }
         }

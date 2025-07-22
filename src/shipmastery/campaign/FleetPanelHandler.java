@@ -27,7 +27,7 @@ import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.Action;
 import shipmastery.deferred.DeferredActionPlugin;
-import shipmastery.hullmods.aicoreinterface.AICoreInterfacePlugin;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.ui.LevelUpDialog;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.MathUtils;

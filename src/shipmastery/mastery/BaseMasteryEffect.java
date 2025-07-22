@@ -172,6 +172,10 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {}
 
+    public final float getBaseStrength() {
+        return baseStrength;
+    }
+
     @Override
     public final float getStrength(PersonAPI commander) {
         return MasteryUtils.getModifiedMasteryEffectStrength(commander, getHullSpec(), baseStrength);

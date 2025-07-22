@@ -278,12 +278,16 @@ public class PlayerMPHandler extends BaseCampaignEventListener implements EveryF
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
         if (battle == null || !battle.isPlayerInvolved()) return;
 
-        long xpGained;
+        Long xpGained;
         try {
             var context = Global.getSector().getCampaignUI().getCurrentInteractionDialog().getPlugin().getContext();
-            xpGained = (long) (float) ReflectionUtils.fleetEncounterContextXPGained.invoke(context);
+            xpGained = (Long) ReflectionUtils.fleetEncounterContextXPGained.invoke(context);
         } catch (Throwable e) {
             Logger.getLogger(PlayerMPHandler.class).warn("Unable to get XP gained from fleet encounter context; falling back to custom computation");
+            xpGained = computedLastBattleXPGain;
+        }
+
+        if (xpGained == null) {
             xpGained = computedLastBattleXPGain;
         }
 

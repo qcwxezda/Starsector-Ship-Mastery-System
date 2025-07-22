@@ -14,7 +14,8 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
-import shipmastery.hullmods.aicoreinterface.AICoreInterfacePlugin;
+import shipmastery.ShipMastery;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.config.Settings;
 import shipmastery.ui.triggers.DialogDismissedListener;
 import shipmastery.util.CampaignUtils;
@@ -90,9 +91,9 @@ public class IntegrateButton extends ButtonWithCost {
     protected float getBaseCost() {
         String toShow = existingIntegrated != null ? existingIntegrated : selectedCoreId;
         if (toShow == null) return 0f;
-        var plugin = Global.getSettings().getHullModSpec(toShow + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
-        if (!(plugin instanceof AICoreInterfacePlugin p)) return 0f;
-        var cost = p.getIntegrationCost(member);
+        var plugin = ShipMastery.getAICoreInterfacePlugin(toShow);
+        if (plugin == null) return 0f;
+        var cost = plugin.getIntegrationCost(member);
         return existingIntegrated != null ? cost / 2f : cost;
     }
 
@@ -142,7 +143,7 @@ public class IntegrateButton extends ButtonWithCost {
 
         NavigableMap<CommoditySpecAPI, Integer> counts;
         if (existingIntegrated == null) {
-            counts = CampaignUtils.getPlayerCommodityCounts(x -> Global.getSettings().getHullModSpec(x.getId() + AICoreInterfacePlugin.INTEGRATED_SUFFIX) != null);
+            counts = CampaignUtils.getPlayerCommodityCounts(x -> ShipMastery.getAICoreInterfacePlugin(x.getId()) != null);
         } else {
             counts = new TreeMap<>((x, y) -> 0);
             counts.put(Global.getSettings().getCommoditySpec(existingIntegrated), 1);
@@ -160,10 +161,13 @@ public class IntegrateButton extends ButtonWithCost {
                     @Override
                     public void trigger(Object... args) {
                         if ((int) args[1] == 1 || !confirmButton.isEnabled()) return;
+                        var cargo = Global.getSector().getPlayerFleet().getCargo();
                         if (existingIntegrated != null) {
-                            selectedVariant.removePermaMod(existingIntegrated + AICoreInterfacePlugin.INTEGRATED_SUFFIX);
+                            selectedVariant.removeTag(existingIntegrated + AICoreInterfacePlugin.INTEGRATED_SUFFIX);
+                            cargo.addCommodity(existingIntegrated, 1f);
                         } else if (selectedCoreId != null) {
-                            selectedVariant.addPermaMod(selectedCoreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX, false);
+                            selectedVariant.addTag(selectedCoreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX);
+                            cargo.removeCommodity(selectedCoreId, 1f);
                         }
                         applyCosts();
                         finish();
@@ -206,7 +210,7 @@ public class IntegrateButton extends ButtonWithCost {
 
     public void addSectionForPseudocore(TooltipMakerAPI tooltip, CommoditySpecAPI spec, int numInCargo, float width, float minHeight) {
         String id = spec.getId();
-        var integrationPlugin = getIntegrationPlugin(id);
+        var integrationPlugin = ShipMastery.getAICoreInterfacePlugin(id);
         if (integrationPlugin == null) return;
 
         float leftPad = 100f;
@@ -235,7 +239,6 @@ public class IntegrateButton extends ButtonWithCost {
         tooltip.addSpacer(-height+5f).getPosition().setXAlignOffset(leftPad);
         tooltip.setTextWidthOverride(textWidth);
         integrationPlugin.addIntegrationDescriptionToTooltip(tooltip);
-//        tooltip.addPara(text, 0f);
         tooltip.addSpacer(Math.max(-5f, height-diff-5f)).getPosition().setXAlignOffset(-leftPad);
 
         tooltip.addImage(spec.getIconName(), 64f, 64f, -height/2f - 32f);
@@ -248,20 +251,13 @@ public class IntegrateButton extends ButtonWithCost {
         }
         tooltip.addSpacer(height/2f+52f);
         tooltip.getPrev().getPosition().setXAlignOffset(-7f);
-
-
-        //ButtonAPI outline = tooltip.addAreaCheckbox("", id, baseColor, darkColor, brightColor, width, 200f, 10f);
-        //ButtonAPI name = tooltip.addAreaCheckbox(spec.getName(), null, baseColor, darkColor, brightColor, width, 30f, -200f);
-        //tooltip.addImage(spec.getIconName(), 32f, 32f, -50f);
-
-
     }
 
     @Override
     protected void updateLabels() {
         if (cannotPerformLabel != null) {
             String currentId = existingIntegrated != null ? existingIntegrated : selectedCoreId;
-            var plugin = getIntegrationPlugin(currentId);
+            var plugin = ShipMastery.getAICoreInterfacePlugin(currentId);
             if (plugin != null) {
                 if (existingIntegrated != null) {
                     cannotIntegrateOrRemoveReason = plugin.getCannotRemoveReason(member);
@@ -274,13 +270,6 @@ public class IntegrateButton extends ButtonWithCost {
         }
         super.updateLabels();
 
-    }
-
-    static AICoreInterfacePlugin getIntegrationPlugin(String coreId) {
-        if (coreId == null) return null;
-        var plugin = Global.getSettings().getHullModSpec(coreId + AICoreInterfacePlugin.INTEGRATED_SUFFIX).getEffect();
-        if (!(plugin instanceof AICoreInterfacePlugin integrationPlugin)) return null;
-        return integrationPlugin;
     }
 
     @Override

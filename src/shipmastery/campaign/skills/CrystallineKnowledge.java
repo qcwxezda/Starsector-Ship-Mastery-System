@@ -251,6 +251,7 @@ public class CrystallineKnowledge {
                 if (cooldown <= 0f) {
                     if (damage.getStats() == null || !(damage.getStats().getEntity() instanceof ShipAPI source)) return null;
                     if (!Global.getCombatEngine().isShipAlive(source)) return null;
+                    if (source.getOwner() == ship.getOwner()) return null;
 
                     var amount = damage.getDamage();
                     if (damage.isDps()) amount *= 0.1f;
@@ -275,11 +276,10 @@ public class CrystallineKnowledge {
                     arc.setRenderGlowAtStart(false);
                     arc.setSingleFlickerMode(true);
 
-                    Boolean active = (Boolean) ship.getCustomData().get(HiddenEffectScript.IS_ACTIVE_KEY);
-                    if (active == null) active = false;
                     cooldown = MIN_DELAY_BETWEEN_SHOTS_SECONDS[Utils.hullSizeToInt(ship.getHullSize())] / masteryStrength;
-                    if (active) cooldown /= 4f;
-                    cooldown *= MathUtils.randBetween(0.75f, 1.25f);
+                    float fadeIn = (float) ship.getCustomData().getOrDefault(HiddenEffectScript.EFFECT_FADE_IN_KEY, 0f);
+                    cooldown *= MathUtils.lerp(1f, 0.333f, fadeIn);
+                    cooldown *= MathUtils.randBetween(0.8f, 1.2f);
 
                     CombatDeferredActionPlugin.performLater(() -> {
                         var explosion = Global.getCombatEngine().spawnDamagingExplosion(explosionSpec, ship, data.one, false);

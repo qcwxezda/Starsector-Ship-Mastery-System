@@ -1,6 +1,5 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.combat.ShipAPI;
 import shipmastery.campaign.skills.HiddenEffectScript;
 
 public class BetaPseudocorePlugin extends BasePseudocorePlugin implements HiddenEffectScript.Provider {
@@ -26,7 +25,7 @@ public class BetaPseudocorePlugin extends BasePseudocorePlugin implements Hidden
     }
 
     @Override
-    public float getCooldownSeconds(ShipAPI ship) {
+    public float getBaseCooldownSeconds() {
         return 45f;
     }
 }

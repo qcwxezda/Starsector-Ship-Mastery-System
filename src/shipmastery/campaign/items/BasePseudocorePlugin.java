@@ -11,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.backgrounds.Enlightened;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -37,7 +37,7 @@ public abstract class BasePseudocorePlugin implements PseudocorePlugin {
 
     public final int getLevel() {
         int base = getBaseLevel();
-        if (Enlightened.isEnlightenedStart()) {
+        if (BackgroundUtils.isEnlightenedStart()) {
             base++;
         }
         return base;
@@ -82,7 +82,7 @@ public abstract class BasePseudocorePlugin implements PseudocorePlugin {
 
     public final float getAIPointsMult() {
         float base = getBaseAIPointsMult();
-        if (Enlightened.isEnlightenedStart()) {
+        if (BackgroundUtils.isEnlightenedStart()) {
             base += getEnlightenedAIMultIncrease();
         }
         return base;

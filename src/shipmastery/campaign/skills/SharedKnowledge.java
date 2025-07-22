@@ -25,12 +25,6 @@ import java.awt.Color;
 
 public class SharedKnowledge {
 
-    public static boolean hasSharedKnowledge(PersonAPI person) {
-        if (person == null || person.getStats() == null) return false;
-        return person.getStats().getSkillLevel("sms_shared_knowledge") >= 1f
-                || person.getStats().getSkillLevel("sms_amorphous_knowledge") >= 1f;
-    }
-
     public static boolean hasEliteSharedKnowledge(PersonAPI person) {
         if (person == null || person.getStats() == null) return false;
         return person.getStats().getSkillLevel("sms_shared_knowledge") >= 2f
@@ -53,9 +47,13 @@ public class SharedKnowledge {
             if (reduction > 0f) {
                 stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, 1f - reduction);
             }
-            stats.getEnergyWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
-            stats.getBallisticWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
-            stats.getMissileWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
+
+            var captain = CampaignUtils.getCaptain(stats);
+            if (captain == null || captain != commander) {
+                stats.getEnergyWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
+                stats.getBallisticWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
+                stats.getMissileWeaponDamageMult().modifyMult(id, 1f - DAMAGE_REDUCTION);
+            }
         }
 
         @Override
@@ -78,13 +76,13 @@ public class SharedKnowledge {
 
     public static class Elite extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
 
-        public static final int MAX_FIRE_RATE_STACKS = 5;
-        public static final float MAX_FIRE_RATE = 0.08f;
+        public static final int MAX_FIRE_RATE_STACKS = 10;
+        public static final float MAX_FIRE_RATE = 0.15f;
         public static final float FIRE_RATE_RANGE = 2500f;
         public static final String FIRE_RATE_STACKS_MOD = "$sms_SharedKnowledgeStacksModifier";
 
         public static class SharedKnowledgeEliteScript implements AdvanceableListener {
-            IntervalUtil checkerInterval = new IntervalUtil(0.5f, 1.5f);
+            IntervalUtil checkerInterval = new IntervalUtil(1f, 1.5f);
             ShipAPI ship;
             String id;
 
@@ -110,15 +108,14 @@ public class SharedKnowledge {
                         ShipAPI other = (ShipAPI) it.next();
                         if (ship == other) continue;
                         if (other.getOwner() != ship.getOwner()) continue;
-                        if (!hasSharedKnowledge(other.getCaptain())) continue;
+                        if (ship.isFighter()) continue;
+                        if (ship.getCaptain() == null || ship.getCaptain().isDefault()) continue;
                         if (MathUtils.dist(other.getLocation(), ship.getLocation()) > FIRE_RATE_RANGE+ship.getCollisionRadius()+other.getCollisionRadius()) continue;
                         count++;
                     }
 
                     count = ship.getMutableStats().getDynamic().getMod(FIRE_RATE_STACKS_MOD).computeEffective(count);
                     float bonus = MAX_FIRE_RATE * Math.min(1f, count / MAX_FIRE_RATE_STACKS);
-                    var commander = CampaignUtils.getFleetCommanderForStats(ship.getMutableStats());
-                    bonus = MasteryUtils.getModifiedMasteryEffectStrength(commander, ship.getHullSpec(), bonus);
                     applyEffectsToStats(ship.getMutableStats(), bonus, id);
                 }
             }
@@ -155,11 +152,9 @@ public class SharedKnowledge {
             // Need custom description due to elite effect taking multiple lines
             info.addPara(Strings.Skills.sharedKnowledgeEliteEffect1, 0f, hc, hc,
                     Utils.asPercent(MAX_FIRE_RATE),
-                    skill.getName(),
                     Utils.asInt(FIRE_RATE_RANGE));
             info.addPara(Strings.Skills.sharedKnowledgeEliteEffect2, 0f, tc, hc, Utils.asInt(MAX_FIRE_RATE_STACKS));
             info.addPara(Strings.Skills.sharedKnowledgeEliteEffect3, tc, 0f);
-            info.addPara(Strings.Skills.sharedKnowledgeEliteEffect4, tc, 0f);
         }
     }
 

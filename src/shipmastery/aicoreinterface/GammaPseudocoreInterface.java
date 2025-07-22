@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -12,13 +12,13 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class GammaPseudocoreInterface extends AICoreInterfaceHullmod {
+public class GammaPseudocoreInterface implements AICoreInterfacePlugin {
     public static final float CR_PER_HULLMOD = 0.02f;
     public static final float CR_INITIAL = 0.12f;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 50000f, 150000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 50000f, 150000f);
     }
 
     @Override

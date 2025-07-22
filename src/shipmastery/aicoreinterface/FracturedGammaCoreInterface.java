@@ -1,24 +1,24 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.HullModItemManager;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class FracturedGammaCoreInterface extends AICoreInterfaceHullmod {
+public class FracturedGammaCoreInterface implements AICoreInterfacePlugin {
 
     public static final float CR_THRESHOLD = 0.4f;
     public static final float REPAIR_AMT = 0.5f;
-    public static final String HULLMOD_ID = "sms_fractured_gamma_core" + AICoreInterfaceHullmod.INTEGRATED_SUFFIX;
+    public static final String TAG_ID = "sms_fractured_gamma_core" + AICoreInterfacePlugin.INTEGRATED_SUFFIX;
 
     public static class IntegrationScript extends BaseCampaignEventListener implements EveryFrameScript {
         private final IntervalUtil checkerInterval = new IntervalUtil(1f, 1.5f);
@@ -43,21 +43,20 @@ public class FracturedGammaCoreInterface extends AICoreInterfaceHullmod {
             var fleet = Global.getSector().getPlayerFleet();
             fleet.getFleetData().getMembersListCopy()
                     .stream()
-                    .filter(fm -> !fm.isMothballed() && fm.getVariant().hasHullMod(HULLMOD_ID))
+                    .filter(fm -> !fm.isMothballed() && fm.getVariant().hasTag(TAG_ID))
                     .forEach(fm -> {
                         if (fm.getStats() == null) return;
                         if (fm.getStats().getMaxCombatReadiness().getModifiedValue() <= CR_THRESHOLD) return;
                         if (fm.getRepairTracker().getCR() >= CR_THRESHOLD) return;
-                        fm.getRepairTracker().applyCREvent(REPAIR_AMT, Strings.Items.integratedDesc);
-                        // Give back item to random temp cargo so it doesn't get added back to the player fleet
-                        HullModItemManager.getInstance().giveBackRequiredItems(HULLMOD_ID, fm, Global.getFactory().createCargo(true));
-                        fm.getVariant().removePermaMod(HULLMOD_ID);
+                        float diff = fm.getRepairTracker().getMaxCR() - fm.getRepairTracker().getCR();
+                        fm.getRepairTracker().applyCREvent(Math.min(diff, REPAIR_AMT), Strings.Items.integratedDesc);
+                        fm.getVariant().removeTag(TAG_ID);
                     });
         }
 
         @Override
         public void reportPlayerEngagement(EngagementResultAPI result) {
-            check();
+            DeferredActionPlugin.performLater(this::check, 0f);
         }
 
         @Override
@@ -71,7 +70,7 @@ public class FracturedGammaCoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 25000f, 75000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 25000f, 75000f);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class FracturedGammaCoreInterface extends AICoreInterfaceHullmod {
         if (member.getRepairTracker() == null || member.getRepairTracker().getCR() < CR_THRESHOLD) {
             return String.format(Strings.Items.fracturedGammaCoreIntegrationCannotAdd, Utils.asPercent(CR_THRESHOLD));
         }
-        return super.getCannotIntegrateReason(member);
+        return null;
     }
 
     @Override

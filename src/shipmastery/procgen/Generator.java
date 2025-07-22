@@ -40,7 +40,7 @@ import com.fs.starfarer.campaign.BaseLocation;
 import com.fs.starfarer.campaign.NascentGravityWell;
 import com.fs.starfarer.campaign.StarSystem;
 import org.lwjgl.util.vector.Vector2f;
-import shipmastery.backgrounds.RejectHumanity;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.campaign.items.SuperconstructPlugin;
 import shipmastery.plugin.CuratorOfficerPlugin;
 import shipmastery.plugin.EmitterArrayPlugin;
@@ -357,7 +357,7 @@ public class Generator {
         extra.addCommodity("sms_beta_pseudocore", 2 + Misc.random.nextInt(2));
         extra.addCommodity("sms_gamma_pseudocore", 3 + Misc.random.nextInt(3));
         extra.addSpecial(new SpecialItemData("sms_superconstruct3", SuperconstructPlugin.ACTIVE_STRING), 1f);
-        if (RejectHumanity.isRejectHumanityStart()) {
+        if (BackgroundUtils.isRejectHumanityStart()) {
             extra.addSpecial(new SpecialItemData("sms_pseudocore_uplink_mk2", null), 1f);
         } else {
             extra.addSpecial(new SpecialItemData("sms_pseudocore_uplink", null), 1f);

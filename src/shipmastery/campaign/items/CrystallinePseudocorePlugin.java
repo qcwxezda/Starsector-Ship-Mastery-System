@@ -1,6 +1,5 @@
 package shipmastery.campaign.items;
 
-import com.fs.starfarer.api.combat.ShipAPI;
 import shipmastery.campaign.skills.HiddenEffectScript;
 
 import java.util.List;
@@ -36,12 +35,12 @@ public class CrystallinePseudocorePlugin extends BasePseudocorePlugin implements
     }
 
     @Override
-    public float getDurationSeconds(ShipAPI ship) {
+    public float getBaseDurationSeconds() {
         return 4f;
     }
 
     @Override
-    public float getCooldownSeconds(ShipAPI ship) {
+    public float getBaseCooldownSeconds() {
         return 36f;
     }
 }

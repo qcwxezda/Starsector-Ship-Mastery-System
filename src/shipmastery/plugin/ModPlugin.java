@@ -20,13 +20,13 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.achievements.MasteredMany;
-import shipmastery.backgrounds.HullTinkerer;
 import shipmastery.campaign.items.BasePseudocorePlugin;
 import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
@@ -46,7 +46,7 @@ import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.hullmods.PseudocoreUplinkHullmod;
-import shipmastery.hullmods.aicoreinterface.FracturedGammaCoreInterface;
+import shipmastery.aicoreinterface.FracturedGammaCoreInterface;
 import shipmastery.procgen.Generator;
 import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
@@ -69,7 +69,6 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     private static String lastSaveId = null;
-    public static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     public static final String GENERATION_SEED_KEY = "$sms_MasteryGenerationSeed";
     public static final ReflectionEnabledClassLoader classLoader;
@@ -86,6 +85,7 @@ public class ModPlugin extends BaseModPlugin {
         initializeCuratorFaction();
         ShipMastery.loadMasteries();
         ShipMastery.loadStats();
+        ShipMastery.loadAICoreInterfaces();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
             LunaLibSettingsListener.init();
         }
@@ -129,6 +129,7 @@ public class ModPlugin extends BaseModPlugin {
                         && !spec.hasTag(Tags.NO_DROP)
                         && !spec.hasTag(Tags.HULLMOD_NO_DROP_SALVAGE)
         ).map(HullModSpecAPI::getId).toList());
+        thisFaction.getKnownHullMods().remove(HullMods.PHASE_ANCHOR);
 
         Set<String> allowedHiddenFactions = new HashSet<>();
         allowedHiddenFactions.add("lions_guard");
@@ -280,13 +281,6 @@ public class ModPlugin extends BaseModPlugin {
         }
 
         if (!Settings.DISABLE_MAIN_FEATURES) {
-            if (!HullTinkerer.isTinkererStart()) {
-                Misc.MAX_PERMA_MODS = 0;
-                Global.getSettings().setFloat("maxPermanentHullmods", 0f);
-            } else {
-                Misc.MAX_PERMA_MODS = originalMaxPermaMods;
-                Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
-            }
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(false);
             // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
             // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
@@ -342,8 +336,6 @@ public class ModPlugin extends BaseModPlugin {
             // so we need to add the mastery handler when the game loads as well
             PlayerFleetHandler.addMasteryHandlerToPlayerFleet();
         } else {
-            Misc.MAX_PERMA_MODS = originalMaxPermaMods;
-            Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(true);
             try {
                 CampaignPlugin autofitPlugin = (CampaignPlugin) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP"));

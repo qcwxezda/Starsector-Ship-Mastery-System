@@ -97,7 +97,6 @@ public class AmorphousKnowledge {
 
             @Override
             protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
-                effectLevel *= 0.5f;
                 effectLevel = Math.min(effectLevel, 0.9f);
                 var stats = ship.getMutableStats();
                 stats.getHullDamageTakenMult().modifyMult(id, 1f - effectLevel);

@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class BetaPseudocoreInterface extends AICoreInterfaceHullmod {
+public class BetaPseudocoreInterface implements AICoreInterfacePlugin {
 
     public static final int S_INCREASE = 1;
     public static final int S_LIMIT = 3;
@@ -40,7 +40,7 @@ public class BetaPseudocoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 75000f, 250000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 75000f, 250000f);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BetaPseudocoreInterface extends AICoreInterfaceHullmod {
         if (Misc.getCurrSpecialMods(member.getVariant()) > 0) {
             return Strings.Items.betaPseudocoreIntegrationCannotRemove;
         }
-        return super.getCannotRemoveReason(member);
+        return null;
     }
 
     @Override

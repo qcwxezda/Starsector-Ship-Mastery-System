@@ -110,12 +110,6 @@ public class TPCChaining extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.getBuiltInWeapons() == null) return null;
-        for (String id : spec.getBuiltInWeapons().values()) {
-            if ("tpc".equals(id)) {
-                return 1f;
-            }
-        }
-        return null;
+        return TPCUpgrade.getTPCMasterySelectionWeight(spec);
     }
 }

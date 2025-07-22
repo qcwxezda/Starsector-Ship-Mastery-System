@@ -14,14 +14,10 @@ import shipmastery.util.Utils;
 public class RejectHumanity extends BaseCharacterBackground {
 
     public static final float OFFICER_REDUCTION = 1f;
-    public static final float CREWED_CR_REDUCTION = 0.5f;
+    public static final float CREWED_CR_REDUCTION = 1f;
     public static final float MAX_DP_BONUS = 0.1f;
     public static final String MODIFIER_ID = "sms_RejectHumanityBackground";
     public static final String IS_REJECT_HUMANITY_START = "$sms_IsRejectHumanityBackground";
-
-    public static boolean isRejectHumanityStart() {
-        return (boolean) Global.getSector().getPersistentData().getOrDefault(RejectHumanity.IS_REJECT_HUMANITY_START, false);
-    }
 
     @Override
     public boolean canBeSelected(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {

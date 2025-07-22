@@ -8,7 +8,7 @@
         "C": "RandomMastery 1 1"
       },
       "2": [
-        "SModCapacity",
+        "SModCapacityAsFractionOfMax 0.5 ROUND_DOWN",
         "RestorationCost"
       ],
       "3": {
@@ -22,7 +22,7 @@
         "C": "RandomMastery 1 3"
       },
       "5": [
-        "SModCapacity",
+        "SModCapacityAsFractionOfMax 0.5 ROUND_UP",
         "SModCreditsCost"
       ],
       "6": {

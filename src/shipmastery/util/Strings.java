@@ -304,7 +304,6 @@ public interface Strings {
         String sharedKnowledgeEliteEffect1 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect1");
         String sharedKnowledgeEliteEffect2 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect2");
         String sharedKnowledgeEliteEffect3 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect3");
-        String sharedKnowledgeEliteEffect4 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect4");
         String warpedKnowledgeStandardEffect1 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect1");
         String warpedKnowledgeStandardEffect2 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect2");
         String warpedKnowledgeStandardEffect3 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect3");
@@ -362,6 +361,7 @@ public interface Strings {
     }
 
     interface Hullmods {
+        String MASTERY_HANDLER = "sms_mastery_handler";
         String ENGINEERING_OVERRIDE = "sms_engineering_override";
         String ANALYSIS_PACKAGE = "sms_analysis_package";
         String REARRANGEMENT1 = "sms_extradimensional_rearrangement1";
@@ -397,6 +397,7 @@ public interface Strings {
         String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
         String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
         String engineeringOverrideTinkererWarning = Utils.getString("sms_hullmods", "engineeringOverrideTinkererWarning");
+        String engineeringOverrideNoMasteryWarning = Utils.getString("sms_hullmods", "engineeringOverrideNoMasteryWarning");
         String moduleCantInstall = Utils.getString("sms_hullmods", "moduleCantInstall");
         String analysisPackageCivilian = Utils.getString("sms_hullmods", "analysisPackageCivilian");
         String analysisPackageCombat = Utils.getString("sms_hullmods", "analysisPackageCombat");

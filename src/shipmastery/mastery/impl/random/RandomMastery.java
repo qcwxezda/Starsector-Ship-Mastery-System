@@ -1,7 +1,6 @@
 package shipmastery.mastery.impl.random;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -123,7 +122,7 @@ public class RandomMastery extends BaseMasteryEffect {
             MasteryInfo selected = effectPicker.pickAndRemove();
 
             params.clear();
-            params.add("" + getStrength((PersonAPI) null) * selected.defaultStrength);
+            params.add("" + getBaseStrength() * selected.defaultStrength);
 
             MasteryGenerator generator = new MasteryGenerator(selected, null);
             effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), getOptionId());

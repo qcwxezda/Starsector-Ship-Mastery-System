@@ -3,7 +3,6 @@ package shipmastery.campaign.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.campaign.skills.HiddenEffectScript;
@@ -67,7 +66,12 @@ public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements H
     }
 
     @Override
-    public float getCooldownSeconds(ShipAPI ship) {
+    public float getBaseEffectStrength() {
+        return 0.375f;
+    }
+
+    @Override
+    public float getBaseCooldownSeconds() {
         return 24f;
     }
 }

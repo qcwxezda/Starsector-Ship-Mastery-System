@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -9,13 +9,13 @@ import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class GammaCoreInterface extends AICoreInterfaceHullmod {
+public class GammaCoreInterface implements AICoreInterfacePlugin {
 
     public static final float REDUCTION = 0.9f;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 40000f, 120000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 40000f, 120000f);
     }
 
     @Override

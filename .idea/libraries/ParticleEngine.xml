@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/../Particle Engine/jars/ParticleEngine.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../Particle Engine/src" />
+    </SOURCES>
   </library>
 </component>

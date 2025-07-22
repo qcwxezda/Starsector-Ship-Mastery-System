@@ -6,17 +6,12 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exerelin.campaign.backgrounds.BaseCharacterBackground;
 import exerelin.utilities.NexFactionConfig;
-import shipmastery.plugin.ModPlugin;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class HullTinkerer extends BaseCharacterBackground {
     public static final float COST_REDUCTION = 0.5f;
     public static final String IS_TINKERER_START = "$sms_IsTinkererBackground";
-
-    public static boolean isTinkererStart() {
-        return (boolean) Global.getSector().getPersistentData().getOrDefault(HullTinkerer.IS_TINKERER_START, false);
-    }
 
     @Override
     public void addTooltipForIntel(TooltipMakerAPI tooltip, FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
@@ -33,7 +28,7 @@ public class HullTinkerer extends BaseCharacterBackground {
     public void addToTooltip(TooltipMakerAPI tooltip) {
         tooltip.addPara(Strings.Backgrounds.tinkererDesc1, -15f);
         tooltip.addPara(Strings.Backgrounds.tinkererDesc2, 10f, Misc.getHighlightColor(),
-                Utils.asInt(ModPlugin.originalMaxPermaMods));
+                Utils.asInt(Misc.MAX_PERMA_MODS));
         tooltip.addPara(Strings.Backgrounds.tinkererDesc3, 0f, Misc.getHighlightColor(), Utils.asPercent(COST_REDUCTION));
         tooltip.addPara(Strings.Backgrounds.tinkererDesc4, 0f);
         tooltip.addPara(Strings.Backgrounds.tinkererDesc5, 0f, Misc.getHighlightColor(),

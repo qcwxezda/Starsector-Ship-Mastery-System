@@ -10,17 +10,21 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.util.Misc;
+import shipmastery.ShipMastery;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
 import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class MasteryHullmod extends BaseHullMod {
     @Override
@@ -28,17 +32,62 @@ public class MasteryHullmod extends BaseHullMod {
         return true;
     }
 
+    private void applyAICoreInterfaceEffect(ShipVariantAPI variant, BiConsumer<String, AICoreInterfacePlugin> effect) {
+        var id = AICoreInterfacePlugin.getIntegratedPseudocore(variant);
+        var aiInterface = ShipMastery.getAICoreInterfacePlugin(id);
+        var modifyId = id + AICoreInterfacePlugin.INTEGRATED_SUFFIX;
+        if (aiInterface != null) {
+            effect.accept(modifyId, aiInterface);
+        }
+    }
+
+    public void applyPostEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+        ShipVariantAPI variant = stats.getVariant();
+        // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
+        // Deprecated
+//        if (shouldApplyEffects(variant)) {
+//            if (HullmodUtils.hasBonusLogisticSlot(variant) && HullmodUtils.hasLogisticSMod(variant)) {
+//                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
+//            } else {
+//                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
+//            }
+//        }
+
+        if (!BackgroundUtils.isTinkererStart()) {
+            stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, -Misc.MAX_PERMA_MODS);
+        }
+
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
+        if (info != null && info.commander != null && info.commander.isPlayer()) {
+            // Penalize CR if the ship's OP is above the limit, for player ships only
+            int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
+            int op = variant.computeOPCost(info.commander.getStats());
+            if (op > maxOp) {
+                float frac = (float) (op-maxOp)/maxOp;
+                float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
+                if (penalty > 0f) {
+                    stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
+                }
+            }
+            // Penalize CR for reject humanity background if officered by human
+            if (BackgroundUtils.isRejectHumanityStart()) {
+                var captain = CampaignUtils.getCaptain(stats);
+                if (captain != null && !captain.isPlayer() && !captain.isDefault() && !captain.isAICore()) {
+                    stats.getMaxCombatReadiness().modifyFlat(
+                            RejectHumanity.MODIFIER_ID,
+                            -RejectHumanity.CREWED_CR_REDUCTION,
+                            Strings.Backgrounds.rejectHumanityCRPenaltyDesc);
+                }
+            }
+        }
+
+        applyAICoreInterfaceEffect(variant,
+                (modifyId, plugin) -> plugin.applyEffectsBeforeShipCreation(hullSize, stats, modifyId));
+    }
+
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         ShipVariantAPI variant = stats.getVariant();
-        // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
-        if (shouldApplyEffects(variant)) {
-            if (HullmodUtils.hasBonusLogisticSlot(variant) && HullmodUtils.hasLogisticSMod(variant)) {
-                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
-            } else {
-                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
-            }
-        }
 
         applyEffects(variant, (effect, commander, isModule) -> {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
@@ -55,29 +104,7 @@ public class MasteryHullmod extends BaseHullMod {
             }
         });
 
-        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
-        if (info != null && info.commander != null && info.commander.isPlayer()) {
-            // Penalize CR if the ship's OP is above the limit, for player ships only
-            int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
-            int op = variant.computeOPCost(info.commander.getStats());
-            if (op > maxOp) {
-                float frac = (float) (op-maxOp)/maxOp;
-                float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
-                if (penalty > 0f) {
-                    stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
-                }
-            }
-            // Penalize CR for reject humanity background if officered by human
-            if (RejectHumanity.isRejectHumanityStart()) {
-                var captain = CampaignUtils.getCaptain(stats);
-                if (captain != null && !captain.isPlayer() && !captain.isDefault() && !captain.isAICore()) {
-                    stats.getMaxCombatReadiness().modifyFlat(
-                            RejectHumanity.MODIFIER_ID,
-                            -RejectHumanity.CREWED_CR_REDUCTION,
-                            Strings.Backgrounds.rejectHumanityCRPenaltyDesc);
-                }
-            }
-        }
+        applyPostEffectsBeforeShipCreation(hullSize, stats, id);
     }
 
     @Override
@@ -92,6 +119,9 @@ public class MasteryHullmod extends BaseHullMod {
                 }
             }
         });
+
+        applyAICoreInterfaceEffect(ship.getVariant(),
+                (modifyId, plugin) -> plugin.applyEffectsAfterShipCreation(ship, modifyId));
     }
 
     @Override
@@ -101,6 +131,9 @@ public class MasteryHullmod extends BaseHullMod {
                 effect.applyEffectsToFighterSpawnedByShip(fighter, ship);
             }
         });
+
+        applyAICoreInterfaceEffect(ship.getVariant(),
+                (modifyId, plugin) -> plugin.applyEffectsToFighterSpawnedByShip(fighter, ship, modifyId));
     }
 
     // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.

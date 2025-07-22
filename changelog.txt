@@ -11,6 +11,9 @@
     - Ship-specific features can have their cost reduced by 90% by spending a story point.
 - Removed skill changes.
 - Reduced maximum mastery level to 7, removed the 3rd S-mod slot (along with the +30% mastery boost other option).
+- No longer sets Misc.MAX_PERMA_MODS (equiv. "maxPermanentHullmods" in settings) to 0.
+    - Mastery handler hullmod now reduces build-in limit by MAX_PERMA_MODS.
+    - The default S-mod capacity masteries now each grant half of MAX_PERMA_MODS capacity.
 - Removed the randomness from MP gain, changed MP gain and cost scaling.
 - Added Nexerelin backgrounds:
     - Hull Tinkerer: detaches S-mods from the mastery system, allowing you to build in S-mods without mastery
@@ -47,6 +50,7 @@
 - A bunch of logistics stats (cargo capacity, fuel capacity, etc.): Tier 1 -> tier 2.
 - Damage-taken-nearby-enemies effects: range is now fixed and dependent on the ship's hull size.
 - Orion-device-damage, nova-burst-damage: added precautions/modified implementation to accommodate modded ships with custom "pusher-plate" implementations.
+- Fixed issue where an item could eat AI cores under certain circumstances.
 - Many other changes not listed.
 
 1.1.15

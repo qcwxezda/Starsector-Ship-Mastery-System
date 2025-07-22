@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -13,10 +13,10 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class AlphaPseudocoreInterface extends AICoreInterfaceHullmod {
+public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
 
-    public static final float FIRE_RATE_INCREASE = SharedKnowledge.Elite.MAX_FIRE_RATE;
-    public static final float CR_REDUCTION = 0.08f;
+    public static final float FIRE_RATE_INCREASE = 0.1f;
+    public static final float CR_REDUCTION = 0.1f;
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
@@ -41,6 +41,6 @@ public class AlphaPseudocoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 150000f, 500000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 150000f, 500000f);
     }
 }

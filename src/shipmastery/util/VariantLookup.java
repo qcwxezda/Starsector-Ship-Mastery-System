@@ -31,10 +31,14 @@ public class VariantLookup extends BaseCampaignEventListener {
     }
 
     private void untrackVariant(ShipVariantAPI variant) {
-        variantInfoMap.remove(getUID(variant));
         for (String id : variant.getModuleSlots()) {
             untrackVariant(variant.getModuleVariant(id));
         }
+        String uid = getUID(variant);
+        if (uid == null) return;
+        variant.removeTag(uid);
+        variant.removeTag(UID_INDICATOR_TAG);
+        variantInfoMap.remove(uid);
     }
 
     private String getUID(ShipVariantAPI variant) {

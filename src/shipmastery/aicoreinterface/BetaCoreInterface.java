@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class BetaCoreInterface extends AICoreInterfaceHullmod {
+public class BetaCoreInterface implements AICoreInterfacePlugin {
 
     public static final float[] CAPACITY_PER = new float[] {200f, 400f, 600f, 800f};
     public static final float[] DISSIPATION_PER = new float[] {10f, 20f, 30f, 40f};
@@ -21,7 +21,7 @@ public class BetaCoreInterface extends AICoreInterfaceHullmod {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return getDefaultIntegrationCost(member, 60000f, 200000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 60000f, 200000f);
     }
 
     @Override

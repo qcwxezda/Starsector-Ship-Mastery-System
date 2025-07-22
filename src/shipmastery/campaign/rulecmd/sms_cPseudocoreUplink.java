@@ -439,11 +439,12 @@ public class sms_cPseudocoreUplink extends BaseCommandPlugin {
                 Global.getSector().getPlayerFleet().getCargo().addCommodity(existingCaptain.getAICoreId(), 1);
             }
 
+            var coreId = plugin.coreIds.get(plugin.checkedCoreButtonIndex);
+            plugin.person.getMemoryWithoutUpdate().set(PseudocoreUplinkHullmod.USED_UPLINK_MEM_KEY, coreId);
             plugin.selectedFleetMember.setCaptain(plugin.person);
-            plugin.person.getMemoryWithoutUpdate().set(PseudocoreUplinkHullmod.USED_UPLINK_MEM_KEY, true);
             CampaignUtils.addPermaModCloneVariantIfNeeded(plugin.selectedFleetMember, "sms_pseudocore_uplink_handler", false);
 
-            helper.removeFromAnyStack(CargoAPI.CargoItemType.RESOURCES, plugin.coreIds.get(plugin.checkedCoreButtonIndex), 1);
+            helper.removeFromAnyStack(CargoAPI.CargoItemType.RESOURCES, coreId, 1);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             dialog.dismiss();
 

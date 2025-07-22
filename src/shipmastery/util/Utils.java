@@ -492,7 +492,7 @@ public abstract class Utils {
             // This just sets hasOpAffectingMods to null, forcing the variant to
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
-            variant.addPermaMod("sms_mastery_handler");
+            variant.addPermaMod(Strings.Hullmods.MASTERY_HANDLER);
             Utils.fixVariantInconsistencies(fm.getStats(), true);
         }
     }

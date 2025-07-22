@@ -54,7 +54,7 @@ public abstract class ReflectionUtils {
             uiPanelGetParent = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelGetParent", MethodType.methodType(MethodHandle.class)).invoke();
             uiPanelGetChildrenNonCopy = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelChildrenNonCopy", MethodType.methodType(MethodHandle.class)).invoke();
             createSkillTooltip = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getCreateSkillTooltip", MethodType.methodType(MethodHandle.class)).invoke();
-            fleetEncounterContextXPGained = lookup.findStatic(thisClassWithReflectionClassloader, "getFleetEncounterContextXPGained", MethodType.methodType(long.class, FleetEncounterContext.class));
+            fleetEncounterContextXPGained = lookup.findStatic(thisClassWithReflectionClassloader, "getFleetEncounterContextXPGained", MethodType.methodType(Long.class, FleetEncounterContext.class));
 
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -62,8 +62,10 @@ public abstract class ReflectionUtils {
     }
 
     @SuppressWarnings("unused")
-    public static long getFleetEncounterContextXPGained(FleetEncounterContext context) {
-        return (long) (float) getField(context, "xpGained");
+    public static Long getFleetEncounterContextXPGained(FleetEncounterContext context) {
+        var res = getFieldWithClass(FleetEncounterContext.class, context, "xpGained");
+        if (res == null) return null;
+        return (long) (float) res;
     }
 
     @SuppressWarnings("unused")

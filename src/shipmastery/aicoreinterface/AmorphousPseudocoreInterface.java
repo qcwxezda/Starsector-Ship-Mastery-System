@@ -1,4 +1,4 @@
-package shipmastery.hullmods.aicoreinterface;
+package shipmastery.aicoreinterface;
 
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -14,10 +14,10 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
-public class AmorphousPseudocoreInterface extends AICoreInterfaceHullmod {
+public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
 
-    public static final float IMMUNITY_SECONDS = 10f;
-    public static final float IMMUNITY_FADE_TIME = 10f;
+    public static final float IMMUNITY_SECONDS = 15f;
+    public static final float IMMUNITY_FADE_TIME = 15f;
     public static final float CR_INCREASE = 1f;
 
     @Override
@@ -39,7 +39,6 @@ public class AmorphousPseudocoreInterface extends AICoreInterfaceHullmod {
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
         ship.addListener(new IntegrationScript(ship, id));
     }
-
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {

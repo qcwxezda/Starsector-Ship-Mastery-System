@@ -12,6 +12,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.backgrounds.BackgroundUtils;
 import shipmastery.backgrounds.HullTinkerer;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
@@ -61,7 +62,7 @@ public abstract class HullmodUtils {
         }
 
         // Tinkerer background
-        if (HullTinkerer.isTinkererStart()) {
+        if (BackgroundUtils.isTinkererStart()) {
             cost *= 1f - HullTinkerer.COST_REDUCTION;
         }
 
@@ -103,7 +104,7 @@ public abstract class HullmodUtils {
     public static int getMaxSMods(MutableShipStatsAPI stats) {
         return (int) stats.getDynamic()
                           .getMod(Stats.MAX_PERMANENT_HULLMODS_MOD)
-                          .computeEffective(Global.getSettings().getInt("maxPermanentHullmods"));
+                          .computeEffective(Misc.MAX_PERMA_MODS);
     }
 
     public static boolean hasBonusLogisticSlot(ShipVariantAPI variant) {

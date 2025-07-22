@@ -1,28 +1,29 @@
 package shipmastery.backgrounds;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
+import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exerelin.campaign.backgrounds.BaseCharacterBackground;
 import exerelin.utilities.NexFactionConfig;
 import org.magiclib.achievements.MagicAchievementManager;
 import shipmastery.ShipMastery;
-import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.MasteryUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
-public class Enlightened extends BaseCharacterBackground {
+import java.util.HashSet;
+import java.util.Set;
+
+public class Enlightened extends BaseCharacterBackground implements CoreUITabListener {
 
     public static final float NPC_MASTERY_BOOST = 0.5f;
     public static final int PSEUDOCORE_EXTRA_LEVELS = 1;
     public static final String MODIFIER_ID = "sms_EnlightenedBackground";
     public static final String IS_ENLIGHTENED_START = "$sms_IsEnlightenedBackground";
-
-    public static boolean isEnlightenedStart() {
-        return (boolean) Global.getSector().getPersistentData().getOrDefault(Enlightened.IS_ENLIGHTENED_START, false);
-    }
+    public static final String PROCESSED_HULLS_SPECS_KEY = "$sms_ProcessedHullSpecs";
 
     @Override
     public boolean canBeSelected(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
@@ -73,15 +74,25 @@ public class Enlightened extends BaseCharacterBackground {
     @Override
     public void onNewGame(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
         Global.getSector().getPersistentData().put(IS_ENLIGHTENED_START, true);
+        Global.getSector().getPersistentData().put(PROCESSED_HULLS_SPECS_KEY, new HashSet<String>());
+        Global.getSector().getListenerManager().addListener(this, false);
     }
 
     @Override
-    public void onNewGameAfterTimePass(FactionSpecAPI factionSpec, NexFactionConfig factionConfig) {
-        DeferredActionPlugin.performLater(() -> Global.getSettings().getAllShipHullSpecs()
+    public void reportAboutToOpenCoreTab(CoreUITabId tab, Object param) {
+        if (tab != CoreUITabId.FLEET && tab != CoreUITabId.REFIT) return;
+
+        //noinspection unchecked
+        var processed = (Set<String>) Global.getSector().getPersistentData().get(PROCESSED_HULLS_SPECS_KEY);
+        var processing = new HashSet<String>();
+
+        Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()
                 .stream()
-                .map(Utils::getRestoredHullSpec)
+                .map(x -> Utils.getRestoredHullSpec(x.getHullSpec()))
                 .distinct()
+                .filter(x -> !processed.contains(x.getHullId()))
                 .forEach(x -> {
+                    processing.add(x.getHullId());
                     int maxLevel = ShipMastery.getMaxMasteryLevel(x);
                     float req = 0f;
                     for (int i = 0; i < maxLevel; i++) {
@@ -92,6 +103,8 @@ public class Enlightened extends BaseCharacterBackground {
                             false,
                             false,
                             ShipMastery.MasteryGainSource.OTHER);
-                }), 0f);
+                });
+
+        processed.addAll(processing);
     }
 }

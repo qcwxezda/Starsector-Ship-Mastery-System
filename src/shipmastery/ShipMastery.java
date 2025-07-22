@@ -10,6 +10,7 @@ import shipmastery.achievements.LevelUp;
 import shipmastery.achievements.MasteredMany;
 import shipmastery.achievements.MaxLevel;
 import shipmastery.achievements.UnlockAchievementAction;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.data.HullMasteryData;
@@ -49,6 +50,7 @@ public abstract class ShipMastery {
      * Ship stat id -> singleton object
      */
     private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
+    private static final Map<String, AICoreInterfacePlugin> aiCoreInterfaceSingletonMap = new HashMap<>();
     private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
     private static final Map<String, Map<String, Float>> selectionWeightMap = new HashMap<>();
 
@@ -177,16 +179,6 @@ public abstract class ShipMastery {
         PlayerGainedMPListenerHandler.reportPlayerMPGain(spec, amount, source);
     }
 
-    public static void setPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getRestoredHullSpecId(spec);
-        SaveData data = SAVE_DATA_TABLE.get(id);
-        if (data == null) {
-            SAVE_DATA_TABLE.put(id, new SaveData(amount, 0));
-        } else {
-            data.points = amount;
-        }
-    }
-
     public static void spendPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.get(id);
@@ -304,6 +296,29 @@ public abstract class ShipMastery {
             stat.defaultAmount = (float) item.optDouble("default_amount", 1f);
             stat.tags.addAll(Arrays.asList(item.getString("tags").trim().split("\\s+")));
             statSingletonMap.put(id, stat);
+        }
+    }
+
+    public static AICoreInterfacePlugin getAICoreInterfacePlugin(String coreId) {
+        return aiCoreInterfaceSingletonMap.get(coreId);
+    }
+
+    public static Map<String, AICoreInterfacePlugin> getAICoreInterfaceSingletonMap() {
+        return Collections.unmodifiableMap(aiCoreInterfaceSingletonMap);
+    }
+
+    public static void loadAICoreInterfaces() throws NoSuchMethodException, IllegalAccessException, JSONException, IOException, ClassNotFoundException, InstantiationException {
+        JSONArray interfaceList = Global.getSettings().getMergedSpreadsheetData("commodity_id", "data/shipmastery/ai_core_interface_list.csv");
+        for (int i = 0; i < interfaceList.length(); i++) {
+            JSONObject item = interfaceList.getJSONObject(i);
+            String commodityId = item.getString("commodity_id");
+            String className = item.getString("plugin");
+            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
+            var plugin = Utils.instantiateClassNoParams(cls);
+            if (!(plugin instanceof AICoreInterfacePlugin p)) {
+                throw new InstantiationException("");
+            }
+            aiCoreInterfaceSingletonMap.put(commodityId, p);
         }
     }
 
@@ -541,7 +556,7 @@ public abstract class ShipMastery {
             for (int i = 1; i <= maxLevel; i++) {
                 allLevels.add(i);
             }
-            MasteryInfo sModCapacityInfo = getMasteryInfo("SModCapacity");
+            MasteryInfo sModCapacityInfo = getMasteryInfo("SModCapacityAsFractionOfMax");
             MasteryInfo randomInfo = getMasteryInfo("RandomMastery");
             for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
                 spec = Utils.getRestoredHullSpec(spec);
@@ -554,11 +569,13 @@ public abstract class ShipMastery {
                     for (int i = 0; i < Math.min(2, maxLevel); i++) {
                         sModLevels.add(allLevels.get(i));
                     }
+                    boolean shouldRoundUp = false;
                     for (int i = 1; i <= maxLevel; i++) {
                         MasteryLevelData levelData = new MasteryLevelData(id, i);
                         MasteryGenerator generator;
                         if (sModLevels.contains(i)) {
-                            generator = new MasteryGenerator(sModCapacityInfo, null);
+                            generator = new MasteryGenerator(sModCapacityInfo, new String[] {"0.5", shouldRoundUp ? "ROUND_UP" : "ROUND_DOWN"});
+                            shouldRoundUp = true;
                         }
                         else {
                             generator = new MasteryGenerator(randomInfo, new String[] {"1", "9999999"});

@@ -41,7 +41,8 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
 
         float autoconstuctPoints = 0f;
         for (FleetMemberAPI fm : Utils.getMembersNoSync(fleetData)) {
-            if (fm.getCaptain() == null || !fm.getCaptain().getMemoryWithoutUpdate().getBoolean(PseudocoreUplinkHullmod.USED_UPLINK_MEM_KEY)) continue;
+            if (fm.getCaptain() == null || !fm.getCaptain().getMemoryWithoutUpdate().contains(PseudocoreUplinkHullmod.USED_UPLINK_MEM_KEY)) continue;
+            if (Misc.isAutomated(fm)) continue;
             autoconstuctPoints += fm.getCaptain().getMemoryWithoutUpdate().getFloat("$autoPointsMult") * fm.getDeploymentPointsCost();
         }
 
@@ -49,6 +50,7 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
         autoconstuctPoints = Math.max(autoconstuctPoints, Float.MIN_VALUE);
         maxPoints = Math.max(maxPoints, Float.MIN_VALUE);
         float crPenalty = Math.max(0f, 1f - maxPoints / autoconstuctPoints);
+        crPenalty = (float) Math.ceil(crPenalty * 100f) / 100f;
         return new PseudocoreUplinkData(autoconstuctPoints, maxPoints, crPenalty);
     }
 
@@ -75,17 +77,7 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         super.createTooltip(tooltip, expanded, transferHandler, stackSource, false);
 
-        PseudocoreUplinkPlugin.PseudocoreUplinkData data;
-        var playerFleet = Global.getSector().getPlayerFleet();
-
-        if (playerFleet == null || playerFleet.getFleetData() == null) {
-            data = getPseudocoreCRPointsAndPenalty();
-        } else {
-            data = (PseudocoreUplinkPlugin.PseudocoreUplinkData) Global.getSector().getPlayerFleet().getFleetData()
-                    .getCacheClearedOnSync()
-                    .computeIfAbsent(PseudocoreUplinkHullmod.CACHE_KEY, k -> getPseudocoreCRPointsAndPenalty());
-
-        }
+        PseudocoreUplinkPlugin.PseudocoreUplinkData data = PseudocoreUplinkHullmod.penaltyData;
         tooltip.addPara(Strings.Items.uplinkDesc, 10f, Misc.getHighlightColor(), Utils.asInt(data.maxPoints));
 
         if (data.crPenalty <= 0f) {
@@ -94,7 +86,7 @@ public class PseudocoreUplinkPlugin extends BaseSpecialItemPlugin {
             tooltip.addPara(Strings.Items.uplinkStatus2, 10f,
                     new Color[] {Misc.getHighlightColor(), Misc.getNegativeHighlightColor()},
                     Utils.asInt(data.numPoints),
-                    Utils.asPercentOneDecimal(data.crPenalty));
+                    Utils.asPercent(data.crPenalty));
         }
         addCostLabel(tooltip, 10f, transferHandler, stackSource);
         if (isMk2(getSpec())) {
