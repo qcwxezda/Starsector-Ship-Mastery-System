@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import shipmastery.campaign.rulecmd.sms_cBlankConstruct;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.util.MasteryUtils;
@@ -21,7 +22,7 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
     // Basically a key; if any other string is used with a blank construct,
     // it will not work. This avoids rendering weirdness with the codex (which always passes in null)
     public static final String ACTIVE_STRING = "sms_BlankConstructActive";
-    public static final int SUPERCONSTRUCT1_MP = 150;
+    public static final int SUPERCONSTRUCT1_MP = 1000;
     public static final float SUPERCONSTRUCT1_STRENGTH = 0.25f;
     public static final int SUPERCONSTRUCT1_SMODS = 1;
     public static final float SUPERCONSTRUCT2_STRENGTH = 0.1f;
@@ -85,7 +86,7 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
             tooltip.addPara(Strings.Items.superconstruct1RightClick, opad, b, Misc.getHighlightColor(), Utils.asInt(SUPERCONSTRUCT1_MP), Utils.asPercent(SUPERCONSTRUCT1_STRENGTH), Utils.asInt(SUPERCONSTRUCT1_SMODS));
         }
         else if (type == Type.TYPE_2) {
-            tooltip.addPara(Strings.Items.superconstruct2RightClick, opad, b, Misc.getHighlightColor(), Utils.asPercent(SUPERCONSTRUCT2_STRENGTH), Utils.asInt(SUPERCONSTRUCT2_NEWMPCOST));
+            tooltip.addPara(Strings.Items.superconstruct2RightClick, opad, b, Misc.getHighlightColor(), Utils.asPercent(SUPERCONSTRUCT2_STRENGTH));
         } else if (type == Type.TYPE_3) {
             tooltip.addPara(Strings.Items.superconstruct3RightClick, opad, b, Misc.getHighlightColor(), Global.getSettings().getSkillSpec("sms_shared_knowledge").getName());
         }
@@ -96,13 +97,14 @@ public class SuperconstructPlugin extends KnowledgeConstructPlugin {
         if (type == Type.TYPE_1) {
             RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tBlankConstructClicked");
             plugin.setCustom1(helper);
-            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, Global.getSector().getPlayerFleet(), () -> {});
+            var target = Global.getSector().getPlayerFleet();
+            target.getMemoryWithoutUpdate().set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.SUPERCONSTRUCT_1, 0f);
+            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, target, () -> {});
         } else if (type == Type.TYPE_2) {
             Global.getSector().getPlayerStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(SUPERCONSTRUCT2_MODIFIERID, 100f*SUPERCONSTRUCT2_STRENGTH);
             Global.getSector().getPersistentData().put(MasteryUtils.CONSTRUCT_MP_OVERRIDE_KEY, SUPERCONSTRUCT2_NEWMPCOST);
             var messageDisplay = Global.getSector().getCampaignUI().getMessageDisplay();
             messageDisplay.addMessage(String.format(Strings.Items.superconstruct2MessageDisplay1, Utils.asPercent(SUPERCONSTRUCT2_STRENGTH)), Settings.MASTERY_COLOR);
-            messageDisplay.addMessage(String.format(Strings.Items.superconstruct2MessageDisplay2, "" + SUPERCONSTRUCT2_NEWMPCOST), Settings.MASTERY_COLOR);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
         } else if (type == Type.TYPE_3) {
             Global.getSector().getPlayerStats().setSkillLevel("sms_shared_knowledge", 2f);

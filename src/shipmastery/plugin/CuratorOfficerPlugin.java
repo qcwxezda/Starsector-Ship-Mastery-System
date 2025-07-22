@@ -15,11 +15,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGenerator
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
 import shipmastery.campaign.FleetHandler;
-import shipmastery.campaign.items.AlphaKCorePlugin;
-import shipmastery.campaign.items.AmorphousCorePlugin;
-import shipmastery.campaign.items.BetaKCorePlugin;
-import shipmastery.campaign.items.FracturedGammaCorePlugin;
-import shipmastery.campaign.items.GammaKCorePlugin;
+import shipmastery.campaign.items.PseudocorePlugin;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.util.IntRef;
 import shipmastery.util.Strings;
@@ -28,6 +24,10 @@ import shipmastery.util.Utils;
 import java.util.Random;
 
 public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
+
+    public static final float REPLACE_WARPED_PROB = 0.03f;
+    public static final float REPLACE_CRYSTALLINE_PROB = 0.03f;
+
     @Override
     public void addCommanderAndOfficers(CampaignFleetAPI fleet, FleetParamsV3 params, Random random) {
         // In case a random fleet patrol is generated, etc.
@@ -43,28 +43,28 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
             }
             case AI_BETA_OR_GAMMA -> {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
-                officerPicker.add("sms_gamma_k_core", 1f);
+                officerPicker.add("sms_gamma_pseudocore", 1f);
                 officerPicker.add(null, 1.5f);
             }
             case AI_BETA -> {
                 officerPicker.add("sms_fractured_gamma_core", 1f);
-                officerPicker.add("sms_gamma_k_core", 1.5f);
-                officerPicker.add("sms_beta_k_core", 1.5f);
+                officerPicker.add("sms_gamma_pseudocore", 1.5f);
+                officerPicker.add("sms_beta_pseudocore", 1.5f);
                 officerPicker.add(null, 0.5f);
             }
             case AI_MIXED -> {
                 officerPicker.add("sms_fractured_gamma_core", 0.25f);
-                officerPicker.add("sms_gamma_k_core", 0.75f);
-                officerPicker.add("sms_beta_k_core", 1.5f);
-                officerPicker.add("sms_alpha_k_core", 0.75f);
+                officerPicker.add("sms_gamma_pseudocore", 0.75f);
+                officerPicker.add("sms_beta_pseudocore", 1.5f);
+                officerPicker.add("sms_alpha_pseudocore", 0.75f);
             }
             case AI_ALPHA -> {
                 officerPicker.add("sms_fractured_gamma_core", 0.25f);
-                officerPicker.add("sms_gamma_k_core", 0.5f);
-                officerPicker.add("sms_beta_k_core", 1f);
-                officerPicker.add("sms_alpha_k_core", 2f);
+                officerPicker.add("sms_gamma_pseudocore", 0.5f);
+                officerPicker.add("sms_beta_pseudocore", 1f);
+                officerPicker.add("sms_alpha_pseudocore", 2f);
             }
-            case AI_OMEGA -> officerPicker.add("sms_alpha_k_core", 1f);
+            case AI_OMEGA -> officerPicker.add("sms_alpha_pseudocore", 1f);
         }
 
         float biggestCommanderScore = 0f;
@@ -72,22 +72,34 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         FleetMemberAPI flagship = null;
         var mem = fleet.getMemoryWithoutUpdate();
         String fleetType = mem == null ? null : mem.getString("$fleetType");
+        boolean isNucleusDefender = Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE.equals(fleetType);
+        boolean isRemoteDefender = Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType);
+        float replaceCrystallineProb = REPLACE_CRYSTALLINE_PROB;
+        float replaceWarpedProb = REPLACE_WARPED_PROB;
+        if (isNucleusDefender) {
+            replaceCrystallineProb = 0.2f;
+            replaceWarpedProb = 0.2f;
+        } else if (isRemoteDefender) {
+            replaceCrystallineProb = 0.33f;
+            replaceWarpedProb = 0.33f;
+        }
+
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             String coreId = officerPicker.pick();
-            if (Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType) && "tesseract".equals(fm.getHullId())) {
-                coreId = "sms_amorphous_core";
+            if (coreId != null && !"sms_fractured_gamma_core".equals(coreId)) {
+                if (random.nextFloat() <= replaceCrystallineProb) {
+                    coreId = "sms_crystalline_pseudocore";
+                } else if (random.nextFloat() <= replaceWarpedProb) {
+                    coreId = "sms_warped_pseudocore";
+                }
+            }
+            if (isRemoteDefender && "tesseract".equals(fm.getHullId())) {
+                coreId = "sms_amorphous_pseudocore";
             }
             if (coreId == null) continue;
             // Don't use Misc.getAICoreOfficerPlugin because we only register the plugin on game load, but we
             // need the plugin on game enable (to set AI core for custom station)
-            var plugin = switch (coreId) {
-                case "sms_fractured_gamma_core" -> new FracturedGammaCorePlugin();
-                case "sms_gamma_k_core" -> new GammaKCorePlugin();
-                case "sms_beta_k_core" -> new BetaKCorePlugin();
-                case "sms_alpha_k_core" -> new AlphaKCorePlugin();
-                case "sms_amorphous_core" -> new AmorphousCorePlugin();
-                default -> null;
-            };
+            var plugin = PseudocorePlugin.getPluginForPseudocore(coreId);
             if (plugin == null) continue;
             var person = plugin.createPerson(coreId, "sms_curator", random);
             assignOfficerSkillsAndIntegrate(person, fm, random);
@@ -95,10 +107,11 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
             float commanderScore = switch (coreId) {
                 case "sms_fractured_gamma_core" -> 1000f;
-                case "sms_gamma_k_core" -> 10000f;
-                case "sms_beta_k_core" -> 100000f;
-                case "sms_alpha_k_core" -> 1000000f;
-                case "sms_amorphous_core" -> 10000000f;
+                case "sms_gamma_pseudocore" -> 10000f;
+                case "sms_beta_pseudocore" -> 100000f;
+                case "sms_warped_pseudocore", "sms_crystalline_pseudocore" -> 250000f;
+                case "sms_alpha_pseudocore" -> 1000000f;
+                case "sms_amorphous_pseudocore" -> 10000000f;
                 default -> 0f;
             };
             commanderScore += fm.getFleetPointCost();
@@ -135,19 +148,23 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
                 numCommanderSkills = 1;
                 memory.set(key, 1f);
             }
-            case "sms_gamma_k_core" -> {
+            case "sms_gamma_pseudocore" -> {
                 numCommanderSkills = 2;
-                memory.set(key, 3.5f);
+                memory.set(key, 3f);
             }
-            case "sms_beta_k_core" -> {
+            case "sms_beta_pseudocore" -> {
                 numCommanderSkills = 3;
+                memory.set(key, 5f);
+            }
+            case "sms_warped_pseudocore", "sms_crystalline_pseudocore" -> {
+                numCommanderSkills = 4;
                 memory.set(key, 6f);
             }
-            case "sms_alpha_k_core" -> {
+            case "sms_alpha_pseudocore" -> {
                 numCommanderSkills = 5;
-                memory.set(key, 8.5f);
+                memory.set(key, 6.5f);
             }
-            case "sms_amorphous_core" -> {
+            case "sms_amorphous_pseudocore" -> {
                 numCommanderSkills = 5;
                 commander.getStats().setSkillLevel("carrier_group", 1f);
                 commander.getStats().setSkillLevel("fighter_uplink", 1f);

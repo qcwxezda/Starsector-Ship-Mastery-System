@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.Description;
@@ -19,6 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import shipmastery.ShipMastery;
+import shipmastery.campaign.MasterySharingHandler;
+import shipmastery.campaign.rulecmd.sms_cBlankConstruct;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -30,11 +33,12 @@ import java.util.Random;
 import java.util.Set;
 
 public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
-    public static final int NUM_POINTS_GAINED = 10;
+    public static final int NUM_POINTS_GAINED = 100;
     public static final String PREF_IN_FLEET_TAG = "~pref_in_fleet";
     public static final String PLAYER_CREATED_PREFIX = "sms_PlayerCreated_";
     private ShipHullSpecAPI hullSpec;
     private boolean wasCreatedByPlayer = false;
+    private boolean isBlank = false;
     private boolean noSpecString = false;
 
     @Override
@@ -47,14 +51,19 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         }
         if (specStr.startsWith(PLAYER_CREATED_PREFIX)) {
             wasCreatedByPlayer = true;
+            isBlank = true;
             specStr = specStr.substring(PLAYER_CREATED_PREFIX.length());
         }
-        hullSpec = Global.getSettings().getHullSpec(specStr);
+        if (specStr.isEmpty()) {
+            hullSpec = null;
+        } else {
+            hullSpec = Global.getSettings().getHullSpec(specStr);
+        }
     }
 
     @Override
     public boolean hasRightClickAction() {
-        return hullSpec != null && !wasCreatedByPlayer;
+        return isBlank || (hullSpec != null && !wasCreatedByPlayer);
     }
 
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult,
@@ -121,7 +130,7 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         renderer.renderBGWithCorners(bgColor, blX, blY, tlX, tlY, trX, trY, brX, brY,
                                      alphaMult*0.5f,  glowMult*0.5f, true);
         renderer.renderScanlinesWithCorners(blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult, true);
-        if (hullId != null) {
+        if (hullId != null && !isBlank) {
             renderer.renderShipWithCorners(hullId, null, blX, blY + (squishY ? 10f : 0f), tlX, tlY, trX, trY - (squishY ? 10f : 0f), brX, brY,
                     alphaMult * 0.5f, 0f, true);
         }
@@ -129,17 +138,18 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public int getPrice(MarketAPI market, SubmarketAPI submarket) {
-        if (hullSpec == null) return 20000;
+        if (isBlank) return 20000;
+        if (hullSpec == null) return 10000;
         return getPrice(hullSpec);
     }
 
     public static int getPrice(ShipHullSpecAPI spec) {
-        return (int) Math.min(30000f, 10000f + spec.getBaseValue() * 0.02f);
+        return (int) Math.min(25000f, 10000f + spec.getBaseValue() * 0.02f);
     }
 
     @Override
     public String getName() {
-        if (hullSpec == null) return super.getName();
+        if (hullSpec == null || isBlank) return super.getName();
         return hullSpec.getHullNameWithDashClass() + " " + Strings.Items.knowledgeConstruct;
     }
 
@@ -163,20 +173,33 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         if (!hasRightClickAction() && !noSpecString) {
             tooltip.addPara(Strings.Items.knowledgeConstructCantRightClick, Misc.getGrayColor(), opad);
         }
-        else if (!noSpecString) {
+        else if (!noSpecString && !isBlank) {
             tooltip.addPara(String.format(Strings.Items.knowledgeConstructRightClick, NUM_POINTS_GAINED), b, opad);
+        } else if (!noSpecString) {
+            tooltip.addPara(String.format(Strings.Items.blankConstructRightClick, Utils.asInt(MasterySharingHandler.SHARED_MASTERY_MP_GAIN)), b, opad);
         }
     }
 
     @Override
     public void performRightClickAction(RightClickActionHelper helper) {
         if (hullSpec != null && !wasCreatedByPlayer) {
-            ShipMastery.addPlayerMasteryPoints(hullSpec, NUM_POINTS_GAINED, false, false);
+            ShipMastery.addPlayerMasteryPoints(hullSpec, NUM_POINTS_GAINED, false, false, ShipMastery.MasteryGainSource.ITEM);
             Global.getSoundPlayer().playUISound("ui_neural_transfer_complete", 1, 1);
             Global.getSector().getCampaignUI().getMessageDisplay()
-                    .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " MP", hullSpec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
+                    .addMessage(String.format(Strings.Messages.gainedMPSingle, NUM_POINTS_GAINED + " " + Strings.Misc.XP, hullSpec.getHullNameWithDashClass()), Settings.MASTERY_COLOR);
 
+        } else if (isBlank) {
+            RuleBasedInteractionDialogPluginImpl plugin = new RuleBasedInteractionDialogPluginImpl("sms_tBlankConstructClicked");
+            plugin.setCustom1(helper);
+            var target = Global.getSector().getPlayerFleet();
+            target.getMemoryWithoutUpdate().set(sms_cBlankConstruct.TYPE_MEMORY_KEY, sms_cBlankConstruct.BlankConstructType.MASTERY_SHARING_CONSTRUCT, 0f);
+            Global.getSector().getCampaignUI().showInteractionDialogFromCargo(plugin, target, () -> {});
         }
+    }
+
+    @Override
+    public boolean shouldRemoveOnRightClickAction() {
+        return !isBlank;
     }
 
     @Override
@@ -256,8 +279,8 @@ public class KnowledgeConstructPlugin extends BaseSpecialItemPlugin {
         for (ShipHullSpecAPI spec : specs) {
             float weight = spec.getRarity();
             if (playerFleetSpecs.contains(spec) && tags.contains(PREF_IN_FLEET_TAG)) {
-                weight += Utils.getSelectionWeightScaledByValueDecreasing(
-                        ShipMastery.getPlayerMasteryPoints(spec), 10f, 50f, 150f, 3000f);
+                weight += 200f * Utils.getSelectionWeightScaledByValueDecreasing(
+                        ShipMastery.getPlayerMasteryPoints(spec), 100f, 2000f, 10000f, 5f);
             }
             picker.add(spec, weight);
         }

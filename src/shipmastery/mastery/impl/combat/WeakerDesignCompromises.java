@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
@@ -17,7 +18,7 @@ public class WeakerDesignCompromises extends BaseMasteryEffect {
     public static float ENERGY_FLUX_GENERATION_PENALTY_REDUCTION = 0.75f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.WeakerDesignCompromises)
                 .params(Global.getSettings().getHullModSpec("design_compromises").getDisplayName(),
                     Utils.asPercent(getStrengthForPlayer()),

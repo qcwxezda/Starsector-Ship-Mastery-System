@@ -10,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.BaseGenericPlugin;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.fleets.GenerateFleetOfficersPlugin;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
 import shipmastery.util.MathUtils;
@@ -63,7 +64,6 @@ public class ConcealedEntityDefenderPlugin extends BaseGenericPlugin implements 
         fleet.setFaction(temp.getId());
         FleetParamsV3 params = new FleetParamsV3();
 
-
         if (entityIsProbe(p)) {
             params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_GAMMA;
         } else {
@@ -75,6 +75,7 @@ public class ConcealedEntityDefenderPlugin extends BaseGenericPlugin implements 
                 case 3 -> params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_ALPHA;
                 default -> params.aiCores = HubMissionWithTriggers.OfficerQuality.AI_OMEGA;
             }
+            fleet.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_FLEET_TYPE, Strings.Campaign.CONCEALED_STATION_DEFENDER_FLEET_TYPE);
         }
 
         // Adding officers may change maximum CR, but we don't want to fully repair in case the fleet

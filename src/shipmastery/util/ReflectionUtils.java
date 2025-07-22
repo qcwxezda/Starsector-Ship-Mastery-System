@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUIAPI;
+import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
@@ -15,6 +16,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.ui.impl.StandardTooltipV2Expandable;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shipmastery.plugin.ModPlugin;
@@ -29,6 +31,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class ReflectionUtils {
 
@@ -39,6 +44,7 @@ public abstract class ReflectionUtils {
     public static MethodHandle uiPanelGetChildrenNonCopy;
     public static MethodHandle createSkillTooltip;
     private static final Class<?> thisClassWithReflectionClassloader;
+    public static final Logger logger = Logger.getLogger(ReflectionUtils.class);
 
     static {
         try {
@@ -48,7 +54,7 @@ public abstract class ReflectionUtils {
             uiPanelGetParent = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelGetParent", MethodType.methodType(MethodHandle.class)).invoke();
             uiPanelGetChildrenNonCopy = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getUIPanelChildrenNonCopy", MethodType.methodType(MethodHandle.class)).invoke();
             createSkillTooltip = (MethodHandle) lookup.findStatic(thisClassWithReflectionClassloader, "getCreateSkillTooltip", MethodType.methodType(MethodHandle.class)).invoke();
-            fleetEncounterContextXPGained = lookup.findStatic(thisClassWithReflectionClassloader, "getFleetEncounterContextXPGained", MethodType.methodType(long.class, FleetEncounterContext.class));
+            fleetEncounterContextXPGained = lookup.findStatic(thisClassWithReflectionClassloader, "getFleetEncounterContextXPGained", MethodType.methodType(Long.class, FleetEncounterContext.class));
 
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -56,8 +62,10 @@ public abstract class ReflectionUtils {
     }
 
     @SuppressWarnings("unused")
-    public static long getFleetEncounterContextXPGained(FleetEncounterContext context) {
-        return (long) (float) getField(context, "xpGained");
+    public static Long getFleetEncounterContextXPGained(FleetEncounterContext context) {
+        var res = getFieldWithClass(FleetEncounterContext.class, context, "xpGained");
+        if (res == null) return null;
+        return (long) (float) res;
     }
 
     @SuppressWarnings("unused")
@@ -87,12 +95,8 @@ public abstract class ReflectionUtils {
         return lookup.unreflect(temp.getClass().getMethod("getChildrenNonCopy"));
     }
 
-    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, float width, float height) {
-        return makeButton(text, handler, base, bg, Alignment.MID, CutStyle.ALL, width, height, -1);
-    }
-
-    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
-        CustomPanelAPI container = Global.getSettings().createCustom(width, height, null);
+    public static Pair<ButtonAPI, CustomPanelAPI> makeButton(String text, CustomUIPanelPlugin plugin, ActionListener handler, Color base, Color bg, Alignment align, CutStyle style, float width, float height, int hotkey) {
+        CustomPanelAPI container = Global.getSettings().createCustom(width, height, plugin);
         TooltipMakerAPI ttm = container.createUIElement(width, height, false);
         ttm.setButtonFontOrbitron20();
         ButtonAPI button = ttm.addButton(text, null, base, bg, align, style, width, height, 0f);
@@ -280,6 +284,80 @@ public abstract class ReflectionUtils {
             return tradeMode == CampaignUIAPI.CoreUITradeMode.OPEN && other != null && other.getMarket() != null && !other.getMarket().isPlanetConditionMarketOnly();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    private static List<Method> getRendererButtonMethods(Class<?> rendererClass) {
+        List<Method> methods = new ArrayList<>();
+        for (Method method : rendererClass.getMethods()) {
+            if (method.getParameterCount() == 1 && void.class.equals(method.getReturnType()) && Color.class.equals(method.getParameterTypes()[0])) {
+                methods.add(method);
+            }
+        }
+        return methods;
+    }
+
+    private static void getSetButtonColorAndTextColorNames() {
+        try {
+            var temp = Global.getSettings().createCustom(0f, 0f, null);
+            var ttmTemp = temp.createUIElement(0f, 0f, false);
+            var buttonTemp = ttmTemp.addButton("", null, 0f, 0f, 0f);
+            var renderer = invokeMethodNoCatch(buttonTemp, "getRenderer");
+            var setColorMethods = getRendererButtonMethods(renderer.getClass());
+            // Both methods are indistinguishable, except for the fact that only one modifies a field
+            // that has a getter.
+            Arrays.stream(renderer.getClass().getMethods())
+                    .filter(method -> method.getParameterCount() == 0 && Color.class.equals(method.getReturnType()))
+                    .findFirst()
+                    .ifPresent(getMethod -> {
+                        setColorMethods.forEach(setMethod -> {
+                            try {
+                                setMethod.invoke(renderer, Color.WHITE);
+                                Color color = (Color) getMethod.invoke(renderer);
+                                if (Color.WHITE.equals(color)) {
+                                    setButtonTextName = setMethod.getName();
+                                    setMethod.invoke(renderer, Color.BLACK);
+                                } else {
+                                    setButtonColorName = setMethod.getName();
+                                }
+                            } catch (Exception e) {
+                                logger.error("Error when finding button color and text color setters", e);
+                            }
+                        });
+                    });
+        } catch (Exception e) {
+            logger.error("Failed to find button color and text color setters", e);
+        }
+    }
+
+
+    private static String setButtonColorName;
+    public static void setButtonColor(ButtonAPI button, Color color) {
+        try {
+            var renderer = invokeMethodNoCatch(button, "getRenderer");
+            if (setButtonColorName == null) {
+                getSetButtonColorAndTextColorNames();
+            }
+            if (setButtonColorName != null) {
+                ReflectionUtils.invokeMethodNoCatch(renderer, setButtonColorName, color);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to set button color", e);
+        }
+    }
+
+    private static String setButtonTextName;
+    public static void setButtonTextColor(ButtonAPI button, Color color) {
+        try {
+            var renderer = invokeMethodNoCatch(button, "getRenderer");
+            if (setButtonTextName == null) {
+                getSetButtonColorAndTextColorNames();
+            }
+            if (setButtonTextName != null) {
+                ReflectionUtils.invokeMethodNoCatch(renderer, setButtonTextName, color);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to set button text color", e);
         }
     }
 }

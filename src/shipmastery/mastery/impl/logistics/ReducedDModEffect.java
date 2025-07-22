@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -13,12 +14,12 @@ import shipmastery.util.Strings;
 
 public class ReducedDModEffect extends MultiplicativeMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return makeGenericDescription(
                 Strings.Descriptions.ReducedDModEffectPos,
                 Strings.Descriptions.ReducedDModEffectNeg,
                 true,
-                true, getStrength(selectedModule));
+                true, getStrength(selectedVariant));
     }
 
     @Override

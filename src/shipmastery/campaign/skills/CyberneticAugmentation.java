@@ -6,31 +6,28 @@ import com.fs.starfarer.api.characters.DescriptionSkillEffect;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.ShipMastery;
+import shipmastery.achievements.MasteredMany;
 import shipmastery.config.Settings;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
 
 /** Note: will just give a flat 5% OP bonus for characters that aren't the player, if for some reason
  *  an NPC manages to have this skill. */
+@Deprecated
 public class CyberneticAugmentation {
 
-    public static final String MASTERED_COUNT_KEY = "$sms_MasteredCountKey";
     public static final float NPC_OP_BONUS = 0.05f;
     public static final int MASTERIES_PER_CLUSTER = 5;
 
     public static class Level0 implements DescriptionSkillEffect {
         public String getString() {
             int base = Global.getSettings().getInt("officerMaxEliteSkills");
-            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
+            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (count == null) count = 0;
             String masterDesc = count == 1 ? Strings.Skills.cyberneticAugmentationDesc3Singular : Strings.Skills.cyberneticAugmentationDesc3;
             return String.format(Strings.Skills.cyberneticAugmentationDesc2, base) + "\n" + String.format(masterDesc, count);
@@ -41,7 +38,7 @@ public class CyberneticAugmentation {
         }
         public String[] getHighlights() {
             int base = Global.getSettings().getInt("officerMaxEliteSkills");
-            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
+            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (count == null) count = 0;
             return new String[] {"" + base, "" + count};
         }
@@ -61,7 +58,7 @@ public class CyberneticAugmentation {
             info.addPara(Strings.Misc.scopePrefix, opad + 5f, Misc.getGrayColor(), c, Strings.Skills.cyberneticAugmentationScope);
             info.addSpacer(opad);
             PersonAPI player = Global.getSector().getPlayerPerson();
-            Integer count = (Integer) player.getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
+            Integer count = (Integer) player.getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (count == null) count = 0;
             int clusters = count / MASTERIES_PER_CLUSTER;
             float bonus = Math.min(Settings.CYBER_AUG_MAX_BONUS, Settings.CYBER_AUG_BASE_BONUS + clusters * Settings.CYBER_AUG_BONUS_PER_GROUP);
@@ -81,7 +78,7 @@ public class CyberneticAugmentation {
             }
 
             PersonAPI player = Global.getSector().getPlayerPerson();
-            Integer masteredCount = (Integer) player.getMemoryWithoutUpdate().get(MASTERED_COUNT_KEY);
+            Integer masteredCount = (Integer) player.getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (masteredCount == null || masteredCount < 0) return;
 
             int clusters = masteredCount / MASTERIES_PER_CLUSTER;
@@ -95,21 +92,4 @@ public class CyberneticAugmentation {
         }
     }
 
-    public static void refreshPlayerMasteredCount() {
-        Set<String> countedBaseIds = new HashSet<>();
-        int count = 0;
-        for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
-            ShipHullSpecAPI restoredSpec = Utils.getRestoredHullSpec(spec);
-            if (spec != restoredSpec) continue;
-            if (spec.isCivilianNonCarrier()) continue;
-            String baseId = spec.getBaseHullId();
-            if (countedBaseIds.contains(baseId)) continue;
-
-            if (ShipMastery.getPlayerMasteryLevel(spec) >= ShipMastery.getMaxMasteryLevel(spec)) {
-                count++;
-                countedBaseIds.add(baseId);
-            }
-        }
-        Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().set(MASTERED_COUNT_KEY, count);
-    }
 }

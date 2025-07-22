@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.EntropyAmplifierStats;
@@ -14,10 +15,10 @@ public class EntropyAmplifierMobility extends ShipSystemEffect {
     public static final String ENTROPY_AMPLIFIER_ID = "entropyamplifier";
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EntropyAmplifierMobility)
                                  .params(getSystemName(),
-                                         Utils.asPercent(getStrength(selectedModule)));
+                                         Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import shipmastery.mastery.BaseMasteryEffect;
@@ -13,8 +14,8 @@ import shipmastery.util.Utils;
 
 public class SafetyOverridesPPT extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.SafetyOverridesPPT)
                 .params(Global.getSettings().getHullModSpec(HullMods.SAFETYOVERRIDES).getDisplayName(), Utils.asFloatOneDecimal(1f + strength));

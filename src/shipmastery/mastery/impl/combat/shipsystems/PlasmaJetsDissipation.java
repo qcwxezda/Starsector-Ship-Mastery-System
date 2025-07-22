@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.MasteryDescription;
@@ -11,8 +12,8 @@ public class PlasmaJetsDissipation extends ShipSystemEffect {
 
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsDissipation)
                                  .params(getSystemName(), Utils.asFloatTwoDecimals(1f + strength), Utils.asPercent(0.5f*strength));
     }

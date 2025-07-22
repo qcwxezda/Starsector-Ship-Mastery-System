@@ -5,6 +5,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +28,13 @@ public class RecallDeviceDestruction extends ShipSystemEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float radius = getEffectRadius(Global.getSector().getPlayerPerson(), selectedModule.getHullSize());
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float radius = getEffectRadius(Global.getSector().getPlayerPerson(), selectedVariant.getHullSize());
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.RecallDeviceDestruction).params(getSystemName(), (int) radius);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.RecallDeviceDestructionPost, 0f);
     }

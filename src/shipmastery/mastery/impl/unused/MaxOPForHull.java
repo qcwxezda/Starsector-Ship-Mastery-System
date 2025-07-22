@@ -21,7 +21,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     static final float MAX_HULL_MODIFIER = 0.9f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         MasteryDescription description = makeGenericDescription(
                 Strings.Descriptions.MaxOPForHull,
                 null,
@@ -61,7 +61,7 @@ public class MaxOPForHull extends MultiplicativeMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.MaxOPForHullPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.absValueAsPercent(1f - MAX_HULL_MODIFIER),

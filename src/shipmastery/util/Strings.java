@@ -21,7 +21,7 @@ public interface Strings {
         String NUCLEUS_DEFENDER_FLEET_TYPE = "sms_NucleusDefenderFleet";
         String BEACON_ID = "$sms_BeaconID";
         String STATION_TYPE_KEY = "$sms_StationType";
-        String K_CORE_AMP_INTEGRATED = "$sms_KCoreAmpIntegrated";
+        String PSEUDOCORE_AMP_INTEGRATED = "$sms_PseudocoreAmpIntegrated";
         // Force set the commander id of defenders in probes and stations, so that their masteries remain the same
         // even if they are regenerated
         String DEFENSES_COMMANDER_ID_KEY = "$sms_DefensesCommanderId";
@@ -31,6 +31,7 @@ public interface Strings {
         String TRIGGERED_REMOTE_BEACON_DEFENDERS = "$sms_TriggeredRemoteBeaconDefenders"; // global
         String REMOTE_BEACON_DEFENDER_FLEET_TYPE = "sms_RemoteBeaconDefender"; // local
         String REMOTE_BEACON_DEFENDER_FLEET = "$sms_RemoteBeaconDefenderFleet"; // global
+        String CONCEALED_STATION_DEFENDER_FLEET_TYPE = "sms_ConcealedStationDefender";
         String ACQUIRED_STATION_LEADS = "$sms_AcquiredStationLeads"; // global
         String PROBE_PARENT_STATION = "$sms_ProbeParentStation"; // local
 
@@ -92,14 +93,15 @@ public interface Strings {
         String probeBreadcrumb = Utils.getString("sms_campaign", "probeBreadcrumb");
         String probeBreadcrumbForIntel = Utils.getString("sms_campaign", "probeBreadcrumbForIntel");
         String probeBreadcrumbIntelTitle = Utils.getString("sms_campaign", "probeBreadcrumbIntelTitle");
+        String adminPromptText = Utils.getString("sms_campaign", "adminPromptText");
     }
 
     interface RefitScreen {
         String masteryButton = Utils.getString("sms_refitScreen", "masteryButton");
-        String masteryLabel = Utils.getString("sms_refitScreen", "masteryLabel");
         String sModAutofitName = Utils.getString("sms_refitScreen", "sModAutofitName");
         String sModAutofitDesc = Utils.getString("sms_refitScreen", "sModAutofitDesc");
         String sModAutofitSPText = Utils.getString("sms_refitScreen", "sModAutofitSPText");
+        String mpToNextLevel = Utils.getString("sms_refitScreen", "mpToNextLevel");
     }
 
     interface RecentBattles {
@@ -132,11 +134,9 @@ public interface Strings {
         String mustBeDockedHullmods = Utils.getString("sms_masteryPanel", "mustBeDockedHullmods");
         String masteryTab = Utils.getString("sms_masteryPanel", "masteryTab");
         String creditsDisplay = Utils.getString("sms_masteryPanel", "creditsDisplay");
-        String masteryPointsDisplay = Utils.getString("sms_masteryPanel", "masteryPointsDisplay");
         String storyPointsDisplay = Utils.getString("sms_masteryPanel", "storyPointsDisplay");
         String levelText = Utils.getString("sms_masteryPanel", "levelText");
         String hullmodListsEmptyHint = Utils.getString("sms_masteryPanel", "hullmodListEmptyHint");
-        String clearButton = Utils.getString("sms_masteryPanel", "clearButton");
         String useSPButton = Utils.getString("sms_masteryPanel", "useSPButton");
         String builtInDisplay = Utils.getString("sms_masteryPanel", "builtInDisplay");
         String doubleClickHint = Utils.getString("sms_masteryPanel", "doubleClickHint");
@@ -145,56 +145,67 @@ public interface Strings {
         String cantBuildIn = Utils.getString("sms_masteryPanel", "cantBuildIn");
         String limitReached = Utils.getString("sms_masteryPanel", "limitReached");
         String notEnoughCredits = Utils.getString("sms_masteryPanel", "notEnoughCredits");
-        String notEnoughMasteryPoints = Utils.getString("sms_masteryPanel", "notEnoughMasteryPoints");
-        String notEnoughStoryPoints = Utils.getString("sms_masteryPanel", "notEnoughStoryPoints");
         String dismissWindow = Utils.getString("sms_masteryPanel", "dismissWindow");
         String hullmodsTab = Utils.getString("sms_masteryPanel", "hullmodsTab");
         String unknownMastery = Utils.getString("sms_masteryPanel", "unknownMastery");
         String levelUpMastery = Utils.getString("sms_masteryPanel", "levelUpMastery");
-        String createConstruct = Utils.getString("sms_masteryPanel", "createConstruct");
-        String createConstructConfirmSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmSingular");
-        String constructSinglar = Utils.getString("sms_masteryPanel", "constructSinglar");
-        String constructPlural = Utils.getString("sms_masteryPanel", "constructPlural");
-        String createConstructConfirmPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmPlural");
-        String createConstructConfirmTextSingular = Utils.getString("sms_masteryPanel", "createConstructConfirmTextSingular");
-        String createConstructConfirmTextPlural = Utils.getString("sms_masteryPanel", "createConstructConfirmTextPlural");
-        String createConstructSPTextSingular = Utils.getString("sms_masteryPanel", "createConstructSPTextSingular");
-        String createConstructSPTextPlural = Utils.getString("sms_masteryPanel", "createConstructSPTextPlural");
-        String createConstructGainedSPSingular = Utils.getString("sms_masteryPanel", "createConstructGainedSPSingular");
-        String createConstructGainedSPPlural = Utils.getString("sms_masteryPanel", "createConstructGainedSPPlural");
+        String enhanceMastery = Utils.getString("sms_masteryPanel", "enhanceMastery");
+        String enhanceSelect = Utils.getString("sms_masteryPanel", "enhanceSelect");
+        String enhanceMasteryTooltip = Utils.getString("sms_masteryPanel", "enhanceMasteryTooltip");
         String rerollMasteries = Utils.getString("sms_masteryPanel", "rerollMasteries");
-        String rerollConfirm = Utils.getString("sms_masteryPanel", "rerollConfirm");
-        String enhanceMasteries = Utils.getString("sms_masteryPanel", "enhanceMasteries");
-        String enhanceMasteriesConfirm = Utils.getString("sms_masteryPanel", "enhanceMasteriesConfirm");
-        String upgradeConfirm = Utils.getString("sms_masteryPanel", "upgradeConfirm");
-        String confirmQuestion = Utils.getString("sms_masteryPanel", "confirmQuestion");
         String enhanceConfirm = Utils.getString("sms_masteryPanel", "enhanceConfirm");
         String builtInConfirm = Utils.getString("sms_masteryPanel", "builtInConfirm");
-        String clearConfirm = Utils.getString("sms_masteryPanel", "clearConfirm");
         String changesPending = Utils.getString("sms_masteryPanel", "changesPending");
-        //String buildInOverMaxWarning = Utils.getString("sms_masteryPanel", "buildInOverMaxWarning");
         String cantOpenPanel = Utils.getString("sms_masteryPanel", "cantOpenPanel");
         String iconHeader = Utils.getString("sms_masteryPanel", "iconHeader");
         String hullmodHeader = Utils.getString("sms_masteryPanel", "hullmodHeader");
         String designTypeHeader = Utils.getString("sms_masteryPanel", "designTypeHeader");
         String ordnancePointsHeader = Utils.getString("sms_masteryPanel", "ordnancePointsHeader");
-        String masteryPointsHeader = Utils.getString("sms_masteryPanel", "masteryPointsHeader");
         String creditsHeader = Utils.getString("sms_masteryPanel", "creditsHeader");
         String modularHeader = Utils.getString("sms_masteryPanel", "modularHeader");
-        String sModRefundTextCredits = Utils.getString("sms_masteryPanel", "sModRefundTextCredits");
-        String sModRefundTextMP = Utils.getString("sms_masteryPanel", "sModRefundTextMP");
-        String rerollMasteryConfirmText = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmText");
-        String rerollMasteryConfirmTextApplicable = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmTextApplicable");
-        String rerollMasteryConfirmTextApplicableCost = Utils.getString("sms_masteryPanel", "rerollMasteryConfirmTextApplicableCost");
-        String rerollMasteryComfirmTextNotApplicable = Utils.getString("sms_masteryPanel", "rerollMasteryComfirmTextNotApplicable");
-        String enhanceMasteryConfirmText = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText");
-        String enhanceMasteryConfirmTextNoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmTextNoSP");
-        String enhanceMasteryConfirmText2 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2");
-        String enhanceMasteryConfirmText2NoSP = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText2NoSP");
-        String enhanceMasteryConfirmText3 = Utils.getString("sms_masteryPanel", "enhanceMasteryConfirmText3");
         String unassignedWarningTextPlural = Utils.getString("sms_masteryPanel", "unassignedWarningTextPlural");
         String unassignedWarningTextSingular = Utils.getString("sms_masteryPanel", "unassignedWarningTextSingular");
-        String useSPHint = Utils.getString("sms_masteryPanel", "useSPHint");
+        String useSPTooltip = Utils.getString("sms_masteryPanel", "useSPTooltip");
+        String levelUpSelect = Utils.getString("sms_masteryPanel", "levelUpSelect");
+        String levelUpTooltip = Utils.getString("sms_masteryPanel", "levelUpTooltip");
+        String masterySharing = Utils.getString("sms_masteryPanel", "masterySharing");
+        String active = Utils.getString("sms_masteryPanel", "active");
+        String inactive = Utils.getString("sms_masteryPanel", "inactive");
+        String masterySharingTooltip = Utils.getString("sms_masteryPanel", "masterySharingTooltip");
+        String rerollTooltip = Utils.getString("sms_masteryPanel", "rerollTooltip");
+        String confirmChangesTooltipTitle = Utils.getString("sms_masteryPanel", "confirmChangesTooltipTitle");
+        String confirmChangesTooltipText = Utils.getString("sms_masteryPanel", "confirmChangesTooltipText");
+        String cancelChangesTitle = Utils.getString("sms_masteryPanel", "cancelChangesTitle");
+        String cancelChangesTooltipText = Utils.getString("sms_masteryPanel", "cancelChangesTooltipText");
+        String noChangesPending = Utils.getString("sms_masteryPanel", "noChangesPending");
+        String unlockAtLevel = Utils.getString("sms_masteryPanel", "unlockAtLevel");
+        String notEnoughXP = Utils.getString("sms_masteryPanel", "notEnoughXP");
+        String maxReached = Utils.getString("sms_masteryPanel", "maxReached");
+        String hotkey = Utils.getString("sms_masteryPanel", "hotkey");
+        String buttonStatus = Utils.getString("sms_masteryPanel", "buttonStatus");
+        String selectiveRestorationButton = Utils.getString("sms_masteryPanel", "selectiveRestorationButton");
+        String selectiveRestorationTooltip = Utils.getString("sms_masteryPanel", "selectiveRestorationTooltip");
+        String selectiveRestorationPanelText = Utils.getString("sms_masteryPanel", "selectiveRestorationPanelText");
+        String selectiveRestorationUsedSPText = Utils.getString("sms_masteryPanel", "selectiveRestorationUsedSPText");
+        String cantRestore = Utils.getString("sms_masteryPanel", "cantRestore");
+        String removeSModsButton = Utils.getString("sms_masteryPanel", "removeSModsButton");
+        String removeSModsTooltip = Utils.getString("sms_masteryPanel", "removeSModsTooltip");
+        String removeSModsPanelText = Utils.getString("sms_masteryPanel", "removeSModsPanelText");
+        String removeSModsPanelUsedSPText = Utils.getString("sms_masteryPanel", "removeSModsPanelUsedSPText");
+        String noDMods = Utils.getString("sms_masteryPanel", "noDMods");
+        String noSMods = Utils.getString("sms_masteryPanel", "noSMods");
+        String toggleAllButton = Utils.getString("sms_masteryPanel", "toggleAllButton");
+        String aiInterfaceButton = Utils.getString("sms_masteryPanel", "aiInterfaceButton");
+        String aiInterfaceTooltip = Utils.getString("sms_masteryPanel", "aiInterfaceTooltip");
+        String aiIntegratedTooltip = Utils.getString("sms_masteryPanel", "aiIntegratedTooltip");
+        String aiInterfacePanelText = Utils.getString("sms_masteryPanel", "aiInterfacePanelText");
+        String aiInterfacePanelRemoveText = Utils.getString("sms_masteryPanel", "aiInterfacePanelRemoveText");
+        String aiInterfacePanelUsedSPText = Utils.getString("sms_masteryPanel", "aiInterfacePanelUsedSPText");
+        String aiInterfacePanelRemoveUsedSPText = Utils.getString("sms_masteryPanel", "aiInterfacePanelRemoveUsedSPText");
+        String aiInterfacePanelCannotIntegrate = Utils.getString("sms_masteryPanel", "aiInterfacePanelCannotIntegrate");
+        String aiInterfacePanelCannotRemove = Utils.getString("sms_masteryPanel", "aiInterfacePanelCannotRemove");
+        String cantRerollNotRandomized = Utils.getString("sms_masteryPanel", "cantRerollNotRandomized");
+        String cantRerollActive = Utils.getString("sms_masteryPanel", "cantRerollActive");
     }
 
     interface Misc {
@@ -205,7 +216,6 @@ public interface Strings {
         String doesntAffectModules = Utils.getString("sms_misc", "doesntAffectModules");
         String flagshipOnly = Utils.getString("sms_misc", "flagshipOnly");
         String scopePrefix = Utils.getString("sms_misc", "scopePrefix");
-        String excessOPWarning = Utils.getString("sms_misc", "excessOPWarning");
         String selectAShip = Utils.getString("sms_misc", "selectAShip");
         String confirm = Utils.getString("sms_misc", "confirm");
         String cancel = Utils.getString("sms_misc", "cancel");
@@ -213,11 +223,19 @@ public interface Strings {
         @SuppressWarnings("unused")
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
         String excessOP = Utils.getString("sms_misc", "excessOP");
+        String storyPoint = Utils.getString("sms_misc", "storyPoint");
+        String storyPoints = Utils.getString("sms_misc", "storyPoints");
+        String requiresStoryPointNoBonus = Utils.getString("sms_misc", "requiresStoryPointNoBonus");
+        String requiresStoryPointWithBonus = Utils.getString("sms_misc", "requiresStoryPointWithBonus");
+        String noStoryPoints = Utils.getString("sms_misc", "noStoryPoints");
+        String noEffect = Utils.getString("sms_misc", "noEffect");
+        String stored = Utils.getString("sms_misc", "stored");
+        String XP = Utils.getString("sms_misc", "XP");
+        String doubled = Utils.getString("sms_misc", "doubled");
     }
 
     interface Messages {
         String gainedMPSingle = Utils.getString("sms_messages", "gainedMPSingle");
-        String gainedMPMultiple = Utils.getString("sms_messages", "gainedMPMultiple");
     }
 
     interface Items {
@@ -225,42 +243,90 @@ public interface Strings {
         String SUPERCONSTRUCT_2 = "sms_superconstruct2";
         String knowledgeConstruct = Utils.getString("sms_items", "knowledgeConstruct");
         String knowledgeConstructRightClick = Utils.getString("sms_items", "knowledgeConstructRightClick");
+        String blankConstructRightClick = Utils.getString("sms_items", "blankConstructRightClick");
         String knowledgeConstructCantRightClick = Utils.getString("sms_items", "knowledgeConstructCantRightClick");
         String superconstruct1RightClick = Utils.getString("sms_items", "superconstruct1RightClick");
         String superconstruct1MessageDisplay1 = Utils.getString("sms_items", "superconstruct1MessageDisplay1");
         String superconstruct1MessageDisplay2 = Utils.getString("sms_items", "superconstruct1MessageDisplay2");
         String superconstruct2RightClick = Utils.getString("sms_items", "superconstruct2RightClick");
         String superconstruct2MessageDisplay1 = Utils.getString("sms_items", "superconstruct2MessageDisplay1");
-        String superconstruct2MessageDisplay2 = Utils.getString("sms_items", "superconstruct2MessageDisplay2");
         String superconstruct3RightClick = Utils.getString("sms_items", "superconstruct3RightClick");
         String superconstruct3MessageDisplay1 = Utils.getString("sms_items", "superconstruct3MessageDisplay1");
         String superconstruct3MessageDisplay2 = Utils.getString("sms_items", "superconstruct3MessageDisplay2");
         String amorphousCorePersonalityText  = Utils.getString("sms_items", "amorphousCorePersonalityText");
-        String kCoreAdditionalInfo = Utils.getString("sms_items", "kCoreAdditionalInfo");
-        String kCorePersonalityTableTitle1 = Utils.getString("sms_items", "kCorePersonalityTableTitle1");
-        String kCorePersonalityTableTitle2 = Utils.getString("sms_items", "kCorePersonalityTableTitle2");
-        String kCorePersonalityTableName1 = Utils.getString("sms_items", "kCorePersonalityTableName1");
-        String kCorePersonalityTableName2 = Utils.getString("sms_items", "kCorePersonalityTableName2");
-        String kCorePersonalityTableName3 = Utils.getString("sms_items", "kCorePersonalityTableName3");
-        String kCorePersonalityText = Utils.getString("sms_items", "kCorePersonalityText");
-        String kCorePersonalityText2 = Utils.getString("sms_items", "kCorePersonalityText2");
-        String uplinkKCoreSelect = Utils.getString("sms_items", "uplinkKCoreSelect");
+        String pseudocoreAdditionalInfo = Utils.getString("sms_items", "pseudocoreAdditionalInfo");
+        String pseudocorePersonalityTableTitle1 = Utils.getString("sms_items", "pseudocorePersonalityTableTitle1");
+        String pseudocorePersonalityTableTitle2 = Utils.getString("sms_items", "pseudocorePersonalityTableTitle2");
+        String pseudocorePersonalityTableName1 = Utils.getString("sms_items", "pseudocorePersonalityTableName1");
+        String pseudocorePersonalityTableName2 = Utils.getString("sms_items", "pseudocorePersonalityTableName2");
+        String pseudocorePersonalityTableName3 = Utils.getString("sms_items", "pseudocorePersonalityTableName3");
+        String pseudocorePersonalityText = Utils.getString("sms_items", "pseudocorePersonalityText");
+        String pseudocorePersonalityText2 = Utils.getString("sms_items", "pseudocorePersonalityText2");
+        String uplinkPseudocoreSelect = Utils.getString("sms_items", "uplinkPseudocoreSelect");
+        String uplinkMk2CoreSelect = Utils.getString("sms_items", "uplinkMk2CoreSelect");
         String uplinkSkillSelect = Utils.getString("sms_items", "uplinkSkillSelect");
         String uplinkDesc = Utils.getString("sms_items", "uplinkDesc");
         String uplinkRightClick = Utils.getString("sms_items", "uplinkRightClick");
+        String uplinkMk2RightClick = Utils.getString("sms_items", "uplinkMk2RightClick");
         String uplinkStatus = Utils.getString("sms_items", "uplinkStatus");
         String uplinkStatus2 = Utils.getString("sms_items", "uplinkStatus2");
         String uplinkPenaltyDesc = Utils.getString("sms_items", "uplinkPenaltyDesc");
         String ampRightClick = Utils.getString("sms_items", "ampRightClick");
         String ampIntegrated = Utils.getString("sms_items", "ampIntegrated");
+        String cargoCount = Utils.getString("sms_items", "cargoCount");
+        String fracturedGammaCoreIntegrationEffect = Utils.getString("sms_items", "fracturedGammaCoreIntegrationEffect");
+        String fracturedGammaCoreIntegrationCannotAdd = Utils.getString("sms_items", "fracturedGammaCoreIntegrationCannotAdd");
+        String gammaPseudocoreIntegrationEffect = Utils.getString("sms_items", "gammaPseudocoreIntegrationEffect");
+        String betaPseudocoreIntegrationEffect = Utils.getString("sms_items", "betaPseudocoreIntegrationEffect");
+        String betaPseudocoreIntegrationCannotRemove = Utils.getString("sms_items", "betaPseudocoreIntegrationCannotRemove");
+        String alphaPseudocoreIntegrationEffect = Utils.getString("sms_items", "alphaPseudocoreIntegrationEffect");
+        String amorphousCoreIntegrationEffect = Utils.getString("sms_items", "amorphousCoreIntegrationEffect");
+        String gammaCoreIntegrationEffect = Utils.getString("sms_items", "gammaCoreIntegrationEffect");
+        String betaCoreIntegrationEffect = Utils.getString("sms_items", "betaCoreIntegrationEffect");
+        String alphaCoreIntegrationEffect = Utils.getString("sms_items", "alphaCoreIntegrationEffect");
+        String alphaCoreIntegrationCannotAdd = Utils.getString("sms_items", "alphaCoreIntegrationCannotAdd");
+        String omegaCoreIntegrationEffect = Utils.getString("sms_items", "omegaCoreIntegrationEffect");
+        String warpedPseudocoreIntegrationEffect = Utils.getString("sms_items", "warpedPseudocoreIntegrationEffect");
+        String crystallinePseudocoreIntegrationEffect = Utils.getString("sms_items", "crystallinePseudocoreIntegrationEffect");
+        String noneInCargo = Utils.getString("sms_items", "noneInCargo");
+        String integratedDesc = Utils.getString("sms_items", "integratedDesc");
+        String selectQuantity = Utils.getString("sms_items", "selectQuantity");
+        String invalidQuantity = Utils.getString("sms_items", "invalidQuantity");
     }
 
     interface Skills {
         String dimensionalTetherEffect = Utils.getString("sms_skills", "dimensionalTetherEffect");
         String dimensionalTetherRetreatText = Utils.getString("sms_skills", "dimensionalTetherRetreatText");
         String dimensionalTetherEliteEffect = Utils.getString("sms_skills", "dimensionalTetherEliteEffect");
-        String sharedKnowledgeStandardEffect = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect");
-        String sharedKnowledgeEliteEffect = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect");
+        String sharedKnowledgeStandardEffect1 = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect1");
+        String sharedKnowledgeStandardEffect2 = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect2");
+        String sharedKnowledgeStandardEffect3 = Utils.getString("sms_skills", "sharedKnowledgeStandardEffect3");
+        String sharedKnowledgeEliteEffect1 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect1");
+        String sharedKnowledgeEliteEffect2 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect2");
+        String sharedKnowledgeEliteEffect3 = Utils.getString("sms_skills", "sharedKnowledgeEliteEffect3");
+        String warpedKnowledgeStandardEffect1 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect1");
+        String warpedKnowledgeStandardEffect2 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect2");
+        String warpedKnowledgeStandardEffect3 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect3");
+        String warpedKnowledgeStandardEffect4 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect4");
+        String warpedKnowledgeStandardEffect5 = Utils.getString("sms_skills", "warpedKnowledgeStandardEffect5");
+        String warpedKnowledgeEliteEffect1 = Utils.getString("sms_skills", "warpedKnowledgeEliteEffect1");
+        String warpedKnowledgeEliteEffect2 = Utils.getString("sms_skills", "warpedKnowledgeEliteEffect2");
+        String warpedKnowledgeEliteEffect3 = Utils.getString("sms_skills", "warpedKnowledgeEliteEffect3");
+        String warpedKnowledgeEliteEffectDebuffTitle = Utils.getString("sms_skills", "warpedKnowledgeEliteEffectDebuffTitle");
+        String warpedKnowledgeEliteEffectDebuffDesc = Utils.getString("sms_skills", "warpedKnowledgeEliteEffectDebuffDesc");
+        String crystallineKnowledgeStandardEffect1 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect1");
+        String crystallineKnowledgeStandardEffect2 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect2");
+        String crystallineKnowledgeStandardEffect3 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect3");
+        String crystallineKnowledgeStandardEffect4 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect4");
+        String crystallineKnowledgeStandardEffect5 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect5");
+        String crystallineKnowledgeStandardEffect6 = Utils.getString("sms_skills", "crystallineKnowledgeStandardEffect6");
+        String crystallineKnowledgeEliteEffect1 = Utils.getString("sms_skills", "crystallineKnowledgeEliteEffect1");
+        String crystallineKnowledgeEliteEffect2 = Utils.getString("sms_skills", "crystallineKnowledgeEliteEffect2");
+        String crystallineKnowledgeEliteEffect3 = Utils.getString("sms_skills", "crystallineKnowledgeEliteEffect3");
+        String crystallineKnowledgeEliteEffectDebuffTitle = Utils.getString("sms_skills", "crystallineKnowledgeEliteEffectDebuffTitle");
+        String crystallineKnowledgeEliteEffectDebuffDesc = Utils.getString("sms_skills", "crystallineKnowledgeEliteEffectDebuffDesc");
+        String amorphousKnowledgeStandardEffect1 = Utils.getString("sms_skills", "amorphousKnowledgeStandardEffect1");
+        String amorphousKnowledgeEliteEffect1 = Utils.getString("sms_skills", "amorphousKnowledgeEliteEffect1");
         String bestOfTheBestDesc = Utils.getString("sms_skills", "bestOfTheBestDesc");
         String bestOfTheBestDesc2 = Utils.getString("sms_skills", "bestOfTheBestDesc2");
         String bestOfTheBestDesc3 = Utils.getString("sms_skills", "bestOfTheBestDesc3");
@@ -295,8 +361,10 @@ public interface Strings {
     }
 
     interface Hullmods {
+        String MASTERY_HANDLER = "sms_mastery_handler";
         String ENGINEERING_OVERRIDE = "sms_engineering_override";
         String ANALYSIS_PACKAGE = "sms_analysis_package";
+        String UPLINK_HANDLER = "sms_pseudocore_uplink_handler";
         String REARRANGEMENT1 = "sms_extradimensional_rearrangement1";
         String REARRANGEMENT2 = "sms_extradimensional_rearrangement2";
         String REARRANGEMENT3 = "sms_extradimensional_rearrangement3";
@@ -327,9 +395,10 @@ public interface Strings {
         String rearrangementD2Effect = Utils.getString("sms_hullmods", "rearrangementD2Effect");
         String rearrangementD3Effect = Utils.getString("sms_hullmods", "rearrangementD3Effect");
         String rearrangementD4Effect = Utils.getString("sms_hullmods", "rearrangementD4Effect");
-        String engineeringOverrideDesc = Utils.getString("sms_hullmods", "engineeringOverrideDesc");
         String engineeringOverrideWarning = Utils.getString("sms_hullmods", "engineeringOverrideWarning");
         String engineeringOverridePermanent = Utils.getString("sms_hullmods", "engineeringOverridePermanent");
+        String engineeringOverrideTinkererWarning = Utils.getString("sms_hullmods", "engineeringOverrideTinkererWarning");
+        String engineeringOverrideNoMasteryWarning = Utils.getString("sms_hullmods", "engineeringOverrideNoMasteryWarning");
         String moduleCantInstall = Utils.getString("sms_hullmods", "moduleCantInstall");
         String analysisPackageCivilian = Utils.getString("sms_hullmods", "analysisPackageCivilian");
         String analysisPackageCombat = Utils.getString("sms_hullmods", "analysisPackageCombat");
@@ -693,5 +762,27 @@ public interface Strings {
         String VentingRepairsPost = Utils.getString( "sms_descriptions", "VentingRepairsPost");
         String BeamPartialHardFlux = Utils.getString( "sms_descriptions", "BeamPartialHardFlux");
         String BeamPartialHardFluxPost = Utils.getString( "sms_descriptions", "BeamPartialHardFluxPost");
+        String EmptyMastery = Utils.getString( "sms_descriptions", "EmptyMastery");
+        String EnhanceMasteryDescOnly = Utils.getString( "sms_descriptions", "EnhanceMasteryDescOnly");
+    }
+
+    interface Backgrounds {
+        String cannotSelectBackground = Utils.getString( "sms_backgrounds", "cannotSelectBackground");
+        String tinkererDesc1 = Utils.getString( "sms_backgrounds", "tinkererDesc1");
+        String tinkererDesc2 = Utils.getString( "sms_backgrounds", "tinkererDesc2");
+        String tinkererDesc3 = Utils.getString( "sms_backgrounds", "tinkererDesc3");
+        String tinkererDesc4 = Utils.getString( "sms_backgrounds", "tinkererDesc4");
+        String tinkererDesc5 = Utils.getString( "sms_backgrounds", "tinkererDesc5");
+        String enlightenedDesc1 = Utils.getString( "sms_backgrounds", "enlightenedDesc1");
+        String enlightenedDesc2 = Utils.getString( "sms_backgrounds", "enlightenedDesc2");
+        String enlightenedDesc3 = Utils.getString( "sms_backgrounds", "enlightenedDesc3");
+        String enlightenedDesc4 = Utils.getString( "sms_backgrounds", "enlightenedDesc4");
+        String rejectHumanityDesc1 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc1");
+        String rejectHumanityDesc2 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc2");
+        String rejectHumanityDesc3 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc3");
+        String rejectHumanityDesc4 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc4");
+        String rejectHumanityDesc5 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc5");
+        String rejectHumanityDesc6 = Utils.getString( "sms_backgrounds", "rejectHumanityDesc6");
+        String rejectHumanityCRPenaltyDesc = Utils.getString( "sms_backgrounds", "rejectHumanityCRPenaltyDesc");
     }
 }

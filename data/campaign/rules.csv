@@ -19,8 +19,8 @@ sms_InsuranceForfeit,DialogOptionSelected,$option == sms_oInsuranceForfeit,sms_c
 
 You imagine a faint smile appearing over $hisOrHer lips as $heOrShe closes the comms on $hisOrHer end.",cutCommLinkNoText:Cut the comms link,
 sms_InsuranceRefuse,DialogOptionSelected,$option == sms_oInsuranceRefuse,"SetShortcut cutCommLinkNoText ""ESCAPE""","""Then goodbye, $player.name.""",cutCommLinkNoText:Cut the comms link,
-sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cSuperconstruct,,,
-sms_KCoreUplinkClicked,sms_tKCoreUplinkClicked,,sms_cKCoreUplink,,,
+sms_BlankConstructClicked,sms_tBlankConstructClicked,,sms_cBlankConstruct,,,
+sms_PseudocoreUplinkClicked,sms_tPseudocoreUplinkClicked,,sms_cPseudocoreUplink,,,
 sms_EmitterArrayFirstTime,OpenInteractionDialog,"$customType == sms_emitter_array score:100
 !$global.sms_EmitterArrayAllowed",,"As you approach the distant orbital structure, an automated burst sends a coded transmission to your fleet.
 
@@ -72,7 +72,7 @@ One of your engineers is hovering over a secure travel-size container resting in
 The security lock on the container indicates that it's been tampered with. It's unlocked.
 
 ",sms_oRemoteBeaconNoShieldUnlooted3:Loot the container,
-sms_RemoteBeaconNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_k_core_amplifier 1
+sms_RemoteBeaconNoShieldUnlooted4,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted3,"AddRemoveAnyItem SPECIAL sms_pseudocore_amplifier 1
 $global.sms_LootedRemoteBeacon = true",You find an odd device inside. You'll have to investigate it later.,sms_oRemoteBeaconNoShieldUnlooted4:Loot the rest of the facility,
 sms_RemoteBeaconNoShieldUnlooted5,DialogOptionSelected,$option == sms_oRemoteBeaconNoShieldUnlooted4,sms_cRemoteBeaconAdditionalLoot,,,
 sms_RemoteBeaconNoShieldLootPicked,sms_tRemoteBeaconNoShieldLootPicked,,sms_cRemoteBeaconPostLoot,"Although you thoroughly investigate the remainder of the facility, you don't find anything else of interest, nor does the salvage team sent in after you.",defaultLeave:Leave,
@@ -126,7 +126,6 @@ sms_ConcealedStationBeginSalvageDef,DialogOptionSelected,"$option == sms_oConcea
 !$defenderFleetDefeated
 !HostileFleetNearbyAndAware","$salvageLeaveText = Leave
 SalvageGenFromSeed
-sms_cConcealedStationIncreaseDP
 SalvageDefenderInteraction","As you pull in closer for a salvage assessment, several unidentified energy signatures appear on your radar to be closing in on your location.
 
 ""$PlayerSirOrMadam, looks like automated defenses. They're protecting the site; you'll have to -- hold on --""

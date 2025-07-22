@@ -1,22 +1,27 @@
 id,tier,tags,priority,default_strength,script
 ### Minimum (and default) tier is 1 ###
 ### Priority affects activation order. Higher priority ==> activates later ###
-### Random masteries: takes an additional argument indicating the maximum tier of masteries that may be selected
+### RandomMastery <strength> [tier: default=1]
 RandomMastery,,,,1,shipmastery.mastery.impl.random.RandomMastery
 ### LOGISTICS ###
-SModCapacity,,no_disable logistic,,0.5,shipmastery.mastery.impl.logistics.SModCapacity
-SModCreditsCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.SModCreditsCost
+EmptyMastery,,logistic,,,shipmastery.mastery.impl.EmptyMastery
+EnhanceMasteryDescOnly,,logistic,,,shipmastery.mastery.impl.EnhanceMasteryDescOnly
+SModCapacity,,no_disable logistic,,0.1,shipmastery.mastery.impl.logistics.SModCapacity
+# SModCapacityAsFractonOfMax <fraction> [ROUND_DOWN | ROUND_UP]
+# Fraction is as fraction of Misc.MAX_PERMA_MODS, default behavior is rounding down
+SModCapacityAsFractionOfMax,,no_disable logistic,,0.1,shipmastery.mastery.impl.logistics.SModCapacityAsFractionOfMax
+SModCreditsCost,,negative_strength_allowed logistic,,-0.15,shipmastery.mastery.impl.logistics.SModCreditsCost
 SModMPCost,,negative_strength_allowed logistic,,-1,shipmastery.mastery.impl.logistics.SModMPCost
-RestorationCost,,negative_strength_allowed logistic,,-0.25,shipmastery.mastery.impl.logistics.RestorationCost
-SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.logistics.SModRemoval
+RestorationCost,,negative_strength_allowed logistic,,-0.2,shipmastery.mastery.impl.logistics.RestorationCost
+# SModRemoval,,unique logistic,,1,shipmastery.mastery.impl.unused.SModRemoval
 SModsOverCapacity,4,no_disable no_auto_activate unique logistic doesnt_affect_modules,1,1,shipmastery.mastery.impl.unused.SModsOverCapacity
 ScaleOtherMasteries,4,negative_strength_allowed unique logistic,-1,0.3,shipmastery.mastery.impl.logistics.ScaleOtherMasteries
 # IgnoreNoBuildIn <strength (unused)> <hullmodId1> [hullmodId2] [...]
 IgnoreNoBuildIn,4,no_disable no_auto_activate logistic combat,,1,shipmastery.mastery.impl.logistics.IgnoreNoBuildIn
-EfficiencyOverhaulBoost,3,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
-ExpandedCargoBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
-ExpandedFuelBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
-ExpandedCrewBoost,4,unique logistic,1,0.25,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
+EfficiencyOverhaulBoost,3,unique logistic,1,0.2,shipmastery.mastery.impl.logistics.EfficiencyOverhaulBoost
+ExpandedCargoBoost,4,unique logistic,1,0.2,shipmastery.mastery.impl.logistics.ExpandedCargoBoost
+ExpandedFuelBoost,4,unique logistic,1,0.2,shipmastery.mastery.impl.logistics.ExpandedFuelBoost
+ExpandedCrewBoost,4,unique logistic,1,0.2,shipmastery.mastery.impl.logistics.ExpandedCrewBoost
 DriveFieldStabilizerBoost,4,unique logistic,1,0.5,shipmastery.mastery.impl.logistics.DriveFieldStabilizerBoost
 GroundSupportBoost,4,unique logistic,1,100,shipmastery.mastery.impl.logistics.GroundSupportBoost
 # This has to be a mastery effect and not a stat, as the reduced d-mods need to be reapplied for the changes to take effect
@@ -33,12 +38,12 @@ ModifyStatsFlat,,varying negative_strength_allowed scale_selection_weight,,1,shi
 ModifyStatsEffect,,varying negative_strength_allowed scale_selection_weight,,1,shipmastery.mastery.impl.stats.ModifyStatsEffect
 #### COMBAT ####
 ApplyOfficerSkill,2,varying combat,,1,shipmastery.mastery.impl.combat.ApplyOfficerSkill
-ShieldHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
-ArmorHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ArmorHullmodPackage
-HullHullmodPackage,2,combat unique,,0.075,shipmastery.mastery.impl.hullmods.HullHullmodPackage
+ShieldHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.ShieldHullmodPackage
+ArmorHullmodPackage,2,combat unique,,0.12,shipmastery.mastery.impl.hullmods.ArmorHullmodPackage
+HullHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.HullHullmodPackage
 EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.EngineHullmodPackage
 FighterHullmodPackage,2,combat unique,,0.15,shipmastery.mastery.impl.hullmods.FighterHullmodPackage
-FluxHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
+FluxHullmodPackage,2,combat unique,,0.12,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
 BuiltInHSA,2,combat unique,,150,shipmastery.mastery.impl.hullmods.BuiltInHSA
 AmmoHullmodPackage,2,combat unique,,0.25,shipmastery.mastery.impl.hullmods.AmmoHullmodPackage
 BuiltInNeuralIntegrator,3,combat unique,,1,shipmastery.mastery.impl.hullmods.BuiltInNeuralIntegrator
@@ -57,25 +62,25 @@ BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.
 EnergyDamageFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.EnergyDamageFluxLevel
 MissileRoFFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRoFFluxLevel
 SpeedHullLevel,4,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.SpeedHullLevel
-HitAngleDR,3,combat unique negative_strength_allowed,,-0.125,shipmastery.mastery.impl.combat.HitAngleDR
+HitAngleDR,3,combat unique negative_strength_allowed,,-0.15,shipmastery.mastery.impl.combat.HitAngleDR
 TPCUpgrade,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCUpgrade
 TPCChaining,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 ArmorRepair,4,combat unique,,0.03,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,4,combat unique,,2.5,shipmastery.mastery.impl.combat.HullThresholdDR
 BackArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.unused.BackArmorBoost
-FrontArmorBoost,2,combat unique,,0.15,shipmastery.mastery.impl.combat.FrontArmorBoost
-ShieldEfficiencyNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
+FrontArmorBoost,2,combat unique,,0.2,shipmastery.mastery.impl.combat.FrontArmorBoost
+ShieldEfficiencyNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.ShieldEfficiencyNearbyEnemies
 VentingSpeedBoost,3,combat unique,,0.2,shipmastery.mastery.impl.combat.VentingSpeedBoost
 RangeNotMoving,2,combat unique,,0.15,shipmastery.mastery.impl.unused.RangeNotMoving
 SafetyOverridesBoost,2,combat unique,,15,shipmastery.mastery.impl.combat.SafetyOverridesBoost
 BuiltInMissileRegen,3,combat unique,,0.03333,shipmastery.mastery.impl.combat.BuiltInMissileRegen
-TimeFlowNearbyEnemies,4,combat,,0.025,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
+TimeFlowNearbyEnemies,4,combat,,0.01,shipmastery.mastery.impl.combat.TimeFlowNearbyEnemies
 # Note: can't just use Stats.CONVERTED_HANGAR_MOD because mastery effects always get applied after all other hullmods, including converted hangar
 ConvertedHangarBays,4,combat triggers_autofit,,0.5,shipmastery.mastery.impl.combat.ConvertedHangarBays
 ConvertedCargoBayNoPenalty,2,combat unique,,1,shipmastery.mastery.impl.combat.ConvertedCargoBayNoPenalty
 ExtraFighterPerWing,3,combat unique,1,1,shipmastery.mastery.impl.combat.ExtraFighterPerWing
-DamageTakenNearbyEnemies,3,combat unique,,0.015,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
+DamageTakenNearbyEnemies,3,combat unique,,0.02,shipmastery.mastery.impl.combat.DamageTakenNearbyEnemies
 LargeBallisticFragDamage,4,combat unique prefix_flagship_only,,150,shipmastery.mastery.impl.combat.LargeBallisticFragDamage
 PhasedCRDegradation,2,combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PhasedCRDegradation
 RangeNoNearbyEnemies,2,combat unique,,0.1,shipmastery.mastery.impl.combat.RangeNoNearbyEnemies

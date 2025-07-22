@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,14 +22,14 @@ public class MinimumReplacementRate extends BaseMasteryEffect {
     public static final float BASE_REPLACEMENT_RATE_MIN = Global.getSettings().getFloat("minFighterReplacementRate");
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.MinimumReplacementRate)
                                  .colors(Misc.getTextColor(),Settings.POSITIVE_HIGHLIGHT_COLOR)
-                                 .params(Utils.asPercent(0), Utils.asPercent(BASE_REPLACEMENT_RATE_MIN + getStrength(selectedModule)));
+                                 .params(Utils.asPercent(0), Utils.asPercent(BASE_REPLACEMENT_RATE_MIN + getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.MinimumReplacementRatePost, 0f, Misc.getTextColor(), Utils.asPercent(BASE_REPLACEMENT_RATE_MIN));
     }

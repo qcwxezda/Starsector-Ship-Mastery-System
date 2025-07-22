@@ -33,6 +33,7 @@ import particleengine.Particles;
 import shipmastery.deferred.CombatDeferredActionPlugin;
 import shipmastery.fx.JitterEmitter;
 import shipmastery.fx.RingBurstEmitter;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -56,7 +57,7 @@ public class DimensionalTether {
     // No CombatEngine.getPlugins or similar, so we need to track the existing repair scripts ourselves
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
     public static final float MIN_CR_COST = 0.1f;
-    public static final float FLUX_BOOST_AMOUNT = 0.2f;
+    public static final float FLUX_REDUCTION_AMOUNT = 0.1f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
     public static final String REMOVED_PHASE_ANCHOR_KEY = "sms_RemovedPhaseAnchor";
     public static final String IS_RETREATING_KEY = "sms_DimensionalTetherIsRetreating";
@@ -110,7 +111,7 @@ public class DimensionalTether {
         @Override
         public void advance(float amount) {
             if (isRetreating) {
-                for (ShipAPI module : Utils.getAllModules(ship)) {
+                for (ShipAPI module : EngineUtils.getAllModules(ship)) {
                     module.setExtraAlphaMult2(Math.max(0f, (RETREAT_DELAY - retreatTime) / RETREAT_DELAY));
                 }
                 retreatTime += amount;
@@ -126,7 +127,7 @@ public class DimensionalTether {
             if (damageAmount >= ship.getHitpoints() && !isRetreating && ship.getCurrentCR() >= crCost) {
                 ship.setCustomData(IS_RETREATING_KEY, true);
                 isRetreating = true;
-                for (ShipAPI module : Utils.getAllModules(ship)) {
+                for (ShipAPI module : EngineUtils.getAllModules(ship)) {
                     JitterEmitter emitter = new JitterEmitter(module, module.getSpriteAPI(), new Color(150, 250, 200), 0f, module.getShieldRadiusEvenIfNoShield() / 2f, 0.25f, false, 0.3f, 100);
                     emitter.setBaseIntensity(0.8f);
                     emitter.enableDynamicAnchoring();
@@ -293,18 +294,21 @@ public class DimensionalTether {
     public static class Elite extends BaseSkillEffectDescription implements ShipSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id, float level) {
-            stats.getFluxDissipation().modifyPercent(id, 100f * FLUX_BOOST_AMOUNT);
+            stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
+            stats.getEnergyWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
+            stats.getMissileWeaponFluxCostMod().modifyMult(id, 1f - FLUX_REDUCTION_AMOUNT);
         }
 
         @Override
         public void unapply(MutableShipStatsAPI stats, ShipAPI.HullSize hullSize, String id) {
-            stats.getFluxDissipation().unmodify(id);
-            stats.getFluxCapacity().unmodify(id);
+            stats.getBallisticWeaponFluxCostMod().unmodify(id);
+            stats.getEnergyWeaponFluxCostMod().unmodify(id);
+            stats.getMissileWeaponFluxCostMod().unmodify(id);
         }
 
         @Override
         public void createCustomDescription(MutableCharacterStatsAPI stats, SkillSpecAPI skill, TooltipMakerAPI info, float width) {
-            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(FLUX_BOOST_AMOUNT));
+            info.addPara(Strings.Skills.dimensionalTetherEliteEffect, 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), Utils.asPercent(FLUX_REDUCTION_AMOUNT));
         }
     }
 }

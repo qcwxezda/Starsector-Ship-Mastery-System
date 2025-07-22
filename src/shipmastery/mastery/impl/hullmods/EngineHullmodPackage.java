@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.hullmods;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -19,7 +20,7 @@ public class EngineHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    protected String[] getDescriptionParams(ShipAPI selectedModule) {
+    protected String[] getDescriptionParams(ShipVariantAPI selectedVariant) {
         return new String[] {
                 Utils.getHullmodName(HullMods.UNSTABLE_INJECTOR),
                 Utils.getHullmodName(HullMods.AUXILIARY_THRUSTERS),
@@ -29,11 +30,11 @@ public class EngineHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.EngineHullmodPackagePost,
                 0f,
-                Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(getStrength(selectedModule)*TOP_SPEED_BONUS[Utils.hullSizeToInt(selectedModule.getHullSize())]));
+                Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(getStrength(selectedVariant)*TOP_SPEED_BONUS[Utils.hullSizeToInt(selectedVariant.getHullSize())]));
     }
 
     @Override

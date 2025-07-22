@@ -1,0 +1,9 @@
+# Use this to force different ship classes to share the same mastery pool
+# Usage:
+# "base_hull_id": ["child_hull_id1", "child_hull_id2", "child_hull_id3"]
+# Forces all child hull ids to use the mastery pool of the base hull id
+# Example:
+# "MSS_Skyrend_Elite": ["MSS_Skyrend_EliteB", "MSS_Skyrend_EliteC", "MSS_Skyrend_EliteD", "MSS_Skyrend_EliteE"]
+{
+
+}

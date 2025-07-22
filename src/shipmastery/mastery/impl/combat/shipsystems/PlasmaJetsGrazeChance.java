@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -26,14 +27,14 @@ public class PlasmaJetsGrazeChance extends ShipSystemEffect {
     public static final float DAMAGE_MULT = 0.5f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsGrazeChance).params(getSystemName(), Utils.asPercent(DAMAGE_MULT));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.PlasmaJetsGrazeChancePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(getStrength(selectedModule)));
+        tooltip.addPara(Strings.Descriptions.PlasmaJetsGrazeChancePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

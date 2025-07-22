@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.MasteryDescription;
@@ -9,9 +10,9 @@ import shipmastery.util.Utils;
 
 public class DamperFieldDissipation extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.DamperFieldDissipation)
-                                 .params(getSystemName(), Utils.asFloatTwoDecimals(1f + getStrength(selectedModule)));
+                                 .params(getSystemName(), Utils.asFloatTwoDecimals(1f + getStrength(selectedVariant)));
     }
 
     @Override

@@ -1,8 +1,10 @@
 {
   "drop_prob_officer_sms_fractured_gamma_core": 0.3,
-  "drop_prob_officer_sms_gamma_k_core": 0.2,
-  "drop_prob_officer_sms_beta_k_core": 0.1,
-  "drop_prob_officer_sms_alpha_k_core": 0.03,
+  "drop_prob_officer_sms_gamma_pseudocore": 0.2,
+  "drop_prob_officer_sms_beta_pseudocore": 0.1,
+  "drop_prob_officer_sms_warped_pseudocore": 0.1,
+  "drop_prob_officer_sms_crystalline_pseudocore": 0.1,
+  "drop_prob_officer_sms_alpha_pseudocore": 0.03,
 
   "ruleCommandPackages":[
     "shipmastery.campaign.rulecmd"
@@ -11,5 +13,27 @@
   "plugins": {
     "sms_CombatListenerManager": "shipmastery.combat.CombatListenerManager",
     "sms_CombatDeferredActionPlugin": "shipmastery.deferred.CombatDeferredActionPlugin"
+  },
+
+  "graphics": {
+    "ui": {
+      "sms_mastery_bar": "graphics/hud/bar_armor.png",
+      "sms_upgrade_icon": "graphics/icons/ui/sms_upgrade_icon.png",
+      "sms_upgrade_icon_green": "graphics/icons/ui/sms_upgrade_icon_green.png",
+      "sms_reroll_icon": "graphics/icons/ui/sms_reroll_icon.png",
+      "sms_reroll_icon_green": "graphics/icons/ui/sms_reroll_icon_green.png",
+      "sms_confirm_icon": "graphics/icons/ui/sms_confirm_icon.png",
+      "sms_cancel_icon": "graphics/icons/ui/sms_cancel_icon.png",
+      "sms_construct_icon": "graphics/icons/ui/sms_construct_icon.png",
+      "sms_remove_smod_icon": "graphics/icons/ui/sms_remove_smod_icon.png",
+      "sms_remove_smod_icon_green": "graphics/icons/ui/sms_remove_smod_icon_green.png",
+      "sms_restore_icon": "graphics/icons/ui/sms_restore_icon.png",
+      "sms_restore_icon_green": "graphics/icons/ui/sms_restore_icon_green.png",
+      "sms_integrate_icon": "graphics/icons/ui/sms_integrate_icon.png",
+      "sms_integrate_icon_green": "graphics/icons/ui/sms_integrate_icon_green.png",
+      "sms_lightbulb_icon": "graphics/icons/ui/sms_lightbulb_icon.png",
+      "sms_all_icon": "graphics/icons/ui/sms_all_icon.png",
+      "sms_icon_broken": "graphics/icons/tactical/broken.png"
+    }
   }
 }

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,22 +22,22 @@ public class FighterCountDR extends BaseMasteryEffect {
 
     public static final int MAX_STACKS_PER_WING = 5;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.FighterCountDR).params(
-                Utils.asInt(getMaxRange(selectedModule)),
-                Utils.asPercent(getDRPerFighter(selectedModule)));
+                Utils.asInt(getMaxRange(selectedVariant)),
+                Utils.asPercent(getDRPerFighter(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        int maxStacks = getMaxStacks(selectedModule);
+        int maxStacks = getMaxStacks(selectedVariant);
         tooltip.addPara(
                 Strings.Descriptions.FighterCountDRPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR},
                 Utils.asInt(maxStacks),
-                Utils.asPercent(maxStacks * getDRPerFighter(selectedModule)));
+                Utils.asPercent(maxStacks * getDRPerFighter(selectedVariant)));
     }
 
     @Override
@@ -46,23 +47,23 @@ public class FighterCountDR extends BaseMasteryEffect {
             ship.addListener(
                     new FighterCountDRScript(
                             ship,
-                            getDRPerFighter(ship),
-                            getMaxStacks(ship),
-                            getMaxRange(ship),
+                            getDRPerFighter(ship.getVariant()),
+                            getMaxStacks(ship.getVariant()),
+                            getMaxRange(ship.getVariant()),
                             id));
         }
     }
 
-    public float getDRPerFighter(ShipAPI ship) {
-        return getStrength(ship) / ship.getNumFighterBays();
+    public float getDRPerFighter(ShipVariantAPI variant) {
+        return getStrength(variant) / variant.getHullSpec().getFighterBays();
     }
 
-    public int getMaxStacks(ShipAPI ship) {
-        return ship.getNumFighterBays() * MAX_STACKS_PER_WING;
+    public int getMaxStacks(ShipVariantAPI variant) {
+        return variant.getHullSpec().getFighterBays() * MAX_STACKS_PER_WING;
     }
 
-    public float getMaxRange(ShipAPI ship) {
-        return getStrength(ship) * 12500f;
+    public float getMaxRange(ShipVariantAPI variant) {
+        return getStrength(variant) * 12500f;
     }
 
     static class FighterCountDRScript implements AdvanceableListener {

@@ -4,8 +4,8 @@ luddic_path, -2,,0,0.25,
 pirates, -2,,1,0.4,
 mercenary, 1,,3,0.9,0.8,0.25
 remnant, 2,2,3,0.9,0.9,0.5
-threat, 6,1,0,0,
-dweller, 8,1,0,0,,
+threat, 5,1,0,0,
+dweller, 7,1,0,0,,
 omega,5,1,5,1,1,0.5
 sms_curator,0,0,0,1,1,1
 <default>, 0, 2.5,2,0.75,0.75,0

@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -22,13 +23,13 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
 
     static final float MAX_FLUX_LEVEL = 0.75f;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         String str = Utils.asPercent(getStrengthForPlayer());
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BallisticFireRateFluxLevel).params(str, str);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.BallisticFireRateFluxLevelPost, 0f, Misc.getTextColor(),
                         Utils.asPercent(MAX_FLUX_LEVEL));
@@ -64,6 +65,7 @@ public class BallisticFireRateFluxLevel extends BaseMasteryEffect {
         public void advance(float amount) {
             if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
                 ship.removeListener(this);
+                return;
             }
             checkerInterval.advance(amount);
 

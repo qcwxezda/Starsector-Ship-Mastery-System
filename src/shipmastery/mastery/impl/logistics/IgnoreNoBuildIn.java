@@ -32,7 +32,7 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         Object[] params = new Object[hullmodIds.size()];
         String str = makeString(params);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.IgnoreNoBuildIn + str).params(params);
@@ -63,8 +63,7 @@ public class IgnoreNoBuildIn extends BaseMasteryEffect {
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
         if ((ShipAPI.HullSize.CAPITAL_SHIP.equals(spec.getHullSize()) || spec.isBuiltInMod(HullMods.SAFETYOVERRIDES)) &&
-                (!spec.isPhase() || spec.isBuiltInMod(HullMods.PHASE_ANCHOR)) &&
-                (!spec.isBuiltInMod(HullMods.AUTOMATED) || spec.isBuiltInMod(HullMods.NEURAL_INTEGRATOR))) return null;
+                (!spec.isPhase() || spec.isBuiltInMod(HullMods.PHASE_ANCHOR))) return null;
         return 0.75f;
     }
 

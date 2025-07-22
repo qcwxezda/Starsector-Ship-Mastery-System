@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -21,14 +22,14 @@ public class StartingRange extends BaseMasteryEffect {
     public static final float BASE_PPT_FRAC = 0.4f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.StartingRange)
-                .params(Utils.asPercent(MAX_RANGE_BONUS[Utils.hullSizeToInt(selectedModule.getHullSize())]), Utils.asPercentNoDecimal(BASE_PPT_FRAC*getStrength(selectedModule)))
+                .params(Utils.asPercent(MAX_RANGE_BONUS[Utils.hullSizeToInt(selectedVariant.getHullSize())]), Utils.asPercentNoDecimal(BASE_PPT_FRAC*getStrength(selectedVariant)))
                 .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.StartingRangePost, 0f, Misc.getTextColor(), Utils.asInt(MAX_PPT), Utils.asInt(MAX_PPT));
     }
 

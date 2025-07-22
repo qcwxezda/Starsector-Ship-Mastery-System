@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -7,8 +8,10 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +28,7 @@ import java.awt.Color;
 
 public class TPCUpgrade extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TPCUpgrade).params(Strings.Descriptions.TPCName,
                                                                                                Utils.asPercent(strength),
@@ -33,7 +36,7 @@ public class TPCUpgrade extends BaseMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.TPCUpgradePost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asInt((getStrengthForPlayer() * 15f)));
     }
@@ -100,10 +103,17 @@ public class TPCUpgrade extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
+        return getTPCMasterySelectionWeight(spec);
+    }
+
+    public static Float getTPCMasterySelectionWeight(ShipHullSpecAPI spec) {
         if (spec.getBuiltInWeapons() == null) return null;
         for (String id : spec.getBuiltInWeapons().values()) {
-            if ("tpc".equals(id)) {
-                return 1f;
+            var weaponSpec = Global.getSettings().getWeaponSpec(id);
+            if (weaponSpec != null && weaponSpec.getProjectileSpec() instanceof ProjectileSpecAPI pSpec) {
+                if ("tpc_shot".equals(pSpec.getId())) {
+                    return 1f;
+                }
             }
         }
         return null;

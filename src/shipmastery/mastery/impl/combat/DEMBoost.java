@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.dem.DEMEffect;
@@ -18,30 +19,30 @@ import shipmastery.util.Utils;
 public class DEMBoost extends BaseMasteryEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.DEMBoost);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+        float strength = getStrength(selectedVariant);
         tooltip.addPara(
                 Strings.Descriptions.DEMBoostPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asFloatOneDecimal(1f / getRegenRate(selectedModule, WeaponAPI.WeaponSize.SMALL)),
-                Utils.asFloatOneDecimal(1f / getRegenRate(selectedModule, WeaponAPI.WeaponSize.MEDIUM)),
-                Utils.asFloatOneDecimal(1f / getRegenRate(selectedModule, WeaponAPI.WeaponSize.LARGE)),
+                Utils.asFloatOneDecimal(1f / getRegenRate(selectedVariant, WeaponAPI.WeaponSize.SMALL)),
+                Utils.asFloatOneDecimal(1f / getRegenRate(selectedVariant, WeaponAPI.WeaponSize.MEDIUM)),
+                Utils.asFloatOneDecimal(1f / getRegenRate(selectedVariant, WeaponAPI.WeaponSize.LARGE)),
                 Utils.asPercent(50f * strength),
                 Utils.asPercent(25f * strength));
     }
 
-    public float getRegenRate(ShipAPI ship, WeaponAPI.WeaponSize slotSize) {
+    public float getRegenRate(ShipVariantAPI variant, WeaponAPI.WeaponSize slotSize) {
         return switch (slotSize) {
-            case SMALL -> getStrength(ship);
-            case MEDIUM -> 1.5f * getStrength(ship);
-            case LARGE -> 2f * getStrength(ship);
+            case SMALL -> getStrength(variant);
+            case MEDIUM -> 1.5f * getStrength(variant);
+            case LARGE -> 2f * getStrength(variant);
         };
     }
 
@@ -75,7 +76,7 @@ public class DEMBoost extends BaseMasteryEffect {
                 if (weapon.getAmmoPerSecond() <= 0f) {
                     int burstSize = weapon.getSpec().getBurstSize();
                     weapon.getAmmoTracker().setReloadSize(burstSize);
-                    weapon.getAmmoTracker().setAmmoPerSecond(burstSize * getRegenRate(ship, weapon.getSlot().getSlotSize()));
+                    weapon.getAmmoTracker().setAmmoPerSecond(burstSize * getRegenRate(ship.getVariant(), weapon.getSlot().getSlotSize()));
                 }
                 if (weapon.getSlot() != null && weapon.getSlot().getSlotSize() == WeaponAPI.WeaponSize.LARGE) {
                     missile.setHitpoints(missile.getHitpoints() * hpMult);

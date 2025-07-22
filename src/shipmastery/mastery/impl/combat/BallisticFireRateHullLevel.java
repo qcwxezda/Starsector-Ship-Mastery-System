@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -22,13 +23,13 @@ public class BallisticFireRateHullLevel extends BaseMasteryEffect {
 
     static final float MIN_HULL_LEVEL = 0.25f;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         String str = Utils.asPercent(getStrengthForPlayer());
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.BallisticFireRateHullLevel).params(str, str);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.BallisticFireRateHullLevelPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.asPercent(MIN_HULL_LEVEL));

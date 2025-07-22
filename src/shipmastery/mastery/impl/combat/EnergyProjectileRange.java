@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponBaseRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -12,8 +13,8 @@ import shipmastery.util.Utils;
 
 public class EnergyProjectileRange extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyProjectileRange).params(Utils.asInt(getStrength(selectedModule)));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyProjectileRange).params(Utils.asInt(getStrength(selectedVariant)));
     }
 
     @Override

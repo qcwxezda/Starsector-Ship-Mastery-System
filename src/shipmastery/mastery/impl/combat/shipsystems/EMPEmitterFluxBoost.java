@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -20,19 +21,19 @@ public class EMPEmitterFluxBoost extends ShipSystemEffect {
     public static final float DECAY_RATE = 0.01f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        String str = Utils.asPercent(getStrength(selectedModule));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        String str = Utils.asPercent(getStrength(selectedVariant));
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EMPEmitterFluxBoost)
                                  .params(getSystemName(), str, str);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.EMPEmitterFluxBoostPost, 0f,
                         new Color[]{Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR,
                                 Settings.NEGATIVE_HIGHLIGHT_COLOR}, Utils.asInt(MAX_STACKS),
-                        Utils.asPercent(MAX_STACKS * getStrength(selectedModule)), Utils.asPercent(DECAY_RATE));
+                        Utils.asPercent(MAX_STACKS * getStrength(selectedVariant)), Utils.asPercent(DECAY_RATE));
     }
 
     @Override

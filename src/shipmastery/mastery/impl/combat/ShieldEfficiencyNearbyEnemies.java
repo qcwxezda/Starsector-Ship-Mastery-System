@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -20,32 +21,35 @@ import java.awt.Color;
 public class ShieldEfficiencyNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
+    public static final float[] EFFECT_RANGE = new float[] {750f, 900f, 1200f, 1500f};
+
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
-                .initDefaultHighlight(Strings.Descriptions.ShieldEfficiencyNearbyEnemies)
-                .params(Utils.asPercent(getStrength(selectedModule)), Utils.asInt(getRange(selectedModule)));
+                .init(Strings.Descriptions.ShieldEfficiencyNearbyEnemies)
+                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.ShieldEfficiencyNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR},
                 "" + MAX_EFFECT_STACKS,
-                Utils.asPercent(getStrength(selectedModule) * MAX_EFFECT_STACKS));
+                Utils.asPercent(getStrength(selectedVariant) * MAX_EFFECT_STACKS));
     }
 
-    public float getRange(ShipAPI ship) {
-        return getStrength(ship) * 50000f;
+    public float getRange(ShipVariantAPI variant) {
+        return EFFECT_RANGE[Utils.hullSizeToInt(variant.getHullSize())];
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(ShieldEfficiencyNearbyEnemiesScript.class)) {
-            ship.addListener(new ShieldEfficiencyNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
+            ship.addListener(new ShieldEfficiencyNearbyEnemiesScript(ship, getRange(ship.getVariant()), getStrength(ship), id));
         }
     }
 

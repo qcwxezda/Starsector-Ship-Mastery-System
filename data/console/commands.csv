@@ -1,4 +1,5 @@
 command,class,tags,syntax,help
-sms_AddMasteryPoints,shipmastery.console.AddMasteryPoints,"cheat,campaign",sms_AddMasteryPoints hullId amount,Adds mastery points to the specified hull type.
+sms_AddMasteryPoints,shipmastery.console.AddMasteryPoints,"cheat,campaign",sms_AddMasteryPoints hullId amount,Adds mastery points to the specified ship class.
+sms_AddMasteryPointsAll,shipmastery.console.AddMasteryPointsAll,"cheat,campaign",sms_AddMasteryPointsAll amount,Adds mastery points to all ship classes in your fleet.
 sms_ClearAllMasteryPoints,shipmastery.console.ClearAllMasteryPoints,"cheat,campaign",sms_ClearAllMasteryPoints,Sets MP of all ship hull types to 0.
 sms_SuicideAll,shipmastery.console.SuicideAll,"cheat,combat",sms_SuicideAll,Destroys all player-side ships.

@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -22,19 +23,19 @@ public class DamagePerShipDestroyed extends BaseMasteryEffect {
     public static final float BASE_CAP = 0.075f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.DamagePerShipDestroyed)
                 .params(Utils.asPercent(AMOUNT_FOR_EQUAL_DP), Utils.asPercent(AMOUNT_FOR_EQUAL_DP))
                 .colors(Misc.getTextColor(), Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.DamagePerShipDestroyedPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(BASE_CAP * getStrength(selectedModule)));
+                Utils.asPercent(BASE_CAP * getStrength(selectedVariant)));
     }
 
     @Override

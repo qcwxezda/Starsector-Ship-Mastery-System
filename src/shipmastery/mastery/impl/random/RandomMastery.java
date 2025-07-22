@@ -1,9 +1,8 @@
 package shipmastery.mastery.impl.random;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import shipmastery.ShipMastery;
@@ -40,7 +39,7 @@ public class RandomMastery extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return null;
     }
 
@@ -55,6 +54,7 @@ public class RandomMastery extends BaseMasteryEffect {
         Set<Class<?>> uniqueDontRepeat = new HashSet<>();
         Set<Class<?>> seenNotUnique = new HashSet<>();
         int maxTier = args.length >= 2 ? Integer.parseInt(args[1]) : 1;
+
         for (int i = 1; i <= ShipMastery.getMaxMasteryLevel(spec); i++) {
             List<MasteryEffect> effects = new ArrayList<>();
             for (String id : ShipMastery.getMasteryOptionIds(spec, i)) {
@@ -123,7 +123,7 @@ public class RandomMastery extends BaseMasteryEffect {
             MasteryInfo selected = effectPicker.pickAndRemove();
 
             params.clear();
-            params.add("" + getStrength((PersonAPI) null) * selected.defaultStrength);
+            params.add("" + getBaseStrength() * selected.defaultStrength);
 
             MasteryGenerator generator = new MasteryGenerator(selected, null);
             effect = generator.generateDontInit(getHullSpec(), getLevel(), getIndex(), getOptionId());

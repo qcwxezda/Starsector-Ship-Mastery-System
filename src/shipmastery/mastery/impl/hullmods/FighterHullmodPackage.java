@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -21,21 +22,21 @@ public class FighterHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    protected String[] getDescriptionParams(ShipAPI selectedModule) {
+    protected String[] getDescriptionParams(ShipVariantAPI selectedVariant) {
         return new String[] {
                 Utils.getHullmodName(HullMods.EXPANDED_DECK_CREW),
                 Utils.getHullmodName(HullMods.RECOVERY_SHUTTLES),
-                Utils.asPercentNoDecimal(getStrength(selectedModule))
+                Utils.asPercentNoDecimal(getStrength(selectedVariant))
         };
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.FighterHullmodPackagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercentNoDecimal(getStrength(selectedModule)*REQ_NOT_MET_MULT));
+                Utils.asPercentNoDecimal(getStrength(selectedVariant)*REQ_NOT_MET_MULT));
     }
 
     @Override

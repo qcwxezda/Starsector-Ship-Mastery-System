@@ -45,9 +45,11 @@ public class ShipGraveyardSpawner extends BaseCampaignEventListener implements S
     protected final Map<FleetMemberAPI, PersonAPI> origAICaptains = new HashMap<>();
     public static final String AI_CORE_MEM_KEY = "$sms_RecoverableWreckAICoreID";
 
-
     public ShipGraveyardSpawner() {
         super(false);
+        Global.getSector().addTransientScript(this);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().getListenerManager().addListener(this, true);
     }
 
     @Override

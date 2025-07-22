@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,19 +19,19 @@ public class FlatArmorHullDamage extends BaseMasteryEffect {
     public static final float BASE_HULL_FRAC_REQUIRED = 1f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.FlatArmorHullDamage)
-                .params(Utils.asInt(MAX_EFFECTIVE_ARMOR[Utils.hullSizeToInt(selectedModule.getHullSize())]))
+                .params(Utils.asInt(MAX_EFFECTIVE_ARMOR[Utils.hullSizeToInt(selectedVariant.getHullSize())]))
                 .colors(Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.FlatArmorHullDamagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercentNoDecimal(BASE_HULL_FRAC_REQUIRED / getStrength(selectedModule)));
+                Utils.asPercentNoDecimal(BASE_HULL_FRAC_REQUIRED / getStrength(selectedVariant)));
     }
 
     @Override

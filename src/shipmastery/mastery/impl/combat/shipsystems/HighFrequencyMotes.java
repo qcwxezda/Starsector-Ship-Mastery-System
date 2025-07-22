@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.combat.MoteControlScript;
@@ -20,13 +21,13 @@ public class HighFrequencyMotes extends ShipSystemEffect {
     public static final float MAX_MOTES_REDUCTION = 0.5f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HighFrequencyMotes)
                                  .params(Global.getSettings().getHullModSpec(HullMods.HIGH_FREQUENCY_ATTRACTOR).getDisplayName());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.HighFrequencyMotesPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asPercent(RANGE_REDUCTION), Utils.asPercent(MAX_MOTES_REDUCTION));
     }

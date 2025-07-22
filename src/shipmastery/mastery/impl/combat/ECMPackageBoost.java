@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -15,9 +16,9 @@ import shipmastery.util.Utils;
 
 public class ECMPackageBoost extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.ECMPackageBoost)
-                                 .params(Global.getSettings().getHullModSpec(HullMods.ECM).getDisplayName(), Utils.asPercent(getStrength(selectedModule)));
+                                 .params(Global.getSettings().getHullModSpec(HullMods.ECM).getDisplayName(), Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override

@@ -52,7 +52,7 @@ public interface MasteryEffect {
     void applyEffectsAfterShipCreation(ShipAPI ship);
 
     /** Will be displayed in the mastery panel. */
-    MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
+    MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember);
 
     /** Same usage as {@link HullModEffect#applyEffectsToFighterSpawnedByShip}  <br>
      *  All mastery effects are applied after all other hullmod effects.
@@ -77,11 +77,11 @@ public interface MasteryEffect {
     float getNPCWeight(FleetMemberAPI fm);
 
     /** Will be displayed in the mastery panel. */
-    void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
+    void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember);
 
     /** Adds a tooltip that shows upon hovering over the effect.
      *  {@link MasteryTags#HAS_TOOLTIP} must be added as a tag in {@code mastery_list.csv}. */
-    void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember);
+    void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember);
 
     /** All mastery effects have a strength value. Strength is assigned on {@link MasteryEffect#init} as the first
      *  parameter, and defaults to {@code default_strength} if no parameters are passed. */

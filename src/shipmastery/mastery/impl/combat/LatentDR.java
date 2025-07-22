@@ -1,6 +1,7 @@
 package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,14 +19,14 @@ public class LatentDR extends BaseMasteryEffect {
     public static final float BASE_PPT_FRAC = 0.8f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.LatentDR)
-                .params(Utils.asPercent(MAX_DAMAGE_REDUCTION), Utils.asPercentNoDecimal(BASE_PPT_FRAC/getStrength(selectedModule)))
+                .params(Utils.asPercent(MAX_DAMAGE_REDUCTION), Utils.asPercentNoDecimal(BASE_PPT_FRAC/getStrength(selectedVariant)))
                 .colors(Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.LatentDRPost, 0f, Misc.getTextColor(), Utils.asInt(MAX_PPT), Utils.asInt(MAX_PPT));
     }
 

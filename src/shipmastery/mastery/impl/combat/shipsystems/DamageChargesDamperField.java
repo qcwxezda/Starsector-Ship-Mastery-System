@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -23,58 +24,59 @@ import java.awt.Color;
 
 public class DamageChargesDamperField extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.DamageChargesDamperField).params(getSystemName());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.DamageChargesDamperFieldPost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(minChargePerHit(selectedModule)),
-                Utils.asPercent(maxChargePerHit(selectedModule)));
+                Utils.asPercent(minChargePerHit(selectedVariant)),
+                Utils.asPercent(maxChargePerHit(selectedVariant)));
         tooltip.addPara(
                 Strings.Descriptions.DamageChargesDamperFieldPost2,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(minDRPerHit(selectedModule)),
-                Utils.asPercent(maxDRPerHit(selectedModule)),
-                Utils.asPercent(maxTotalDR(selectedModule)));
+                Utils.asPercent(minDRPerHit(selectedVariant)),
+                Utils.asPercent(maxDRPerHit(selectedVariant)),
+                Utils.asPercent(maxTotalDR(selectedVariant)));
     }
 
-    public float minChargePerHit(ShipAPI ship) {
-        return 0.003f * getStrength(ship) / 0.4f;
+    public float minChargePerHit(ShipVariantAPI variant) {
+        return 0.003f * getStrength(variant) / 0.4f;
     }
 
-    public float maxChargePerHit(ShipAPI ship) {
-        return 0.015f * getStrength(ship) / 0.4f;
+    public float maxChargePerHit(ShipVariantAPI variant) {
+        return 0.015f * getStrength(variant) / 0.4f;
     }
 
-    public float minDRPerHit(ShipAPI ship) {
-        return 0.0015f * getStrength(ship) / 0.4f;
+    public float minDRPerHit(ShipVariantAPI variant) {
+        return 0.0015f * getStrength(variant) / 0.4f;
     }
 
-    public float maxDRPerHit(ShipAPI ship) {
-        return 0.0075f * getStrength(ship) / 0.4f;
+    public float maxDRPerHit(ShipVariantAPI variant) {
+        return 0.0075f * getStrength(variant) / 0.4f;
     }
 
-    public float maxTotalDR(ShipAPI ship) {
-        return getStrength(ship);
+    public float maxTotalDR(ShipVariantAPI variant) {
+        return getStrength(variant);
     }
 
     @Override
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
         if (!ship.hasListenerOfClass(DamageChargesDamperFieldScript.class)) {
+            var variant = ship.getVariant();
             ship.addListener(new DamageChargesDamperFieldScript(
                     ship,
-                    minChargePerHit(ship),
-                    maxChargePerHit(ship),
-                    minDRPerHit(ship),
-                    maxDRPerHit(ship),
-                    maxTotalDR(ship),
+                    minChargePerHit(variant),
+                    maxChargePerHit(variant),
+                    minDRPerHit(variant),
+                    maxDRPerHit(variant),
+                    maxTotalDR(variant),
                     id));
         }
     }

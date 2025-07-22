@@ -10,6 +10,10 @@ import shipmastery.ShipMastery;
 public class AddMasteryPoints implements BaseCommand {
     @Override
     public CommandResult runCommand(@NotNull String args, @NotNull BaseCommand.CommandContext context) {
+        if (context != CommandContext.CAMPAIGN_MARKET && context != CommandContext.CAMPAIGN_MAP) {
+            return CommandResult.WRONG_CONTEXT;
+        }
+
         String[] argList = args.split("\\s+");
 
         if (argList.length != 2) {
@@ -32,7 +36,7 @@ public class AddMasteryPoints implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        ShipMastery.addPlayerMasteryPoints(spec, amount, false, false);
+        ShipMastery.addPlayerMasteryPoints(spec, amount, false, false, ShipMastery.MasteryGainSource.OTHER);
         return CommandResult.SUCCESS;
     }
 

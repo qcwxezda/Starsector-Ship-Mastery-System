@@ -7,12 +7,13 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.config.Settings;
 import shipmastery.config.TransientSettings;
 import shipmastery.mastery.AdditiveMasteryEffect;
 import shipmastery.mastery.MasteryDescription;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
@@ -27,7 +28,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     public static final Map<String, Set<Integer>> overCapacityMap = new HashMap<>();
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         int increase = getIncreasePlayer();
         return MasteryDescription.initDefaultHighlight(
                                          increase == 1 ? Strings.Descriptions.SModsOverCapacitySingle : Strings.Descriptions.SModsOverCapacityPlural)
@@ -48,7 +49,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         if (stats == null || stats.getVariant() == null || stats.getFleetMember() == null) return;
 
-        int overMax = stats.getVariant().getSMods().size() - SModUtils.getMaxSMods(stats);
+        int overMax = Misc.getCurrSpecialMods(stats.getVariant()) - HullmodUtils.getMaxSMods(stats);
         if (overMax > 0) {
             Set<Integer> ids = overCapacityMap.get(stats.getFleetMember().getId());
             overMax = Math.min(overMax, ids == null ? 0 : ids.size());
@@ -78,7 +79,7 @@ public class SModsOverCapacity extends AdditiveMasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SModsOverCapacityPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR, Utils.asInt((100f * DP_PENALTY_PER_SMOD)) + "%");
     }

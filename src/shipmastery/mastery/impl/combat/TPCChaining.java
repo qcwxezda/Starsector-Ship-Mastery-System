@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -29,12 +30,12 @@ public class TPCChaining extends BaseMasteryEffect {
 
     static final float CHAIN_DAMAGE_FRAC = 0.5f;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TPCChaining).params(Strings.Descriptions.TPCName);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
         tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(strength), Utils.asInt((strength * 20f)), Utils.asInt((strength * 2500f)));
@@ -109,12 +110,6 @@ public class TPCChaining extends BaseMasteryEffect {
 
     @Override
     public Float getSelectionWeight(ShipHullSpecAPI spec) {
-        if (spec.getBuiltInWeapons() == null) return null;
-        for (String id : spec.getBuiltInWeapons().values()) {
-            if ("tpc".equals(id)) {
-                return 1f;
-            }
-        }
-        return null;
+        return TPCUpgrade.getTPCMasterySelectionWeight(spec);
     }
 }

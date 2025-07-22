@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
@@ -24,8 +25,8 @@ public class HullThresholdDR extends BaseMasteryEffect {
 
     public static final float DAMAGE_MULT = 0.1f;
 
-    public int getMaxActivations(ShipAPI ship) {
-        return switch (ship.getHullSize()) {
+    public int getMaxActivations(ShipVariantAPI variant) {
+        return switch (variant.getHullSize()) {
             case FRIGATE, DESTROYER -> 1;
             case CRUISER -> 2;
             case CAPITAL_SHIP -> 3;
@@ -33,34 +34,34 @@ public class HullThresholdDR extends BaseMasteryEffect {
         };
     }
 
-    public float getActivationThreshold(ShipAPI ship) {
-        return 1f / (1f + getMaxActivations(ship));
+    public float getActivationThreshold(ShipVariantAPI variant) {
+        return 1f / (1f + getMaxActivations(variant));
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.HullThresholdDR)
                 .params(
                         Utils.asPercent(1f - DAMAGE_MULT),
-                        Utils.asFloatOneDecimal(getStrength(selectedModule)));
+                        Utils.asFloatOneDecimal(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.HullThresholdDRPost,
                 0f,
                 Misc.getTextColor(),
-                Utils.asPercent(getActivationThreshold(selectedModule)),
-                "" + getMaxActivations(selectedModule));
+                Utils.asPercent(getActivationThreshold(selectedVariant)),
+                "" + getMaxActivations(selectedVariant));
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(HullThresholdDRScript.class)) {
-            ship.addListener(new HullThresholdDRScript(ship, getMaxActivations(ship), getActivationThreshold(ship), getStrength(ship), id));
+            ship.addListener(new HullThresholdDRScript(ship, getMaxActivations(ship.getVariant()), getActivationThreshold(ship.getVariant()), getStrength(ship), id));
         }
     }
 

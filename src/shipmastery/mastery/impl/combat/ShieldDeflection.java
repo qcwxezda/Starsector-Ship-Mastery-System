@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -40,7 +41,7 @@ public class ShieldDeflection extends BaseMasteryEffect {
                 && ship.getShield().getType() != ShieldAPI.ShieldType.PHASE
                 && ship.getShield().getType() != ShieldAPI.ShieldType.NONE
                 && !ship.hasListenerOfClass(ShieldDeflectionScript.class)) {
-            ship.addListener(new ShieldDeflectionScript(ship, getMaxTime(ship)));
+            ship.addListener(new ShieldDeflectionScript(ship, getMaxTime(ship.getVariant())));
         }
     }
     @Override
@@ -51,20 +52,20 @@ public class ShieldDeflection extends BaseMasteryEffect {
     }
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.ShieldDeflection).params(
-                Utils.asFloatOneDecimal(getMaxTime(selectedModule)),
+                Utils.asFloatOneDecimal(getMaxTime(selectedVariant)),
                 Utils.absValueAsPercent(1f - UNFOLD_RATE_MULT)).colors(
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Settings.NEGATIVE_HIGHLIGHT_COLOR);
     }
 
-    float getMaxTime(ShipAPI ship) {
-        return TIME_MULT[Utils.hullSizeToInt(ship.getHullSize())] * getStrength(ship);
+    float getMaxTime(ShipVariantAPI variant) {
+        return TIME_MULT[Utils.hullSizeToInt(variant.getHullSize())] * getStrength(variant);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.ShieldDeflectionPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Utils.absValueAsPercent(DAMAGE_TAKEN_MULT));

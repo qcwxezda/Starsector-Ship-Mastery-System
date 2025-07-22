@@ -10,8 +10,9 @@ import shipmastery.achievements.LevelUp;
 import shipmastery.achievements.MasteredMany;
 import shipmastery.achievements.MaxLevel;
 import shipmastery.achievements.UnlockAchievementAction;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
 import shipmastery.campaign.PlayerMPHandler;
-import shipmastery.campaign.skills.CyberneticAugmentation;
+import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.data.HullMasteryData;
 import shipmastery.data.MasteryGenerator;
 import shipmastery.data.MasteryInfo;
@@ -49,6 +50,7 @@ public abstract class ShipMastery {
      * Ship stat id -> singleton object
      */
     private static final Map<String, ShipStat> statSingletonMap = new HashMap<>();
+    private static final Map<String, AICoreInterfacePlugin> aiCoreInterfaceSingletonMap = new HashMap<>();
     private static final Map<Class<?>, String> effectToIdMap = new HashMap<>();
     private static final Map<String, Map<String, Float>> selectionWeightMap = new HashMap<>();
 
@@ -59,6 +61,7 @@ public abstract class ShipMastery {
     private static final Map<String, HullMasteryData> masteryMap = new HashMap<>();
     private static JSONObject masteryAssignments;
     private static final Map<String, MasteryInfo> masteryInfoMap = new HashMap<>();
+    private static final Map<String, String> masteryAliasMap = new HashMap<>();
 
     public static void addRerolledSpecThisSave(ShipHullSpecAPI spec) {
         rerolledSpecs.add(spec.getHullId());
@@ -89,6 +92,7 @@ public abstract class ShipMastery {
             data = new SaveData(0, 1);
             SAVE_DATA_TABLE.put(id, data);
         } else {
+            if (data.level >= getMaxMasteryLevel(spec)) return;
             data.level++;
         }
 
@@ -110,9 +114,9 @@ public abstract class ShipMastery {
         UnlockAchievementAction.unlockWhenUnpaused(LevelUp.class);
 
         if (getPlayerMasteryLevel(spec) >= getMaxMasteryLevel(spec)) {
-            CyberneticAugmentation.refreshPlayerMasteredCount();
+            MasteredMany.refreshPlayerMasteredCount();
             UnlockAchievementAction.unlockWhenUnpaused(MaxLevel.class);
-            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(CyberneticAugmentation.MASTERED_COUNT_KEY);
+            Integer count = (Integer) Global.getSector().getPlayerPerson().getMemoryWithoutUpdate().get(MasteredMany.MASTERED_COUNT_KEY);
             if (count != null && count >= MasteredMany.NUM_NEEDED) {
                 UnlockAchievementAction.unlockWhenUnpaused(MasteredMany.class);
             }
@@ -126,11 +130,20 @@ public abstract class ShipMastery {
         return data == null ? 0 : data.points;
     }
 
+    public enum MasteryGainSource {
+        COMBAT,
+        NONCOMBAT,
+        ITEM,
+        TRICKLE,
+        OTHER
+    }
+
     public static void addPlayerMasteryPoints(
             ShipHullSpecAPI spec,
             float amount,
             boolean trickleToSkins,
-            boolean countsForDifficultyProgression) {
+            boolean countsForDifficultyProgression,
+            MasteryGainSource source) {
         ShipHullSpecAPI restored = Utils.getRestoredHullSpec(spec);
         String baseHullId = restored.getBaseHullId();
         Set<String> allSkins = Utils.baseHullToAllSkinsMap.getOrDefault(baseHullId, new HashSet<>());
@@ -146,6 +159,8 @@ public abstract class ShipMastery {
             }
         }
 
+        amount = PlayerGainedMPListenerHandler.modifyPlayerMPGain(spec, amount, source);
+
         if (countsForDifficultyProgression) {
             PlayerMPHandler.addTotalCombatMP(amount);
         }
@@ -160,16 +175,8 @@ public abstract class ShipMastery {
                 data.points += amount * elem.two;
             }
         }
-    }
 
-    public static void setPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
-        String id = Utils.getRestoredHullSpecId(spec);
-        SaveData data = SAVE_DATA_TABLE.get(id);
-        if (data == null) {
-            SAVE_DATA_TABLE.put(id, new SaveData(amount, 0));
-        } else {
-            data.points = amount;
-        }
+        PlayerGainedMPListenerHandler.reportPlayerMPGain(spec, amount, source);
     }
 
     public static void spendPlayerMasteryPoints(ShipHullSpecAPI spec, float amount) {
@@ -185,7 +192,7 @@ public abstract class ShipMastery {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
-        data.activateLevel(level, optionId);
+        if (!data.activateLevel(level, optionId)) return;
         List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onActivate(Global.getSector().getPlayerPerson());
@@ -197,7 +204,7 @@ public abstract class ShipMastery {
         String id = Utils.getRestoredHullSpecId(spec);
         SaveData data = SAVE_DATA_TABLE.computeIfAbsent(id, k -> new SaveData(0, 0));
 
-        data.deactivateLevel(level);
+        if (!data.deactivateLevel(level)) return;
         List<MasteryEffect> effects = getMasteryEffects(spec, level, optionId);
         for (MasteryEffect effect : effects) {
             effect.onDeactivate(Global.getSector().getPlayerPerson());
@@ -218,7 +225,7 @@ public abstract class ShipMastery {
     public static List<String> getMasteryOptionIds(ShipHullSpecAPI spec, int level) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return new ArrayList<>(levelData.getEffectsLists().keySet());
+        return new ArrayList<>(levelData.getGeneratorsLists().keySet());
     }
 
     /**
@@ -227,15 +234,16 @@ public abstract class ShipMastery {
     public static List<MasteryEffect> getMasteryEffects(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return levelData.getEffectsLists().get(optionId);
+        var res = levelData.getEffectsLists().get(optionId);
+        return res == null ? new ArrayList<>() : res;
     }
 
     public static List<MasteryGenerator> getGenerators(ShipHullSpecAPI spec, int level, String optionId) {
         MasteryLevelData levelData = getLevelData(spec, level);
         if (levelData == null) return new ArrayList<>();
-        return levelData.getGeneratorsLists().get(optionId);
+        var res = levelData.getGeneratorsLists().get(optionId);
+        return res == null ? new ArrayList<>() : res;
     }
-
 
     private static MasteryLevelData getLevelData(ShipHullSpecAPI spec, int level) {
         String id = Utils.getRestoredHullSpecId(spec);
@@ -287,6 +295,29 @@ public abstract class ShipMastery {
             stat.defaultAmount = (float) item.optDouble("default_amount", 1f);
             stat.tags.addAll(Arrays.asList(item.getString("tags").trim().split("\\s+")));
             statSingletonMap.put(id, stat);
+        }
+    }
+
+    public static AICoreInterfacePlugin getAICoreInterfacePlugin(String coreId) {
+        return aiCoreInterfaceSingletonMap.get(coreId);
+    }
+
+    public static Map<String, AICoreInterfacePlugin> getAICoreInterfaceSingletonMap() {
+        return Collections.unmodifiableMap(aiCoreInterfaceSingletonMap);
+    }
+
+    public static void loadAICoreInterfaces() throws NoSuchMethodException, IllegalAccessException, JSONException, IOException, ClassNotFoundException, InstantiationException {
+        JSONArray interfaceList = Global.getSettings().getMergedSpreadsheetData("commodity_id", "data/shipmastery/ai_core_interface_list.csv");
+        for (int i = 0; i < interfaceList.length(); i++) {
+            JSONObject item = interfaceList.getJSONObject(i);
+            String commodityId = item.getString("commodity_id");
+            String className = item.getString("plugin");
+            Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
+            var plugin = Utils.instantiateClassNoParams(cls);
+            if (!(plugin instanceof AICoreInterfacePlugin p)) {
+                throw new InstantiationException("");
+            }
+            aiCoreInterfaceSingletonMap.put(commodityId, p);
         }
     }
 
@@ -448,9 +479,15 @@ public abstract class ShipMastery {
         }
 
         HullMasteryData masteryData = new HullMasteryData(name, ml);
+        MasteryInfo defaultInfo = getMasteryInfo("EmptyMastery");
         for (int i = 1; i <= ml; i++) {
-            if (levelDataMap.get(i) == null) continue;
-            masteryData.setLevelData(i, levelDataMap.get(i).one);
+            if (levelDataMap.get(i) == null || levelDataMap.get(i).one.getGeneratorsLists().isEmpty()) {
+                MasteryLevelData data = new MasteryLevelData(name, i);
+                data.addGeneratorToList("", new MasteryGenerator(defaultInfo, null));
+                masteryData.setLevelData(i, data);
+            } else {
+                masteryData.setLevelData(i, levelDataMap.get(i).one);
+            }
         }
         masteryMap.put(name, masteryData);
         savedMaxLevel.value = maxLevel;
@@ -484,7 +521,8 @@ public abstract class ShipMastery {
         Iterator<String> itr = presets.keys();
         while (itr.hasNext()) {
             String name = itr.next();
-            JSONObject obj = presets.getJSONObject(name);
+            JSONObject obj = presets.optJSONObject(name);
+            if (obj == null) continue;
             if (obj.has(PRESET_CHECK_KEY)) {
                 String className = obj.getString(PRESET_CHECK_KEY);
                 presetNameToCheckerMap.put(name,
@@ -517,7 +555,7 @@ public abstract class ShipMastery {
             for (int i = 1; i <= maxLevel; i++) {
                 allLevels.add(i);
             }
-            MasteryInfo sModCapacityInfo = getMasteryInfo("SModCapacity");
+            MasteryInfo sModCapacityInfo = getMasteryInfo("SModCapacityAsFractionOfMax");
             MasteryInfo randomInfo = getMasteryInfo("RandomMastery");
             for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
                 spec = Utils.getRestoredHullSpec(spec);
@@ -527,25 +565,43 @@ public abstract class ShipMastery {
                     HullMasteryData data = new HullMasteryData(id, maxLevel);
                     Collections.shuffle(allLevels, new Random(seed));
                     Set<Integer> sModLevels = new HashSet<>();
-                    for (int i = 0; i < Math.min(3, maxLevel); i++) {
+                    for (int i = 0; i < Math.min(2, maxLevel); i++) {
                         sModLevels.add(allLevels.get(i));
                     }
+                    boolean shouldRoundUp = false;
                     for (int i = 1; i <= maxLevel; i++) {
                         MasteryLevelData levelData = new MasteryLevelData(id, i);
                         MasteryGenerator generator;
                         if (sModLevels.contains(i)) {
-                            generator = new MasteryGenerator(sModCapacityInfo, null);
+                            generator = new MasteryGenerator(sModCapacityInfo, new String[] {"0.5", shouldRoundUp ? "ROUND_UP" : "ROUND_DOWN"});
+                            shouldRoundUp = true;
                         }
                         else {
                             generator = new MasteryGenerator(randomInfo, new String[] {"1", "9999999"});
                         }
-                        levelData.addGeneratorToList("A", generator);
+                        levelData.addGeneratorToList("", generator);
                         data.setLevelData(i, levelData);
                     }
                     masteryMap.put(id, data);
                 }
             }
         }
+    }
+
+    public static void loadAliases() throws JSONException, IOException {
+        JSONObject aliases = Global.getSettings().getMergedJSON("data/shipmastery/mastery_aliases.json");
+        for (Iterator<String> it = aliases.keys(); it.hasNext(); ) {
+            String parent = it.next();
+            JSONArray array = aliases.getJSONArray(parent);
+            for (int i = 0; i < array.length(); i++) {
+                String child = array.getString(i);
+                masteryAliasMap.put(child, parent);
+            }
+        }
+    }
+
+    public static String getParentHullId(String child) {
+        return masteryAliasMap.get(child);
     }
 
     public static void loadMasteries() throws JSONException, IOException, ClassNotFoundException, IllegalAccessException, NoSuchMethodException {

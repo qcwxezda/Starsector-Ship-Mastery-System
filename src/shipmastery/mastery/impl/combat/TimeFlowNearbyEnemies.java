@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -22,31 +23,34 @@ import java.awt.Color;
 public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
 
     public static final int MAX_EFFECT_STACKS = 10;
+    public static final float[] RANGE = new float[] {800f, 1000f, 1250f, 1500f};
+
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription
-                .initDefaultHighlight(Strings.Descriptions.TimeFlowNearbyEnemies)
-                .params(Utils.asPercent(getStrength(selectedModule)), Utils.asInt(getRange(selectedModule)));
+                .init(Strings.Descriptions.TimeFlowNearbyEnemies)
+                .params(Utils.asPercent(getStrength(selectedVariant)), Utils.asInt(getRange(selectedVariant)))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.TimeFlowNearbyEnemiesPost,
                 0f,
                 new Color[] {Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR},
                 "" + MAX_EFFECT_STACKS,
-                Utils.asPercent(getStrength(selectedModule) * MAX_EFFECT_STACKS));
+                Utils.asPercent(getStrength(selectedVariant) * MAX_EFFECT_STACKS));
     }
 
-    public float getRange(ShipAPI ship) {
-        return getStrength(ship) * 40000f;
+    public float getRange(ShipVariantAPI variant) {
+        return RANGE[Utils.hullSizeToInt(variant.getHullSize())];
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
-        ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship), getStrength(ship), id));
+        ship.addListener(new TimeFlowNearbyEnemiesScript(ship, getRange(ship.getVariant()), getStrength(ship), id));
     }
 
     static class TimeFlowNearbyEnemiesScript implements AdvanceableListener {
@@ -73,6 +77,7 @@ public class TimeFlowNearbyEnemies extends BaseMasteryEffect {
         public void advance(float amount) {
             if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
                 ship.removeListener(this);
+                return;
             }
 
             checkInterval.advance(amount);

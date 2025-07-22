@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -22,12 +23,12 @@ public class SpeedHullLevel extends BaseMasteryEffect {
 
     static final float MIN_HULL_LEVEL = 0.25f;
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SpeedHullLevel).params(Utils.asPercent(getStrength(selectedModule)));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SpeedHullLevel).params(Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SpeedHullLevelPost, 0f, Settings.NEGATIVE_HIGHLIGHT_COLOR,
                         Utils.asPercent(MIN_HULL_LEVEL));
@@ -64,6 +65,7 @@ public class SpeedHullLevel extends BaseMasteryEffect {
         public void advance(float amount) {
             if (!ship.isAlive() || ship.getHitpoints() <= 0f) {
                 ship.removeListener(this);
+                return;
             }
             checkerInterval.advance(amount);
 

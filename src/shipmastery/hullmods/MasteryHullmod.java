@@ -10,15 +10,21 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.util.Misc;
+import shipmastery.ShipMastery;
+import shipmastery.aicoreinterface.AICoreInterfacePlugin;
+import shipmastery.backgrounds.BackgroundUtils;
+import shipmastery.backgrounds.RejectHumanity;
 import shipmastery.config.Settings;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class MasteryHullmod extends BaseHullMod {
     @Override
@@ -26,32 +32,59 @@ public class MasteryHullmod extends BaseHullMod {
         return true;
     }
 
+    private void applyAICoreInterfaceEffect(ShipVariantAPI variant, BiConsumer<String, AICoreInterfacePlugin> effect) {
+        var id = AICoreInterfacePlugin.getIntegratedPseudocore(variant);
+        var aiInterface = ShipMastery.getAICoreInterfacePlugin(id);
+        if (aiInterface != null) {
+            var modifyId = id + AICoreInterfacePlugin.INTEGRATED_SUFFIX;
+            effect.accept(modifyId, aiInterface);
+        }
+    }
+
+    public void applyPostEffectsBeforeShipCreation(MutableShipStatsAPI stats, String id) {
+        ShipVariantAPI variant = stats.getVariant();
+        // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
+        // Deprecated
+//        if (shouldApplyEffects(variant)) {
+//            if (HullmodUtils.hasBonusLogisticSlot(variant) && HullmodUtils.hasLogisticSMod(variant)) {
+//                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
+//            } else {
+//                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
+//            }
+//        }
+
+        if (!BackgroundUtils.isTinkererStart()) {
+            stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, -Misc.MAX_PERMA_MODS);
+        }
+
+        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
+        if (info != null && info.commander != null && info.commander.isPlayer()) {
+            // Penalize CR if the ship's OP is above the limit, for player ships only
+            int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
+            int op = variant.computeOPCost(info.commander.getStats());
+            if (op > maxOp) {
+                float frac = (float) (op - maxOp) / maxOp;
+                float penalty = Math.min(1f, frac * 100f * Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
+                if (penalty > 0f) {
+                    stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
+                }
+            }
+            // Penalize CR for reject humanity background if officered by human
+            if (BackgroundUtils.isRejectHumanityStart()) {
+                var captain = CampaignUtils.getCaptain(stats);
+                if (captain != null && !captain.isPlayer() && !captain.isDefault() && !captain.isAICore()) {
+                    stats.getMaxCombatReadiness().modifyFlat(
+                            RejectHumanity.MODIFIER_ID,
+                            -RejectHumanity.CREWED_CR_REDUCTION,
+                            Strings.Backgrounds.rejectHumanityCRPenaltyDesc);
+                }
+            }
+        }
+    }
+
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         ShipVariantAPI variant = stats.getVariant();
-        // Add an S-mod slot if the logistics enhance bonus is active and the ship has at least one logistics hullmod
-        if (shouldApplyEffects(variant)) {
-            if (SModUtils.hasBonusLogisticSlot(variant) && SModUtils.hasLogisticSMod(variant)) {
-                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).modifyFlat(id, 1);
-            } else {
-                stats.getDynamic().getMod(Stats.MAX_PERMANENT_HULLMODS_MOD).unmodify(id);
-            }
-        }
-
-        // Enhances 6-10 decrease damage taken by 1% each
-        VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(variant);
-        ShipHullSpecAPI rootSpec = info == null ? variant.getHullSpec() : info.root.getHullSpec();
-        int enhanceCount = MasteryUtils.getEnhanceCount(rootSpec);
-        float dr = 0f;
-        for (int i = 0; i < enhanceCount; i++) {
-            dr += MasteryUtils.ENHANCE_DR_AMOUNT[i];
-        }
-        if (dr > 0f) {
-            stats.getShieldDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getArmorDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getHullDamageTakenMult().modifyMult(id, 1f-dr);
-            stats.getEmpDamageTakenMult().modifyMult(id, 1f-dr);
-        }
 
         applyEffects(variant, (effect, commander, isModule) -> {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
@@ -66,20 +99,14 @@ public class MasteryHullmod extends BaseHullMod {
                     effect.onFlagshipStatusGained(commander, stats, null);
                 }
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(variant,
+                        (modifyId, plugin) -> plugin.applyEffectsBeforeShipCreation(hullSize, stats, modifyId));
+            }
         });
 
-        // Penalize CR if the ship's OP is above the limit, for player ships only
-        if (info != null && info.commander != null && info.commander.isPlayer()) {
-            int maxOp = SkillsChangeRemoveExcessOPEffect.getMaxOP(variant.getHullSpec(), info.commander.getStats());
-            int op = variant.computeOPCost(info.commander.getStats());
-            if (op > maxOp) {
-                float frac = (float) (op-maxOp)/maxOp;
-                float penalty = Math.min(1f, frac*100f*Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT);
-                if (penalty > 0f) {
-                    stats.getMaxCombatReadiness().modifyFlat(id, -penalty, Strings.Misc.excessOP);
-                }
-            }
-        }
+        applyPostEffectsBeforeShipCreation(stats, id);
     }
 
     @Override
@@ -93,7 +120,13 @@ public class MasteryHullmod extends BaseHullMod {
                     effect.onFlagshipStatusGained(commander, ship.getMutableStats(), null);
                 }
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(ship.getVariant(),
+                        (modifyId, plugin) -> plugin.applyEffectsAfterShipCreation(ship, modifyId));
+            }
         });
+
     }
 
     @Override
@@ -102,13 +135,21 @@ public class MasteryHullmod extends BaseHullMod {
             if (!isModule || !effect.hasTag(MasteryTags.DOESNT_AFFECT_MODULES)) {
                 effect.applyEffectsToFighterSpawnedByShip(fighter, ship);
             }
+        }, (commander, isModule) -> {
+            if (!isModule) {
+                applyAICoreInterfaceEffect(ship.getVariant(),
+                        (modifyId, plugin) -> plugin.applyEffectsToFighterSpawnedByShip(fighter, ship, modifyId));
+            }
         });
     }
 
-    // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant.updateStatsForOpCosts, etc.
+    // Extra safety against recursive calls not handled by forcing no-sync for fleet, i.e. in variant
+    // .updateStatsForOpCosts, etc.
     boolean noRecurse = false;
-    private void applyEffects(ShipVariantAPI variant, HullmodAction action) {
-        if (variant == null || noRecurse || !shouldApplyEffects(variant)) {
+
+    private void applyEffects(ShipVariantAPI variant, HullmodAction perEffectAction,
+                              BiConsumer<PersonAPI, Boolean> afterEffectsAction) {
+        if (variant == null || noRecurse) {
             return;
         }
 
@@ -118,14 +159,18 @@ public class MasteryHullmod extends BaseHullMod {
         PersonAPI commander = info == null ? null : info.commander;
         CampaignFleetAPI fleet = info == null ? null : info.fleet;
         noRecurse = true;
-        // Needed because getting masteries calls getFlagship, which updates stats, which calls applyEffectsBeforeShipCreation, etc.
+        // Needed because getting masteries calls getFlagship, which updates stats, which calls
+        // applyEffectsBeforeShipCreation, etc.
         boolean wasNoSync = false;
         if (fleet != null) {
             wasNoSync = fleet.getFleetData().isForceNoSync();
             fleet.getFleetData().setForceNoSync(true);
         }
-        MasteryUtils.applyAllActiveMasteryEffects(
-                commander, rootSpec, effect -> action.perform(effect, commander, isModule));
+        if (shouldApplyEffects(variant)) {
+            MasteryUtils.applyAllActiveMasteryEffects(
+                    commander, rootSpec, effect -> perEffectAction.perform(effect, commander, isModule));
+        }
+        afterEffectsAction.accept(commander, isModule);
         if (fleet != null) {
             fleet.getFleetData().setForceNoSync(wasNoSync);
         }

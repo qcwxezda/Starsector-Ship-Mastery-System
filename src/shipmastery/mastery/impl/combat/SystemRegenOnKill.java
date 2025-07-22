@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -24,16 +25,16 @@ import java.util.Set;
 public class SystemRegenOnKill extends BaseMasteryEffect {
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.SystemRegenOnKill)
-                                 .params(Misc.getHullSizeStr(selectedModule.getHullSize()))
+                                 .params(Misc.getHullSizeStr(selectedVariant.getHullSize()))
                                  .colors(Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
-        tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(getStrength(selectedModule)));
+        tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asFloatOneDecimal(getStrength(selectedVariant)));
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost2, 0f);
         tooltip.addPara(Strings.Descriptions.SystemRegenOnKillPost3, 0f);
     }

@@ -10,8 +10,8 @@ import shipmastery.mastery.MasteryDescription;
 
 public abstract class HullmodPackage extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(getDescriptionString()).params((Object[]) getDescriptionParams(selectedModule));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(getDescriptionString()).params((Object[]) getDescriptionParams(selectedVariant));
     }
 
     @Override
@@ -40,7 +40,7 @@ public abstract class HullmodPackage extends BaseMasteryEffect {
 
     protected abstract String getDescriptionString();
 
-    protected abstract String[] getDescriptionParams(ShipAPI selectedModule);
+    protected abstract String[] getDescriptionParams(ShipVariantAPI selectedVariant);
 
     protected abstract HullmodData[] getHullmodList();
 

@@ -1,0 +1,4 @@
+id,name,shortDescription,longDescription,order,iconPath,plugin
+sms_tinkerer,Hull Tinkerer,Begin with the ability to build S-mods into ships regardless of mastery.,,1000,graphics/icons/backgrounds/sms_tinkerer.png,shipmastery.backgrounds.HullTinkerer
+sms_enlightened,Enlightened,Begin with enough mastery XP to reach max level in every ship class.,,1001,graphics/icons/backgrounds/sms_enlightened.png,shipmastery.backgrounds.Enlightened
+sms_reject_humanity,Reject Humanity,Begin without the ability to field officers and an arcane device of unknown origin.,,1002,graphics/icons/backgrounds/sms_reject_humanity.png,shipmastery.backgrounds.RejectHumanity

@@ -20,20 +20,25 @@ import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
+import shipmastery.backgrounds.BackgroundUtils;
+import shipmastery.backgrounds.Enlightened;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.hullmods.MasteryHullmod;
 import shipmastery.mastery.MasteryEffect;
 import shipmastery.mastery.MasteryTags;
+import shipmastery.util.CampaignUtils;
 import shipmastery.util.MasteryUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.SizeLimitedMap;
+import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
@@ -61,9 +66,14 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  disappear when the fleet is deflated, signaling that this handler needs to reprocess the fleet. */
     public static final String VARIANT_PROCESSED_TAG = "sms_VariantProcessed";
     public static final Map<String, Map<String, NavigableMap<Integer, String>>> NPC_MASTERY_CACHE = new SizeLimitedMap<>(MAX_CACHED_COMMANDERS);
+    public static final String MODIFIER_ID = "sms_NPCMasteryStrengthMod";
 
     public FleetHandler() {
         super(false);
+        Global.getSector().addTransientScript(this);
+        Global.getSector().addTransientListener(this);
+        Global.getSector().getListenerManager().addListener(this, true);
+        NPC_MASTERY_CACHE.clear();
     }
 
     public static void cacheNPCMasteries(PersonAPI commander, ShipHullSpecAPI spec, NavigableMap<Integer, String> levels) {
@@ -82,21 +92,17 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
      *  Otherwise, returns a modified copy of that variant. */
     public static ShipVariantAPI addHandlerMod(ShipVariantAPI variant, ShipVariantAPI root, FleetMemberAPI member) {
         boolean variantIsRoot = Objects.equals(variant, root);
-        if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
-            variant = variant.clone();
-            variant.setGoalVariant(false);
-            variant.setSource(VariantSource.REFIT);
-        }
+        variant = CampaignUtils.cloneAndSetVariantIfNeeded(null, variant);
         if (variantIsRoot) root = variant;
         VariantLookup.addVariantInfo(variant, root, member);
         // Bypass the arbitrary checks in removeMod since we're adding it back anyway
         // Makes sure the mastery handler is the last hullmod processed (backing DS is LinkedHashSet)
-        variant.getHullMods().remove("sms_mastery_handler");
-        variant.getHullMods().add("sms_mastery_handler");
+        variant.getHullMods().remove(Strings.Hullmods.MASTERY_HANDLER);
+        variant.getHullMods().add(Strings.Hullmods.MASTERY_HANDLER);
         // This also sets hasOpAffectingMods to null, forcing variants to
         // recompute their statsForOpCosts
         // (Normally this is naturally set when a hullmod is manually added or removed)
-        variant.addPermaMod("sms_mastery_handler");
+        variant.addPermaMod(Strings.Hullmods.MASTERY_HANDLER);
         // Add the tracker to any modules as well
         for (String id : variant.getModuleSlots()) {
             variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, member));
@@ -145,6 +151,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     membersOfSpecMap.get(Utils.getRestoredHullSpecId(spec)),
                     fleet.getFlagship());
             fm.setVariant(addHandlerMod(fm.getVariant(), fm.getVariant(), fm), false, false);
+            new MasteryHullmod().applyPostEffectsBeforeShipCreation(fm.getStats(), Strings.Hullmods.MASTERY_HANDLER);
 
             final ShipVariantAPI variant = fm.getVariant();
             boolean repeatAutofit = false;
@@ -175,7 +182,7 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                     }
                 }
 
-                int sModsToAdd = SModUtils.getMaxSMods(fm) - variant.getSMods().size();
+                int sModsToAdd = HullmodUtils.getMaxSMods(fm) - Misc.getCurrSpecialMods(variant);
                 float prob = difficultyData.baseSModProb() * (float) Math.pow(difficultyData.sModProbMultPerDMod(), DModManager.getNumDMods(variant));
                 addAdditionalSModsToVariant(variant, sModsToAdd, fleet, random, prob);
 
@@ -187,9 +194,9 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
                 // Adjust CR if mastery effects affected that
                 //fm.getRepairTracker().setCR(fm.getRepairTracker().getMaxCR());
                 // Do this again just to make sure mastery handler is at bottom of hullmod list
-                variant.getHullMods().remove("sms_mastery_handler");
-                variant.getHullMods().add("sms_mastery_handler");
-                variant.addPermaMod("sms_mastery_handler");
+                variant.getHullMods().remove(Strings.Hullmods.MASTERY_HANDLER);
+                variant.getHullMods().add(Strings.Hullmods.MASTERY_HANDLER);
+                variant.addPermaMod(Strings.Hullmods.MASTERY_HANDLER);
             }
 
             variant.addTag(VARIANT_PROCESSED_TAG);
@@ -209,6 +216,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             addAdditionalSModsToVariant(variant.getModuleVariant(id), count, fleet, random, chanceToAddPer);
         }
 
+        // Only add S-mods to ships that have the mastery hullmod
+        if (!variant.hasHullMod(Strings.Hullmods.MASTERY_HANDLER)) return;
         if (count <= 0 || variant.getHullSpec().getOrdnancePoints(null) <= 0) return;
 
         WeightedRandomPicker<String> picker = new WeightedRandomPicker<>();
@@ -351,9 +360,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         Random random = new Random(getCommanderAndHullSeed(commander, spec));
 
         float bonus = data.averageModifier();
-        float averageLevel = commander.getStats().getLevel()/3f + bonus + getNPCLevelModifier(progression);
+        float averageLevel = commander.getStats().getLevel()/4f + bonus + getNPCLevelModifier(progression);
         float masteryStrength = data.masteryStrengthBonus();
-        commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD).modifyPercent(FleetHandler.class.getName(), 100f*masteryStrength);
+        var mod = commander.getStats().getDynamic().getMod(MasteryEffect.GLOBAL_MASTERY_STRENGTH_MOD);
+        mod.modifyPercent(MODIFIER_ID, 100f*masteryStrength);
+        if (BackgroundUtils.isEnlightenedStart()) {
+            mod.modifyPercent(Enlightened.MODIFIER_ID, 100f*Enlightened.NPC_MASTERY_BOOST);
+        }
 
         String flagshipSpecId = flagship == null ? null : Utils.getRestoredHullSpecId(flagship.getHullSpec());
         if (Objects.equals(spec.getHullId(), flagshipSpecId)) {

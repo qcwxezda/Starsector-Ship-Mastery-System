@@ -14,13 +14,21 @@ import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.listeners.CommodityTooltipModifier;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import com.fs.starfarer.api.combat.ShipAIConfig;
+import com.fs.starfarer.api.combat.ShipAIPlugin;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
+import shipmastery.achievements.MasteredMany;
+import shipmastery.campaign.items.BasePseudocorePlugin;
+import shipmastery.campaign.listeners.CoreTabListener;
 import shipmastery.campaign.CuratorFleetHandler;
 import shipmastery.campaign.FleetHandler;
 import shipmastery.campaign.PlayerFleetHandler;
@@ -28,24 +36,26 @@ import shipmastery.campaign.PlayerMPHandler;
 import shipmastery.campaign.RefitHandler;
 import shipmastery.campaign.graveyard.InsuranceFraudDetector;
 import shipmastery.campaign.graveyard.ShipGraveyardSpawner;
-import shipmastery.campaign.items.AlphaKCorePlugin;
-import shipmastery.campaign.items.AmorphousCorePlugin;
-import shipmastery.campaign.items.BetaKCorePlugin;
-import shipmastery.campaign.items.FracturedGammaCorePlugin;
-import shipmastery.campaign.items.KCoreInterface;
-import shipmastery.campaign.items.GammaKCorePlugin;
+import shipmastery.campaign.items.PseudocorePlugin;
+import shipmastery.campaign.listeners.FleetSyncListenerHandler;
+import shipmastery.campaign.listeners.PlayerGainedMPListenerHandler;
 import shipmastery.campaign.recentbattles.RecentBattlesIntel;
 import shipmastery.campaign.recentbattles.RecentBattlesTracker;
-import shipmastery.campaign.skills.CyberneticAugmentation;
 import shipmastery.combat.CombatListenerManager;
 import shipmastery.config.LunaLibSettingsListener;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
+import shipmastery.hullmods.PseudocoreUplinkHullmod;
+import shipmastery.aicoreinterface.FracturedGammaCoreInterface;
 import shipmastery.procgen.Generator;
+import shipmastery.util.EngineUtils;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 import shipmastery.util.VariantLookup;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -59,7 +69,6 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class ModPlugin extends BaseModPlugin {
     private static String lastSaveId = null;
-    private static final int originalMaxPermaMods = Global.getSettings().getInt("maxPermanentHullmods");
     public static final String RANDOM_MODE_KEY = "$sms_IsRandomMode";
     public static final String GENERATION_SEED_KEY = "$sms_MasteryGenerationSeed";
     public static final ReflectionEnabledClassLoader classLoader;
@@ -71,10 +80,12 @@ public class ModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        ShipMastery.loadAliases();
         Utils.init();
         initializeCuratorFaction();
         ShipMastery.loadMasteries();
         ShipMastery.loadStats();
+        ShipMastery.loadAICoreInterfaces();
         if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
             LunaLibSettingsListener.init();
         }
@@ -82,9 +93,16 @@ public class ModPlugin extends BaseModPlugin {
             Settings.loadSettingsFromJson();
         }
 
-        // Load this particular portrait sprite manually as we do not want these to be
+        var miscAptitudeSpec = Global.getSettings().getSkillSpec("sms_aptitude_misc");
+        miscAptitudeSpec.addTag("npc_only");
+        miscAptitudeSpec.addTag("ai_core_only");
+        miscAptitudeSpec.addTag("hide_in_codex");
+
+        // Load these particular portrait sprites manually as we do not want these to be
         // random officers
-        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_amorphous_core.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_warped_pseudocore.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_crystalline_pseudocore.png");
+        particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_amorphous_pseudocore.png");
     }
 
     @Override
@@ -92,9 +110,15 @@ public class ModPlugin extends BaseModPlugin {
         CodexDataV2.makeRelated(
                 CodexDataV2.getSkillEntryId("sms_shared_knowledge"),
                 CodexDataV2.getItemEntryId("sms_construct"),
-                CodexDataV2.getCommodityEntryId("sms_gamma_k_core"),
-                CodexDataV2.getCommodityEntryId("sms_beta_k_core"),
-                CodexDataV2.getCommodityEntryId("sms_alpha_k_core"));
+                CodexDataV2.getCommodityEntryId("sms_gamma_pseudocore"),
+                CodexDataV2.getCommodityEntryId("sms_beta_pseudocore"),
+                CodexDataV2.getCommodityEntryId("sms_alpha_pseudocore"));
+        CodexDataV2.makeRelated(
+                CodexDataV2.getSkillEntryId("sms_warped_knowledge"),
+                CodexDataV2.getCommodityEntryId("sms_warped_pseudocore"));
+        CodexDataV2.makeRelated(
+                CodexDataV2.getSkillEntryId("sms_crystalline_knowledge"),
+                CodexDataV2.getCommodityEntryId("sms_crystalline_pseudocore"));
     }
 
     private void initializeCuratorFaction() {
@@ -105,6 +129,7 @@ public class ModPlugin extends BaseModPlugin {
                         && !spec.hasTag(Tags.NO_DROP)
                         && !spec.hasTag(Tags.HULLMOD_NO_DROP_SALVAGE)
         ).map(HullModSpecAPI::getId).toList());
+        thisFaction.getKnownHullMods().remove(HullMods.PHASE_ANCHOR);
 
         Set<String> allowedHiddenFactions = new HashSet<>();
         allowedHiddenFactions.add("lions_guard");
@@ -204,6 +229,9 @@ public class ModPlugin extends BaseModPlugin {
         DeferredActionPlugin deferredActionPlugin = new DeferredActionPlugin();
         Global.getSector().addScript(deferredActionPlugin);
         Global.getSector().getMemoryWithoutUpdate().set(DeferredActionPlugin.INSTANCE_KEY, deferredActionPlugin);
+
+        // Start with the modspec, rather than the mod just unlocked, to highlight that the option exists
+        Global.getSector().getPlayerFleet().getCargo().addHullmods(Strings.Hullmods.ENGINEERING_OVERRIDE, 1);
     }
 
     @Override
@@ -225,6 +253,9 @@ public class ModPlugin extends BaseModPlugin {
         ShipMastery.loadMasteryTable();
         ListenerManagerAPI listeners = Global.getSector().getListenerManager();
         CombatListenerManager.clearLastBattleCreationContext();
+        new EngineUtils.ClearCacheOnCombatEnd().onCombatEnd();
+        PlayerGainedMPListenerHandler.clearListeners();
+        FleetSyncListenerHandler.clearListeners();
 
         try {
             EveryFrameScript initializer = (EveryFrameScript) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.Initializer"));
@@ -238,9 +269,18 @@ public class ModPlugin extends BaseModPlugin {
             listeners.addListener(new InsuranceFraudDetector(), false);
         }
 
+        Object coreTabListenerHandler;
+        MethodHandle registerCoreTabListener;
+        try {
+            coreTabListenerHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.listeners.CoreTabListenerHandler"));
+            // Can't do normal casting cause different classloaders
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            registerCoreTabListener = lookup.findVirtual(coreTabListenerHandler.getClass(), "registerListener", MethodType.methodType(void.class, CoreTabListener.class));
+        } catch (NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         if (!Settings.DISABLE_MAIN_FEATURES) {
-            Misc.MAX_PERMA_MODS = 0;
-            Global.getSettings().setFloat("maxPermanentHullmods", 0f);
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(false);
             // Time to generate masteries is roughly 1 second per 10,000 ship hull specs
             // (Tradeoff between saving the masteries in file and generating them on the fly from seed)
@@ -258,38 +298,44 @@ public class ModPlugin extends BaseModPlugin {
                 throw new RuntimeException(e);
             }
 
+            Object refitHandler;
             try {
-                Object refitModifier = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.RefitHandler"));
-                listeners.addListener(refitModifier, true);
+                refitHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.RefitHandler"));
+                listeners.addListener(refitHandler, true);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to add refit tab modifier", e);
             }
 
+            Object fleetPanelHandler;
+            try {
+                fleetPanelHandler = Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.campaign.FleetPanelHandler"));
+                Global.getSector().addTransientScript((EveryFrameScript) fleetPanelHandler);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to add fleet panel modifier", e);
+            }
+
+            try {
+                registerCoreTabListener.invoke(coreTabListenerHandler, refitHandler);
+                registerCoreTabListener.invoke(coreTabListenerHandler, fleetPanelHandler);
+                listeners.addListener(coreTabListenerHandler, true);
+            } catch (Throwable e) {
+                throw new RuntimeException("Failed to add core UI listener modifier", e);
+            }
+
             // May need to be permanent if NPC fleets can stay inflated through game loads
             // But this doesn't seem to be the case
-            VariantLookup variantLookup = new VariantLookup();
-            Global.getSector().addTransientListener(variantLookup);
+            new VariantLookup();
+            new PlayerMPHandler();
+            new FleetHandler();
+            new PlayerFleetHandler();
 
-            PlayerMPHandler xpTracker = new PlayerMPHandler();
-            Global.getSector().addTransientScript(xpTracker);
-            Global.getSector().addTransientListener(xpTracker);
-
-            FleetHandler fleetHandler = new FleetHandler();
-            listeners.addListener(fleetHandler, true);
-            Global.getSector().addTransientListener(fleetHandler);
-            Global.getSector().addTransientScript(fleetHandler);
-            listeners.addListener(new PlayerFleetHandler(), true);
-            FleetHandler.NPC_MASTERY_CACHE.clear();
-
-            CyberneticAugmentation.refreshPlayerMasteredCount();
+            MasteredMany.refreshPlayerMasteredCount();
 
             // reportCoreTabOpened triggers after the variant is cloned for the to-be-selected ship in the refit screen
             // for some reason, which is too late as the UID tags aren't in the clones,
             // so we need to add the mastery handler when the game loads as well
             PlayerFleetHandler.addMasteryHandlerToPlayerFleet();
         } else {
-            Misc.MAX_PERMA_MODS = originalMaxPermaMods;
-            Global.getSettings().setFloat("maxPermanentHullmods", (float) originalMaxPermaMods);
             Global.getSettings().getHullModSpec(Strings.Hullmods.ENGINEERING_OVERRIDE).setHiddenEverywhere(true);
             try {
                 CampaignPlugin autofitPlugin = (CampaignPlugin) Utils.instantiateClassNoParams(classLoader.loadClass("shipmastery.plugin.SModAutofitCampaignPluginSP"));
@@ -301,17 +347,20 @@ public class ModPlugin extends BaseModPlugin {
 
         listeners.addListener(new CuratorFleetHandler(), true);
 
-        ShipGraveyardSpawner graveyardSpawner = new ShipGraveyardSpawner();
-        Global.getSector().addTransientListener(graveyardSpawner);
-        Global.getSector().addTransientScript(graveyardSpawner);
-        listeners.addListener(graveyardSpawner, true);
-
-        RecentBattlesTracker recentBattlesTracker = new RecentBattlesTracker();
-        Global.getSector().addTransientListener(recentBattlesTracker);
-        listeners.addListener(recentBattlesTracker, true);
+        new ShipGraveyardSpawner();
+        new RecentBattlesTracker();
 
         registerCommodityTooltipPlugin(listeners);
         registerAICorePlugins();
+        new FracturedGammaCoreInterface.IntegrationScript();
+        var pseudocorePluginHandler = new BasePseudocorePlugin.Handler();
+        FleetSyncListenerHandler.registerListener(pseudocorePluginHandler);
+        try {
+            registerCoreTabListener.invoke(coreTabListenerHandler, pseudocorePluginHandler);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        FleetSyncListenerHandler.registerListener(new PseudocoreUplinkHullmod());
 
         if (!Settings.ENABLE_RECENT_BATTLES) {
             IntelManagerAPI intelManager = Global.getSector().getIntelManager();
@@ -335,7 +384,7 @@ public class ModPlugin extends BaseModPlugin {
         listeners.addListener((CommodityTooltipModifier) (info, width, expanded, stack) -> {
             if (stack.getCommodityId() == null) return;
             var plugin = Misc.getAICoreOfficerPlugin(stack.getCommodityId());
-            if (!(plugin instanceof KCoreInterface)) return;
+            if (!(plugin instanceof PseudocorePlugin)) return;
             plugin.createPersonalitySection(null, info);
         }, true);
     }
@@ -344,20 +393,34 @@ public class ModPlugin extends BaseModPlugin {
         Global.getSector().registerPlugin(new BaseCampaignPlugin() {
             @Override
             public PluginPick<AICoreOfficerPlugin> pickAICoreOfficerPlugin(String commodityId) {
-                return switch (commodityId) {
-                    case "sms_alpha_k_core" -> new PluginPick<>(new AlphaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_beta_k_core" -> new PluginPick<>(new BetaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_gamma_k_core" -> new PluginPick<>(new GammaKCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_fractured_gamma_core" -> new PluginPick<>(new FracturedGammaCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    case "sms_amorphous_core" -> new PluginPick<>(new AmorphousCorePlugin(), PickPriority.MOD_SPECIFIC);
-                    default -> null;
-                };
+                var plugin = PseudocorePlugin.getPluginForPseudocore(commodityId);
+                if (plugin == null) return null;
+                return new PluginPick<>(plugin, PickPriority.MOD_SPECIFIC);
             }
         });
     }
 
+    @Override
+    public PluginPick<ShipAIPlugin> pickShipAI(FleetMemberAPI member, ShipAPI ship) {
+        if (ship == null || ship.getCaptain() == null) return null;
+        String id = ship.getCaptain().getAICoreId();
+        if (id == null) return null;
+        var plugin = PseudocorePlugin.getPluginForPseudocore(id);
+        if (plugin != null) {
+            ShipAIConfig config = new ShipAIConfig();
+            config.alwaysStrafeOffensively = true;
+            config.backingOffWhileNotVentingAllowed = true;
+            config.turnToFaceWithUndamagedArmor = false;
+            config.burnDriveIgnoreEnemies = false;
+            return new PluginPick<>(Global.getSettings().createDefaultShipAI(ship, config), CampaignPlugin.PickPriority.MOD_SET);
+        }
+        return null;
+    }
+
     private static final String[] reflectionWhitelist = new String[] {
             "shipmastery.campaign.RefitHandler",
+            "shipmastery.campaign.listeners.CoreTabListenerHandler",
+            "shipmastery.campaign.FleetPanelHandler",
             "shipmastery.campaign.Initializer",
             "shipmastery.campaign.AutofitPluginSModOption",
             "shipmastery.campaign.graveyard.ClaimsHistoryGetter",

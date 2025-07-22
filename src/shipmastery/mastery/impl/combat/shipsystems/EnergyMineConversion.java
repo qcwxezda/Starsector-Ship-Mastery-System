@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ProximityExplosionEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -37,7 +38,7 @@ public class EnergyMineConversion extends ShipSystemEffect {
     public static final String PROJ_EMP_DAMAGE_KEY = "sms_EnergyMineArcEmp";
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnergyMineConversion).params(getSystemName());
     }
 
@@ -49,12 +50,12 @@ public class EnergyMineConversion extends ShipSystemEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.EnergyMineConversionPost,
                 0f, new Color[] {Settings.NEGATIVE_HIGHLIGHT_COLOR, Misc.getTextColor(), Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR},
-                Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedModule)), Utils.asInt(5f * getStrength(selectedModule)));
+                Utils.asPercent(1f - DAMAGE_FRAC), "" + NUM_ARCS, Utils.asInt(getStrength(selectedVariant)), Utils.asInt(5f * getStrength(selectedVariant)));
     }
 
     @Override

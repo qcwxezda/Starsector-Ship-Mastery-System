@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class WinBattleHighMastery extends MagicAchievement {
 
-    public static final float REQ_AVG_LEVEL = 7.5f;
+    public static final float REQ_AVG_LEVEL = 6f;
 
     private class Listener extends BaseCampaignEventListener {
         public Listener() {

@@ -14,7 +14,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.util.MutableValue;
@@ -41,10 +40,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 public abstract class Utils {
@@ -177,7 +174,10 @@ public abstract class Utils {
         return hullmodIdToNameMap.get(hullmodId);
     }
 
-    public static ShipHullSpecAPI getRestoredHullSpecOneStep(ShipHullSpecAPI spec) {
+    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
+        ShipHullSpecAPI memo = hullIdToRestored.get(spec.getHullId());
+        if (memo != null) return memo;
+
         ShipHullSpecAPI dParentHull = spec.getDParentHull();
         if (!spec.isDefaultDHull() && !spec.isRestoreToBase()) {
             dParentHull = spec;
@@ -186,21 +186,20 @@ public abstract class Utils {
             dParentHull = spec.getBaseHull();
         }
 
-        return dParentHull == null ? spec : dParentHull;
-    }
-
-    public static ShipHullSpecAPI getRestoredHullSpec(ShipHullSpecAPI spec) {
-        ShipHullSpecAPI memo = hullIdToRestored.get(spec.getHullId());
-        if (memo != null) return memo;
-
-        ShipHullSpecAPI prevSpec = null;
-        while (spec != prevSpec) {
-            prevSpec = spec;
-            spec = getRestoredHullSpecOneStep(spec);
+        ShipHullSpecAPI restoredSpec = dParentHull == null ? spec : dParentHull;
+        String aliasedId = ShipMastery.getParentHullId(restoredSpec.getHullId());
+        if (aliasedId != null) {
+            restoredSpec = Global.getSettings().getHullSpec(aliasedId);
         }
 
-        hullIdToRestored.put(spec.getHullId(), spec);
-        return spec;
+        if (restoredSpec == spec) {
+            hullIdToRestored.put(spec.getHullId(), spec);
+            return spec;
+        } else {
+            var fullyRestored = getRestoredHullSpec(restoredSpec);
+            hullIdToRestored.put(spec.getHullId(), fullyRestored);
+            return fullyRestored;
+        }
     }
 
     public static String getRestoredHullSpecId(ShipHullSpecAPI spec) {
@@ -454,7 +453,6 @@ public abstract class Utils {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasShield(ShipHullSpecAPI spec) {
         return spec.getShieldType() != ShieldAPI.ShieldType.NONE && spec.getShieldType() != ShieldAPI.ShieldType.PHASE;
     }
@@ -494,7 +492,7 @@ public abstract class Utils {
             // This just sets hasOpAffectingMods to null, forcing the variant to
             // recompute its statsForOpCosts (e.g. number of hangar bays)
             // (Normally this is naturally set when a hullmod is manually added or removed)
-            variant.addPermaMod("sms_mastery_handler");
+            variant.addPermaMod(Strings.Hullmods.MASTERY_HANDLER);
             Utils.fixVariantInconsistencies(fm.getStats(), true);
         }
     }
@@ -802,54 +800,4 @@ public abstract class Utils {
         return "-".repeat((int) (width/per));
     }
 
-    private static ShipVariantAPI addPermaModHelper(ShipVariantAPI variant, FleetMemberAPI fm, String hullmodId, boolean addToModules) {
-        if (variant == null) return null;
-        if (variant.isStockVariant() || variant.isGoalVariant() || variant.isEmptyHullVariant()) {
-            variant = variant.clone();
-            variant.setSource(VariantSource.REFIT);
-            if (fm != null) {
-                fm.setVariant(variant, false, false);
-            }
-        }
-        variant.addPermaMod(hullmodId, false);
-        if (addToModules) {
-            for (String id : variant.getModuleSlots()) {
-                variant.setModuleVariant(id, addPermaModHelper(variant.getModuleVariant(id), null, hullmodId, true));
-            }
-        }
-        return variant;
-    }
-
-    public static void addPermaModCloneVariantIfNeeded(FleetMemberAPI fm, String hullmodId, boolean addToModules) {
-        addPermaModHelper(fm.getVariant(), fm, hullmodId, addToModules);
-    }
-
-    /** Will not work on non-refit-source variants */
-    public static void removePermaModFromCustomVariant(FleetMemberAPI fm, String hullmodId, boolean removeFromModules) {
-        Queue<ShipVariantAPI> variants = new LinkedList<>();
-        variants.add(fm.getVariant());
-
-        while (!variants.isEmpty()) {
-            var variant = variants.poll();
-            variant.removePermaMod(hullmodId);
-            if (removeFromModules) {
-                for (String id : variant.getModuleSlots()) {
-                    variants.add(variant.getModuleVariant(id));
-                }
-            }
-        }
-    }
-
-    /** Includes the ship itself */
-    public static List<ShipAPI> getAllModules(ShipAPI ship) {
-        List<ShipAPI> list = new ArrayList<>();
-        if (ship == null) return list;
-        getAllModulesHelper(ship, list);
-        return list;
-    }
-
-    private static void getAllModulesHelper(ShipAPI ship, List<ShipAPI> list) {
-        list.add(ship);
-        ship.getChildModulesCopy().forEach(child -> getAllModulesHelper(child, list));
-    }
 }

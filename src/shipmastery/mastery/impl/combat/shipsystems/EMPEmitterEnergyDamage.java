@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.lwjgl.util.vector.Vector2f;
 import shipmastery.combat.listeners.EMPEmitterDamageListener;
@@ -13,9 +14,9 @@ import shipmastery.util.Utils;
 
 public class EMPEmitterEnergyDamage extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EMPEmitterEnergyDamage)
-                                 .params(getSystemName(), Utils.asInt(getStrength(selectedModule)));
+                                 .params(getSystemName(), Utils.asInt(getStrength(selectedVariant)));
     }
 
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {

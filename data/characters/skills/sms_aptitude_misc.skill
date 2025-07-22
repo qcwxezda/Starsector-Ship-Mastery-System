@@ -1,0 +1,12 @@
+{
+	"id":"sms_aptitude_misc",
+	"governingAptitude":"sms_misc",
+	"effectGroups":[
+		{
+			"requiredSkillLevel":0,
+			"effects":[
+				{"type":"DESCRIPTION", "script":"com.fs.starfarer.api.impl.campaign.skills.AptitudeDesc$Level0"},
+			]
+		},
+	],
+}

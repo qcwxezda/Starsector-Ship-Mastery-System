@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
@@ -39,20 +40,20 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
     public static final float AMMO_GAIN = 1f;
     public static final String ON_FIRE_KEY = "sms_on_fire";
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.HammerLingeringDamage).params(
                 Utils.asPercentNoDecimal(AMMO_GAIN)).colors(Misc.getTextColor());
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.HammerLingeringDamagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(getStrength(selectedModule)),
-                Utils.asInt(300f * getStrength(selectedModule)),
+                Utils.asPercent(getStrength(selectedVariant)),
+                Utils.asInt(300f * getStrength(selectedVariant)),
                 Utils.asInt(DAMAGE_OVER_TIME_DURATION));
     }
 

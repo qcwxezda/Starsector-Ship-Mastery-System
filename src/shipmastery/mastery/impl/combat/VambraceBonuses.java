@@ -14,15 +14,15 @@ import shipmastery.util.Utils;
 
 public class VambraceBonuses extends BaseMasteryEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
         return MasteryDescription
                 .initDefaultHighlight(Strings.Descriptions.VambraceBonuses)
                 .params(Utils.asPercent(strength), Utils.asFloatOneDecimal(1000f*strength), Utils.asFloatOneDecimal(100f*strength), Utils.asPercent(5f*strength));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.VambraceBonusesPost, 0f);
     }
 

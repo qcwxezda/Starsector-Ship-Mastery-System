@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
@@ -23,20 +24,20 @@ public class SkimmerEMP extends ShipSystemEffect {
     public static final float MIN_RANGE_FRAC_VISUAL = 0.25f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        float strength = getStrength(selectedModule);
-        int hullSize = Utils.hullSizeToInt(selectedModule.getHullSize());
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        float strength = getStrength(selectedVariant);
+        int hullSize = Utils.hullSizeToInt(selectedVariant.getHullSize());
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.SkimmerEMP)
                                  .params(
                                          getSystemName(),
                                          Utils.asInt(strength),
-                                         Utils.asFloatOneDecimal(selectedModule.getMutableStats().getSystemRangeBonus().computeEffective(MAX_RANGE[Utils.hullSizeToInt(selectedModule.getHullSize())])),
+                                         Utils.asFloatOneDecimal(MAX_RANGE[Utils.hullSizeToInt(selectedVariant.getHullSize())]),
                                          Utils.asFloatOneDecimal(strength*50f*DAMAGE_MULT[hullSize]),
                                          Utils.asFloatOneDecimal(strength*125f*DAMAGE_MULT[hullSize]));
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.SkimmerEMPPost, 0f);
     }

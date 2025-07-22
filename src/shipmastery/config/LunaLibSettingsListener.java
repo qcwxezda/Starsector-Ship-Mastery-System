@@ -1,10 +1,8 @@
 package shipmastery.config;
 
-import com.fs.starfarer.api.Global;
 import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettingsListener;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import shipmastery.campaign.FleetHandler;
 
 public class LunaLibSettingsListener implements LunaSettingsListener {
@@ -21,23 +19,17 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
     public void settingsChanged(@NotNull String modId) {
         if (!id.equals(modId)) return;
 
-        Settings.CLEAR_SMODS_ALWAYS_ENABLED = LunaSettings.getBoolean(id, "sms_ClearSModsAlwaysEnabled");
-        Settings.CLEAR_SMODS_REFUND_FRACTION = LunaSettings.getFloat(id, "sms_ClearSModsRefundFraction");
         Settings.COMBAT_MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_CombatMPGainMultiplier");
         Settings.CIVILIAN_MP_GAIN_MULTIPLIER = LunaSettings.getFloat(id, "sms_CivilianMPGainMultiplier");
         Settings.BUILD_IN_CREDITS_COST_MULTIPLIER = LunaSettings.getFloat(id, "sms_SModCreditCostMultiplier");
         Settings.RANDOM_GENERATION_SEED = LunaSettings.getString(id, "sms_RandomMasterySeed");
+        Settings.DISPLAY_LOCKED_MASTERIES = LunaSettings.getBoolean(id, "sms_DisplayLockedMasteries");
 
         Settings.MASTERY_COLOR = LunaSettings.getColor(id, "sms_MasteryColor");
-        Settings.POSITIVE_HIGHLIGHT_COLOR =
-                LunaSettings.getColor(id, "sms_PositiveHighlightColor");
-        Settings.NEGATIVE_HIGHLIGHT_COLOR =
-                LunaSettings.getColor(id, "sms_NegativeHighlightColor");
         Settings.DOUBLE_CLICK_INTERVAL = LunaSettings.getFloat(id, "sms_DoubleClickInterval");
         Settings.SHOW_MP_AND_LEVEL_IN_REFIT =
                 LunaSettings.getBoolean(id, "sms_RefitScreenDisplay");
         Settings.ENABLE_COPY_SEED_BUTTON = LunaSettings.getBoolean(id, "sms_EnableCopySeedButton");
-        Settings.ADDITIONAL_MP_PER_REROLL = LunaSettings.getInt(id, "sms_AdditionalMPPerReroll");
         Settings.CR_PENALTY_PER_EXCESS_OP_PERCENT = LunaSettings.getFloat(id, "sms_CrPenaltyPerExcessOPPercent");
 
         Settings.NPC_MASTERY_LEVEL_MODIFIER = LunaSettings.getInt(id, "sms_DifficultyLevelMod");
@@ -59,16 +51,6 @@ public class LunaLibSettingsListener implements LunaSettingsListener {
             Settings.RECENT_BATTLES_PRECISE_MODE = "Precise".equals(recentBattlesParam);
         }
         Settings.DISABLE_MAIN_FEATURES = LunaSettings.getBoolean(id, "sms_DisableMainFeatures");
-
-        try {
-            JSONObject json = Global.getSettings().loadJSON("shipmastery_settings.json", "shipmasterysystem");
-            Settings.CYBER_AUG_BASE_BONUS = Math.max(0f, (float) json.getDouble("cyberAugBaseBonus"));
-            Settings.CYBER_AUG_MAX_BONUS = Math.max(0f, (float) json.getDouble("cyberAugMaxBonus"));
-            Settings.CYBER_AUG_BONUS_PER_GROUP = Math.max(0f, (float) json.getDouble("cyberAugBonusPerGroup"));
-        } catch (Exception e) {
-            throw new RuntimeException("[Ship Mastery System] Unable to load shipmastery_settings.json", e);
-        }
-
         FleetHandler.NPC_MASTERY_CACHE.clear();
     }
 }

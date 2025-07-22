@@ -9,6 +9,7 @@
 			"effectBasedOnLevel":false,
 			"effects":[
 				{"type":"SHIP", "script":"shipmastery.campaign.skills.SharedKnowledge$Standard"},
+				{"type":"SHIP", "script":"shipmastery.campaign.skills.SharedKnowledge$Hidden"},
 			]
 		},
 		{

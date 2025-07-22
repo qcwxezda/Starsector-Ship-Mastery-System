@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.combat;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,17 +19,17 @@ public class PhasedArmorRepair extends ArmorRepair {
     public static final float TIME_FLOW_PENALTY = 0.25f;
 
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.init(Strings.Descriptions.PhasedArmorRepair);
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.PhasedArmorRepairPost, 0f, new Color[] {
                                 Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                        Utils.asPercent(getStrength(selectedModule)),
-                        Utils.asFloatOneDecimal(getFlatMax(selectedModule)),
+                        Utils.asPercent(getStrength(selectedVariant)),
+                        Utils.asFloatOneDecimal(getFlatMax(selectedVariant)),
                         Utils.asPercent(TIME_FLOW_PENALTY));
     }
 
@@ -40,7 +41,7 @@ public class PhasedArmorRepair extends ArmorRepair {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(PhasedArmorRepairScript.class)) {
-            ship.addListener(new PhasedArmorRepairScript(ship, getStrength(ship), getFlatMax(ship)));
+            ship.addListener(new PhasedArmorRepairScript(ship, getStrength(ship), getFlatMax(ship.getVariant())));
         }
     }
 

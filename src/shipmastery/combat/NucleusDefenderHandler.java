@@ -10,10 +10,10 @@ import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.vector.Vector2f;
+import shipmastery.campaign.skills.PseudocoreHiddenSkillScript;
 import shipmastery.combat.listeners.ShipDestroyedListener;
 import shipmastery.fx.ParticleBurstEmitter;
 import shipmastery.fx.StaticRingEmitter;
-import shipmastery.hullmods.CuratorNPCHullmod;
 import shipmastery.util.MathUtils;
 import shipmastery.util.Utils;
 
@@ -99,7 +99,7 @@ public class NucleusDefenderHandler extends BaseEveryFrameCombatPlugin implement
             }
             for (ShipAPI ship : Global.getCombatEngine().getShips()) {
                 if (MathUtils.dist(loc, ship.getLocation()) <= data.radius) {
-                    var listeners = ship.getListeners(CuratorNPCHullmod.CuratorNPCHullmodScript.class);
+                    var listeners = ship.getListeners(PseudocoreHiddenSkillScript.class);
                     if (listeners != null) {
                         for (var listener : listeners) {
                             listener.activate();

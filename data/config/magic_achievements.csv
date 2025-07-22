@@ -17,17 +17,17 @@ id,name,description,tooltip,script,image,spoilerLevel,rarity
 
 sms_LevelUp,"Level Up","Advanced a ship's mastery level.",,shipmastery.achievements.LevelUp,,VISIBLE,COMMON
 sms_LevelMax,"Mastered","Mastered a ship by maxing its mastery level.",,shipmastery.achievements.MaxLevel,,VISIBLE,UNCOMMON
-sms_ManyRerolls,"Gambling Addict","Rerolled the mastery effects of the same ship type 5 times.",,shipmastery.achievements.ManyRerolls,,VISIBLE,RARE
-sms_FullEnhance,"Maximum Power","Enhanced a ship type to +10.",,shipmastery.achievements.FullEnhance,,VISIBLE,RARE
-sms_MasteredMany,"Full House","Mastered 20 unique non-civilian ship types in a single playthrough (skins do not count as unique).",,shipmastery.achievements.MasteredMany,,VISIBLE,EPIC
-sms_LotsOfMP,"Our Battle Was Legendary","Earned 333 mastery points from a single battle (combat MP multiplier in settings must not exceed 1).",,shipmastery.achievements.LotsOfMP,,VISIBLE,LEGENDARY
+sms_ManyRerolls,"Gambling Addict","Rerolled the mastery effects of the same ship class 5 times.",,shipmastery.achievements.ManyRerolls,,VISIBLE,RARE
+sms_FullEnhance,"Maximum Power","Enhanced a ship class to +10.",,shipmastery.achievements.FullEnhance,,VISIBLE,RARE
+sms_MasteredMany,"Full House","Mastered 24 unique ship classes in a single playthrough (skins do not count as unique).",,shipmastery.achievements.MasteredMany,,VISIBLE,EPIC
+sms_LotsOfMP,"Our Battle Was Legendary","Earned 9000 mastery XP from a single battle (combat mastery XP multiplier in settings must not exceed 1).",,shipmastery.achievements.LotsOfMP,,VISIBLE,LEGENDARY
 
-sms_AnalysisPackageBattle,"Mastery Farm","Won a pitched battle while having Analysis Package boost your combat-related mastery point gain by at least 50%.",,shipmastery.achievements.AnalysisPackageBattle,,VISIBLE,COMMON
-sms_SPFromConstructs,"Mastery Exchange","Earned a story point by crafting knowledge constructs.",,shipmastery.achievements.SPFromConstructs,,VISIBLE,UNCOMMON
-sms_WinBattleHighMastery,"Double-Edged Sword of Mastery","Won a pitched battle against a fleet having an average ship-wide mastery level of at least 7.5.",,shipmastery.achievements.WinBattleHighMastery,,VISIBLE,RARE
+sms_AnalysisPackageBattle,"Mastery Farm","Won a pitched battle while having Analysis Package boost your combat-related mastery XP gain by at least 50%.",,shipmastery.achievements.AnalysisPackageBattle,,VISIBLE,COMMON
+sms_SPFromConstructs,"Mastery Exchange","Crafted a blank knowledge construct.",,shipmastery.achievements.BlankConstructMade,,VISIBLE,UNCOMMON
+sms_WinBattleHighMastery,"Double-Edged Sword of Mastery","Won a pitched battle against a fleet having an average ship-wide mastery level of at least 6.",,shipmastery.achievements.WinBattleHighMastery,,VISIBLE,RARE
 
 sms_SalvagedStation,"Knowledge Seeker","Salvaged a concealed station.",,shipmastery.achievements.SalvagedStation,,VISIBLE,UNCOMMON
 sms_SalvagedAllStations,"Knowledge Overflow","Salvaged every concealed station.",,shipmastery.achievements.SalvagedAllStations,,VISIBLE,EPIC
 sms_PseudocoreCrewedShip,"The Pseudocore Connection, Part 1","Placed a Pseudocore in command of a crewed ship.",,shipmastery.achievements.PseudocoreCrewedShip,,VISIBLE,EPIC
 sms_PseudocoreAmplifierIntegrated,"The Pseudocore Connection, Part 2","Unlocked the full potential of Pseudocores.",,shipmastery.achievements.PseudocoreAmplifierIntegrated,,VISIBLE,EPIC
-sms_AmorphousCoreUsed,"The Pseudocore Connection, Part 3","Placed the Amorphous Pseudocore in command of a crewed ship.",,shipmastery.achievements.AmorphousCoreUsed,,SPOILER,LEGENDARY
+sms_AmorphousCoreUsed,"The Pseudocore Connection, Part 3","Placed the Amorphous Pseudocore in command of a crewed ship.",,shipmastery.achievements.AmorphousPseudocoreUsed,,SPOILER,LEGENDARY

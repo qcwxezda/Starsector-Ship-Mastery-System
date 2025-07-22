@@ -7,13 +7,12 @@ import com.fs.starfarer.api.impl.campaign.plog.PlaythroughLog;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.util.Misc;
-import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.deferred.DeferredActionPlugin;
 import shipmastery.ui.MasteryPanel;
 import shipmastery.util.ClassRefs;
 import shipmastery.util.ReflectionUtils;
-import shipmastery.util.SModUtils;
+import shipmastery.util.HullmodUtils;
 import shipmastery.util.ShipMasterySModRecord;
 import shipmastery.util.Strings;
 import shipmastery.util.Utils;
@@ -76,10 +75,10 @@ public class SModTableRowPressed extends TriggerableProxy {
                 if (rootVariant != null) {
                     String name = spec.getDisplayName();
 
-                    boolean isEnhance = SModUtils.isHullmodBuiltIn(spec, variant);
+                    boolean isEnhance = HullmodUtils.isHullmodBuiltIn(spec, variant);
                     float bonusXPFraction = 0f;
                     if (masteryPanel.isUsingSP()) {
-                        float origCreditsCost = SModUtils.getCreditsCost(spec, module);
+                        float origCreditsCost = HullmodUtils.getBuildInCost(spec, module);
                         bonusXPFraction = isEnhance ? 1f : 1f - Math.min(1f, origCreditsCost / CREDITS_FOR_NO_BONUS_XP);
                         Global.getSector().getPlayerStats().spendStoryPoints(
                                 1,
@@ -97,7 +96,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                         ShipMasterySModRecord record = new ShipMasterySModRecord(module.getFleetMember());
                         record.getSMods().add(rowData.hullModSpecId);
                         record.setSPSpent(masteryPanel.isUsingSP() ? 1 : 0);
-                        record.setMPSpent(rowData.mpCost);
+                        record.setMPSpent(0);
                         record.setBonusXPFractionGained(bonusXPFraction);
                         record.setCreditsSpent(rowData.creditsCost);
                         PlaythroughLog.getInstance().getSModsInstalled().add(record);
@@ -118,7 +117,7 @@ public class SModTableRowPressed extends TriggerableProxy {
                     }
 
                     if (masteryPanel.isUsingSP()) {
-                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_technology", 1f, 1f);
+                        Global.getSoundPlayer().playUISound("ui_char_spent_story_point_industry", 1f, 1f);
                     } else {
                         Global.getSoundPlayer().playUISound("sms_add_smod", 1f, 1f);
                     }
@@ -128,7 +127,6 @@ public class SModTableRowPressed extends TriggerableProxy {
                         variant.addPermaMod(Strings.Hullmods.ENGINEERING_OVERRIDE, false);
                     }
 
-                    ShipMastery.spendPlayerMasteryPoints(rootVariant.getHullSpec(), rowData.mpCost);
                     Utils.getPlayerCredits().subtract(rowData.creditsCost);
                     masteryPanel.forceRefresh(true, true, true, false);
                 }

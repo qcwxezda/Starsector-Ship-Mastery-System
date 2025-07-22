@@ -3,6 +3,7 @@ package shipmastery.mastery.impl.hullmods;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,16 +13,16 @@ import shipmastery.util.Utils;
 
 public class ArmorHullmodPackage extends HullmodPackage {
 
-    public static float REQ_NOT_MET_MULT = 0.8f;
+    public static float REQ_NOT_MET_MULT = 10f/12f;
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(
                 Strings.Descriptions.ArmorHullmodPackagePost,
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercentNoDecimal(getStrength(selectedModule)*REQ_NOT_MET_MULT));
+                Utils.asPercentNoDecimal(getStrength(selectedVariant)*REQ_NOT_MET_MULT));
     }
 
     @Override
@@ -30,11 +31,11 @@ public class ArmorHullmodPackage extends HullmodPackage {
     }
 
     @Override
-    protected String[] getDescriptionParams(ShipAPI selectedModule) {
+    protected String[] getDescriptionParams(ShipVariantAPI selectedVariant) {
         return new String[] {
                 Utils.getHullmodName(HullMods.HEAVYARMOR),
                 Utils.getHullmodName(HullMods.ARMOREDWEAPONS),
-                Utils.asPercentNoDecimal(getStrength(selectedModule))};
+                Utils.asPercentNoDecimal(getStrength(selectedVariant))};
     }
 
     @Override

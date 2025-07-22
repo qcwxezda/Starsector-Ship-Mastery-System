@@ -11,12 +11,18 @@ import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import shipmastery.backgrounds.BackgroundUtils;
+import shipmastery.util.Strings;
 import shipmastery.util.VariantLookup;
 
 import java.util.List;
 
 public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecoveryListener, CoreUITabListener,
                                            EconomyTickListener {
+
+    public PlayerFleetHandler() {
+        Global.getSector().getListenerManager().addListener(this, true);
+    }
 
     @Override
     public void reportPlayerOpenedMarket(MarketAPI market) {}
@@ -37,6 +43,9 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
     public void reportAboutToOpenCoreTab(CoreUITabId id, Object o) {
         if (id == CoreUITabId.FLEET || id == CoreUITabId.REFIT) {
             addMasteryHandlerToPlayerFleet();
+            if (BackgroundUtils.isRejectHumanityStart()) {
+                BackgroundUtils.setOfficerNumberToZero();
+            }
         }
     }
 
@@ -56,7 +65,7 @@ public class PlayerFleetHandler implements ColonyInteractionListener, ShipRecove
         for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
             ShipVariantAPI variant = fm.getVariant();
             VariantLookup.VariantInfo variantInfo = VariantLookup.getVariantInfo(variant);
-            if (!variant.hasHullMod("sms_mastery_handler")
+            if (!variant.hasHullMod(Strings.Hullmods.MASTERY_HANDLER)
                     || variantInfo == null
                     || variantInfo.fleet != Global.getSector().getPlayerFleet()
                     || variant.isStockVariant() || variant.isGoalVariant()) {

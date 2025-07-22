@@ -5,16 +5,18 @@ sms_concealed_probe,CUSTOM,"An autonomous probe of impressive scale equipped wit
 sms_concealed_station,CUSTOM,"A seemingly abandoned station, located far away from civilized space and outfitted with a device that masks its sensor signal, albeit with limited effectiveness. Whoever built this station clearly wanted to keep it safe from prying pirates, scavengers, and adventurers alike. A closer inspection is required.",,,,
 sms_station_nucleus,CUSTOM,"A massive siphon intercepting a pair of binary stars, deformed by cycles of bidirectional tension.",,,,
 sms_emitter_array,CUSTOM,One of a set of six orbital installations found surrounding some unassuming rock beyond the farthest reaches of the sector. Possibly plays a part in erecting the planetary-scale shield protecting said rock.,,,,
-sms_alpha_k_core,RESOURCE,"A heavily modified alpha-level AI core, stripped of most of its functionality and fed with vast quantities of battle simulation data.
+sms_alpha_pseudocore,RESOURCE,"A heavily modified alpha-level AI core, stripped of most of its functionality and fed with vast quantities of battle simulation data.
 
 In theory, plucking out a large proportion of an AI core's brain and leaving not much more than the bare computing fundamentals should greatly hinder its ability to act independently. In practice, Pseudocores are only marginally less autonomous than their proper counterparts. While they're unable to serve as colony administrators or assistants, their vastly expanded combat knowledge base allows them to be just as deadly at the helm of a combat-capable vessel, provided their fleet's commander has the skills to match.",,,,
-sms_beta_k_core,RESOURCE,"A heavily modified beta-level AI core. It's been stripped of most of its functionality and fed with copious amounts of battle simulation data.
+sms_beta_pseudocore,RESOURCE,"A heavily modified beta-level AI core. It's been stripped of most of its functionality and fed with copious amounts of battle simulation data.
 
 In theory, plucking out a large proportion of an AI core's brain and leaving not much more than the bare computing fundamentals should greatly hinder its ability to act independently. In practice, Pseudocores are only marginally less autonomous than their proper counterparts. While they're unable to serve as colony administrators or assistants, their vastly expanded combat knowledge base allows them to be just as deadly at the helm of a combat-capable vessel, provided their fleet's commander has the skills to match.",,,,
-sms_gamma_k_core,RESOURCE,"A heavily modified gamma-level AI core. It's been stripped of most of its functionality and fed with copious amounts of battle simulation data.
+sms_gamma_pseudocore,RESOURCE,"A heavily modified gamma-level AI core. It's been stripped of most of its functionality and fed with copious amounts of battle simulation data.
 
 In theory, plucking out a large proportion of an AI core's brain and leaving not much more than the bare computing fundamentals should greatly hinder its ability to act independently. In practice, Pseudocores are only marginally less autonomous than their proper counterparts. While they're unable to serve as colony administrators or assistants, their vastly expanded combat knowledge base allows them to be just as deadly at the helm of a combat-capable vessel, provided their fleet's commander has the skills to match.",,,,
 sms_fractured_gamma_core,RESOURCE,"This gamma core appears to have been the subject of an unsuccessful experiment. It's seen better days.
 
 Remarkably, it manages to retain limited functionality despite no longer possessing half of its core proper. Colony assistance might be out of the question, but a brazen -- or desperate -- commander might utilize it to modestly enhance the combat effectiveness of one of his ships, provided he has the proper skillset.",,,,
-sms_amorphous_core,RESOURCE,UNKNOWN ENTRY,,,,
+sms_amorphous_pseudocore,RESOURCE,UNKNOWN ENTRY,,,,
+sms_warped_pseudocore,RESOURCE,"A strange, rare AI core that appears to be a modification of the common Pseudocore, similarly stripped of non-essential functionality. It's unclear whether its unique directives are a result of concerted experimentation or incidental mutation.",,,,
+sms_crystalline_pseudocore,RESOURCE,"A strange, rare AI core that appears to be a modification of the common Pseudocore, similarly stripped of non-essential functionality. It's unclear whether its unique directives are a result of concerted experimentation or incidental mutation.",,,,

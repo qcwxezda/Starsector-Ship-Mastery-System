@@ -2,6 +2,7 @@ package shipmastery.mastery.impl.combat.shipsystems;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import shipmastery.combat.listeners.BaseShipSystemListener;
 import shipmastery.mastery.MasteryDescription;
@@ -12,13 +13,13 @@ import java.awt.Color;
 
 public class HEFShieldEfficiency extends ShipSystemEffect {
     @Override
-    public MasteryDescription getDescription(ShipAPI selectedModule, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFShieldEfficiency).params(getSystemName(), Utils.asPercent(getStrength(selectedModule)));
+    public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HEFShieldEfficiency).params(getSystemName(), Utils.asPercent(getStrength(selectedVariant)));
     }
 
     @Override
     public void applyEffectsAfterShipCreationIfHasSystem(ShipAPI ship) {
-        if (!ship.hasListenerOfClass(HEFShieldEfficiencyScript.class)) {
+        if (!ship.hasListenerOfClass(HEFShieldEfficiencyScript.class) && ship.getShield() != null) {
             ship.addListener(new HEFShieldEfficiencyScript(ship, getStrength(ship), id));
         }
     }

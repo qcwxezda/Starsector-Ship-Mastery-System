@@ -17,6 +17,7 @@ import shipmastery.util.Utils;
 
 import java.awt.Color;
 
+@Deprecated
 public class BestOfTheBest {
 
     public static class Level0 implements DescriptionSkillEffect {

@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import shipmastery.ShipMastery;
+import shipmastery.util.MasteryUtils;
 import shipmastery.util.VariantLookup;
 
 import java.util.ArrayList;
@@ -115,11 +116,11 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {}
 
     @Override
-    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipAPI selectedModule,
+    public void addTooltipIfHasTooltipTag(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {}
 
     @Override
@@ -165,59 +166,19 @@ public abstract class BaseMasteryEffect implements MasteryEffect {
         this.priority = priority;
     }
 
-//    @Override
-//    public final void modifyStrengthMultiplicative(PersonAPI commander, float fraction, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) {
-//            modifier = new MutableStat(1f);
-//            strengthModifierMap.put(id, modifier);
-//        }
-//        modifier.modifyMult(sourceId, fraction);
-//    }
-//
-//    @Override
-//    public final void modifyStrengthAdditive(PersonAPI commander, float fraction, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) {
-//            modifier = new MutableStat(1f);
-//            strengthModifierMap.put(id, modifier);
-//        }
-//        modifier.modifyPercent(sourceId, 100f*(fraction - 1f));
-//    }
-//
-//    @Override
-//    public final void unmodifyStrength(PersonAPI commander, String sourceId) {
-//        if (commander == null) return;
-//        String id = commander.getId();
-//        MutableStat modifier = strengthModifierMap.get(id);
-//        if (modifier == null) return;
-//        modifier.unmodify(sourceId);
-//    }
-
-
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {}
 
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {}
 
+    public final float getBaseStrength() {
+        return baseStrength;
+    }
+
     @Override
     public final float getStrength(PersonAPI commander) {
-        float strength = baseStrength;
-        if (commander == null) return strength;
-        // local mod can be multiplicative (if negative) or additive (if positive)
-        strength = commander.getStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + getHullSpec().getHullId()).computeEffective(strength);
-        // global mod is always additive
-        strength += commander.getStats().getDynamic().getMod(GLOBAL_MASTERY_STRENGTH_MOD).computeEffective(baseStrength) - baseStrength;
-        return strength;
-/*        String id = commander.getId();
-        MutableStat modifier = strengthModifierMap.get(id);
-        if (modifier == null) return baseStrength;
-        return baseStrength * modifier.getModifiedValue();*/
+        return MasteryUtils.getModifiedMasteryEffectStrength(commander, getHullSpec(), baseStrength);
     }
 
     public final float getStrengthForPlayer() {
