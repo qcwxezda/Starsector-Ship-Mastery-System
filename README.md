@@ -8,7 +8,7 @@ A Starsector mod that allows the player to gain mastery in ship hulls to unlock 
 - Ship classes (a.k.a. hull specs) in your fleet gain mastery XP and can use that XP to level up.
     - Player XP gained from combat grants mastery XP to the ship classes in your fleet that participated.
     - Player XP gained from any other source grants mastery XP to civilian ship classes.
-      - For this purpose, civilian ship classes are hull specs that have the CIVILIAN tag, but do not have the CARRIER tag.
+      - For this purpose, civilian ship classes are hull specs that have the CIVILIAN hint, but do not have the CARRIER hint.
 - Mastery XP can also be acquired by consuming knowledge constructs, which appear as rare loot under certain circumstances.
 - Mastery XP can be used to level up a ship class's mastery, upon which you may select a perk to unlock.
     - Each ship class has its own mastery XP pool and level-up choices that are shared between all ships of that type.
