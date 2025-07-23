@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetInflater;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.listeners.CoreAutoresolveListener;
 import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
@@ -20,6 +19,7 @@ import com.fs.starfarer.api.impl.campaign.DModManager;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.rulecmd.ShowDefaultVisual;
 import com.fs.starfarer.api.plugins.AutofitPlugin;
 import com.fs.starfarer.api.plugins.impl.CoreAutofitPlugin;
 import com.fs.starfarer.api.util.Misc;
@@ -108,13 +108,6 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
             variant.setModuleVariant(id, addHandlerMod(variant.getModuleVariant(id), root, member));
         }
         return variant;
-    }
-
-    @Override
-    public void reportShownInteractionDialog(InteractionDialogAPI dialog) {
-        if (dialog.getInteractionTarget() instanceof CampaignFleetAPI fleet) {
-            addMasteriesToFleet(fleet);
-        }
     }
 
     public static void addMasteriesToFleet(CampaignFleetAPI fleet) {
@@ -460,6 +453,8 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         if (!(target instanceof CampaignFleetAPI fleet)) return;
         if (fleet != lastSeenFleet) {
             addMasteriesToFleet(fleet);
+            // memoryMap not used in ShowDefaultVisual
+            new ShowDefaultVisual().execute(null, dialog, null, null);
         }
         lastSeenFleet = fleet;
     }

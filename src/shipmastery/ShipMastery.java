@@ -315,7 +315,9 @@ public abstract class ShipMastery {
             Class<?> cls = Global.getSettings().getScriptClassLoader().loadClass(className);
             var plugin = Utils.instantiateClassNoParams(cls);
             if (!(plugin instanceof AICoreInterfacePlugin p)) {
-                throw new InstantiationException("");
+                throw new InstantiationException("plugin "
+                        + className
+                        +  " in ai_core_interface_list.csv must implement shipmastery.aicoreinterface.AICoreInterfacePlugin");
             }
             aiCoreInterfaceSingletonMap.put(commodityId, p);
         }

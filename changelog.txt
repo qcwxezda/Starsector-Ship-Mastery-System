@@ -1,3 +1,10 @@
+2.0.1
+----------
+- Removed extraneous mastery-adder listener invocation.
+- Fixed issue with obfuscated FleetMember.getHullSpec call causing crashes on non-Windows systems.
+- Fixed issue where some fleets (those without inflaters) would not show their S-mods added by this mod in the fleet preview.
+- Added error message if AI Core interface plugin doesn't implement the correct Java interface.
+
 2.0.0
 ----------
 

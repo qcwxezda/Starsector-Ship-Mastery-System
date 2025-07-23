@@ -284,7 +284,7 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
                     var plugin = new FleetPanelHandler.FleetPanelItemUIPlugin(
                             isSelected ? getSelectedShip(coreUI).two.getVariant() : member.getVariant(),
                             member,
-                            isSelected ? currentShipInfo.rootSpec : member.getHullSpec(),
+                            isSelected ? currentShipInfo.rootSpec : ((FleetMemberAPI) member).getHullSpec(),
                             pos);
                     plugin.heightOverride = 40f;
                     plugin.numBars = 20;
