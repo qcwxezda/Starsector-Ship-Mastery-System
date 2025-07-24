@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.FleetInflater;
 import com.fs.starfarer.api.campaign.listeners.CoreAutoresolveListener;
 import com.fs.starfarer.api.campaign.listeners.FleetInflationListener;
@@ -451,10 +452,13 @@ public class FleetHandler extends BaseCampaignEventListener implements FleetInfl
         if (dialog == null) return;
         var target = dialog.getInteractionTarget();
         if (!(target instanceof CampaignFleetAPI fleet)) return;
+        if (fleet.isPlayerFleet()) return;
         if (fleet != lastSeenFleet) {
             addMasteriesToFleet(fleet);
             // memoryMap not used in ShowDefaultVisual
-            new ShowDefaultVisual().execute(null, dialog, null, null);
+            if (dialog.getPlugin() != null && dialog.getPlugin().getContext() instanceof FleetEncounterContextPlugin p && p.getBattle() != null) {
+                new ShowDefaultVisual().execute(null, dialog, null, null);
+            }
         }
         lastSeenFleet = fleet;
     }

@@ -1,3 +1,7 @@
+2.0.2
+----------
+- Hotfix for issue introduced in 2.0.1 that would cause some interaction dialogs to show the wrong visual.
+
 2.0.1
 ----------
 - Removed extraneous mastery-adder listener invocation.
