@@ -20,6 +20,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
@@ -109,7 +110,6 @@ public class ModPlugin extends BaseModPlugin {
     public void onAboutToLinkCodexEntries() {
         CodexDataV2.makeRelated(
                 CodexDataV2.getSkillEntryId("sms_shared_knowledge"),
-                CodexDataV2.getItemEntryId("sms_construct"),
                 CodexDataV2.getCommodityEntryId("sms_gamma_pseudocore"),
                 CodexDataV2.getCommodityEntryId("sms_beta_pseudocore"),
                 CodexDataV2.getCommodityEntryId("sms_alpha_pseudocore"));
@@ -119,6 +119,23 @@ public class ModPlugin extends BaseModPlugin {
         CodexDataV2.makeRelated(
                 CodexDataV2.getSkillEntryId("sms_crystalline_knowledge"),
                 CodexDataV2.getCommodityEntryId("sms_crystalline_pseudocore"));
+    }
+
+    @Override
+    public void onCodexDataGenerated() {
+        String[] skills = new String[] {
+                CodexDataV2.getSkillEntryId("sms_warped_knowledge"),
+                CodexDataV2.getSkillEntryId("sms_crystalline_knowledge"),
+                CodexDataV2.getSkillEntryId("sms_shared_knowledge")};
+        String[] vanillaCores =  new String[] {
+                CodexDataV2.getCommodityEntryId(Commodities.GAMMA_CORE),
+                CodexDataV2.getCommodityEntryId(Commodities.BETA_CORE),
+                CodexDataV2.getCommodityEntryId(Commodities.ALPHA_CORE)};
+        for (String skill : skills) {
+            for (String vanillaCore : vanillaCores) {
+                CodexDataV2.makeUnrelated(skill, vanillaCore);
+            }
+        }
     }
 
     private void initializeCuratorFaction() {

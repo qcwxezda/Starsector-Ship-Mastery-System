@@ -4,6 +4,9 @@
 - Fixed a possible crash of unknown origin if the fleet panel injector can't find the fleet panel buttons.
 - Fixed an issue where a skill that depended on a target's shield efficiency wasn't taking into account its shield damage taken stat.
 
+No new version, just re-download latest:
+- (2:30 AM EST 7/30/2025): Codex now unlocks unique AI core skills if you have them in your cargo when you open the cargo screen.
+
 2.0.2
 ----------
 - Hotfix for issue introduced in 2.0.1 that would cause some interaction dialogs to show the wrong visual.
