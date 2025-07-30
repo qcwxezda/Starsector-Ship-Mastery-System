@@ -1,4 +1,5 @@
 faction_id, average_modifier, stdev, flagship_bonus, base_smod_prob, smod_prob_mult_per_dmod, mastery_strength_bonus
+player,,,,0,
 derelict, -4,,0,0,
 luddic_path, -2,,0,0.25,
 pirates, -2,,1,0.4,

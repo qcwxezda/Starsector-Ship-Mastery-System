@@ -55,6 +55,7 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
 
     private boolean needsInjection(Object fleetItem) {
         List<?> children = (List<?>) ReflectionUtils.invokeMethod(fleetItem, "getChildrenNonCopy");
+        if (children == null) return false;
         for (int i = children.size() - 1; i >= 0; i--) {
             if (children.get(i) instanceof CustomPanelAPI panel && panel.getPlugin() instanceof GenericFleetPanelUIPlugin) {
                 return false;

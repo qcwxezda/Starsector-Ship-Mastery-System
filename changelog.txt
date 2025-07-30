@@ -1,3 +1,9 @@
+2.0.3
+----------
+- Player-faction NPC fleets (patrols, etc.) no longer get S-mods. This is to prevent issues with stuff like special task groups and fleet detachments erroneously getting S-mods, since those ships can be returned to the player.
+- Fixed a possible crash of unknown origin if the fleet panel injector can't find the fleet panel buttons.
+- Fixed an issue where a skill that depended on a target's shield efficiency wasn't taking into account its shield damage taken stat.
+
 2.0.2
 ----------
 - Hotfix for issue introduced in 2.0.1 that would cause some interaction dialogs to show the wrong visual.

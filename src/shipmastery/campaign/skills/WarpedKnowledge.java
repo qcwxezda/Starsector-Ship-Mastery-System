@@ -57,7 +57,8 @@ public class WarpedKnowledge {
             public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
                 if (!(target instanceof ShipAPI ship)) return null;
                 if (shieldHit && ship.getShield() != null) {
-                    float eff = ship.getShield().getFluxPerPointOfDamage();
+                    float eff = ship.getShield().getFluxPerPointOfDamage()
+                            * ship.getMutableStats().getShieldDamageTakenMult().getModifiedValue();
                     eff = Math.min(Math.max(eff, SHIELD_THRESHOLD_MIN), SHIELD_THRESHOLD_MAX);
                     float t = 1f - (eff - SHIELD_THRESHOLD_MIN) / (SHIELD_THRESHOLD_MAX - SHIELD_THRESHOLD_MIN);
                     float bonus = MathUtils.lerp(0f, MAX_DAMAGE_SHIELDS, t);
