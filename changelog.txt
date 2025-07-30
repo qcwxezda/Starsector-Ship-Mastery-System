@@ -6,6 +6,7 @@
 
 No new version, just re-download latest:
 - (2:30 AM EST 7/30/2025): Codex now unlocks unique AI core skills if you have them in your cargo when you open the cargo screen.
+- (2:48 AM EST 7/30/2025): Fixed issue with version files not being updated.
 
 2.0.2
 ----------
