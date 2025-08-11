@@ -2,10 +2,10 @@ package shipmastery.hullmods;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.hullmods.BaseLogisticsHullMod;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import shipmastery.campaign.PlayerMPHandler;
@@ -17,7 +17,7 @@ import shipmastery.util.VariantLookup;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
+public class AnalysisPackage extends BaseLogisticsHullMod implements HullModFleetEffect {
 
     public static final float[] BASE_INCREASE_VALUES = new float[] {0.05f, 0.1f, 0.15f, 0.2f};
     public static final float MAX_INCREASE_VALUE = 1f;
@@ -76,12 +76,15 @@ public class AnalysisPackage extends BaseHullMod implements HullModFleetEffect {
 
     @Override
     public boolean isApplicableToShip(ShipAPI ship) {
+        if (!super.isApplicableToShip(ship)) return false;
         var lookup = VariantLookup.getVariantInfo(ship.getVariant());
         return lookup == null || lookup.variant == lookup.root;
     }
 
     @Override
     public String getUnapplicableReason(ShipAPI ship) {
+        String supReason = super.getUnapplicableReason(ship);
+        if (supReason != null) return supReason;
         // Also possible: check for MODULE hint
         // But do all modules require the MODULE hint?
         var lookup = VariantLookup.getVariantInfo(ship.getVariant());

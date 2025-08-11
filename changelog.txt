@@ -1,3 +1,8 @@
+2.0.4
+----------
+- Fixed Analysis Package being installable despite already having 2 logistics hullmods installed.
+- (New game only) Exploration content generator now skips non-hidden modded systems without stars, except nebulae, to prevent issues with BaseThemeGenerator.
+
 2.0.3
 ----------
 - Player-faction NPC fleets (patrols, etc.) no longer get S-mods. This is to prevent issues with stuff like special task groups and fleet detachments erroneously getting S-mods, since those ships can be returned to the player.
@@ -36,7 +41,7 @@ No new version, just re-download latest:
     - Mastery handler hullmod now reduces build-in limit by MAX_PERMA_MODS.
     - The default S-mod capacity masteries now each grant half of MAX_PERMA_MODS capacity.
 - Removed the randomness from MP gain, changed MP gain and cost scaling.
-- Added Nexerelin backgrounds:
+- Added Nexerelin backgrounds:w
     - Hull Tinkerer: detaches S-mods from the mastery system, allowing you to build in S-mods without mastery
     - Enlightened: Unlock by completing the achievement "Full House"
     - Reject Humanity: Unlock by completing the achievement "The Pseudocore Connection, Part 1"

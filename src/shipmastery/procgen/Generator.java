@@ -103,6 +103,8 @@ public class Generator {
                 sys -> {
                     if (Math.abs(sys.getLocation().x) <= SECTOR_WIDTH / 6f
                             || Math.abs(sys.getLocation().y) <= SECTOR_HEIGHT / 6f) return false;
+                    // Ignore systems that aren't nebulae and that have no star, as that breaks BaseThemeGenerator's random picker
+                    if (sys.getType() != StarSystemGenerator.StarSystemType.NEBULA && sys.getStar() == null) return false;
                     Set<String> blacklist = new HashSet<>(sys.getTags());
                     blacklist.retainAll(TAGS_TO_SKIP);
                     return blacklist.isEmpty();
