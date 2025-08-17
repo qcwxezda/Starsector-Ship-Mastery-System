@@ -254,7 +254,7 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_CORE)) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_HIDDEN)) return;
             if (fleet.getContainingLocation() == toTrack.getContainingLocation()) return;
-            if (Misc.random.nextFloat() <= 0f/6f) return;
+            if (Misc.random.nextFloat() <= 5f/6f) return;
 
             regenerateFleet(true);
             Vector2f loc = MathUtils.randomPointInRing(gateTo.getLocation(), 1000f, 2000f);

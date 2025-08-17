@@ -17,6 +17,9 @@
 - Fixed Curator faction knowing hidden/hidden everywhere hullmods.
 - Entropy amplifier chaining/mobility masteries: no longer crash if used with a mod that replaces entropy amplifier with its own implementation, but still won't work with them.
 
+No new version, just re-download latest:
+- (5:08 PM EST 8/17/2025): Fixed a small bug with a specific NPC fleet.
+
 2.0.4
 ----------
 - Fixed Analysis Package being installable despite already having 2 logistics hullmods installed.
