@@ -14,12 +14,12 @@ import java.awt.Color;
 
 public class AlphaCoreInterface implements AICoreInterfacePlugin {
 
-    public static final float STAT_BOOST = 0.1f;
+    public static final float STAT_BOOST = 0.12f;
     public static final int S_REDUCTION = 1;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 125000f, 400000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 100000f, 200000f);
     }
 
     @Override

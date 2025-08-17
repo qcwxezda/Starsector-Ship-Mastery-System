@@ -1,3 +1,22 @@
+2.0.5
+----------
+- Reduced AI core installation costs.
+- Buffed/modified some AI core interface effects:
+    - Beta Core: changed effect from flux capacity/dissipation for d-mods/S-mods to effective armor/ECM rating.
+    - Alpha Core: buff increased from 1.1x to 1.12x.
+    - Omega Core (unobtainable, exists only for completeness): S-mod capacity +1 -> +2.
+    - Gamma Pseudocore: base CR increase 12% -> 10%, CR decrease per hullmod 2% -> 1%.
+    - Alpha Pseudocore: CR decrease 10% -> 8%.
+    - Warped Pseudocore: Bonus 12% -> 10%, CR decrease 8% -> 5%.
+    - Crystalline Pseudocore: Bonus 12% -> 10%, CR decrease 8% -> 5%.
+    - ... and another minor change to another core effect.
+- Slightly modified some stats.
+- No longer crashes if a modded faction lists nonexistent fighters/weapons/ships in its known entity lists.
+- Fixed issue where the engine-hullmod-package mastery wasn't correctly applying the top-speed effect when the conditions for the base effect were met.
+    - Reduced effect slightly.
+- Fixed Curator faction knowing hidden/hidden everywhere hullmods.
+- Entropy amplifier chaining/mobility masteries: no longer crash if used with a mod that replaces entropy amplifier with its own implementation, but still won't work with them.
+
 2.0.4
 ----------
 - Fixed Analysis Package being installable despite already having 2 logistics hullmods installed.

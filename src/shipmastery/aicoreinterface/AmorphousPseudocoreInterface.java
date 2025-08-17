@@ -18,6 +18,8 @@ public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
 
     public static final float IMMUNITY_SECONDS = 15f;
     public static final float IMMUNITY_FADE_TIME = 15f;
+    public static final float MIN_IMMUNITY = 0.25f;
+    public static final float MAX_IMMUNITY = 0.99f;
     public static final float CR_INCREASE = 1f;
 
     @Override
@@ -26,6 +28,8 @@ public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
                 0f,
                 Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(CR_INCREASE),
+                Utils.asPercent(MAX_IMMUNITY),
+                Utils.asPercent(MIN_IMMUNITY),
                 Utils.asFloatOneDecimal(IMMUNITY_SECONDS),
                 Utils.asFloatOneDecimal(IMMUNITY_FADE_TIME));
     }
@@ -67,7 +71,7 @@ public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
 
         @Override
         public void advance(float amount) {
-            if (!ship.isAlive() || ship.getHitpoints() < 0f || timeElapsed > IMMUNITY_FADE_TIME + IMMUNITY_SECONDS) {
+            if (!ship.isAlive() || ship.getHitpoints() < 0f) {
                 ship.removeListener(this);
                 return;
             }
@@ -75,7 +79,8 @@ public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
             checkerInterval.advance(amount);
             if (!checkerInterval.intervalElapsed()) return;
             if (ship.getFluxTracker().isVenting()) {
-                float effectMult = timeElapsed <= IMMUNITY_SECONDS ? 1f : Math.max(0f, 1f - ((timeElapsed - IMMUNITY_SECONDS) / IMMUNITY_FADE_TIME));
+                float effectMult = timeElapsed <= IMMUNITY_SECONDS ? MAX_IMMUNITY : Math.max(0f, MAX_IMMUNITY*(1f - ((timeElapsed - IMMUNITY_SECONDS) / IMMUNITY_FADE_TIME)));
+                effectMult = Math.max(effectMult, MIN_IMMUNITY);
                 stats.getHullDamageTakenMult().modifyMult(id, 1f - effectMult);
                 stats.getArmorDamageTakenMult().modifyMult(id, 1f - effectMult);
                 stats.getShieldDamageTakenMult().modifyMult(id, 1f - effectMult);

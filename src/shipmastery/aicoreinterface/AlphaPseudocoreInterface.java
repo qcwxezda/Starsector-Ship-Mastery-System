@@ -16,7 +16,7 @@ import java.awt.Color;
 public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
 
     public static final float FIRE_RATE_INCREASE = 0.1f;
-    public static final float CR_REDUCTION = 0.1f;
+    public static final float CR_REDUCTION = 0.08f;
 
     @Override
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
@@ -41,6 +41,6 @@ public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 150000f, 500000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 120000f, 240000f);
     }
 }

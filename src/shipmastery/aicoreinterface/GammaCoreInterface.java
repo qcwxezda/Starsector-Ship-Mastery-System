@@ -15,7 +15,7 @@ public class GammaCoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 40000f, 120000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 40000f, 80000f);
     }
 
     @Override

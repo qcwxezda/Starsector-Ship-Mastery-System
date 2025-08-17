@@ -12,7 +12,7 @@ import shipmastery.util.Utils;
 
 public class EngineHullmodPackage extends HullmodPackage {
 
-    public static final float[] TOP_SPEED_BONUS = {10f, 8f, 6f, 5f};
+    public static final float[] TOP_SPEED_BONUS = {10f, 7f, 5f, 3f};
 
     @Override
     protected String getDescriptionString() {
@@ -56,6 +56,7 @@ public class EngineHullmodPackage extends HullmodPackage {
         stats.getBallisticWeaponRangeBonus().unmodify(HullMods.UNSTABLE_INJECTOR);
         stats.getEnergyWeaponRangeBonus().unmodify(HullMods.UNSTABLE_INJECTOR);
         stats.getFighterRefitTimeMult().unmodify(HullMods.UNSTABLE_INJECTOR);
+        applyIfRequirementNotMet(hullSize, stats);
     }
 
     @Override

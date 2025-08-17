@@ -13,8 +13,8 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 
 public class GammaPseudocoreInterface implements AICoreInterfacePlugin {
-    public static final float CR_PER_HULLMOD = 0.02f;
-    public static final float CR_INITIAL = 0.12f;
+    public static final float CR_PER_HULLMOD = 0.01f;
+    public static final float CR_INITIAL = 0.1f;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {

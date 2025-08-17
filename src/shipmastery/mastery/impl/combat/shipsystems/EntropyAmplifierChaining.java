@@ -65,7 +65,7 @@ public class EntropyAmplifierChaining extends ShipSystemEffect {
         @Override
         public void onFullyActivate() {
             Object targetDataObj = Global.getCombatEngine().getCustomData().get(ship.getId() + "_entropy_target_data");
-            if (targetDataObj == null) return;
+            if (!(targetDataObj instanceof EntropyAmplifierStats.TargetData)) return;
 
             curTargetData = ((EntropyAmplifierStats.TargetData) targetDataObj);
             if (curTargetData.target == null) return;

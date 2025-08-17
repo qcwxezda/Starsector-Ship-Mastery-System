@@ -13,7 +13,7 @@ import shipmastery.util.Utils;
 public class OmegaCoreInterface implements AICoreInterfacePlugin {
 
     public static final float CR_INCREASE = 1f;
-    public static final int S_CAPACITY = 1;
+    public static final int S_CAPACITY = 2;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {

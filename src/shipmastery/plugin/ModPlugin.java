@@ -144,6 +144,8 @@ public class ModPlugin extends BaseModPlugin {
                 spec -> !spec.hasTag(Tags.RESTRICTED)
                         && !spec.hasTag(Tags.HIDE_IN_CODEX)
                         && !spec.hasTag(Tags.NO_DROP)
+                        && !spec.isHidden()
+                        && !spec.isHiddenEverywhere()
                         && !spec.hasTag(Tags.HULLMOD_NO_DROP_SALVAGE)
         ).map(HullModSpecAPI::getId).toList());
         thisFaction.getKnownHullMods().remove(HullMods.PHASE_ANCHOR);
@@ -161,12 +163,14 @@ public class ModPlugin extends BaseModPlugin {
                     faction.getKnownFighters().stream().filter(
                             id -> {
                                 var spec = Global.getSettings().getFighterWingSpec(id);
+                                if (spec == null) return false;
                                 return !spec.hasTag(Tags.RESTRICTED) && !spec.hasTag(Tags.HIDE_IN_CODEX);
                             }).toList());
             thisFaction.getKnownWeapons().addAll(
                     faction.getKnownWeapons().stream().filter(
                             id -> {
                                 var spec = Global.getSettings().getWeaponSpec(id);
+                                if (spec == null) return false;
                                 return !spec.hasTag(Tags.RESTRICTED)
                                         && !spec.hasTag(Tags.HIDE_IN_CODEX)
                                         && !spec.getAIHints().contains(WeaponAPI.AIHints.SYSTEM);
@@ -174,6 +178,7 @@ public class ModPlugin extends BaseModPlugin {
             var knownShips = faction.getKnownShips().stream().filter(
                     id -> {
                         var spec = Global.getSettings().getHullSpec(id);
+                        if (spec == null) return false;
                         return spec == Utils.getRestoredHullSpec(spec)
                             && !spec.hasTag(Tags.RESTRICTED)
                             && !spec.hasTag(Tags.DWELLER)

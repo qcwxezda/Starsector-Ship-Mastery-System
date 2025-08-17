@@ -19,12 +19,12 @@ public class WarpedPseudocoreInterface implements AICoreInterfacePlugin {
     public static final float DURATION_INCREASE = 1f;
     public static final float PER_STACK_INCREASE = 0.5f;
     public static final float DEBUFF_CAP_INCREASE = 0.25f;
-    public static final float DAMAGE_DEALT_INCREASE = 0.12f;
-    public static final float CR_REDUCTION = 0.08f;
+    public static final float DAMAGE_DEALT_INCREASE = 0.1f;
+    public static final float CR_REDUCTION = 0.05f;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 100000f, 300000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 100000f, 200000f);
     }
 
     @Override

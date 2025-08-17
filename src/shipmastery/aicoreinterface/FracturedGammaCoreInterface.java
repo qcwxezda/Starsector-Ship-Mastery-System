@@ -70,7 +70,7 @@ public class FracturedGammaCoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 25000f, 75000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 25000f, 50000f);
     }
 
     @Override

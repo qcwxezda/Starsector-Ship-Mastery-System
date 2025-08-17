@@ -15,13 +15,14 @@ import java.awt.Color;
 
 public class BetaCoreInterface implements AICoreInterfacePlugin {
 
-    public static final float[] CAPACITY_PER = new float[] {200f, 400f, 600f, 800f};
-    public static final float[] DISSIPATION_PER = new float[] {10f, 20f, 30f, 40f};
+    public static final float ECM_PER = 0.01f;
+    public static final float[] ECM_CAP = new float[] {0.01f, 0.01f, 0.02f, 0.03f};
+    public static final float[] EFFECTIVE_ARMOR_PER = new float[] {10f, 10f, 15f, 20f};
     public static final float INCREASED_DMOD_PROB = 9f;
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 60000f, 200000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 60000f, 120000f);
     }
 
     @Override
@@ -30,8 +31,8 @@ public class BetaCoreInterface implements AICoreInterfacePlugin {
         int sCount = Misc.getCurrSpecialMods(stats.getVariant());
         int dCount = DModManager.getNumDMods(stats.getVariant());
         int size = Utils.hullSizeToInt(hullSize);
-        stats.getFluxCapacity().modifyFlat(id, CAPACITY_PER[size] * dCount);
-        stats.getFluxDissipation().modifyFlat(id, DISSIPATION_PER[size] * sCount);
+        stats.getEffectiveArmorBonus().modifyFlat(id, EFFECTIVE_ARMOR_PER[size] * dCount);
+        stats.getDynamic().getMod(Stats.ELECTRONIC_WARFARE_FLAT).modifyFlat(id, 100f * Math.min(ECM_PER*sCount, ECM_CAP[size]));
         stats.getDynamic().getMod(Stats.DMOD_ACQUIRE_PROB_MOD).modifyPercent(id, 100f * INCREASED_DMOD_PROB);
     }
 
@@ -48,15 +49,17 @@ public class BetaCoreInterface implements AICoreInterfacePlugin {
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Settings.POSITIVE_HIGHLIGHT_COLOR,
+                        Settings.POSITIVE_HIGHLIGHT_COLOR,
                         Settings.NEGATIVE_HIGHLIGHT_COLOR},
-                Utils.asInt(CAPACITY_PER[0]),
-                Utils.asInt(CAPACITY_PER[1]),
-                Utils.asInt(CAPACITY_PER[2]),
-                Utils.asInt(CAPACITY_PER[3]),
-                Utils.asInt(DISSIPATION_PER[0]),
-                Utils.asInt(DISSIPATION_PER[1]),
-                Utils.asInt(DISSIPATION_PER[2]),
-                Utils.asInt(DISSIPATION_PER[3]),
+                Utils.asInt(EFFECTIVE_ARMOR_PER[0]),
+                Utils.asInt(EFFECTIVE_ARMOR_PER[1]),
+                Utils.asInt(EFFECTIVE_ARMOR_PER[2]),
+                Utils.asInt(EFFECTIVE_ARMOR_PER[3]),
+                Utils.asPercent(ECM_PER),
+                Utils.asPercent(ECM_CAP[0]),
+                Utils.asPercent(ECM_CAP[1]),
+                Utils.asPercent(ECM_CAP[2]),
+                Utils.asPercent(ECM_CAP[3]),
                 Utils.asPercent(INCREASED_DMOD_PROB));
     }
 }
