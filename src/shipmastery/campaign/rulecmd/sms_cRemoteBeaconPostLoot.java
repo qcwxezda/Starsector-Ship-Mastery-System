@@ -19,6 +19,7 @@ import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
@@ -253,8 +254,9 @@ public class sms_cRemoteBeaconPostLoot extends BaseCommandPlugin {
             if (gateTo == null || gateTo.isInHyperspace()) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_CORE)) return;
             if (gateTo.getContainingLocation().hasTag(Tags.THEME_HIDDEN)) return;
+            if (!Entities.INACTIVE_GATE.equals(gateTo.getCustomEntityType())) return;
             if (fleet.getContainingLocation() == toTrack.getContainingLocation()) return;
-            if (Misc.random.nextFloat() <= 5f/6f) return;
+            if (Misc.random.nextFloat() <= 4f/5f) return;
 
             regenerateFleet(true);
             Vector2f loc = MathUtils.randomPointInRing(gateTo.getLocation(), 1000f, 2000f);

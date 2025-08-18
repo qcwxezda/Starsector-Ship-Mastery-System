@@ -198,7 +198,7 @@ public class WarpedKnowledge {
                 VariantLookup.VariantInfo info = VariantLookup.getVariantInfo(ship.getVariant());
                 masteryStrength = MasteryUtils.getModifiedMasteryEffectStrength(
                         ship.getFleetCommander(),
-                        info.root == null ? ship.getHullSpec() : info.root.getHullSpec(),
+                        info == null || info.root == null ? ship.getHullSpec() : info.root.getHullSpec(),
                         1f);
                 explosionSpec = new DamagingExplosionSpec(
                         0.1f,

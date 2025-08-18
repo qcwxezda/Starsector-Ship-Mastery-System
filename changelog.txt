@@ -1,3 +1,8 @@
+2.0.6
+----------
+- Fixed issue where custom entities that weren't actually gates, but could be warped to (RAT settlements, etc.), were treated as gates.
+- Fixed possible rare crash (of unknown cause) when fighting fleets with Warped and/or Crystalline Pseudocores.
+
 2.0.5
 ----------
 - Reduced AI core installation costs.
