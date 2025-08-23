@@ -54,7 +54,7 @@ PhaseCloakCost,phase cloak activation and upkeep costs,2,-0.15,,shipmastery.stat
 PhaseTimeMult,local timeflow when phased,3,0.25,,shipmastery.stats.combat.PhaseTimeMult
 ZeroFluxSpeedBoost,the zero-flux speed boost,2,0.15,,shipmastery.stats.combat.ZeroFluxSpeedBoost
 AllWeaponOPCost,the OP cost of all weapons,4,-0.9,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.AllWeaponOPCost
-ExplosionRadiusDamage,explosion radius and damage when destroyed,,1,,shipmastery.stats.combat.ExplosionRadiusDamage
+ExplosionRadiusDamage,explosion range (excluding inner collision radius) and damage when destroyed,,1,,shipmastery.stats.combat.ExplosionRadiusDamage
 BallisticWeaponsOPCost,the OP cost of all ballistic weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.BallisticWeaponsOPCost
 EnergyWeaponsOPCost,the OP cost of all energy weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.EnergyWeaponsOPCost
 MissileWeaponsOPCost,the OP cost of all missile weapons,3,-1.45,modify_flat require_integer triggers_autofit,shipmastery.stats.combat.MissileWeaponsOPCost

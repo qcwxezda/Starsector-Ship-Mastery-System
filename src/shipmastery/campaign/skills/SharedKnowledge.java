@@ -80,6 +80,7 @@ public class SharedKnowledge {
         public static final float MAX_FIRE_RATE = 0.15f;
         public static final float FIRE_RATE_RANGE = 2500f;
         public static final String FIRE_RATE_STACKS_MOD = "$sms_SharedKnowledgeStacksModifier";
+        public static final String FIRE_RATE_CAP_MOD = "$sms_SharedKnowledgeCapModifier";
 
         public static class SharedKnowledgeEliteScript implements AdvanceableListener {
             IntervalUtil checkerInterval = new IntervalUtil(1f, 1.5f);
@@ -115,7 +116,9 @@ public class SharedKnowledge {
                     }
 
                     count = ship.getMutableStats().getDynamic().getMod(FIRE_RATE_STACKS_MOD).computeEffective(count);
-                    float bonus = MAX_FIRE_RATE * Math.min(1f, count / MAX_FIRE_RATE_STACKS);
+
+                    float bonus = ship.getMutableStats().getDynamic().getMod(FIRE_RATE_CAP_MOD).computeEffective(MAX_FIRE_RATE)
+                            * Math.min(1f, count / MAX_FIRE_RATE_STACKS);
                     applyEffectsToStats(ship.getMutableStats(), bonus, id);
                 }
             }
@@ -133,6 +136,7 @@ public class SharedKnowledge {
             stats.getMissileRoFMult().modifyPercent(modifierId, 100f * amount);
             stats.getBallisticWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
             stats.getEnergyWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
+            stats.getBeamWeaponFluxCostMult().modifyMult(modifierId, (1f + amount));
             stats.getMissileWeaponFluxCostMod().modifyMult(modifierId, 1f / (1f + amount));
         }
 

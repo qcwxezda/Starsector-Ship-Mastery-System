@@ -37,12 +37,16 @@ import java.util.Set;
 public class HammerLingeringDamage extends BaseMasteryEffect {
 
     public static final float DAMAGE_OVER_TIME_DURATION = 10f;
-    public static final float AMMO_GAIN = 1f;
     public static final String ON_FIRE_KEY = "sms_on_fire";
+
+    public float getAmmoGain(ShipVariantAPI variant) {
+        return getStrength(variant) * 3f;
+    }
+
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.init(Strings.Descriptions.HammerLingeringDamage).params(
-                Utils.asPercentNoDecimal(AMMO_GAIN)).colors(Misc.getTextColor());
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.HammerLingeringDamage).params(
+                Utils.asPercentNoDecimal(getAmmoGain(selectedVariant)));
     }
 
     @Override
@@ -60,7 +64,7 @@ public class HammerLingeringDamage extends BaseMasteryEffect {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship) {
         if (!ship.hasListenerOfClass(HammerLingeringDamageScript.class)) {
-            ship.addListener(new HammerLingeringDamageScript(ship, getStrength(ship), AMMO_GAIN, 300f * getStrength(ship)));
+            ship.addListener(new HammerLingeringDamageScript(ship, getStrength(ship), getAmmoGain(ship.getVariant()), 300f * getStrength(ship)));
         }
     }
 

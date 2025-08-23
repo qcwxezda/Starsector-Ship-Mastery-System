@@ -1,5 +1,6 @@
 package shipmastery.mastery.impl.combat;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -14,18 +15,26 @@ import shipmastery.util.Strings;
 import shipmastery.util.Utils;
 
 public class VentingRepairs extends BaseMasteryEffect {
+
+    public static final float BASE_VENT_RATE = 0.08f;
     public static final float BASE_FLUX_NEEDED = 0.7f;
     public static final float COOLDOWN_SECONDS = 20f;
 
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.VentingRepairs)
-                .params(Utils.asPercentNoDecimal(BASE_FLUX_NEEDED / getStrength(selectedVariant)));
+                .params(Utils.asPercent(BASE_VENT_RATE * getStrength(selectedVariant)),
+                        Utils.asPercentNoDecimal(BASE_FLUX_NEEDED / getStrength(selectedVariant)));
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         tooltip.addPara(Strings.Descriptions.VentingRepairsPost, 0f, Misc.getTextColor(), Utils.asInt(COOLDOWN_SECONDS));
+    }
+
+    @Override
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
+        stats.getVentRateMult().modifyPercent(id, 100f * BASE_VENT_RATE * getStrength(stats));
     }
 
     @Override

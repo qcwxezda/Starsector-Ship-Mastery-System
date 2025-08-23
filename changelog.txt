@@ -1,3 +1,16 @@
+2.0.7
+----------
+- (Nerf) Alpha Pseudocore integration with Shared Knowledge active now reduces its cap from 15% -> 10%.
+- (Nerf) Weaker-design-compromises mastery: scalable effect reduced from 25% -> 15%.
+- (Buff) Venting-repairs-damaged-weapons mastery now also improves vent rate by 8%, this is scalable.
+- (Mostly buff) Hammer-burn-damage mastery: reduced burn from 30% -> 25%, additional hammer ammo 100% -> 75%, but it now scales with mastery strength.
+- (Buff) Missile-reload-on-kill mastery: damage reduction 25% -> 20%.
+- (Nerf) Regroup-replacement mastery: scalable effect 30% -> 25%.
+- (Nerf) Flux-hullmod-package mastery: scalable effect 12% -> 10%.
+- (Nerf) Empty-mounts-reduce-flux-generation mastery: per-mount reduction no longer scales, cap reduced from 20% -> 10% and now scales.
+- Fixed mastery bar lighting up when enhance is maxed.
+- Fixed Shared Knowledge skill reducing beam weapon flux per second.
+
 2.0.6
 ----------
 - Fixed issue where custom entities that weren't actually gates, but could be warped to (RAT settlements, etc.), were treated as gates.

@@ -225,10 +225,10 @@ public class FleetPanelHandler implements EveryFrameScript, CoreTabListener {
             Color darkEnhance = Misc.getStoryDarkColor();
             if (enhanceFrac > 0f)
                 drawRect(x, y, width, height, 0f, Math.min(1f, enhanceFrac), darkEnhance, alphaMult * extraAlphaMult);
-            Color enhance = progress >= 1f ? brightEnhanceColor : Misc.getStoryOptionColor();
+            Color enhance = progress >= 1f && enhanceFrac < 1f ? brightEnhanceColor : Misc.getStoryOptionColor();
             if (greenFilled > 0f)
                 drawRect(x, y, width, height, 0f, greenFilled, enhance, alphaMult * extraAlphaMult * (fullProgress ? 1f - 0.75f * flashBrightness : 1f));
-            Color mastery = progress >= 1f ? brightMasteryColor : Settings.MASTERY_COLOR;
+            Color mastery = progress >= 1f && enhanceFrac < 1f ? brightMasteryColor : Settings.MASTERY_COLOR;
             if (clampedProgress > greenFilled)
                 drawRect(x, y, width, height, greenFilled, clampedProgress, mastery, alphaMult * extraAlphaMult * (fullProgress ? 1f - 0.75f * flashBrightness: 1f));
             GL11.glEnd();

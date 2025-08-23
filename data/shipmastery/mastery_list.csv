@@ -43,13 +43,13 @@ ArmorHullmodPackage,2,combat unique,,0.12,shipmastery.mastery.impl.hullmods.Armo
 HullHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.HullHullmodPackage
 EngineHullmodPackage,2,combat unique,,1,shipmastery.mastery.impl.hullmods.EngineHullmodPackage
 FighterHullmodPackage,2,combat unique,,0.15,shipmastery.mastery.impl.hullmods.FighterHullmodPackage
-FluxHullmodPackage,2,combat unique,,0.12,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
+FluxHullmodPackage,2,combat unique,,0.1,shipmastery.mastery.impl.hullmods.FluxHullmodPackage
 BuiltInHSA,2,combat unique,,150,shipmastery.mastery.impl.hullmods.BuiltInHSA
 AmmoHullmodPackage,2,combat unique,,0.25,shipmastery.mastery.impl.hullmods.AmmoHullmodPackage
 BuiltInNeuralIntegrator,3,combat unique,,1,shipmastery.mastery.impl.hullmods.BuiltInNeuralIntegrator
 FluxByShieldUpkeep,2,negative_strength_allowed combat,1,0.25,shipmastery.mastery.impl.combat.FluxByShieldUpkeep
 RangeIfNoBonuses,2,negative_strength_allowed unique combat,1,0.25,shipmastery.mastery.impl.combat.RangeIfNoBonuses
-EmptyMountsReduceFlux,3,unique combat,,0.01,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
+EmptyMountsReduceFlux,3,unique combat,,0.1,shipmastery.mastery.impl.combat.EmptyMountsReduceFlux
 # Doesn't work
 # MaxOPForHull,7,combat,,0.1,shipmastery.mastery.impl.unused.MaxOPForHull
 DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.2,shipmastery.mastery.impl.combat.DPIfOnlyShip
@@ -90,10 +90,10 @@ SystemRegenOnKill,3,combat unique,,15,shipmastery.mastery.impl.combat.SystemRege
 MissileRegenOnKill,3,combat unique,,0.2,shipmastery.mastery.impl.combat.MissileRegenOnKill
 SafetyOverridesPPT,2,combat doesnt_affect_modules,,0.5,shipmastery.mastery.impl.combat.SafetyOverridesPPT
 DEMBoost,4,combat unique,,0.01,shipmastery.mastery.impl.combat.DEMBoost
-RegroupReplacement,2,combat unique,,0.3,shipmastery.mastery.impl.combat.RegroupReplacement
+RegroupReplacement,2,combat unique,,0.25,shipmastery.mastery.impl.combat.RegroupReplacement
 ExtraMiningDrones,3,combat unique,,4,shipmastery.mastery.impl.combat.ExtraMiningDrones
 LimitedArmorRegen,3,combat unique,,0.4,shipmastery.mastery.impl.combat.LimitedArmorRegen
-HammerLingeringDamage,3,combat unique,,0.3,shipmastery.mastery.impl.combat.HammerLingeringDamage
+HammerLingeringDamage,3,combat unique,,0.25,shipmastery.mastery.impl.combat.HammerLingeringDamage
 PilumSalamanderBoost,3,combat unique,,150,shipmastery.mastery.impl.combat.PilumSalamanderBoost
 PhasedArmorRepair,4,combat unique,,0.02,shipmastery.mastery.impl.combat.PhasedArmorRepair
 MissileAutoloaderCapacity,3,combat unique,,0.5,shipmastery.mastery.impl.combat.MissileAutoloaderCapacity
@@ -110,7 +110,7 @@ ECMPackageBoost,3,combat,,1,shipmastery.mastery.impl.combat.ECMPackageBoost
 OperationsCenterBoost,3,combat unique prefix_flagship_only,,1,shipmastery.mastery.impl.combat.OperationsCenterBoost
 MaxCRFloor,4,combat unique,,0.4,shipmastery.mastery.impl.combat.MaxCRFloor
 FullHitpointsBoost,3,combat,,0.05,shipmastery.mastery.impl.combat.FullHitpointsBoost
-WeakerDesignCompromises,4,combat unique,,0.25,shipmastery.mastery.impl.combat.WeakerDesignCompromises
+WeakerDesignCompromises,4,combat unique,,0.15,shipmastery.mastery.impl.combat.WeakerDesignCompromises
 VambraceBonuses,4,combat doesnt_affect_modules,,0.05,shipmastery.mastery.impl.combat.VambraceBonuses
 StartingRange,2,combat,,1,shipmastery.mastery.impl.combat.StartingRange
 LatentDR,2,combat,,1,shipmastery.mastery.impl.combat.LatentDR

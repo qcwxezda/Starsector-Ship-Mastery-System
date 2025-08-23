@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import particleengine.Particles;
@@ -28,7 +29,9 @@ public class PlasmaJetsGrazeChance extends ShipSystemEffect {
 
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PlasmaJetsGrazeChance).params(getSystemName(), Utils.asPercent(DAMAGE_MULT));
+        return MasteryDescription.init(Strings.Descriptions.PlasmaJetsGrazeChance)
+                .params(getSystemName(), Utils.asPercent(DAMAGE_MULT))
+                .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Misc.getTextColor());
     }
 
     @Override

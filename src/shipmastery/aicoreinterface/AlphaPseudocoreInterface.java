@@ -22,8 +22,9 @@ public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
     public void addIntegrationDescriptionToTooltip(TooltipMakerAPI tooltip) {
         tooltip.addPara(Strings.Items.alphaPseudocoreIntegrationEffect,
                 0f,
-                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
+                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Global.getSettings().getSkillSpec("sms_shared_knowledge").getName(),
+                Utils.asPercent(FIRE_RATE_INCREASE),
                 Utils.asPercent(FIRE_RATE_INCREASE),
                 Utils.asPercent(CR_REDUCTION));
     }
@@ -31,6 +32,7 @@ public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         stats.getDynamic().getMod(SharedKnowledge.Elite.FIRE_RATE_STACKS_MOD).modifyMult(id, 9999f);
+        stats.getDynamic().getMod(SharedKnowledge.Elite.FIRE_RATE_CAP_MOD).modifyMult(id, FIRE_RATE_INCREASE / SharedKnowledge.Elite.MAX_FIRE_RATE);
         var captain = CampaignUtils.getCaptain(stats);
         boolean hasEliteSharedKnowledge = SharedKnowledge.hasEliteSharedKnowledge(captain);
         if (!hasEliteSharedKnowledge) {
