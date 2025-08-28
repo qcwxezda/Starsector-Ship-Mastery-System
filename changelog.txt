@@ -1,3 +1,7 @@
+2.0.8
+----------
+- Added hidden aptitude to skill_data.csv, removed handler in code.
+
 2.0.7
 ----------
 - (Nerf) Alpha Pseudocore integration with Shared Knowledge active now reduces its cap from 15% -> 10%.

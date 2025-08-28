@@ -94,11 +94,6 @@ public class ModPlugin extends BaseModPlugin {
             Settings.loadSettingsFromJson();
         }
 
-        var miscAptitudeSpec = Global.getSettings().getSkillSpec("sms_aptitude_misc");
-        miscAptitudeSpec.addTag("npc_only");
-        miscAptitudeSpec.addTag("ai_core_only");
-        miscAptitudeSpec.addTag("hide_in_codex");
-
         // Load these particular portrait sprites manually as we do not want these to be
         // random officers
         particleengine.Utils.getLoadedSprite("graphics/portraits/sms_portrait_warped_pseudocore.png");

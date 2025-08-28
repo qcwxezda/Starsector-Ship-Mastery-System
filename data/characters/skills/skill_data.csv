@@ -4,3 +4,4 @@ sms_warped_knowledge,Warped Knowledge,1,1,0,,"Error: skill name ""Warped Knowled
 sms_crystalline_knowledge,Crystalline Knowledge,1,1,0,,"Error: skill name ""Crystalline Knowledge"" not recognized. Unable to load flavor text. Please register your Tri-Tachyon datapad to receive the latest news and updates.",,TRUE,FALSE,FALSE,"npc_only, ai_core_only, codex_unlockable",graphics/icons/skills/sms_crystalline_knowledge.png
 sms_amorphous_knowledge,Amorphous Knowledge,1,1,0,,UNKNOWN ENTRY,,TRUE,FALSE,FALSE,"npc_only, ai_core_only, hide_in_codex",graphics/icons/skills/sms_amorphous_knowledge.png
 sms_dimensional_tether,Dimensional Tether,2,1,0,,UNKNOWN ENTRY,,TRUE,FALSE,FALSE,"npc_only, ai_core_only, hide_in_codex",graphics/icons/skills/sms_dimensional_tether.png
+sms_aptitude_misc,,0,,,,,,,,,"npc_only, ai_core_only, hide_in_codex",graphics/icons/skills/technology.png
