@@ -1,3 +1,16 @@
+2.1.0
+---------
+- Updated for Starsector 0.98.5a-RC6.
+- Disabled vanilla "Change S-mods" features.
+- Selective restoration replaced with "Improved Restoration," which uses 8%-40% fewer domain-grade parts.
+- Removed restoration cost mastery and S-mod cost reduction mastery.
+- Survival mode S-mod cost increased to 3.5x.
+- Survival mode cost reduction when using story points reduced from 90% to 75%.
+- Bonus XP refund when spending SP is capped at 250000 (up from 200000).
+    - Domain-grade parts are worth 10000 credits (20000 in survival mode) each when calculating this value.
+- Maximum cost to build a single S-mod in reduced to 3 million (was 10 million).
+- Fixed issue where engineering override reduced S-mod removal cost.
+
 2.0.8
 ----------
 - Added hidden aptitude to skill_data.csv, removed handler in code.

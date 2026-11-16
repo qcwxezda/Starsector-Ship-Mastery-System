@@ -87,14 +87,20 @@ public class IntegrateButton extends ButtonWithCost {
                 toShow == null ? "" : Global.getSettings().getCommoditySpec(toShow).getName(),
                 Misc.getDGSCredits(getModifiedCost())};
     }
+
     @Override
-    protected float getBaseCost() {
+    protected int getCostArgIndex() {
+        return 1;
+    }
+
+    @Override
+    protected int getBaseCost() {
         String toShow = existingIntegrated != null ? existingIntegrated : selectedCoreId;
-        if (toShow == null) return 0f;
+        if (toShow == null) return 0;
         var plugin = ShipMastery.getAICoreInterfacePlugin(toShow);
-        if (plugin == null) return 0f;
+        if (plugin == null) return 0;
         var cost = plugin.getIntegrationCost(member);
-        return existingIntegrated != null ? cost / 2f : cost;
+        return (int) Math.ceil(existingIntegrated != null ? cost / 2f : cost);
     }
 
     public class IntegratePanelPlugin extends BaseCustomUIPanelPlugin {

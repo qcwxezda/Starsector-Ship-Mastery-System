@@ -258,7 +258,7 @@ public class MasteryPanel {
         }
         removeSModsButton.onFinish(() -> forceRefresh(true, true, true, false));
 
-        var selectiveRestoreButton = new SelectiveRestoreButton(usingSP, selectedShip);
+        var selectiveRestoreButton = new SelectiveRestoreButton(usingSP, member, selectedShip);
         addButton(selectiveRestoreButton, panel, null, false, -128f, 25f);
         int restoreUnlockLevel = Math.min(maxLevel, MasteryUtils.UNLOCK_SELECTIVE_RESTORATION_LEVEL);
         boolean unrestorable = selectedVariant.hasTag(Tags.VARIANT_UNRESTORABLE) || selectedVariant.getHullSpec().hasTag(Tags.HULL_UNRESTORABLE);
@@ -604,7 +604,7 @@ public class MasteryPanel {
         Color nameColor = modular ? Misc.getBrightPlayerColor() : Color.WHITE;
         Color designColor = Misc.getGrayColor();
         String opCost = "" + (modular ? spec.getCostFor(module.getHullSize()) : 0);
-        int creditsCost = HullmodUtils.getBuildInCost(spec, module, usingSP);
+        int creditsCost = HullmodUtils.getBuildInCost(spec, module, usingSP, false);
         String creditsCostStr = Misc.getFormat().format(creditsCost);
         String modularString = modular ? Strings.MasteryPanel.yes : Strings.MasteryPanel.no;
         Color creditsColor = Misc.getHighlightColor();

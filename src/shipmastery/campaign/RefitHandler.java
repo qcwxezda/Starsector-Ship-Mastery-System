@@ -196,6 +196,22 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
         return getAllModsPanels(coreUI).getLast();
     }
 
+    void removeSModsButton(UIPanelAPI coreUI) {
+        try {
+            Object currentTab = ReflectionUtils.invokeMethodNoCatch(coreUI, "getCurrentTab");
+            Object refitPanel = ReflectionUtils.invokeMethodNoCatch(currentTab, "getRefitPanel");
+            Object designDisplay = ReflectionUtils.invokeMethodNoCatch(refitPanel, "getDesignDisplay");
+            Object smodsButton = ReflectionUtils.invokeMethodNoCatch(designDisplay, "getSmodsButton");
+
+            if (smodsButton != null) {
+                ((ButtonAPI) smodsButton).setOpacity(0f);
+            }
+        }
+        catch (Exception e) {
+            logger.error("[Ship Mastery System] Failed to grab refit screen S-mods button", e);
+        }
+    }
+
     void modifyBuildInButton(UIPanelAPI coreUI) {
         // Modify the "build-in" button
         try {
@@ -313,6 +329,7 @@ public class RefitHandler implements CoreTabListener, CharacterStatsRefreshListe
         UIPanelAPI coreUI = ReflectionUtils.getCoreUI();
 
         modifyBuildInButton(coreUI);
+        removeSModsButton(coreUI);
         updateMasteryButton(coreUI, hideMasteryButton);
 
         if (shouldSync) {

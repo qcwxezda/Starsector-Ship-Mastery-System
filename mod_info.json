@@ -8,7 +8,7 @@
         {"id": "MagicLib", "name": "MagicLib"}
     ],
     "description": "Gain mastery in ship hulls to unlock S-mod slots and additional bonuses.",
-    "gameVersion": "0.98a-RC8",
+    "gameVersion": "0.98.5a-RC6",
     "jars": ["jars/ShipMasterySystem.jar"],
     "modPlugin": "shipmastery.plugin.ModPlugin"
 }

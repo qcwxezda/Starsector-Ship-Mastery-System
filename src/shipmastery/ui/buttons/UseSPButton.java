@@ -26,7 +26,7 @@ public class UseSPButton extends ButtonWithIcon {
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
         tooltip.addPara(Strings.MasteryPanel.useSPTooltip, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(1f - HullmodUtils.CREDITS_COST_MULT_SP),
+                Utils.asPercent(1f - HullmodUtils.getCostMultSP()),
                 Misc.getDGSCredits(HullmodUtils.CREDITS_COST_BXP_CAP));
         tooltip.addPara(Strings.MasteryPanel.buttonStatus, 10f, Settings.POSITIVE_HIGHLIGHT_COLOR,
                 thisButton.isChecked() ? Strings.MasteryPanel.active : Strings.MasteryPanel.inactive);

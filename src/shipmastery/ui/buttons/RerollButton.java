@@ -217,7 +217,7 @@ public class RerollButton extends ButtonWithItemSelection<RerollButton.RerollIte
     }
 
     @Override
-    protected float getBaseCost() {
-        return 0f;
+    protected int getBaseCost() {
+        return 0;
     }
 }

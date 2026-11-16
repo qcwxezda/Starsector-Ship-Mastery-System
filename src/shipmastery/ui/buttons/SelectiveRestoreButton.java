@@ -1,7 +1,11 @@
 package shipmastery.ui.buttons;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DModManager;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -18,8 +22,11 @@ import java.util.stream.Collectors;
 
 public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
 
-    public SelectiveRestoreButton(boolean useStoryColors, ShipAPI selectedShip) {
+    protected FleetMemberAPI member;
+
+    public SelectiveRestoreButton(boolean useStoryColors, FleetMemberAPI member, ShipAPI selectedShip) {
         super(useStoryColors ? "graphics/icons/ui/sms_restore_icon_green.png": "graphics/icons/ui/sms_restore_icon.png", useStoryColors, selectedShip);
+        this.member = member;
     }
 
     @Override
@@ -30,6 +37,24 @@ public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
     @Override
     protected String getCostDescriptionFormat() {
         return Strings.MasteryPanel.selectiveRestorationPanelText;
+    }
+
+    @Override
+    protected float getBxpFraction() {
+        return HullmodUtils.getBonusXPFraction(getBaseCost() * Global.getSector().getEconomy().getCommoditySpec(Commodities.PARTS).getBasePrice());
+    }
+
+    @Override
+    protected float getCurrencyAmount() {
+        return Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(Commodities.PARTS);
+    }
+
+    @Override
+    protected void applyCosts() {
+        var cost = getModifiedCost();
+        Global.getSector().getPlayerFleet().getCargo().removeCommodity(Commodities.PARTS, cost);
+        spendSPIfNeededAndPlaySound();
+        ListenerUtil.reportDModsRepaired(member, selectedShip.getVariant(), cost);
     }
 
     @Override
@@ -59,7 +84,9 @@ public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
 
     @Override
     protected String[] getCostDescriptionArgs() {
-        return new String[] {Misc.getDGSCredits(getModifiedCost())};
+        int cost = getModifiedCost();
+        return new String[] {Integer.toString(cost),
+                cost == 1 ? Strings.MasteryPanel.domainGradePartsSingle : Strings.MasteryPanel.domainGradePartsPlural};
     }
 
     @Override
@@ -79,14 +106,11 @@ public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
     }
 
     @Override
-    protected float getBaseCost() {
-        var variant = selectedShip.getVariant();
-        float base = HullmodUtils.getRestorationCost(selectedShip.getVariant());
-        int count = DModManager.getNumDMods(variant);
-        float minMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MIN;
-        float maxMult = HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MAX;
+    protected int getBaseCost() {
         int toRestore = selectedItems.size();
-        return toRestore == 0 || count == 0 ? 0f : base * (minMult + (maxMult - minMult) * (float) toRestore / count);
+        int base = selectedShip.getHullSpec().getPartsPerDmod() * toRestore;
+        float discount = Math.min(HullmodUtils.SELECTIVE_RESTORE_DISCOUNT_MAX, HullmodUtils.SELECTIVE_RESTORE_DISCOUNT_PER * toRestore);
+        return toRestore == 0 ? 0 : (int) Math.ceil(base * (1f - discount));
     }
 
     @Override
@@ -96,11 +120,13 @@ public class SelectiveRestoreButton extends ButtonWithHullmodSelection {
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        float frac = isStoryOption ? HullmodUtils.CREDITS_COST_MULT_SP : 1f;
+        float frac = isStoryOption ? HullmodUtils.getCostMultSP() : 1f;
+        float maxPrice = 1f - HullmodUtils.SELECTIVE_RESTORE_DISCOUNT_PER;
+        float minPrice = 1f - HullmodUtils.SELECTIVE_RESTORE_DISCOUNT_MAX;
         tooltip.addPara(Strings.MasteryPanel.selectiveRestorationTooltip,
                 10f,
                 isStoryOption ? Misc.getStoryBrightColor() : Settings.POSITIVE_HIGHLIGHT_COLOR,
-                Utils.asPercent(HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MIN * frac),
-                Utils.asPercent(HullmodUtils.SELECTIVE_RESTORE_COST_MULT_MAX * frac));
+                Utils.asPercent(1f - maxPrice * frac),
+                Utils.asPercent(1f - minPrice * frac));
     }
 }

@@ -25,9 +25,17 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         super(spriteName, isStoryOption);
     }
 
-    protected final void applyCosts() {
+    protected float getCurrencyAmount() {
+        return Utils.getPlayerCredits().get();
+    }
+
+    protected void applyCosts() {
         float cost = getModifiedCost();
         Utils.getPlayerCredits().subtract(cost);
+        spendSPIfNeededAndPlaySound();
+    }
+
+    protected final void spendSPIfNeededAndPlaySound() {
         if (isStoryOption) {
             Global.getSector().getPlayerStats().spendStoryPoints(
                     1,
@@ -52,7 +60,7 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
 
     protected void updateLabels() {
         float cost = getModifiedCost();
-        boolean canAfford = cost <= Utils.getPlayerCredits().get();
+        boolean canAfford = cost <= getCurrencyAmount();
         boolean hasEnoughSP = Global.getSector().getPlayerStats().getStoryPoints() >= 1;
         boolean shouldShowCost = shouldShowCostLabelNow();
         boolean shouldShowSPCost = shouldShowSPCostLabelNow();
@@ -62,7 +70,7 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
             Color[] colors = new Color[args.length];
             Arrays.fill(colors, Settings.POSITIVE_HIGHLIGHT_COLOR);
             if (colors.length > 0) {
-                colors[colors.length - 1] = canAfford ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR;
+                colors[getCostArgIndex()] = canAfford ? Settings.POSITIVE_HIGHLIGHT_COLOR : Settings.NEGATIVE_HIGHLIGHT_COLOR;
             }
             costLabel.setText(String.format(getCostDescriptionFormat(), (Object[]) args));
             costLabel.setHighlight(args);
@@ -115,6 +123,9 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         return HullmodUtils.getBonusXPFraction(getBaseCost());
     }
     protected abstract String[] getCostDescriptionArgs();
+    protected int getCostArgIndex() {
+        return 0;
+    }
     protected abstract String getUsedSPDescription();
 
     protected final TooltipMakerAPI addCostLabels(CustomPanelAPI panel, float width, float padFromTop) {
@@ -132,9 +143,9 @@ public abstract class ButtonWithCost extends ButtonWithIcon {
         return costText;
     }
 
-    protected abstract float getBaseCost();
-    protected final float getModifiedCost() {
+    protected abstract int getBaseCost();
+    protected final int getModifiedCost() {
         var base = getBaseCost();
-        return isStoryOption ? base * HullmodUtils.CREDITS_COST_MULT_SP : base;
+        return isStoryOption ? (int) (base * HullmodUtils.getCostMultSP()) : base;
     }
 }

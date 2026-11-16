@@ -68,8 +68,8 @@ public class HullReversionButton extends ButtonWithHullmodSelection {
     }
 
     @Override
-    protected float getBaseCost() {
-        return (float) (selectedItems.stream().mapToDouble(x -> HullmodUtils.getBuildInCost(x.getItem(), selectedShip)).sum() * HullmodUtils.SMOD_REMOVAL_COST_MULT);
+    protected int getBaseCost() {
+        return (int) Math.ceil((selectedItems.stream().mapToDouble(x -> HullmodUtils.getBuildInCost(x.getItem(), selectedShip, false, true)).sum() * HullmodUtils.SMOD_REMOVAL_COST_MULT));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class HullReversionButton extends ButtonWithHullmodSelection {
 
     @Override
     public void appendToTooltip(TooltipMakerAPI tooltip) {
-        float frac = isStoryOption ? HullmodUtils.CREDITS_COST_MULT_SP : 1f;
+        float frac = isStoryOption ? HullmodUtils.getCostMultSP() : 1f;
         tooltip.addPara(Strings.MasteryPanel.removeSModsTooltip, 10f,
                 isStoryOption ? Misc.getStoryBrightColor() : Settings.POSITIVE_HIGHLIGHT_COLOR,
                 Utils.asPercent(HullmodUtils.SMOD_REMOVAL_COST_MULT * frac));

@@ -187,6 +187,8 @@ public interface Strings {
         String selectiveRestorationTooltip = Utils.getString("sms_masteryPanel", "selectiveRestorationTooltip");
         String selectiveRestorationPanelText = Utils.getString("sms_masteryPanel", "selectiveRestorationPanelText");
         String selectiveRestorationUsedSPText = Utils.getString("sms_masteryPanel", "selectiveRestorationUsedSPText");
+        String domainGradePartsSingle = Utils.getString("sms_masteryPanel", "domainGradePartsSingle");
+        String domainGradePartsPlural = Utils.getString("sms_masteryPanel", "domainGradePartsPlural");
         String cantRestore = Utils.getString("sms_masteryPanel", "cantRestore");
         String removeSModsButton = Utils.getString("sms_masteryPanel", "removeSModsButton");
         String removeSModsTooltip = Utils.getString("sms_masteryPanel", "removeSModsTooltip");
