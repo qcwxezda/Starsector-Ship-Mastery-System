@@ -1,6 +1,6 @@
 2.1.0
 ---------
-- Updated for Starsector 0.98.5a-RC6.
+- Updated for Starsector 0.98.5a-RC7.
 - Disabled vanilla "Change S-mods" features.
 - Selective restoration replaced with "Improved Restoration," which uses 8%-40% fewer domain-grade parts.
 - Removed restoration cost mastery and S-mod cost reduction mastery.
