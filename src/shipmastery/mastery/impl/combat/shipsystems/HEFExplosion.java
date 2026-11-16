@@ -114,7 +114,7 @@ public class HEFExplosion extends ShipSystemEffect {
                 proj.getCustomData().remove(id);
                 float[] explosionColorComps = new float[4];
                 trailColor.getComponents(explosionColorComps);
-                explosionColorComps[3] = damageAmount / 10000f;
+                explosionColorComps[3] = Math.min(1f, damageAmount / 10000f);
                 Color explosionColor = new Color(explosionColorComps[0], explosionColorComps[1], explosionColorComps[2], explosionColorComps[3]);
                 DamagingExplosionSpec spec = new DamagingExplosionSpec(
                         0.1f,
