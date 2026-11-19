@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class HullmodUtils {
 
     public static final int[] BASE_VALUE_AMTS = new int[] {10000, 30000, 75000, 250000};
-    public static final float EXTENDED_MODE_MULTIPLIER = 3.5f;
+    public static final float EXTENDED_MODE_MULTIPLIER = 2.5f;
     public static final float CREDITS_HARD_CAP = 3000000f;
     public static final float CREDITS_COST_BXP_CAP = 250000f;
     public static final float SELECTIVE_RESTORE_DISCOUNT_PER = 0.08f;
@@ -158,7 +158,7 @@ public abstract class HullmodUtils {
                      i++) {
                     highlights.add(descParam);
                 }
-                tooltip.addPara(hullmod.getDescription(hullSize).replaceAll("%", "%%"), 0f, Misc.getHighlightColor(),
+                tooltip.addPara(hullmod.getDescription(hullSize).replace("%", "%%"), 0f, Misc.getHighlightColor(),
                         highlights.toArray(new String[0]));
             }
             effect.addPostDescriptionSection(tooltip, hullSize, ship, getTooltipWidth(tooltipParam), true);

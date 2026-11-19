@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import shipmastery.ShipMastery;
 import shipmastery.config.Settings;
 import shipmastery.util.MathUtils;
@@ -49,6 +50,7 @@ public interface AICoreInterfacePlugin {
     static float getDefaultIntegrationCost(FleetMemberAPI member, float minCost, float maxCost) {
         float cost = MathUtils.lerp(minCost, maxCost, MathUtils.clamp(member.getUnmodifiedDeploymentPointsCost() / 60f, 0f, 1f));
         cost = 1000f * (int) (cost/1000f);
+        if (Misc.isExtended()) cost *= 2.5f;
         return cost;
     }
 

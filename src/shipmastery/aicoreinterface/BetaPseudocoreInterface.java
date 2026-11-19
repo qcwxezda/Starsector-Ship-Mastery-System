@@ -40,7 +40,7 @@ public class BetaPseudocoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 75000f, 150000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 52500f, 150000f);
     }
 
     @Override

@@ -67,11 +67,11 @@ public class AmorphousPseudocorePlugin extends BasePseudocorePlugin implements H
 
     @Override
     public float getBaseEffectStrength() {
-        return 0.375f;
+        return 0.5f;
     }
 
     @Override
     public float getBaseCooldownSeconds() {
-        return 27f;
+        return 30f;
     }
 }

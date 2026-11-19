@@ -43,6 +43,6 @@ public class AlphaPseudocoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 120000f, 240000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 84000f, 240000f);
     }
 }

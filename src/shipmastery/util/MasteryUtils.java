@@ -3,6 +3,7 @@ package shipmastery.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import shipmastery.ShipMastery;
@@ -23,8 +24,8 @@ public abstract class MasteryUtils {
 
     public static final int bonusLogisticSlotEnhanceNumber = 9999; // Disabled, sorry
     public static final String CONSTRUCT_MP_OVERRIDE_KEY = "$sms_ConstructMPOverride";
-    public static final float[] ENHANCE_MASTERY_AMOUNT = {0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
-    public static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
+    private static final float[] ENHANCE_MASTERY_AMOUNT = new float[]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
+    private static final float[] ENHANCE_BONUS_XP = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f};
     public static final float ENHANCE_BONUS_XP_CIV = 0.9f;
     public static final int MAX_ENHANCES = 10;
     public static final int UNLOCK_SELECTIVE_RESTORATION_LEVEL;
@@ -48,6 +49,11 @@ public abstract class MasteryUtils {
         }
     }
 
+    public static float getEnhanceMasteryAmount(int level) {
+        if (level < 0 || level >= ENHANCE_MASTERY_AMOUNT.length) return 0f;
+        return ENHANCE_MASTERY_AMOUNT[level] * (Misc.isExtended() ? 0.5f : 1f);
+    }
+
     public static float getEnhanceBonusXP(ShipHullSpecAPI spec) {
         if (spec.isCivilianNonCarrier()) return ENHANCE_BONUS_XP_CIV;
         int count = Math.min(getEnhanceCount(spec), ENHANCE_BONUS_XP.length-1);
@@ -64,10 +70,10 @@ public abstract class MasteryUtils {
             case 3 -> 900;
             case 4 -> 1200;
             case 5 -> 1550;
-            case 6 -> 1950;
-            case 7 -> 2400;
-            case 8 -> 3000;
-            case 9 -> 4000;
+            case 6 -> 2000;
+            case 7 -> 2500;
+            case 8 -> 3500;
+            case 9 -> 5000;
             default -> Integer.MAX_VALUE;
         };
     }

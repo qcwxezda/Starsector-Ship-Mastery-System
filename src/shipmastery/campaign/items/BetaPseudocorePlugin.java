@@ -26,6 +26,6 @@ public class BetaPseudocorePlugin extends BasePseudocorePlugin implements Hidden
 
     @Override
     public float getBaseCooldownSeconds() {
-        return 45f;
+        return 40f;
     }
 }

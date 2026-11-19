@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector2f;
@@ -29,23 +30,30 @@ import java.util.Collection;
 public class TPCChaining extends BaseMasteryEffect {
 
     static final float CHAIN_DAMAGE_FRAC = 0.5f;
+    public static final int CHAIN_COUNT = 2;
+
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TPCChaining).params(Strings.Descriptions.TPCName);
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TPCChaining)
+                                 .params(Strings.Descriptions.TPCName);
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipVariantAPI selectedVariant,
                                           FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, Settings.POSITIVE_HIGHLIGHT_COLOR, Utils.asPercent(strength), Utils.asInt((strength * 20f)), Utils.asInt((strength * 2500f)));
+        tooltip.addPara(Strings.Descriptions.TPCChainingPost, 0f, new Color[] {
+                Settings.POSITIVE_HIGHLIGHT_COLOR,
+                Misc.getTextColor(),
+                Settings.POSITIVE_HIGHLIGHT_COLOR
+        }, Utils.asPercent(strength), Utils.asInt(CHAIN_COUNT), Utils.asInt((strength * 2500f)));
     }
 
     @Override
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
         if (ship != null && !ship.hasListenerOfClass(TPCChainingScript.class)) {
             float strength = getStrengthForPlayer();
-            ship.addListener(new TPCChainingScript(ship, strength, strength * 20f, strength * 2500f, id));
+            ship.addListener(new TPCChainingScript(ship, strength, CHAIN_COUNT, strength * 2500f, id));
         }
     }
 
@@ -58,12 +66,12 @@ public class TPCChaining extends BaseMasteryEffect {
 
         final ShipAPI ship;
         final float damageBonus;
-        final float chainCount;
+        final int chainCount;
         final float chainRange;
         final String id;
         final Color color = new Color(1f, 0.5f, 0.5f, 1f);
 
-        TPCChainingScript(ShipAPI ship, float damageBonus, float chainCount, float chainRange, String id) {
+        TPCChainingScript(ShipAPI ship, float damageBonus, int chainCount, float chainRange, String id) {
             this.ship = ship;
             this.chainCount = chainCount;
             this.damageBonus = damageBonus;
@@ -79,7 +87,7 @@ public class TPCChaining extends BaseMasteryEffect {
             damage.getModifier().modifyPercent(id, 100f * damageBonus);
 
             final Collection<CombatEntityAPI> targets = EngineUtils.getKNearestEntities(
-                    (int) chainCount,
+                    chainCount,
                     pt,
                     null,
                     true,

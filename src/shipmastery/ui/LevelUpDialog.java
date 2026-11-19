@@ -107,7 +107,7 @@ public class LevelUpDialog {
 
                     float enhanceAmount = 0f;
                     for (int i = 0; i < enhanceCount; i++) {
-                        enhanceAmount += MasteryUtils.ENHANCE_MASTERY_AMOUNT[i];
+                        enhanceAmount += MasteryUtils.getEnhanceMasteryAmount(i);
                     }
                     Global.getSector().getPlayerStats().getDynamic().getMod(MASTERY_STRENGTH_MOD_FOR + spec.getHullId())
                             .modifyPercent(MasteryUtils.ENHANCE_MODIFIER_ID, 100f * enhanceAmount);

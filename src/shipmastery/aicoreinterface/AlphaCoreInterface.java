@@ -19,7 +19,7 @@ public class AlphaCoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 100000f, 200000f);
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 70000f, 200000f);
     }
 
     @Override

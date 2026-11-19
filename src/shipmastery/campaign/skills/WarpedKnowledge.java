@@ -299,6 +299,21 @@ public class WarpedKnowledge {
     }
 
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
+        static void applyHiddenEffects(ShipAPI ship, String id, float effectLevel) {
+            var amount = effectLevel * 0.4f;
+            ship.getMutableStats().getBallisticWeaponDamageMult().modifyPercent(id, 100f * amount);
+            ship.getMutableStats().getEnergyWeaponDamageMult().modifyPercent(id, 100f * amount);
+            ship.getMutableStats().getMissileWeaponDamageMult().modifyPercent(id, 100f * amount);
+            ship.getMutableStats().getWeaponTurnRateBonus().modifyPercent(id, 300f * amount);
+        }
+
+        static void unapplyHiddenEffects(ShipAPI ship, String id) {
+            ship.getMutableStats().getBallisticWeaponDamageMult().unmodify(id);
+            ship.getMutableStats().getEnergyWeaponDamageMult().unmodify(id);
+            ship.getMutableStats().getMissileWeaponDamageMult().unmodify(id);
+            ship.getMutableStats().getWeaponTurnRateBonus().unmodify(id);
+        }
+
         public static class EffectScript extends HiddenEffectScript {
             public EffectScript(ShipAPI ship, String id, Provider plugin) {
                 super(ship, id, new Color(225, 150, 100), plugin);
@@ -306,16 +321,12 @@ public class WarpedKnowledge {
 
             @Override
             protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
-                ship.getMutableStats().getBallisticWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
-                ship.getMutableStats().getEnergyWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
-                ship.getMutableStats().getMissileWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
+                applyHiddenEffects(ship, id, effectLevel);
             }
 
             @Override
             protected void unapplyEffectsToShip(ShipAPI ship) {
-                ship.getMutableStats().getBallisticWeaponDamageMult().unmodify(id);
-                ship.getMutableStats().getEnergyWeaponDamageMult().unmodify(id);
-                ship.getMutableStats().getMissileWeaponDamageMult().unmodify(id);
+                unapplyHiddenEffects(ship, id);
             }
         }
 

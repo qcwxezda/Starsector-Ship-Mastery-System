@@ -2,7 +2,6 @@ package shipmastery.mastery.impl.combat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -10,6 +9,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.combat.PhaseCloakStats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.combat.entities.Ship;
 import particleengine.Particles;
 import shipmastery.config.Settings;
@@ -23,8 +23,8 @@ import java.awt.Color;
 
 public class PhaseCloakResidue extends BaseMasteryEffect {
 
-    static final float CLOAK_COOLDOWN_MULT = 4f;
-    static final float CLOAK_UPKEEP_MULT = 1.25f;
+    static final float CLOAK_COOLDOWN_MULT = 3f;
+    static final float CLOAK_UPKEEP_MULT = 1.2f;
     static final float MAX_DAMAGE_REDUCTION = 0.25f;
 
     @Override
@@ -33,7 +33,7 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
         tooltip.addPara(
                 Strings.Descriptions.PhaseCloakResiduePost,
                 0f,
-                new Color[] {Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
+                new Color[] {Misc.getTextColor(), Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR, Settings.NEGATIVE_HIGHLIGHT_COLOR},
                 Utils.asPercent(MAX_DAMAGE_REDUCTION),
                 Utils.asFloatTwoDecimals(CLOAK_UPKEEP_MULT),
                 Utils.asFloatOneDecimal(CLOAK_COOLDOWN_MULT),
@@ -117,23 +117,19 @@ public class PhaseCloakResidue extends BaseMasteryEffect {
             }
 
             if (isAcceleratedUnphased) {
-                MutableStat timeMult = stats.getTimeMult();
-                timeMult.unmodify(id);
-                float currentTimeMult = timeMult.getModifiedValue();
                 float targetTimeMult = maxTimeMult + (1f - maxTimeMult) * timeAcceleratedUnphased / maxTime;
-                float ratio = targetTimeMult / currentTimeMult;
-                timeAcceleratedUnphased += amount / timeMult.getModifiedValue();
+                timeAcceleratedUnphased += amount;
                 if (ship == Global.getCombatEngine().getPlayerShip()) {
-                    Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
+                    Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / targetTimeMult);
                 }
-                timeMult.modifyMult(id, ratio);
+                stats.getTimeMult().modifyMult(id, targetTimeMult);
                 Utils.maintainStatusForPlayerShip(ship,
                         id + "1",
                         ship.getPhaseCloak().getSpecAPI().getIconSpriteName(),
                         Strings.Descriptions.PhaseCloakResidueStatusTitle,
-                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc1, Utils.asPercentNoDecimal(timeMult.getModifiedValue())),
+                        String.format(Strings.Descriptions.PhaseCloakResidueStatusDesc1, Utils.asPercentNoDecimal(targetTimeMult)),
                         false);
-                float damageMult = 1f - ((timeMult.getModifiedValue() - 1f) / (maxTimeMult - 1f)) * MAX_DAMAGE_REDUCTION;
+                float damageMult = 1f - ((targetTimeMult - 1f) / (maxTimeMult - 1f)) * MAX_DAMAGE_REDUCTION;
                 stats.getHullDamageTakenMult().modifyMult(id, damageMult);
                 stats.getArmorDamageTakenMult().modifyMult(id, damageMult);
                 stats.getEmpDamageTakenMult().modifyMult(id, damageMult);

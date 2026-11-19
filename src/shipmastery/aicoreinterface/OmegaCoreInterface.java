@@ -17,7 +17,7 @@ public class OmegaCoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return 5000000f;
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 5000000f, 5000000f);
     }
 
     @Override

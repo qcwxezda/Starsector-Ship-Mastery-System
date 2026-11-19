@@ -163,6 +163,14 @@ public class SharedKnowledge {
     }
 
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
+        static void applyHiddenEffects(ShipAPI ship, String id, float effectLevel) {
+            ship.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel * 0.4f);
+        }
+
+        static void unapplyHiddenEffects(ShipAPI ship, String id) {
+            ship.getMutableStats().getTimeMult().unmodify(id);
+        }
+
         public static class EffectScript extends HiddenEffectScript {
             public EffectScript(ShipAPI ship, String id, Provider plugin) {
                 super(ship, id, new Color(100, 200, 150), plugin);
@@ -170,12 +178,12 @@ public class SharedKnowledge {
 
             @Override
             protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
-                ship.getMutableStats().getTimeMult().modifyMult(id, 1f + effectLevel);
+                applyHiddenEffects(ship, id, effectLevel);
             }
 
             @Override
             protected void unapplyEffectsToShip(ShipAPI ship) {
-                ship.getMutableStats().getTimeMult().unmodify(id);
+                unapplyHiddenEffects(ship, id);
             }
         }
 

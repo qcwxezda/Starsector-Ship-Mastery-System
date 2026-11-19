@@ -35,12 +35,7 @@ public class WarpedPseudocorePlugin extends BasePseudocorePlugin implements Hidd
     }
 
     @Override
-    public float getBaseDurationSeconds() {
-        return 4f;
-    }
-
-    @Override
     public float getBaseCooldownSeconds() {
-        return 30f;
+        return 32f;
     }
 }

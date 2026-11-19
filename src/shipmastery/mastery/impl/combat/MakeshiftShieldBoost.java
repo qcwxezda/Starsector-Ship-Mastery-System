@@ -29,7 +29,6 @@ public class MakeshiftShieldBoost extends BaseMasteryEffect {
         float strength = getStrength(stats);
         stats.getShieldArcBonus().modifyPercent(id, 100f*strength);
         stats.getShieldDamageTakenMult().modifyMult(id, 1f - strength*0.2f);
-        stats.getMaxSpeed().unmodify(HullMods.MAKESHIFT_GENERATOR);
     }
 
     @Override

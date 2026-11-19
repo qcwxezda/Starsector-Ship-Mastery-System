@@ -55,7 +55,7 @@ EmptyMountsReduceFlux,3,unique combat,,0.1,shipmastery.mastery.impl.combat.Empty
 DPIfOnlyShip,3,negative_strength_allowed combat unique doesnt_affect_modules,,-0.2,shipmastery.mastery.impl.combat.DPIfOnlyShip
 PeakCRMultipleShips,2,negative_strength_allowed combat unique doesnt_affect_modules,,0.25,shipmastery.mastery.impl.combat.PeakCRMultipleShips
 ShieldDeflection,4,combat unique doesnt_affect_modules prefix_flagship_only,,7,shipmastery.mastery.impl.combat.ShieldDeflection
-PhaseCloakResidue,4,combat unique doesnt_affect_modules,,2.5,shipmastery.mastery.impl.combat.PhaseCloakResidue
+PhaseCloakResidue,4,combat unique doesnt_affect_modules,,3,shipmastery.mastery.impl.combat.PhaseCloakResidue
 ZeroFluxResidue,3,combat unique doesnt_affect_modules,,5,shipmastery.mastery.impl.combat.ZeroFluxResidue
 BallisticFireRateHullLevel,4,combat unique,,0.125,shipmastery.mastery.impl.combat.BallisticFireRateHullLevel
 BallisticFireRateFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.BallisticFireRateFluxLevel
@@ -63,8 +63,8 @@ EnergyDamageFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.Energ
 MissileRoFFluxLevel,4,combat unique,,0.1,shipmastery.mastery.impl.combat.MissileRoFFluxLevel
 SpeedHullLevel,4,combat unique doesnt_affect_modules,,0.15,shipmastery.mastery.impl.combat.SpeedHullLevel
 HitAngleDR,3,combat unique negative_strength_allowed,,-0.15,shipmastery.mastery.impl.combat.HitAngleDR
-TPCUpgrade,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCUpgrade
-TPCChaining,4,combat unique prefix_flagship_only,,0.08,shipmastery.mastery.impl.combat.TPCChaining
+TPCUpgrade,4,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCUpgrade
+TPCChaining,4,combat unique prefix_flagship_only,,0.1,shipmastery.mastery.impl.combat.TPCChaining
 TorpedoTracking,4,combat unique,,4,shipmastery.mastery.impl.combat.TorpedoTracking
 ArmorRepair,4,combat unique,,0.03,shipmastery.mastery.impl.combat.ArmorRepair
 HullThresholdDR,4,combat unique,,2.5,shipmastery.mastery.impl.combat.HullThresholdDR

@@ -325,6 +325,25 @@ public class CrystallineKnowledge {
     }
 
     public static class Hidden extends BaseSkillEffectDescription implements AfterShipCreationSkillEffect {
+        static void applyHiddenEffects(ShipAPI ship, String id, float effectLevel) {
+            var amount = Math.min(effectLevel * 0.4f, 0.9f);
+            ship.getMutableStats().getHullDamageTakenMult().modifyMult(id, 1f - amount);
+            ship.getMutableStats().getArmorDamageTakenMult().modifyMult(id, 1f - amount);
+            ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - amount);
+            ship.getMutableStats().getEmpDamageTakenMult().modifyMult(id, 1f - amount);
+            ship.getMutableStats().getCombatEngineRepairTimeMult().modifyMult(id, (1f - amount)/5f);
+            ship.getMutableStats().getCombatWeaponRepairTimeMult().modifyMult(id, (1f - amount)/5f);
+        }
+
+        static void unapplyHiddenEffects(ShipAPI ship, String id) {
+            ship.getMutableStats().getHullDamageTakenMult().unmodify(id);
+            ship.getMutableStats().getArmorDamageTakenMult().unmodify(id);
+            ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
+            ship.getMutableStats().getEmpDamageTakenMult().unmodify(id);
+            ship.getMutableStats().getCombatEngineRepairTimeMult().unmodify(id);
+            ship.getMutableStats().getCombatWeaponRepairTimeMult().unmodify(id);
+        }
+
         public static class EffectScript extends HiddenEffectScript {
             public EffectScript(ShipAPI ship, String id, Provider plugin) {
                 super(ship, id, new Color(100, 150, 225), plugin);
@@ -332,19 +351,12 @@ public class CrystallineKnowledge {
 
             @Override
             protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
-                effectLevel = Math.min(effectLevel, 0.9f);
-                ship.getMutableStats().getHullDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                ship.getMutableStats().getArmorDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                ship.getMutableStats().getShieldDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                ship.getMutableStats().getEmpDamageTakenMult().modifyMult(id, 1f - effectLevel);
+                applyHiddenEffects(ship, id, effectLevel);
             }
 
             @Override
             protected void unapplyEffectsToShip(ShipAPI ship) {
-                ship.getMutableStats().getHullDamageTakenMult().unmodify(id);
-                ship.getMutableStats().getArmorDamageTakenMult().unmodify(id);
-                ship.getMutableStats().getShieldDamageTakenMult().unmodify(id);
-                ship.getMutableStats().getEmpDamageTakenMult().unmodify(id);
+                unapplyHiddenEffects(ship, id);
             }
         }
         @Override

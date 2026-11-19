@@ -10,7 +10,7 @@ import shipmastery.util.Utils;
 public class ShipSystemCooldown extends ShipStat {
     @Override
     public Object get(MutableShipStatsAPI stats) {
-        return new Object[] {stats.getSystemCooldownBonus(), stats.getSystemRegenBonus()};
+        return stats.getSystemCooldownBonus();
     }
 
     @Override
@@ -20,16 +20,9 @@ public class ShipSystemCooldown extends ShipStat {
         if (spec.getShipSystemId() == null) return null;
         ShipSystemSpecAPI systemSpec = Global.getSettings().getShipSystemSpec(spec.getShipSystemId());
         if (systemSpec == null) return null;
+        if (systemSpec.getMaxUses(null) != Integer.MAX_VALUE) return null;
 
-        float cooldown;
-        if (systemSpec.getMaxUses(null) == Integer.MAX_VALUE) {
-            cooldown = systemSpec.getCooldown(null);
-        }
-        else {
-            float regen = systemSpec.getRegen(null);
-            if (regen <= 0.0f) return null; // Doesn't regenerate, so would have no effect
-            cooldown = 1f / regen;
-        }
+        float cooldown = systemSpec.getCooldown(null);
 
         // Ignore extremely long cooldowns
         if (cooldown > 1000f) return null;

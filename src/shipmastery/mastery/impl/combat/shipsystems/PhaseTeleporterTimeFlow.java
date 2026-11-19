@@ -28,7 +28,7 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         float strength = getStrength(selectedVariant);
         return MasteryDescription.initDefaultHighlight(Strings.Descriptions.PhaseTeleporterTimeFlow)
-                                 .params(getSystemName(), Utils.asPercent(strength), Utils.asFloatOneDecimal(3f*strength));
+                                 .params(getSystemName(), Utils.asPercent(strength), Utils.asFloatOneDecimal(strength * 4f));
     }
 
     @Override
@@ -48,13 +48,17 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
     @Override
     public void onFlagshipStatusGainedIfHasSystem(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         if (!ship.hasListenerOfClass(PhaseTeleporterTimeFlowScript.class)) {
-            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, getStrength(ship), 3f*getStrength(ship), 10f*getStrength(ship)));
+            var str = getStrength(ship);
+            ship.addListener(new PhaseTeleporterTimeFlowScript(ship, str, 4f*str, 10f*str));
         }
     }
 
     @Override
     public void onFlagshipStatusLost(PersonAPI commander, MutableShipStatsAPI stats, @NotNull ShipAPI ship) {
         ship.getMutableStats().getTimeMult().unmodify(id);
+        if (ship == Global.getCombatEngine().getPlayerShip()) {
+            Global.getCombatEngine().getTimeMult().unmodify(id);
+        }
         ship.removeListenerOfClass(PhaseTeleporterTimeFlowScript.class);
     }
 
@@ -104,24 +108,23 @@ public class PhaseTeleporterTimeFlow extends ShipSystemEffect {
         public void advance(float amount) {
             if (timeLeft <= 0f) {
                 ship.getMutableStats().getTimeMult().unmodify(id);
+                if (ship == Global.getCombatEngine().getPlayerShip()) {
+                    Global.getCombatEngine().getTimeMult().unmodify(id);
+                }
                 return;
             }
 
-            MutableStat timeMult = ship.getMutableStats().getTimeMult();
-            timeMult.unmodify(id);
-            float currentTimeMult = timeMult.getModifiedValue();
             float targetTimeMult = maxTimeMult + (1f - maxTimeMult) * (maxTime - timeLeft) / maxTime;
-            float ratio = targetTimeMult / currentTimeMult;
-            timeLeft -= amount / timeMult.getModifiedValue();
-            timeMult.modifyMult(id, ratio);
+            timeLeft -= amount;
+            ship.getMutableStats().getTimeMult().modifyMult(id, targetTimeMult);
             if (ship == Global.getCombatEngine().getPlayerShip()) {
-                Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / ratio);
+                Global.getCombatEngine().getTimeMult().modifyMult(id, 1f / targetTimeMult);
             }
             Utils.maintainStatusForPlayerShip(ship,
                                               id,
                                               getSystemSpec().getIconSpriteName(),
                                               Strings.Descriptions.PhaseTeleporterTimeFlowTitle,
-                                              String.format(Strings.Descriptions.PhaseTeleporterTimeFlowDesc1, Utils.asPercentNoDecimal(timeMult.getModifiedValue())),
+                                              String.format(Strings.Descriptions.PhaseTeleporterTimeFlowDesc1, Utils.asPercentNoDecimal(targetTimeMult)),
                                               false);
         }
 

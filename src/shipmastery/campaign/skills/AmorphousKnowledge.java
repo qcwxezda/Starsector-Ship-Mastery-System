@@ -97,29 +97,16 @@ public class AmorphousKnowledge {
 
             @Override
             protected void applyEffectsToShip(ShipAPI ship, float effectLevel) {
-                effectLevel = Math.min(effectLevel, 0.9f);
-                var stats = ship.getMutableStats();
-                stats.getHullDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                stats.getArmorDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                stats.getShieldDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                stats.getEmpDamageTakenMult().modifyMult(id, 1f - effectLevel);
-                stats.getBallisticWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
-                stats.getEnergyWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
-                stats.getMissileWeaponDamageMult().modifyPercent(id, 100f * effectLevel);
-                stats.getTimeMult().modifyMult(id, 1f + effectLevel);
+                SharedKnowledge.Hidden.applyHiddenEffects(ship, id, effectLevel);
+                WarpedKnowledge.Hidden.applyHiddenEffects(ship, id, effectLevel);
+                CrystallineKnowledge.Hidden.applyHiddenEffects(ship, id, effectLevel);
             }
 
             @Override
             protected void unapplyEffectsToShip(ShipAPI ship) {
-                var stats = ship.getMutableStats();
-                stats.getHullDamageTakenMult().unmodify(id);
-                stats.getArmorDamageTakenMult().unmodify(id);
-                stats.getShieldDamageTakenMult().unmodify(id);
-                stats.getEmpDamageTakenMult().unmodify(id);
-                stats.getBallisticWeaponDamageMult().unmodify(id);
-                stats.getEnergyWeaponDamageMult().unmodify(id);
-                stats.getMissileWeaponDamageMult().unmodify(id);
-                stats.getTimeMult().unmodify(id);
+                SharedKnowledge.Hidden.unapplyHiddenEffects(ship, id);
+                WarpedKnowledge.Hidden.unapplyHiddenEffects(ship, id);
+                CrystallineKnowledge.Hidden.unapplyHiddenEffects(ship, id);
             }
         }
 

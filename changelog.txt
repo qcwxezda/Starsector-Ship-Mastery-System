@@ -1,3 +1,22 @@
+2.1.1
+---------
+- Updated makeshift shield generator mastery to no longer reference removed speed penalty.
+- Slightly increased mastery XP required to enhance at the very high end.
+- Reduced pseudocore tertiary (hidden) skill effects from 75% to 40%, increased their duration by 1-3 seconds, and slightly modified their cooldown.
+- Reduced the cost of integrating AI cores into low DP ships.
+- TPC Upgrade damage bonus now fixed at 100% (was: 80%), no longer scales. Base chance 8% -> 10%.
+- TPC Chaining target count now fixed at 2 (was: 1), no longer scales. Base damage increase 8% -> 10%.
+- Phase Teleporter Time Flow duration now uses local time instead of global time, base 3s -> 4s.
+- Phase Cloak Residue duration now uses local time instead of global time, base 2.5s -> 3s. Cooldown factor 4 -> 3, upkeep factor 1.25 -> 1.2.
+- Slightly reduced size and strength of boss fleets.
+- Survival mode: mastery enhancement reduced to 5% each (down from 10%).
+- Survival mode: S-mod cost multiplier reduced from 3.5x to 2.5x.
+- Survival mode: integrating AI cores now costs 2.5x the credits.
+- Survival mode: you are now much more likely to encounter special pseudocores.
+- Fixed issue where ship system recharge rate mastery was actually increasing cooldown if the system didn't use charges.
+    - Split into two stats, so this has a small chance of changing up some masteries!
+- Fixed issue with global time dilation in a couple of timeflow masteries.
+
 2.1.0
 ---------
 - Updated for Starsector 0.98.5a-RC7.

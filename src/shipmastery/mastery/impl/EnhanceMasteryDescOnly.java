@@ -14,7 +14,7 @@ public class EnhanceMasteryDescOnly extends BaseMasteryEffect {
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         int enhances = MasteryUtils.getEnhanceCount(selectedFleetMember.getHullSpec());
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnhanceMasteryDescOnly).params(Utils.asPercent(MasteryUtils.ENHANCE_MASTERY_AMOUNT[enhances]));
+        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.EnhanceMasteryDescOnly).params(Utils.asPercent(MasteryUtils.getEnhanceMasteryAmount(enhances)));
     }
 
     @Override

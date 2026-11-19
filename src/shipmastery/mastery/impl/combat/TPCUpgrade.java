@@ -27,12 +27,14 @@ import shipmastery.util.Utils;
 import java.awt.Color;
 
 public class TPCUpgrade extends BaseMasteryEffect {
+    public static final float DAMAGE_BONUS = 0.8f;
+
     @Override
     public MasteryDescription getDescription(ShipVariantAPI selectedVariant, FleetMemberAPI selectedFleetMember) {
         float strength = getStrengthForPlayer();
-        return MasteryDescription.initDefaultHighlight(Strings.Descriptions.TPCUpgrade).params(Strings.Descriptions.TPCName,
-                                                                                               Utils.asPercent(strength),
-                                                                                               Utils.asPercent(10f * strength));
+        return MasteryDescription.init(Strings.Descriptions.TPCUpgrade)
+                                 .params(Strings.Descriptions.TPCName, Utils.asPercent(strength), Utils.asPercent(DAMAGE_BONUS))
+                                 .colors(Settings.POSITIVE_HIGHLIGHT_COLOR, Settings.POSITIVE_HIGHLIGHT_COLOR, null);
     }
 
     @Override
@@ -45,7 +47,7 @@ public class TPCUpgrade extends BaseMasteryEffect {
     public void onFlagshipStatusGained(PersonAPI commander, MutableShipStatsAPI stats, @Nullable ShipAPI ship) {
         if (ship != null && !ship.hasListenerOfClass(TPCUpgradeScript.class)) {
             float strength = getStrengthForPlayer();
-            ship.addListener(new TPCUpgradeScript(ship, strength, strength * 10f, strength * 15f, id));
+            ship.addListener(new TPCUpgradeScript(ship, strength, DAMAGE_BONUS, strength * 15f, id));
         }
     }
 

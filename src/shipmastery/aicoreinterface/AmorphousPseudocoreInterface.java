@@ -46,7 +46,7 @@ public class AmorphousPseudocoreInterface implements AICoreInterfacePlugin {
 
     @Override
     public float getIntegrationCost(FleetMemberAPI member) {
-        return 5000000f;
+        return AICoreInterfacePlugin.getDefaultIntegrationCost(member, 5000000f, 5000000f);
     }
 
     private static class IntegrationScript implements AdvanceableListener {

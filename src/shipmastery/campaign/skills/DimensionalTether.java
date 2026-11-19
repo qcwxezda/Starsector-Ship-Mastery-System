@@ -53,10 +53,10 @@ public class DimensionalTether {
     public static final float ADD_TO_RESERVE_DELAY_PLAYER = 3f;
     // Note: repair over time only applies to player ships, for NPC ships the delay to add to reserve is higher,
     // but they always enter with full health
-    public static final float ADD_TO_RESERVE_DELAY_NPC = 25f;
+    public static final float ADD_TO_RESERVE_DELAY_NPC = 60f;
     // No CombatEngine.getPlugins or similar, so we need to track the existing repair scripts ourselves
     public static final String EXISTING_REPAIR_SCRIPTS_KEY = "$sms_DimensionalTetherScripts";
-    public static final float MIN_CR_COST = 0.1f;
+    public static final float MIN_CR_COST = 0.15f;
     public static final float FLUX_REDUCTION_AMOUNT = 0.1f;
     public static final float[] EMP_RANGE = {800f, 1200f, 1600f, 2000f};
     public static final String REMOVED_PHASE_ANCHOR_KEY = "sms_RemovedPhaseAnchor";

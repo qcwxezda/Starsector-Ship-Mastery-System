@@ -12,6 +12,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.impl.campaign.ids.Skills;
 import com.fs.starfarer.api.impl.campaign.missions.hub.HubMissionWithTriggers;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import com.fs.starfarer.campaign.CharacterStats;
 import shipmastery.campaign.FleetHandler;
@@ -25,8 +26,8 @@ import java.util.Random;
 
 public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
 
-    public static final float REPLACE_WARPED_PROB = 0.03f;
-    public static final float REPLACE_CRYSTALLINE_PROB = 0.03f;
+    public static final float REPLACE_WARPED_PROB = 0.04f;
+    public static final float REPLACE_CRYSTALLINE_PROB = 0.04f;
 
     @Override
     public void addCommanderAndOfficers(CampaignFleetAPI fleet, FleetParamsV3 params, Random random) {
@@ -74,22 +75,29 @@ public class CuratorOfficerPlugin extends BaseGenerateFleetOfficersPlugin {
         String fleetType = mem == null ? null : mem.getString("$fleetType");
         boolean isNucleusDefender = Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE.equals(fleetType);
         boolean isRemoteDefender = Strings.Campaign.REMOTE_BEACON_DEFENDER_FLEET_TYPE.equals(fleetType);
-        float replaceCrystallineProb = REPLACE_CRYSTALLINE_PROB;
-        float replaceWarpedProb = REPLACE_WARPED_PROB;
+        float replaceCrystallineProb = (Misc.isExtended() ? 3f : 1f) * REPLACE_CRYSTALLINE_PROB;
+        float replaceWarpedProb = (Misc.isExtended() ? 3f : 1f) * REPLACE_WARPED_PROB;
         if (isNucleusDefender) {
             replaceCrystallineProb = 0.2f;
             replaceWarpedProb = 0.2f;
         } else if (isRemoteDefender) {
-            replaceCrystallineProb = 0.33f;
-            replaceWarpedProb = 0.33f;
+            replaceCrystallineProb = 1f/3f;
+            replaceWarpedProb = 1f/3f;
         }
 
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             String coreId = officerPicker.pick();
             if (coreId != null && !"sms_fractured_gamma_core".equals(coreId)) {
-                if (random.nextFloat() <= replaceCrystallineProb) {
+                // Lower chance of replacing a gamma
+                var probC = replaceCrystallineProb;
+                var probW = replaceWarpedProb;
+                if ("sms_gamma_pseudocore".equals(coreId)) {
+                    probC /= 3f;
+                    probW /= 3f;
+                }
+                if (random.nextFloat() <= probC) {
                     coreId = "sms_crystalline_pseudocore";
-                } else if (random.nextFloat() <= replaceWarpedProb) {
+                } else if (random.nextFloat() <= probW) {
                     coreId = "sms_warped_pseudocore";
                 }
             }

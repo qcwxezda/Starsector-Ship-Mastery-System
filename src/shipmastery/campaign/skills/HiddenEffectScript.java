@@ -26,13 +26,13 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
         String STRENGTH_MOD = "sms_PseudocoreHiddenEffectStrengthMod";
 
         default float getBaseCooldownSeconds() {
-            return 60f;
+            return 48f;
         }
         default float getBaseDurationSeconds() {
-            return 5f;
+            return 6f;
         }
         default float getBaseEffectStrength() {
-            return 0.75f;
+            return 1f;
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
     private boolean active = false;
     private float activeTime = 0f;
     private final FaderUtil effectFader = new FaderUtil(0f, 0.5f);
-    private final IntervalUtil repopulateWingsAndModulesInterval = new IntervalUtil(0.5f, 0.5f);
+    private final IntervalUtil repopulateWingsAndModulesInterval = new IntervalUtil(1f, 1f);
     private List<ShipAPI> allModules = new ArrayList<>();
     private List<ShipAPI> allWings = new ArrayList<>();
     public static final String EFFECT_FADE_IN_KEY = "sms_HiddenEffectFadeInLevel";
@@ -136,8 +136,7 @@ public abstract class HiddenEffectScript extends AdvanceIfAliveListener implemen
     @Override
     public final void advanceIfAlive(float amount) {
         var dynamicStats = ship.getMutableStats().getDynamic();
-        float strength = dynamicStats.getMod(Provider.STRENGTH_MOD)
-                .computeEffective(plugin.getBaseEffectStrength());
+        float strength = dynamicStats.getMod(Provider.STRENGTH_MOD).computeEffective(plugin.getBaseEffectStrength());
         float effectLevel = effectFader.getBrightness() * strength;
         applyEffects(effectLevel, Misc.random.nextFloat() < amount*15f);
         effectFader.advance(amount);

@@ -29,6 +29,6 @@ public class AlphaPseudocorePlugin extends BasePseudocorePlugin implements Hidde
 
     @Override
     public float getBaseCooldownSeconds() {
-        return 30f;
+        return 32f;
     }
 }

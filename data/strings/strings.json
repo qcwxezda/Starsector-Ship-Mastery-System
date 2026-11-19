@@ -399,7 +399,7 @@
     "DamperFieldDissipation": "While %1$s is active, flux dissipation is multiplied by a factor of %2$s.",
     "DamperFieldDissipationTitle": "Attuned Damper",
     "DamperFieldDissipationDesc1": "x%1$s dissipation",
-    "MakeshiftShieldBoost": "If %1$s is installed, extends shield arc by %2$s, reduces shield damage taken by %3$s, and negates the hullmod's speed penalty.",
+    "MakeshiftShieldBoost": "If %1$s is installed, extends shield arc by %2$s and reduces shield damage taken by %3$s.",
     "DecoyFlareBoost": "Extends the lifetime and durability of flares launched by %1$s by %2$s.",
     "MinimumCR": "Combat readiness will never fall below %1$s during combat. Grants immunity to most malfunctions as long as combat readiness is above 0%%.",
     "MinimumCRPost": "Will not increase combat readiness if deployed below the threshold. This effect is negated if the ship's safeties are overridden.",

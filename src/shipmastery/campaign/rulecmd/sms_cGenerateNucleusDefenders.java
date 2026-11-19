@@ -27,7 +27,6 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
         var entity = dialog.getInteractionTarget();
         if (entity == null) return false;
 
-
         var mem = getEntityMemory(memoryMap);
         CampaignFleetAPI defenders = mem.getFleet("$defenderFleet");
         if (defenders != null && !defenders.isEmpty()) {
@@ -46,10 +45,10 @@ public class sms_cGenerateNucleusDefenders extends BaseCommandPlugin {
                 "sms_curator",
                 2f,
                 Strings.Campaign.NUCLEUS_DEFENDER_FLEET_TYPE,
-                850f, 0f, 0f, 0f, 0f, 0f, 0f);
+                600f, 0f, 0f, 0f, 0f, 0f, 0f);
         fParams.withOfficers = true;
         fParams.aiCores = HubMissionWithTriggers.OfficerQuality.AI_BETA;
-        fParams.maxNumShips = 70;
+        fParams.maxNumShips = 60;
         fParams.maxShipSize = 2;
         fParams.averageSMods = 2;
         fParams.random = new Random(commanderId.hashCode());
